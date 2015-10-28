@@ -7,9 +7,9 @@
 #include "view/Label.h"
 #include "view/ImageView.h"
 
-class ViewTest : public view::SuiteView {
+class BasicViewTests : public view::SuiteView {
 public:
-	ViewTest();
+	BasicViewTests();
 
 	void layout() override;
 
@@ -19,9 +19,6 @@ private:
 	view::ViewRef				mContainerView;
 	view::StrokedRectViewRef	mBorderView;
 
-	view::HSliderRef			mHSlider;
-	view::VSliderRef			mVSlider;
-	view::ButtonRef				mButton, mToggle;
 	view::LabelRef				mLabel, mLabelClipped;
 	view::LabelGridRef			mLabelGrid;
 	view::ImageViewRef			mImageView;

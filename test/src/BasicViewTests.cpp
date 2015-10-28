@@ -1,4 +1,4 @@
-#include "ViewTest.h"
+#include "BasicViewTests.h"
 
 #include "cinder/app/App.h"
 #include "cinder/Rand.h"
@@ -54,7 +54,7 @@ protected:
 	}
 };
 
-ViewTest::ViewTest()
+BasicViewTests::BasicViewTests()
 	: SuiteView()
 {
 	mContainerView = make_shared<View>();
@@ -92,31 +92,6 @@ ViewTest::ViewTest()
 	mBorderView = make_shared<view::StrokedRectView>();
 	mBorderView->setColor( ColorA( "red", 1 ) );
 	mContainerView->addSubview( mBorderView );
-
-	mButton = make_shared<view::Button>();
-	mButton->setTitle( "Moe" );
-	mButton->getSignalPressed().connect( [] { CI_LOG_V( "Bob pressed" ); } );
-	mButton->getSignalReleased().connect( [] { CI_LOG_V( "Bob released" ); } );
-
-	mToggle = make_shared<view::Button>();
-	mToggle->setAsToggle();
-	mToggle->setLabel( "toggle" );
-	mToggle->setTitle( "Larry" );
-	mToggle->setTitle( "Curly", view::Button::State::ENABLED );
-	mToggle->getSignalPressed().connect( [] { CI_LOG_V( "toggle pressed" ); } );
-	mToggle->getSignalReleased().connect( [] { CI_LOG_V( "toggle released" ); } );
-
-	// temp - adding constrols to this test
-	mHSlider = make_shared<view::HSlider>();
-	mHSlider->getBackground()->setColor( ColorA( "green", 0.5f ) );
-	mHSlider->getSignalValueChanged().connect( [this] {
-		CI_LOG_V( "mHSlider value: " << mHSlider->getValue() );
-	} );
-
-	mVSlider = make_shared<view::VSlider>();
-	mVSlider->getSignalValueChanged().connect( [this] {
-		CI_LOG_V( "mVSlider value: " << mVSlider->getValue() );
-	} );
 
 	mLabel = make_shared<view::Label>();
 	mLabel->setText( "a label" );
@@ -157,25 +132,16 @@ ViewTest::ViewTest()
 		CI_LOG_EXCEPTION( "failed to load image at path: " << imageFilePath, exc );
 	}
 
-	mContainerView->addSubviews( { mButton, mToggle, mHSlider, mVSlider, mLabel, mLabelClipped, mLabelGrid, mImageView } );
+	mContainerView->addSubviews( { mLabel, mLabelClipped, mLabelGrid, mImageView } );
 	addSubview( mContainerView );
 
-	connectKeyDown( signals::slot( this, &ViewTest::keyEvent ) );
+	connectKeyDown( signals::slot( this, &BasicViewTests::keyEvent ) );
 }
 
-void ViewTest::layout()
+void BasicViewTests::layout()
 {
 	mContainerView->setBounds( Rectf( PADDING, PADDING, getWidth() - PADDING, getHeight() - PADDING ) );
 	mBorderView->setSize( mContainerView->getSize() );
-
-	Rectf buttonBounds( mContainerView->getWidth() - 200, mContainerView->getHeight() - 180, mContainerView->getWidth() - 100, mContainerView->getHeight() - 140 );
-	mButton->setBounds( buttonBounds );
-
-	buttonBounds += vec2( 0, buttonBounds.getHeight() + 10 );
-	mToggle->setBounds( buttonBounds );
-
-	mHSlider->setBounds( Rectf( mContainerView->getCenter().x, mContainerView->getHeight() - 60, mContainerView->getCenter().x + 200, mContainerView->getHeight() - 20 ) );
-	mVSlider->setBounds( Rectf( mContainerView->getWidth() - 60, mContainerView->getHeight() - 300, mContainerView->getWidth() - 20, mContainerView->getHeight() - 100 ) );
 
 	Rectf labelBounds( PADDING, mContainerView->getHeight() - 70, 100 + PADDING, mContainerView->getHeight() - 44 );
 	mLabel->setBounds( labelBounds );
@@ -191,7 +157,7 @@ void ViewTest::layout()
 
 }
 
-void ViewTest::keyEvent( app::KeyEvent &event )
+void BasicViewTests::keyEvent( app::KeyEvent &event )
 {
 	switch( event.getCode() ) {
 		case app::KeyEvent::KEY_c: {

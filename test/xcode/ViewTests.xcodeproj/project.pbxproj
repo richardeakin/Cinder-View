@@ -15,8 +15,9 @@
 		1118C06619AA386600F0D18B /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1118C06519AA386600F0D18B /* AVFoundation.framework */; };
 		1118C06819AA388500F0D18B /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1118C06719AA388500F0D18B /* CoreMedia.framework */; };
 		114F64B01BE09841000CE3EE /* ViewTestsApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64AB1BE09841000CE3EE /* ViewTestsApp.cpp */; };
-		114F64B11BE09841000CE3EE /* ScrollViewTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64AC1BE09841000CE3EE /* ScrollViewTest.cpp */; };
-		114F64B21BE09841000CE3EE /* ViewTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64AE1BE09841000CE3EE /* ViewTest.cpp */; };
+		114F64B11BE09841000CE3EE /* ScrollTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64AC1BE09841000CE3EE /* ScrollTests.cpp */; };
+		114F64B21BE09841000CE3EE /* BasicViewTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64AE1BE09841000CE3EE /* BasicViewTests.cpp */; };
+		114F65311BE0B1D4000CE3EE /* ControlsTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F652F1BE0B1D4000CE3EE /* ControlsTest.cpp */; };
 		119C4EB81B2391DE006563C5 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 119C4EB71B2391DE006563C5 /* IOKit.framework */; };
 		5323E6B20EAFCA74003A9687 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5323E6B10EAFCA74003A9687 /* CoreVideo.framework */; };
 		5323E6B60EAFCA7E003A9687 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5323E6B50EAFCA7E003A9687 /* QTKit.framework */; };
@@ -57,11 +58,13 @@
 		1118C06519AA386600F0D18B /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		1118C06719AA388500F0D18B /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		114F64AB1BE09841000CE3EE /* ViewTestsApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ViewTestsApp.cpp; path = ../src/ViewTestsApp.cpp; sourceTree = "<group>"; };
-		114F64AC1BE09841000CE3EE /* ScrollViewTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScrollViewTest.cpp; path = ../src/ScrollViewTest.cpp; sourceTree = "<group>"; };
-		114F64AD1BE09841000CE3EE /* ScrollViewTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScrollViewTest.h; path = ../src/ScrollViewTest.h; sourceTree = "<group>"; };
-		114F64AE1BE09841000CE3EE /* ViewTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ViewTest.cpp; path = ../src/ViewTest.cpp; sourceTree = "<group>"; };
-		114F64AF1BE09841000CE3EE /* ViewTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewTest.h; path = ../src/ViewTest.h; sourceTree = "<group>"; };
+		114F64AC1BE09841000CE3EE /* ScrollTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScrollTests.cpp; path = ../src/ScrollTests.cpp; sourceTree = "<group>"; };
+		114F64AD1BE09841000CE3EE /* ScrollTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScrollTests.h; path = ../src/ScrollTests.h; sourceTree = "<group>"; };
+		114F64AE1BE09841000CE3EE /* BasicViewTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BasicViewTests.cpp; path = ../src/BasicViewTests.cpp; sourceTree = "<group>"; };
+		114F64AF1BE09841000CE3EE /* BasicViewTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BasicViewTests.h; path = ../src/BasicViewTests.h; sourceTree = "<group>"; };
 		114F64B31BE09A4E000CE3EE /* cinder-view.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "cinder-view.xcodeproj"; path = "../../xcode/cinder-view.xcodeproj"; sourceTree = "<group>"; };
+		114F652F1BE0B1D4000CE3EE /* ControlsTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ControlsTest.cpp; path = ../src/ControlsTest.cpp; sourceTree = "<group>"; };
+		114F65301BE0B1D4000CE3EE /* ControlsTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ControlsTest.h; path = ../src/ControlsTest.h; sourceTree = "<group>"; };
 		11576ABF1970AD9100BE66B3 /* Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Prefix.pch; sourceTree = "<group>"; };
 		119C4EB71B2391DE006563C5 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		11C895881834977200F7C515 /* libjscre.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libjscre.a; path = "../blocks/Cinder-Dart/dart-runtime/lib/macosx/libjscre.a"; sourceTree = "<group>"; };
@@ -104,11 +107,13 @@
 		080E96DDFE201D6D7F000001 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				114F652F1BE0B1D4000CE3EE /* ControlsTest.cpp */,
+				114F65301BE0B1D4000CE3EE /* ControlsTest.h */,
+				114F64AC1BE09841000CE3EE /* ScrollTests.cpp */,
+				114F64AD1BE09841000CE3EE /* ScrollTests.h */,
+				114F64AE1BE09841000CE3EE /* BasicViewTests.cpp */,
+				114F64AF1BE09841000CE3EE /* BasicViewTests.h */,
 				114F64AB1BE09841000CE3EE /* ViewTestsApp.cpp */,
-				114F64AC1BE09841000CE3EE /* ScrollViewTest.cpp */,
-				114F64AD1BE09841000CE3EE /* ScrollViewTest.h */,
-				114F64AE1BE09841000CE3EE /* ViewTest.cpp */,
-				114F64AF1BE09841000CE3EE /* ViewTest.h */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -289,8 +294,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				114F64B01BE09841000CE3EE /* ViewTestsApp.cpp in Sources */,
-				114F64B11BE09841000CE3EE /* ScrollViewTest.cpp in Sources */,
-				114F64B21BE09841000CE3EE /* ViewTest.cpp in Sources */,
+				114F65311BE0B1D4000CE3EE /* ControlsTest.cpp in Sources */,
+				114F64B11BE09841000CE3EE /* ScrollTests.cpp in Sources */,
+				114F64B21BE09841000CE3EE /* BasicViewTests.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

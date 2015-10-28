@@ -5,8 +5,9 @@
 
 #include "view/Suite.h"
 
-#include "ViewTest.h"
-#include "ScrollViewTest.h"
+#include "BasicViewTests.h"
+#include "ControlsTest.h"
+#include "ScrollTests.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -27,8 +28,9 @@ void ViewTestsApp::setup()
 {
 	mTestSuite = make_shared<view::Suite>();
 
-	mTestSuite->registerSuiteView<ViewTest>( "view" );
-	mTestSuite->registerSuiteView<ScrollViewTest>( "scrollview" );
+	mTestSuite->registerSuiteView<BasicViewTests>( "basic" );
+	mTestSuite->registerSuiteView<ControlsTest>( "controls" );
+	mTestSuite->registerSuiteView<ScrollTests>( "scroll" );
 
 	mTestSuite->selectTest( 0 );
 }

@@ -5,9 +5,9 @@
 #include "view/Button.h"
 #include "view/Label.h"
 
-class ScrollViewTest : public view::SuiteView {
+class ScrollTests : public view::SuiteView {
 public:
-	ScrollViewTest();
+	ScrollTests();
 
 	void layout() override;
 

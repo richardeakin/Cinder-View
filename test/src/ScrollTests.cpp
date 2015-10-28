@@ -1,4 +1,4 @@
-#include "ScrollViewTest.h"
+#include "ScrollTests.h"
 #include "view/ImageView.h"
 #include "view/Button.h"
 
@@ -68,7 +68,7 @@ protected:
 	Color mLocalTouchColor = Color::gray( 0.3f );
 };
 
-ScrollViewTest::ScrollViewTest()
+ScrollTests::ScrollTests()
 	: SuiteView()
 {
 	// Free scrolling ScrollView
@@ -138,10 +138,10 @@ ScrollViewTest::ScrollViewTest()
 
 	addSubviews( { mScrollView, mHorizontalPager, mVerticalPager } );
 
-	connectKeyDown( signals::slot( this, &ScrollViewTest::keyEvent ) );
+	connectKeyDown( signals::slot( this, &ScrollTests::keyEvent ) );
 }
 
-void ScrollViewTest::layout()
+void ScrollTests::layout()
 {
 	auto rect = Rectf( PADDING, PADDING, getWidth() / 2.0f - PADDING, getHeight() - PADDING );
 	mScrollView->setBounds( rect );
@@ -154,7 +154,7 @@ void ScrollViewTest::layout()
 }
 
 
-void ScrollViewTest::keyEvent( app::KeyEvent &event )
+void ScrollTests::keyEvent( app::KeyEvent &event )
 {
 	switch( event.getCode() ) {
 		case app::KeyEvent::KEY_p: {
