@@ -1,0 +1,475 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		114F64D51BE09AE7000CE3EE /* ImageView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64BF1BE09AE7000CE3EE /* ImageView.cpp */; };
+		114F64D61BE09AE7000CE3EE /* ImageView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64BF1BE09AE7000CE3EE /* ImageView.cpp */; };
+		114F64D71BE09AE7000CE3EE /* ImageView.h in Headers */ = {isa = PBXBuildFile; fileRef = 114F64C01BE09AE7000CE3EE /* ImageView.h */; };
+		114F64D81BE09AE7000CE3EE /* ImageView.h in Headers */ = {isa = PBXBuildFile; fileRef = 114F64C01BE09AE7000CE3EE /* ImageView.h */; };
+		114F64D91BE09AE7000CE3EE /* Interface3d.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64C11BE09AE7000CE3EE /* Interface3d.cpp */; };
+		114F64DA1BE09AE7000CE3EE /* Interface3d.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64C11BE09AE7000CE3EE /* Interface3d.cpp */; };
+		114F64DB1BE09AE7000CE3EE /* Interface3d.h in Headers */ = {isa = PBXBuildFile; fileRef = 114F64C21BE09AE7000CE3EE /* Interface3d.h */; };
+		114F64DC1BE09AE7000CE3EE /* Interface3d.h in Headers */ = {isa = PBXBuildFile; fileRef = 114F64C21BE09AE7000CE3EE /* Interface3d.h */; };
+		114F64DD1BE09AE7000CE3EE /* Label.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64C31BE09AE7000CE3EE /* Label.cpp */; };
+		114F64DE1BE09AE7000CE3EE /* Label.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64C31BE09AE7000CE3EE /* Label.cpp */; };
+		114F64DF1BE09AE7000CE3EE /* Label.h in Headers */ = {isa = PBXBuildFile; fileRef = 114F64C41BE09AE7000CE3EE /* Label.h */; };
+		114F64E01BE09AE7000CE3EE /* Label.h in Headers */ = {isa = PBXBuildFile; fileRef = 114F64C41BE09AE7000CE3EE /* Label.h */; };
+		114F64E11BE09AE7000CE3EE /* ScrollView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64C51BE09AE7000CE3EE /* ScrollView.cpp */; };
+		114F64E21BE09AE7000CE3EE /* ScrollView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64C51BE09AE7000CE3EE /* ScrollView.cpp */; };
+		114F64E31BE09AE7000CE3EE /* ScrollView.h in Headers */ = {isa = PBXBuildFile; fileRef = 114F64C61BE09AE7000CE3EE /* ScrollView.h */; };
+		114F64E41BE09AE7000CE3EE /* ScrollView.h in Headers */ = {isa = PBXBuildFile; fileRef = 114F64C61BE09AE7000CE3EE /* ScrollView.h */; };
+		114F64E51BE09AE7000CE3EE /* View.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64C71BE09AE7000CE3EE /* View.cpp */; };
+		114F64E61BE09AE7000CE3EE /* View.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64C71BE09AE7000CE3EE /* View.cpp */; };
+		114F64E71BE09AE7000CE3EE /* View.h in Headers */ = {isa = PBXBuildFile; fileRef = 114F64C81BE09AE7000CE3EE /* View.h */; };
+		114F64E81BE09AE7000CE3EE /* View.h in Headers */ = {isa = PBXBuildFile; fileRef = 114F64C81BE09AE7000CE3EE /* View.h */; };
+		114F64E91BE09AE7000CE3EE /* Button.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64C91BE09AE7000CE3EE /* Button.cpp */; };
+		114F64EA1BE09AE7000CE3EE /* Button.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64C91BE09AE7000CE3EE /* Button.cpp */; };
+		114F64EB1BE09AE7000CE3EE /* TextManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64CA1BE09AE7000CE3EE /* TextManager.cpp */; };
+		114F64EC1BE09AE7000CE3EE /* TextManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64CA1BE09AE7000CE3EE /* TextManager.cpp */; };
+		114F64ED1BE09AE7000CE3EE /* Button.h in Headers */ = {isa = PBXBuildFile; fileRef = 114F64CB1BE09AE7000CE3EE /* Button.h */; };
+		114F64EE1BE09AE7000CE3EE /* Button.h in Headers */ = {isa = PBXBuildFile; fileRef = 114F64CB1BE09AE7000CE3EE /* Button.h */; };
+		114F64EF1BE09AE7000CE3EE /* Control.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64CC1BE09AE7000CE3EE /* Control.cpp */; };
+		114F64F01BE09AE7000CE3EE /* Control.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64CC1BE09AE7000CE3EE /* Control.cpp */; };
+		114F64F11BE09AE7000CE3EE /* Control.h in Headers */ = {isa = PBXBuildFile; fileRef = 114F64CD1BE09AE7000CE3EE /* Control.h */; };
+		114F64F21BE09AE7000CE3EE /* Control.h in Headers */ = {isa = PBXBuildFile; fileRef = 114F64CD1BE09AE7000CE3EE /* Control.h */; };
+		114F64F31BE09AE7000CE3EE /* Selector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64CE1BE09AE7000CE3EE /* Selector.cpp */; };
+		114F64F41BE09AE7000CE3EE /* Selector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64CE1BE09AE7000CE3EE /* Selector.cpp */; };
+		114F64F51BE09AE7000CE3EE /* Selector.h in Headers */ = {isa = PBXBuildFile; fileRef = 114F64CF1BE09AE7000CE3EE /* Selector.h */; };
+		114F64F61BE09AE7000CE3EE /* Selector.h in Headers */ = {isa = PBXBuildFile; fileRef = 114F64CF1BE09AE7000CE3EE /* Selector.h */; };
+		114F64F71BE09AE7000CE3EE /* Slider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64D01BE09AE7000CE3EE /* Slider.cpp */; };
+		114F64F81BE09AE7000CE3EE /* Slider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64D01BE09AE7000CE3EE /* Slider.cpp */; };
+		114F64F91BE09AE7000CE3EE /* Slider.h in Headers */ = {isa = PBXBuildFile; fileRef = 114F64D11BE09AE7000CE3EE /* Slider.h */; };
+		114F64FA1BE09AE7000CE3EE /* Slider.h in Headers */ = {isa = PBXBuildFile; fileRef = 114F64D11BE09AE7000CE3EE /* Slider.h */; };
+		114F64FB1BE09AE7000CE3EE /* Suite.h in Headers */ = {isa = PBXBuildFile; fileRef = 114F64D21BE09AE7000CE3EE /* Suite.h */; };
+		114F64FC1BE09AE7000CE3EE /* Suite.h in Headers */ = {isa = PBXBuildFile; fileRef = 114F64D21BE09AE7000CE3EE /* Suite.h */; };
+		114F64FD1BE09AE7000CE3EE /* Suite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64D31BE09AE7000CE3EE /* Suite.cpp */; };
+		114F64FE1BE09AE7000CE3EE /* Suite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64D31BE09AE7000CE3EE /* Suite.cpp */; };
+		114F64FF1BE09AE7000CE3EE /* TextManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 114F64D41BE09AE7000CE3EE /* TextManager.h */; };
+		114F65001BE09AE7000CE3EE /* TextManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 114F64D41BE09AE7000CE3EE /* TextManager.h */; };
+		114F650A1BE0A512000CE3EE /* Factory.h in Headers */ = {isa = PBXBuildFile; fileRef = 114F65051BE0A512000CE3EE /* Factory.h */; };
+		114F650B1BE0A512000CE3EE /* Factory.h in Headers */ = {isa = PBXBuildFile; fileRef = 114F65051BE0A512000CE3EE /* Factory.h */; };
+		114F650D1BE0A512000CE3EE /* format.cc in Sources */ = {isa = PBXBuildFile; fileRef = 114F65071BE0A512000CE3EE /* format.cc */; };
+		114F650E1BE0A512000CE3EE /* format.h in Headers */ = {isa = PBXBuildFile; fileRef = 114F65081BE0A512000CE3EE /* format.h */; };
+		114F650F1BE0A512000CE3EE /* format.h in Headers */ = {isa = PBXBuildFile; fileRef = 114F65081BE0A512000CE3EE /* format.h */; };
+		114F65111BE0AA0B000CE3EE /* format.cc in Sources */ = {isa = PBXBuildFile; fileRef = 114F65071BE0A512000CE3EE /* format.cc */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		1104F3C917753F10003EAA2B /* libcinder-view.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libcinder-view.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1104F3CC17753F10003EAA2B /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		1104F3CF17753F10003EAA2B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		114F64BF1BE09AE7000CE3EE /* ImageView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ImageView.cpp; path = view/ImageView.cpp; sourceTree = "<group>"; };
+		114F64C01BE09AE7000CE3EE /* ImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ImageView.h; path = view/ImageView.h; sourceTree = "<group>"; };
+		114F64C11BE09AE7000CE3EE /* Interface3d.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Interface3d.cpp; path = view/Interface3d.cpp; sourceTree = "<group>"; };
+		114F64C21BE09AE7000CE3EE /* Interface3d.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Interface3d.h; path = view/Interface3d.h; sourceTree = "<group>"; };
+		114F64C31BE09AE7000CE3EE /* Label.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Label.cpp; path = view/Label.cpp; sourceTree = "<group>"; };
+		114F64C41BE09AE7000CE3EE /* Label.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Label.h; path = view/Label.h; sourceTree = "<group>"; };
+		114F64C51BE09AE7000CE3EE /* ScrollView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScrollView.cpp; path = view/ScrollView.cpp; sourceTree = "<group>"; };
+		114F64C61BE09AE7000CE3EE /* ScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScrollView.h; path = view/ScrollView.h; sourceTree = "<group>"; };
+		114F64C71BE09AE7000CE3EE /* View.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = View.cpp; path = view/View.cpp; sourceTree = "<group>"; };
+		114F64C81BE09AE7000CE3EE /* View.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = View.h; path = view/View.h; sourceTree = "<group>"; };
+		114F64C91BE09AE7000CE3EE /* Button.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Button.cpp; path = view/Button.cpp; sourceTree = "<group>"; };
+		114F64CA1BE09AE7000CE3EE /* TextManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextManager.cpp; path = view/TextManager.cpp; sourceTree = "<group>"; };
+		114F64CB1BE09AE7000CE3EE /* Button.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Button.h; path = view/Button.h; sourceTree = "<group>"; };
+		114F64CC1BE09AE7000CE3EE /* Control.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Control.cpp; path = view/Control.cpp; sourceTree = "<group>"; };
+		114F64CD1BE09AE7000CE3EE /* Control.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Control.h; path = view/Control.h; sourceTree = "<group>"; };
+		114F64CE1BE09AE7000CE3EE /* Selector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Selector.cpp; path = view/Selector.cpp; sourceTree = "<group>"; };
+		114F64CF1BE09AE7000CE3EE /* Selector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Selector.h; path = view/Selector.h; sourceTree = "<group>"; };
+		114F64D01BE09AE7000CE3EE /* Slider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Slider.cpp; path = view/Slider.cpp; sourceTree = "<group>"; };
+		114F64D11BE09AE7000CE3EE /* Slider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Slider.h; path = view/Slider.h; sourceTree = "<group>"; };
+		114F64D21BE09AE7000CE3EE /* Suite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Suite.h; path = view/Suite.h; sourceTree = "<group>"; };
+		114F64D31BE09AE7000CE3EE /* Suite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Suite.cpp; path = view/Suite.cpp; sourceTree = "<group>"; };
+		114F64D41BE09AE7000CE3EE /* TextManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextManager.h; path = view/TextManager.h; sourceTree = "<group>"; };
+		114F65051BE0A512000CE3EE /* Factory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Factory.h; sourceTree = "<group>"; };
+		114F65071BE0A512000CE3EE /* format.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = format.cc; sourceTree = "<group>"; };
+		114F65081BE0A512000CE3EE /* format.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = format.h; sourceTree = "<group>"; };
+		11B0421C179B90450034BEE2 /* libcinder-view.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libcinder-view.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		1104F3C617753F10003EAA2B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		11B04202179B90450034BEE2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1104F3C017753F10003EAA2B = {
+			isa = PBXGroup;
+			children = (
+				1104F46017754A6E003EAA2B /* src */,
+				1104F3CB17753F10003EAA2B /* Frameworks */,
+				1104F3CA17753F10003EAA2B /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		1104F3CA17753F10003EAA2B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1104F3C917753F10003EAA2B /* libcinder-view.a */,
+				11B0421C179B90450034BEE2 /* libcinder-view.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1104F3CB17753F10003EAA2B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1104F3CC17753F10003EAA2B /* Cocoa.framework */,
+				1104F3CE17753F10003EAA2B /* Other Frameworks */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		1104F3CE17753F10003EAA2B /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1104F3CF17753F10003EAA2B /* Foundation.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		1104F46017754A6E003EAA2B /* src */ = {
+			isa = PBXGroup;
+			children = (
+				114F65061BE0A512000CE3EE /* cppformat */,
+				114F65041BE0A512000CE3EE /* mason */,
+				11576A44196F591600BE66B3 /* view */,
+			);
+			name = src;
+			path = ../src;
+			sourceTree = "<group>";
+		};
+		114F65041BE0A512000CE3EE /* mason */ = {
+			isa = PBXGroup;
+			children = (
+				114F65051BE0A512000CE3EE /* Factory.h */,
+			);
+			path = mason;
+			sourceTree = "<group>";
+		};
+		114F65061BE0A512000CE3EE /* cppformat */ = {
+			isa = PBXGroup;
+			children = (
+				114F65071BE0A512000CE3EE /* format.cc */,
+				114F65081BE0A512000CE3EE /* format.h */,
+			);
+			path = cppformat;
+			sourceTree = "<group>";
+		};
+		11576A44196F591600BE66B3 /* view */ = {
+			isa = PBXGroup;
+			children = (
+				114F64C91BE09AE7000CE3EE /* Button.cpp */,
+				114F64CB1BE09AE7000CE3EE /* Button.h */,
+				114F64CC1BE09AE7000CE3EE /* Control.cpp */,
+				114F64CD1BE09AE7000CE3EE /* Control.h */,
+				114F64BF1BE09AE7000CE3EE /* ImageView.cpp */,
+				114F64C01BE09AE7000CE3EE /* ImageView.h */,
+				114F64C11BE09AE7000CE3EE /* Interface3d.cpp */,
+				114F64C21BE09AE7000CE3EE /* Interface3d.h */,
+				114F64C31BE09AE7000CE3EE /* Label.cpp */,
+				114F64C41BE09AE7000CE3EE /* Label.h */,
+				114F64C51BE09AE7000CE3EE /* ScrollView.cpp */,
+				114F64C61BE09AE7000CE3EE /* ScrollView.h */,
+				114F64CE1BE09AE7000CE3EE /* Selector.cpp */,
+				114F64CF1BE09AE7000CE3EE /* Selector.h */,
+				114F64D01BE09AE7000CE3EE /* Slider.cpp */,
+				114F64D11BE09AE7000CE3EE /* Slider.h */,
+				114F64D31BE09AE7000CE3EE /* Suite.cpp */,
+				114F64D21BE09AE7000CE3EE /* Suite.h */,
+				114F64CA1BE09AE7000CE3EE /* TextManager.cpp */,
+				114F64D41BE09AE7000CE3EE /* TextManager.h */,
+				114F64C71BE09AE7000CE3EE /* View.cpp */,
+				114F64C81BE09AE7000CE3EE /* View.h */,
+			);
+			name = view;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		1104F3C717753F10003EAA2B /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				114F64F91BE09AE7000CE3EE /* Slider.h in Headers */,
+				114F64FB1BE09AE7000CE3EE /* Suite.h in Headers */,
+				114F64E71BE09AE7000CE3EE /* View.h in Headers */,
+				114F64F51BE09AE7000CE3EE /* Selector.h in Headers */,
+				114F64E31BE09AE7000CE3EE /* ScrollView.h in Headers */,
+				114F64F11BE09AE7000CE3EE /* Control.h in Headers */,
+				114F64ED1BE09AE7000CE3EE /* Button.h in Headers */,
+				114F650A1BE0A512000CE3EE /* Factory.h in Headers */,
+				114F64DF1BE09AE7000CE3EE /* Label.h in Headers */,
+				114F64FF1BE09AE7000CE3EE /* TextManager.h in Headers */,
+				114F650E1BE0A512000CE3EE /* format.h in Headers */,
+				114F64D71BE09AE7000CE3EE /* ImageView.h in Headers */,
+				114F64DB1BE09AE7000CE3EE /* Interface3d.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		11B04203179B90450034BEE2 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				114F64FA1BE09AE7000CE3EE /* Slider.h in Headers */,
+				114F64FC1BE09AE7000CE3EE /* Suite.h in Headers */,
+				114F64E81BE09AE7000CE3EE /* View.h in Headers */,
+				114F64F61BE09AE7000CE3EE /* Selector.h in Headers */,
+				114F64E41BE09AE7000CE3EE /* ScrollView.h in Headers */,
+				114F64F21BE09AE7000CE3EE /* Control.h in Headers */,
+				114F64EE1BE09AE7000CE3EE /* Button.h in Headers */,
+				114F650B1BE0A512000CE3EE /* Factory.h in Headers */,
+				114F64E01BE09AE7000CE3EE /* Label.h in Headers */,
+				114F65001BE09AE7000CE3EE /* TextManager.h in Headers */,
+				114F650F1BE0A512000CE3EE /* format.h in Headers */,
+				114F64D81BE09AE7000CE3EE /* ImageView.h in Headers */,
+				114F64DC1BE09AE7000CE3EE /* Interface3d.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		1104F3C817753F10003EAA2B /* cinder-view-mac */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1104F3ED17753F10003EAA2B /* Build configuration list for PBXNativeTarget "cinder-view-mac" */;
+			buildPhases = (
+				1104F3C517753F10003EAA2B /* Sources */,
+				1104F3C617753F10003EAA2B /* Frameworks */,
+				1104F3C717753F10003EAA2B /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "cinder-view-mac";
+			productName = "cinder-viewMac";
+			productReference = 1104F3C917753F10003EAA2B /* libcinder-view.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		11B041F2179B90450034BEE2 /* cinder-view-ios */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 11B04219179B90450034BEE2 /* Build configuration list for PBXNativeTarget "cinder-view-ios" */;
+			buildPhases = (
+				11B041F3179B90450034BEE2 /* Sources */,
+				11B04202179B90450034BEE2 /* Frameworks */,
+				11B04203179B90450034BEE2 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "cinder-view-ios";
+			productName = "cinder-viewMac";
+			productReference = 11B0421C179B90450034BEE2 /* libcinder-view.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		1104F3C117753F10003EAA2B /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0500;
+				ORGANIZATIONNAME = Racoon;
+			};
+			buildConfigurationList = 1104F3C417753F10003EAA2B /* Build configuration list for PBXProject "cinder-view" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 1104F3C017753F10003EAA2B;
+			productRefGroup = 1104F3CA17753F10003EAA2B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				1104F3C817753F10003EAA2B /* cinder-view-mac */,
+				11B041F2179B90450034BEE2 /* cinder-view-ios */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		1104F3C517753F10003EAA2B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				114F64FD1BE09AE7000CE3EE /* Suite.cpp in Sources */,
+				114F64F31BE09AE7000CE3EE /* Selector.cpp in Sources */,
+				114F64DD1BE09AE7000CE3EE /* Label.cpp in Sources */,
+				114F64E11BE09AE7000CE3EE /* ScrollView.cpp in Sources */,
+				114F64D91BE09AE7000CE3EE /* Interface3d.cpp in Sources */,
+				114F64D51BE09AE7000CE3EE /* ImageView.cpp in Sources */,
+				114F65111BE0AA0B000CE3EE /* format.cc in Sources */,
+				114F64E51BE09AE7000CE3EE /* View.cpp in Sources */,
+				114F64EF1BE09AE7000CE3EE /* Control.cpp in Sources */,
+				114F64EB1BE09AE7000CE3EE /* TextManager.cpp in Sources */,
+				114F64F71BE09AE7000CE3EE /* Slider.cpp in Sources */,
+				114F64E91BE09AE7000CE3EE /* Button.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		11B041F3179B90450034BEE2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				114F64FE1BE09AE7000CE3EE /* Suite.cpp in Sources */,
+				114F64F41BE09AE7000CE3EE /* Selector.cpp in Sources */,
+				114F64DE1BE09AE7000CE3EE /* Label.cpp in Sources */,
+				114F64E21BE09AE7000CE3EE /* ScrollView.cpp in Sources */,
+				114F64DA1BE09AE7000CE3EE /* Interface3d.cpp in Sources */,
+				114F64D61BE09AE7000CE3EE /* ImageView.cpp in Sources */,
+				114F650D1BE0A512000CE3EE /* format.cc in Sources */,
+				114F64E61BE09AE7000CE3EE /* View.cpp in Sources */,
+				114F64F01BE09AE7000CE3EE /* Control.cpp in Sources */,
+				114F64EC1BE09AE7000CE3EE /* TextManager.cpp in Sources */,
+				114F64F81BE09AE7000CE3EE /* Slider.cpp in Sources */,
+				114F64EA1BE09AE7000CE3EE /* Button.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		1104F3EB17753F10003EAA2B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CINDER_PATH = ../../cinder;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CONFIGURATION_TEMP_DIR = "build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				COPY_PHASE_STRIP = NO;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				HEADER_SEARCH_PATHS = "\"$(CINDER_PATH)/include\"";
+				LINK_WITH_STANDARD_LIBRARIES = NO;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				OBJROOT = build;
+				ONLY_ACTIVE_ARCH = NO;
+				PRODUCT_NAME = "cinder-view";
+				SDKROOT = macosx;
+				USER_HEADER_SEARCH_PATHS = "../src \"$(CINDER_PATH)/include\" \"$(DART_PATH)/src\" \"$(DART_PATH)/dart-runtime\" ../lib/thirdparty";
+			};
+			name = Debug;
+		};
+		1104F3EC17753F10003EAA2B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CINDER_PATH = ../../cinder;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CONFIGURATION_TEMP_DIR = "build/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = NDEBUG;
+				GENERATE_MASTER_OBJECT_FILE = YES;
+				HEADER_SEARCH_PATHS = "\"$(CINDER_PATH)/include\"";
+				LINK_WITH_STANDARD_LIBRARIES = NO;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				OBJROOT = build;
+				PRODUCT_NAME = "cinder-view";
+				SDKROOT = macosx;
+				USER_HEADER_SEARCH_PATHS = "../src \"$(CINDER_PATH)/include\" \"$(DART_PATH)/src\" \"$(DART_PATH)/dart-runtime\" ../lib/thirdparty";
+			};
+			name = Release;
+		};
+		1104F3EE17753F10003EAA2B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				ONLY_ACTIVE_ARCH = YES;
+				SYMROOT = ../lib/macosx;
+			};
+			name = Debug;
+		};
+		1104F3EF17753F10003EAA2B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				ONLY_ACTIVE_ARCH = YES;
+				SYMROOT = ../lib/macosx;
+			};
+			name = Release;
+		};
+		11B0421A179B90450034BEE2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				GCC_DYNAMIC_NO_PIC = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				SDKROOT = iphoneos;
+				SYMROOT = "../lib/cinder-view/ios";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		11B0421B179B90450034BEE2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				GCC_DYNAMIC_NO_PIC = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				SDKROOT = iphoneos;
+				SYMROOT = "../lib/cinder-view/ios";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1104F3C417753F10003EAA2B /* Build configuration list for PBXProject "cinder-view" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1104F3EB17753F10003EAA2B /* Debug */,
+				1104F3EC17753F10003EAA2B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1104F3ED17753F10003EAA2B /* Build configuration list for PBXNativeTarget "cinder-view-mac" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1104F3EE17753F10003EAA2B /* Debug */,
+				1104F3EF17753F10003EAA2B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		11B04219179B90450034BEE2 /* Build configuration list for PBXNativeTarget "cinder-view-ios" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				11B0421A179B90450034BEE2 /* Debug */,
+				11B0421B179B90450034BEE2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 1104F3C117753F10003EAA2B /* Project object */;
+}

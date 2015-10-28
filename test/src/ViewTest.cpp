@@ -1,0 +1,239 @@
+#include "ViewTest.h"
+
+#include "cinder/app/App.h"
+#include "cinder/Rand.h"
+#include "cinder/Timeline.h"
+#include "cinder/Log.h"
+
+using namespace std;
+using namespace ci;
+using namespace mason;
+
+#define PADDING 50.0f
+#define ANIM_TIME 1.0f
+
+class ChildView : public view::RectView {
+public:
+	ChildView( const Rectf &bounds ) : RectView( bounds )	{}
+
+protected:
+	bool touchesBegan( const app::TouchEvent &event )	override
+	{
+		vec2 pos = event.getTouches().front().getPos();
+		vec2 localPos = toLocal( pos );
+
+		CI_LOG_V( getLabel() << " local pos: " << localPos << ", world pos: " << getWorldPos() << ", event pos: " << pos );
+		moveViewAnimated();
+
+		return true;
+	}
+
+	bool touchesMoved( const app::TouchEvent &event )		override
+	{
+		vec2 pos = event.getTouches().front().getPos();
+		vec2 localPos = toLocal( pos );
+		CI_LOG_V( getLabel() << " local pos: " << localPos << ", world pos: " << getWorldPos() << ", event pos: " << pos );
+
+		return true;
+	}
+
+	bool touchesEnded( const app::TouchEvent &event )		override
+	{
+		vec2 pos = event.getTouches().front().getPos();
+		vec2 localPos = toLocal( pos );
+		CI_LOG_V( getLabel() << " local pos: " << localPos << ", world pos: " << getWorldPos() << ", event pos: " << pos );
+
+		return true;
+	}
+
+	void moveViewAnimated()
+	{
+		float w = getParent()->getBounds().getWidth() * 0.5f;
+		app::timeline().apply( animPos(), vec2( randFloat( w ), randFloat( w ) ), ANIM_TIME, EaseInOutBack() );
+		app::timeline().apply( animSize(), vec2( randFloat( 200 ), randFloat( 100 ) ), ANIM_TIME, EaseInOutBack() );
+	}
+};
+
+ViewTest::ViewTest()
+	: SuiteView()
+{
+	mContainerView = make_shared<View>();
+	mContainerView->getBackground()->setColor( Color::gray( 0.75f ) );
+	mContainerView->connectTouchEvents();
+	mContainerView->setLabel( "container" );
+
+	Rectf childBounds = Rectf( 30, 30, 300, 100 );
+
+	auto view1 = make_shared<ChildView>( childBounds );
+	view1->setColor( Color( "green" ) );
+	view1->setLabel( "view1" );
+
+	childBounds += vec2( 0, childBounds.getHeight() + 10 );
+	auto view2 = make_shared<ChildView>( childBounds );
+	view2->setColor( Color( "blue" ) );
+	view2->setLabel( "view2" );
+
+	childBounds += vec2( 0, childBounds.getHeight() + 10 );
+	auto view3 = make_shared<ChildView>( childBounds );
+	view3->setColor( Color( "yellow" ) );
+	view3->setLabel( "view3" );
+
+	// view4 is placed as a smaller subview of view3
+	auto view4 = make_shared<ChildView>( Rectf( 20, 20, 100, 50 ) );
+	view4->setColor( Color( "brown" ) );
+	view4->setLabel( "view4" );
+	view3->addSubview( view4 );
+
+	mContainerView->addSubview( view1 );
+	mContainerView->addSubview( view2 );
+	mContainerView->addSubview( view3 );
+	mContainerView->addSubview( view1 ); // with this call, view1 will only be in root's view heirarchy once, but it will be moved to the top.
+
+	mBorderView = make_shared<view::StrokedRectView>();
+	mBorderView->setColor( ColorA( "red", 1 ) );
+	mContainerView->addSubview( mBorderView );
+
+	mButton = make_shared<view::Button>();
+	mButton->setTitle( "Moe" );
+	mButton->getSignalPressed().connect( [] { CI_LOG_V( "Bob pressed" ); } );
+	mButton->getSignalReleased().connect( [] { CI_LOG_V( "Bob released" ); } );
+
+	mToggle = make_shared<view::Button>();
+	mToggle->setAsToggle();
+	mToggle->setLabel( "toggle" );
+	mToggle->setTitle( "Larry" );
+	mToggle->setTitle( "Curly", view::Button::State::ENABLED );
+	mToggle->getSignalPressed().connect( [] { CI_LOG_V( "toggle pressed" ); } );
+	mToggle->getSignalReleased().connect( [] { CI_LOG_V( "toggle released" ); } );
+
+	// temp - adding constrols to this test
+	mHSlider = make_shared<view::HSlider>();
+	mHSlider->getBackground()->setColor( ColorA( "green", 0.5f ) );
+	mHSlider->getSignalValueChanged().connect( [this] {
+		CI_LOG_V( "mHSlider value: " << mHSlider->getValue() );
+	} );
+
+	mVSlider = make_shared<view::VSlider>();
+	mVSlider->getSignalValueChanged().connect( [this] {
+		CI_LOG_V( "mVSlider value: " << mVSlider->getValue() );
+	} );
+
+	mLabel = make_shared<view::Label>();
+	mLabel->setText( "a label" );
+	mLabel->setAlignment( view::TextAlignment::CENTER );
+	mLabel->setTextColor( Color::white() );
+	mLabel->getBackground()->setColor( Color( 0, 0, 0.4 ) );
+
+	mLabelClipped = make_shared<view::Label>();
+	mLabelClipped->setText( "blah blah blah blah blah" );
+	mLabelClipped->setClipEnabled();
+	mLabelClipped->setTextColor( Color::white() );
+	mLabelClipped->getBackground()->setColor( Color( 0, 0, 0.4 ) );
+
+	mLabelGrid = make_shared<view::LabelGrid>();
+	mLabelGrid->getBackground()->setColor( ColorA( "yellow", 0.5f ) );
+	mLabelGrid->setCell( 0, 0, "hey:" );
+	mLabelGrid->setCell( 0, 1, "how ya goin:" );
+	mLabelGrid->setCell( 1, 0, "yo" );
+	mLabelGrid->setCell( 1, 1, "yea, good." );
+	mLabelGrid->setCell( 0, 2, "writing ui code:" );
+	mLabelGrid->setCell( 1, 2, "sucks" );
+
+	mImageView = make_shared<view::ImageView>();
+
+	auto imageBorder = make_shared<view::StrokedRectView>();
+	imageBorder->setFillParentEnabled();
+	imageBorder->setColor( ColorA( 0.9f, 0.5f, 0.0f, 0.7f ) );
+	mImageView->addSubview( imageBorder );
+	fs::path imageFilePath = app::getAssetPath( "images/monkey_hitchhike.jpg" );
+	try {
+		CI_LOG_I( "loading image view.." );
+		auto image = loadImage( loadFile( imageFilePath ) );
+		auto tex = gl::Texture::create( image );
+		mImageView->setTexture( tex );
+		CI_LOG_I( "complete" );
+	}
+	catch( std::exception &exc ) {
+		CI_LOG_EXCEPTION( "failed to load image at path: " << imageFilePath, exc );
+	}
+
+	mContainerView->addSubviews( { mButton, mToggle, mHSlider, mVSlider, mLabel, mLabelClipped, mLabelGrid, mImageView } );
+	addSubview( mContainerView );
+
+	connectKeyDown( signals::slot( this, &ViewTest::keyEvent ) );
+}
+
+void ViewTest::layout()
+{
+	mContainerView->setBounds( Rectf( PADDING, PADDING, getWidth() - PADDING, getHeight() - PADDING ) );
+	mBorderView->setSize( mContainerView->getSize() );
+
+	Rectf buttonBounds( mContainerView->getWidth() - 200, mContainerView->getHeight() - 180, mContainerView->getWidth() - 100, mContainerView->getHeight() - 140 );
+	mButton->setBounds( buttonBounds );
+
+	buttonBounds += vec2( 0, buttonBounds.getHeight() + 10 );
+	mToggle->setBounds( buttonBounds );
+
+	mHSlider->setBounds( Rectf( mContainerView->getCenter().x, mContainerView->getHeight() - 60, mContainerView->getCenter().x + 200, mContainerView->getHeight() - 20 ) );
+	mVSlider->setBounds( Rectf( mContainerView->getWidth() - 60, mContainerView->getHeight() - 300, mContainerView->getWidth() - 20, mContainerView->getHeight() - 100 ) );
+
+	Rectf labelBounds( PADDING, mContainerView->getHeight() - 70, 100 + PADDING, mContainerView->getHeight() - 44 );
+	mLabel->setBounds( labelBounds );
+
+	labelBounds += vec2( 0, labelBounds.getHeight() + 6 );
+	mLabelClipped->setBounds( labelBounds );
+
+	mLabelGrid->setBounds( Rectf( getCenter().x - 40, PADDING, getCenter().x + 200, PADDING + 60 ) );
+
+	vec2 imageViewPos = vec2( mLabelGrid->getPos().x, mLabelGrid->getBounds().y2 + PADDING );
+	mImageView->setPos( imageViewPos );
+	mImageView->setSize( vec2( 200, 200 ) );
+
+}
+
+void ViewTest::keyEvent( app::KeyEvent &event )
+{
+	switch( event.getCode() ) {
+		case app::KeyEvent::KEY_c: {
+			app::timeline().apply( mContainerView->getBackground()->getColorAnim(), ColorA( randFloat(), randFloat(), randFloat(), 1.0f ), ANIM_TIME, EaseInOutExpo() );
+			break;
+		}
+		case app::KeyEvent::KEY_SPACE: {
+			app::timeline().apply( mContainerView->animPos(), vec2( randFloat( -PADDING, PADDING ), randFloat( -PADDING, PADDING ) ), ANIM_TIME, EaseOutExpo() );
+			break;
+		}
+		case app::KeyEvent::KEY_a: {
+			float nextAlpha = mContainerView->getAlpha() > 0.01f ? 0.0f : 1.0f;
+			app::timeline().apply( mContainerView->animAlpha(), nextAlpha, 0.6f, EaseInOutExpo() );
+			break;
+		}
+		case app::KeyEvent::KEY_r: {
+			if( ! mContainerView->getSubviews().empty() ) {
+				auto lastChild = mContainerView->getSubviews().back();
+				lastChild->removeFromParent();
+			}
+		}
+		case app::KeyEvent::KEY_b: {
+			float nextBorderWidth = randFloat( 1, 30 );
+			app::timeline().apply( mBorderView->getLineWidthAnim(), nextBorderWidth, 0.6f, EaseOutExpo() );
+			break;
+		}
+		case app::KeyEvent::KEY_p: {
+			CI_LOG_V( "root view heirarchy: " );
+			mContainerView->printHeirarchy( app::console() ); // TODO: make this printToString() so it can be shoved into the log_v
+			break;
+		}
+		case app::KeyEvent::KEY_w: {
+			CI_LOG_V( "world positions, root: " << mContainerView->getWorldPos() );
+			app::console() << "subviews: " << endl;
+			for( const auto &view : mContainerView->getSubviews() )
+				app::console() << "(" << view->getLabel() << ") " << view->getWorldPos() << endl;
+
+		}
+		case app::KeyEvent::KEY_i: {
+			auto nextMode = view::ImageScaleMode( ( (int)mImageView->getScaleMode() + 1 ) % view::ImageScaleMode::NUM_MODES );
+			CI_LOG_I( "setting scale mode to: " << nextMode );
+			mImageView->setScaleMode( nextMode );
+		}
+	}
+}
