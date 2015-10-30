@@ -184,11 +184,6 @@ void BasicViewTests::keyEvent( app::KeyEvent &event )
 			app::timeline().apply( mBorderView->getLineWidthAnim(), nextBorderWidth, 0.6f, EaseOutExpo() );
 			break;
 		}
-		case app::KeyEvent::KEY_p: {
-			CI_LOG_V( "root view heirarchy: " );
-			mContainerView->printHeirarchy( app::console() ); // TODO: make this printToString() so it can be shoved into the log_v
-			break;
-		}
 		case app::KeyEvent::KEY_w: {
 			CI_LOG_V( "world positions, root: " << mContainerView->getWorldPos() );
 			app::console() << "subviews: " << endl;

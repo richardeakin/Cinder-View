@@ -64,8 +64,9 @@ public:
 
 	void reloadCurrentTest();
 
+	view::ViewRef	getRootView() const	{ return mRootView; }
+
 private:
-	void keyDown( ci::app::KeyEvent &event );
 	void resize();
 	void selectTest( const std::string &key );
 

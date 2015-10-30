@@ -87,6 +87,7 @@ ScrollTests::ScrollTests()
 	auto button = make_shared<view::Button>( Rectf( 200, 60, 300, 100 ) );
 	button->setTitle( "tap me" );
 	button->setTitleColor( Color( 0, 0.2f, 0.8f ) );
+	button->setColor( Color( 0.6f, 0.6f, 0.8f ), view::Button::State::PRESSED );
 	button->getSignalPressed().connect( [] { CI_LOG_V( "button pressed" ); } );
 	button->getSignalReleased().connect( [] { CI_LOG_V( "button released" ); } );
 
@@ -158,11 +159,6 @@ void ScrollTests::layout()
 void ScrollTests::keyEvent( app::KeyEvent &event )
 {
 	switch( event.getCode() ) {
-		case app::KeyEvent::KEY_p: {
-			// TODO: make sure ScrollView's content views get printed too
-			printHeirarchy( app::console() );
-			break;
-		}
 		case app::KeyEvent::KEY_c: {
 			mScrollView->setClipEnabled( ! mScrollView->isClipEnabled() );
 		}

@@ -62,11 +62,4 @@ void ControlsTest::layout()
 
 void ControlsTest::keyEvent( app::KeyEvent &event )
 {
-	switch( event.getCode() ) {
-		case app::KeyEvent::KEY_p: {
-			CI_LOG_V( "view heirarchy: " );
-			printHeirarchy( app::console() );
-			break;
-		}
-	}
 }

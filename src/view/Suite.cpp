@@ -59,7 +59,6 @@ Suite::Suite()
 	mRootView->addSubview( mSelector );
 
 	app::getWindow()->getSignalResize().connect( bind( &Suite::resize, this ) );
-	app::getWindow()->getSignalKeyDown().connect( bind( &Suite::keyDown, this, placeholders::_1 ) );
 }
 
 void Suite::resize()
@@ -105,14 +104,6 @@ void Suite::selectTest( size_t index )
 void Suite::reloadCurrentTest()
 {
 	selectTest( mSelector->getSelectedLabel() );
-}
-
-void Suite::keyDown( app::KeyEvent &event )
-{
-	if( event.getChar() == 'v' ) {
-		mRootView->printHeirarchy( app::console() );
-	}
-
 }
 
 void Suite::update()

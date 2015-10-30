@@ -16,8 +16,7 @@ using namespace std;
 class ViewTestsApp : public App {
   public:
 	void setup() override;
-	void resize() override;
-	void mouseDown( MouseEvent event ) override;
+	void keyDown( KeyEvent event ) override;
 	void update() override;
 	void draw() override;
 
@@ -35,12 +34,11 @@ void ViewTestsApp::setup()
 	mTestSuite->selectTest( 0 );
 }
 
-void ViewTestsApp::mouseDown( MouseEvent event )
+void ViewTestsApp::keyDown( app::KeyEvent event )
 {
-}
-
-void ViewTestsApp::resize()
-{
+	if( event.getChar() == 'p' ) {
+		mTestSuite->getRootView()->printHeirarchy( app::console() );
+	}
 }
 
 void ViewTestsApp::update()
