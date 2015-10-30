@@ -161,8 +161,15 @@ void ScrollTests::keyEvent( app::KeyEvent &event )
 	switch( event.getCode() ) {
 		case app::KeyEvent::KEY_c: {
 			mScrollView->setClipEnabled( ! mScrollView->isClipEnabled() );
+			break;
+		}
+		case app::KeyEvent::KEY_h: {
+			mScrollView->setHorizontalScrollingEnabled( ! mScrollView->isHorizontalScrollingEnabled() );
+			break;
+		}
+		case app::KeyEvent::KEY_v: {
+			mScrollView->setVerticalScrollingEnabled( ! mScrollView->isVerticalScrollingEnabled() );
+			break;
 		}
 	}
-
-
 }

@@ -156,8 +156,8 @@ void ScrollView::updateOffset( const ci::vec2 &currentPos, const ci::vec2 &previ
 	if( offset.y < mOffsetBoundaries.y1 || offset.y > mOffsetBoundaries.y2 )
 		diff.y *= mStretchFactor;
 
-	mContentOffset() -= diff;
-	updateContentViewOffset();
+	vec2 contentOffset = mContentOffset() - diff;
+	updateContentViewOffset( contentOffset );
 
 	// restrict the target offset to content boundaries.
 	mTargetOffset = mOffsetBoundaries.closestPoint( mContentOffset );
@@ -170,40 +170,40 @@ void ScrollView::updateDeceleratingOffset()
 	// apply velocity to content offset
 	const float targetFrameRate = app::getFrameRate(); // TODO: need to get time + framerate from a source that is independant of app (something akin to a Context)
 	float deltaTime = 1.0f / targetFrameRate;
-	mContentOffset() -= mTouchVelocity * deltaTime;
+	vec2 contentOffset = mContentOffset() - mTouchVelocity * deltaTime;
 
 	const Rectf &boundaries = getDeceleratingBoundaries();
-	float decelFactor = boundaries.contains( mContentOffset() ) ? mDecelerationFactorInside : mDecelerationFactorOutside;
+	float decelFactor = boundaries.contains( contentOffset ) ? mDecelerationFactorInside : mDecelerationFactorOutside;
 	mTouchVelocity *= 1 - decelFactor;
 
-	mTargetOffset = boundaries.closestPoint( mContentOffset );
+	mTargetOffset = boundaries.closestPoint( contentOffset );
 
-	vec2 delta = mTargetOffset - mContentOffset();
+	vec2 delta = mTargetOffset - contentOffset;
 	vec2 velocity = delta * mConstraintStiffness;
 	float speed = length( velocity );
 	if( speed > mMaxSpeed ) {
 		velocity = velocity * mMaxSpeed / speed;
 	}
-	mContentOffset() += velocity;
+	contentOffset += velocity;
 
 	auto velLength = length( mTouchVelocity );
-	auto offsetLength = length( mTargetOffset - mContentOffset() );
+	auto offsetLength = length( mTargetOffset - contentOffset );
 
 	if( velLength < mMinVelocityConsideredAsStopped && offsetLength < mMinOffsetUntilStopped ) {
-		mContentOffset = mTargetOffset;
+		contentOffset = mTargetOffset;
 		mDecelerating = false;
 	}
 
-	updateContentViewOffset();
+	updateContentViewOffset( contentOffset );
 	mSignalDidScroll.emit();
 }
 
-void ScrollView::updateContentViewOffset()
+void ScrollView::updateContentViewOffset( const vec2 &offset )
 {
-	if( ! mVerticalScrollingEnabled )
-		mContentOffset().y = 0;
-	if( ! mHorizontalScrollingEnabled )
-		mContentOffset().x = 0;
+	if( mVerticalScrollingEnabled )
+		mContentOffset().y = offset.y;
+	if( mHorizontalScrollingEnabled )
+		mContentOffset().x = offset.x;
 
 	// Move all of the content's position based on mContentOffset. A full re-layout isn't necessary, so just mark world positions as dirty
 	mContentView->setPos( - mContentOffset(), false );

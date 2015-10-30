@@ -115,7 +115,7 @@ class ScrollView : public View {
 	ci::vec2				mTargetOffset;
 
   private:
-	void updateContentViewOffset();
+	void updateContentViewOffset( const ci::vec2 &offset );
 	void storeTouchPos( const ci::vec2 &pos );
 	void calcTouchVelocity();
 
