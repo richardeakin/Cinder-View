@@ -75,6 +75,11 @@ class ScrollView : public View {
 	//! Returns the max speed (pixels) that can be applied as a result of seeking toward target offset. Default: 300.0
 	float getMaxSpeed() const								{ return mMaxSpeed; }
 
+	void setVerticalScrollingEnabled( bool enable )			{ mVerticalScrollingEnabled = enable; }
+	bool isVerticalScrollingEnabled() const					{ return mVerticalScrollingEnabled; }
+	void setHorizontalScrollingEnabled( bool enable )		{ mHorizontalScrollingEnabled = enable; }
+	bool isHorizontalScrollingEnabled() const				{ return mHorizontalScrollingEnabled; }
+
 	ci::signals::Signal<void ()>& getSignalDidScroll()		{ return mSignalDidScroll; }
 
   protected:
@@ -86,11 +91,11 @@ class ScrollView : public View {
 	bool touchesMoved( const ci::app::TouchEvent &event )	override;
 	bool touchesEnded( const ci::app::TouchEvent &event )	override;
 
-	virtual void updateOffset( const ci::vec2 &currentPos, const ci::vec2 &previousPos );
 	virtual const ci::Rectf&	getDeceleratingBoundaries() const;
 
 	void calcContentSize();
 	void calcOffsetBoundaries();
+	void updateOffset( const ci::vec2 &currentPos, const ci::vec2 &previousPos );
 	void updateDeceleratingOffset();
 
 	// --------------------------------------------
@@ -128,6 +133,9 @@ class ScrollView : public View {
 	float mMinVelocityConsideredAsStopped	= 10;
 	float mMinOffsetUntilStopped			= 0.1f;  // TODO: add max offset too (but should still move smoothly perhaps tanh).
 	float mMaxSpeed							= 300.0f;
+
+	bool							mVerticalScrollingEnabled = true;
+	bool							mHorizontalScrollingEnabled = true;
 
 	ci::signals::Signal<void ()>	mSignalDidScroll;
 };
@@ -182,11 +190,9 @@ class PagingScrollView : public ScrollView {
   protected:
 
 	void layout()		override;
-	void update()		override;
 	bool touchesEnded( const ci::app::TouchEvent &event )	override;
 
-	const ci::Rectf&	getDeceleratingBoundaries() const							override;
-	void updateOffset( const ci::vec2 &currentPos, const ci::vec2 &previousPos )	override;
+	const ci::Rectf&	getDeceleratingBoundaries() const	override;
 
 	void layoutPages();
 	void layoutPage( size_t index );
@@ -197,7 +203,7 @@ class PagingScrollView : public ScrollView {
 
   private:
 
-	Axis			mAxis = Axis::HORIZONTAL;
+	Axis			mAxis;
 	LayoutMode		mLayoutMode = LayoutMode::SNAP_TO_BOUNDS;
 	size_t			mCurrentPageIndex = 0;
 	ci::vec2		mPageMargin = ci::vec2( 0 );

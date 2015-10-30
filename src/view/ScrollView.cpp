@@ -200,6 +200,11 @@ void ScrollView::updateDeceleratingOffset()
 
 void ScrollView::updateContentViewOffset()
 {
+	if( ! mVerticalScrollingEnabled )
+		mContentOffset().y = 0;
+	if( ! mHorizontalScrollingEnabled )
+		mContentOffset().x = 0;
+
 	// Move all of the content's position based on mContentOffset. A full re-layout isn't necessary, so just mark world positions as dirty
 	mContentView->setPos( - mContentOffset(), false );
 	mContentView->setWorldPosDirty();
@@ -302,6 +307,9 @@ void ScrollView::storeTouchPos( const ci::vec2 &pos )
 PagingScrollView::PagingScrollView( const Rectf &bounds )
 	: ScrollView( bounds )
 {
+	// Default to horizontal scrolling, but nothing yet to layout so skip that
+	mAxis = Axis::HORIZONTAL;
+	setVerticalScrollingEnabled( false );
 }
 
 PagingScrollView::~PagingScrollView()
@@ -366,6 +374,15 @@ void PagingScrollView::setAxis( Axis axis )
 		return;
 
 	mAxis = axis;
+	if( mAxis == Axis::HORIZONTAL ) {
+		setHorizontalScrollingEnabled( true );
+		setVerticalScrollingEnabled( false );
+	}
+	else {
+		setHorizontalScrollingEnabled( false );
+		setVerticalScrollingEnabled( true );
+	}
+
 	layoutPages();
 }
 
@@ -388,18 +405,6 @@ void PagingScrollView::layout()
 {
 	layoutPages();
 	ScrollView::layout();
-}
-
-void PagingScrollView::update()
-{
-	ScrollView::update();
-
-	if( mAxis == HORIZONTAL ) {
-		setContentOffset( vec2( getContentOffset().x, 0 ) );
-	}
-	else {
-		setContentOffset( vec2( 0, getContentOffset().y ) );
-	}
 }
 
 bool PagingScrollView::touchesEnded( const app::TouchEvent &event )
@@ -482,18 +487,6 @@ void PagingScrollView::layoutPage( size_t index )
 	}
 
 	LOG_SCROLL( "index: " << index << ", bounds: " << contentView->getBounds() );
-}
-
-void PagingScrollView::updateOffset( const vec2 &currentPos, const vec2 &previousPos )
-{
-	ScrollView::updateOffset( currentPos, previousPos );
-
-	if( mAxis == HORIZONTAL ) {
-		setContentOffset( vec2( getContentOffset().x, 0 ) );
-	}
-	else {
-		setContentOffset( vec2( 0, getContentOffset().y ) );
-	}
 }
 
 vec2 PagingScrollView::getTargetOffsetForPage( size_t index ) const
