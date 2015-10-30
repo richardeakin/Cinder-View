@@ -86,6 +86,7 @@ ScrollTests::ScrollTests()
 
 	auto button = make_shared<view::Button>( Rectf( 200, 60, 300, 100 ) );
 	button->setTitle( "tap me" );
+	button->setTitleColor( Color( 0, 0.2f, 0.8f ) );
 	button->getSignalPressed().connect( [] { CI_LOG_V( "button pressed" ); } );
 	button->getSignalReleased().connect( [] { CI_LOG_V( "button released" ); } );
 
@@ -117,7 +118,7 @@ ScrollTests::ScrollTests()
 		label->setFontSize( 36 );
 		label->setText( "Page " + to_string( i ) );
 		label->setTextColor( Color::white() );
-		label->getBackground()->setColor( Color( 0.2f, (float)i / (float)numHorizontalPages, 0 ) );
+		label->getBackground()->setColor( Color( CM_HSV, 0.5f + (float)i * 0.4f / (float)numHorizontalPages, 1.0f, 0.75f ) );
 		mHorizontalPager->addContentView( label );
 	}
 
@@ -132,7 +133,7 @@ ScrollTests::ScrollTests()
 		label->setFontSize( 36 );
 		label->setText( "Page " + to_string( i ) );
 		label->setTextColor( Color::white() );
-		label->getBackground()->setColor( Color( 0.2f, (float)i / (float)numVerticalPages, 0 ) );
+		label->getBackground()->setColor( Color( CM_HSV, 1.0f - (float)i * 0.2f / (float)numHorizontalPages, 1.0f, 0.75f ) );
 		mVerticalPager->addContentView( label );
 	}
 
@@ -146,7 +147,7 @@ void ScrollTests::layout()
 	auto rect = Rectf( PADDING, PADDING, getWidth() / 2.0f - PADDING, getHeight() - PADDING );
 	mScrollView->setBounds( rect );
 
-	auto halfRect = Rectf( getWidth() / 2.0f + PADDING, PADDING, getWidth() - PADDING, getHeight() / 2.0f - PADDING );
+	auto halfRect = Rectf( ( getWidth() + PADDING ) / 2.0f, PADDING, getWidth() - PADDING, ( getHeight() - PADDING ) / 2.0f );
 	mHorizontalPager->setBounds( halfRect );
 
 	halfRect += vec2( 0, PADDING + halfRect.getHeight() );
