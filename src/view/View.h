@@ -163,16 +163,17 @@ private:
 	bool					mInteractive = true;
 	bool					mHidden = false;
 	bool					mNeedsLayout = false;
+	
 	mutable bool			mWorldPosDirty = true;
+	mutable ci::vec2		mWorldPos;
 
 	ci::Anim<float>			mAlpha = 1.0f;
-	View*					mParent = nullptr;
 	ci::Anim<ci::vec2>		mPos;
 	ci::Anim<ci::vec2>		mSize;
-	mutable ci::vec2		mWorldPos;
 	std::string				mLabel;
 	bool					mFillParent = false; // TODO: replace this with proper layout system
 
+	View*					mParent = nullptr;
 	std::list<ViewRef>		mSubviews; // TODO: using list so iterators aren't invalidated during add / remove operations. A more efficient solution could be deferring the add remove until after iteration loops
 	RectViewRef				mBackground;
 };
