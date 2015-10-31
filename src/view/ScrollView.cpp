@@ -410,10 +410,10 @@ void PagingScrollView::layout()
 bool PagingScrollView::touchesEnded( const app::TouchEvent &event )
 {
 	bool wasDecelerating = isDecelerating();
-	bool parentResult = ScrollView::touchesEnded( event );
+	bool handled = ScrollView::touchesEnded( event );
 
 	if( getNumPages() == 0 )
-		return parentResult;
+		return handled;
 
 	vec2 pageOffset = getTargetOffsetForPage( mCurrentPageIndex );
 
@@ -438,6 +438,8 @@ bool PagingScrollView::touchesEnded( const app::TouchEvent &event )
 		else if( ( didSwipe && diff.y > 0 ) || ( ! wasDecelerating && ( pageOffset.y - getContentOffset().y > halfSize && ! isOnFirstPage() ) ) )
 			previousPage();
 	}
+
+	return handled;
 }
 
 void PagingScrollView::layoutPages()
