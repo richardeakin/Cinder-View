@@ -39,6 +39,7 @@ const float BOUNDS_EPSILON = 0.00001f;
 View::View( const ci::Rectf &bounds )
 	: mPos( bounds.getUpperLeft() ), mSize( vec2( bounds.x2 - bounds.x1, bounds.y2 - bounds.y1 ) )
 {
+	mLayer = make_shared<Layer>( this );
 }
 
 View::~View()
@@ -252,6 +253,7 @@ void View::propagateUpdate()
 	if( hasBackground )
 		mBackground->propagateUpdate();
 
+	mLayer->update();
 	update();
 }
 

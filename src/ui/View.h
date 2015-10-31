@@ -21,6 +21,8 @@
 
 #pragma once
 
+#include "view/Layer.h"
+
 #include "cinder/app/TouchEvent.h"
 #include "cinder/app/MouseEvent.h"
 #include "cinder/Signals.h"
@@ -176,6 +178,7 @@ private:
 	View*					mParent = nullptr;
 	std::list<ViewRef>		mSubviews; // TODO: using list so iterators aren't invalidated during add / remove operations. A more efficient solution could be deferring the add remove until after iteration loops
 	RectViewRef				mBackground;
+	LayerRef				mLayer;
 };
 
 class RectView : public View {

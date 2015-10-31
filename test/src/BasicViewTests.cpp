@@ -172,7 +172,7 @@ void BasicViewTests::keyEvent( app::KeyEvent &event )
 		}
 		case app::KeyEvent::KEY_a: {
 			float nextAlpha = mContainerView->getAlpha() > 0.01f ? 0.0f : 1.0f;
-			app::timeline().apply( mContainerView->animAlpha(), nextAlpha, 0.6f, EaseInOutExpo() );
+			app::timeline().apply( mContainerView->animAlpha(), nextAlpha, 2.0f, EaseInOutExpo() );
 			break;
 		}
 		case app::KeyEvent::KEY_r: {
