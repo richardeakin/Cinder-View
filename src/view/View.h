@@ -53,8 +53,8 @@ class View : public std::enable_shared_from_this<View> {
 	virtual bool containsSubview( const ViewRef &view );
 
 	void	setBounds( const ci::Rectf &bounds );
-	void	setPos( const ci::vec2 &position, bool shouldPropagateLayout = true );
-	void	setSize( const ci::vec2 &size, bool shouldPropagateLayout = true );
+	void	setPos( const ci::vec2 &position );
+	void	setSize( const ci::vec2 &size );
 	void	setAlpha( float alpha )							{ mAlpha = alpha; }
 
 	float					getAlpha()	const		{ return mAlpha; }

@@ -205,9 +205,8 @@ void ScrollView::updateContentViewOffset( const vec2 &offset )
 	if( mHorizontalScrollingEnabled )
 		mContentOffset().x = offset.x;
 
-	// Move all of the content's position based on mContentOffset. A full re-layout isn't necessary, so just mark world positions as dirty
-	mContentView->setPos( - mContentOffset(), false );
-	mContentView->setWorldPosDirty();
+	// Move all of the content's position based on mContentOffset. Their world positions will be marked dirty.
+	mContentView->setPos( - mContentOffset() );
 }
 
 void ScrollView::calcTouchVelocity()

@@ -26,6 +26,7 @@
 #include "cinder/CinderAssert.h"
 #include "cinder/gl/gl.h"
 #include "cinder/app/App.h"
+#include "cinder/Log.h"
 #include "cinder/System.h"
 
 using namespace std;
@@ -49,7 +50,7 @@ View::~View()
 		subview->mParent = nullptr;
 }
 
-void View::setPos( const vec2 &position, bool shouldPropagateLayout )
+void View::setPos( const vec2 &position )
 {
 	if( glm::all( glm::epsilonEqual( getPos(), position, BOUNDS_EPSILON ) ) )
 		return;
@@ -58,11 +59,10 @@ void View::setPos( const vec2 &position, bool shouldPropagateLayout )
 	if( mBackground )
 		mBackground->setPos( getPos() );
 
-	if( shouldPropagateLayout )
-		setNeedsLayout();
+	setWorldPosDirty();
 }
 
-void View::setSize( const vec2 &size, bool shouldPropagateLayout )
+void View::setSize( const vec2 &size )
 {
 	if( glm::all( glm::epsilonEqual( getSize(), size, BOUNDS_EPSILON ) ) )
 		return;
@@ -71,29 +71,20 @@ void View::setSize( const vec2 &size, bool shouldPropagateLayout )
 	if( mBackground )
 		mBackground->setSize( getSize() );
 
-	if( shouldPropagateLayout )
-		setNeedsLayout();
+	setNeedsLayout();
 }
 
 void View::setBounds( const ci::Rectf &bounds )
 {
-	// if needed, propagate layout only once
-	bool needsLayout = false;
-
 	vec2 pos = bounds.getUpperLeft();
 	if( ! glm::all( glm::epsilonEqual( getPos(), pos, BOUNDS_EPSILON ) ) ) {
-		needsLayout = true;
-		setPos( pos, false );
+		setPos( pos );
 	}
 
 	vec2 size = bounds.getSize();
 	if( ! glm::all( glm::epsilonEqual( getSize(), size, BOUNDS_EPSILON ) ) ) {
-		needsLayout = true;
-		setSize( size, false );
+		setSize( size );
 	}
-
-	if( needsLayout )
-		setNeedsLayout();
 }
 
 Rectf View::getBounds() const
@@ -223,8 +214,8 @@ void View::propagateLayout()
 	if( mFillParent ) {
 		auto parent = getParent();
 		if( parent ) {
-			setPos( vec2( 0 ), false );
-			setSize( parent->getSize(), false );
+			setPos( vec2( 0 ) );
+			setSize( parent->getSize() );
 		}
 	}
 
@@ -242,14 +233,15 @@ void View::propagateUpdate()
 	bool hasBackground = (bool)mBackground;
 
 	if( ! mPos.isComplete() ) {
-		needsLayout = true;
 		if( hasBackground )
-			mBackground->setPos( getPos(), false );
+			mBackground->setPos( getPos() );
+
+		setWorldPosDirty();
 	}
 	if( ! mSize.isComplete() ) {
 		needsLayout = true;
 		if( hasBackground )
-			mBackground->setSize( getSize(), false );
+			mBackground->setSize( getSize() );
 	}
 
 	if( needsLayout )
