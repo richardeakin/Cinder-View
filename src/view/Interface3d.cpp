@@ -22,6 +22,7 @@
 #include "view/Interface3d.h"
 
 #include "cinder/gl/gl.h"
+#include "cinder/app/App.h"
 
 using namespace ci;
 using namespace std;
@@ -31,14 +32,28 @@ namespace view {
 CoordinateAxisView::CoordinateAxisView( const ci::Rectf &bounds )
 	: View( bounds )
 {
-	mCoordFrameCam.setPerspective( 45, mViewportSize.x / mViewportSize.y, 0.1f, 100.0f );
+}
+
+void CoordinateAxisView::layout()
+{
+	ivec2 viewportSize = getSize();
+	if( viewportSize.x == 0 || viewportSize.y == 0 )
+		return;
+
+	mCoordFrameCam.setPerspective( 45, viewportSize.x / viewportSize.y, 0.1f, 100.0f );
 	mCoordFrameCam.lookAt( vec3( 0, 0, 2.75f ), vec3( 0 ) );
 }
 
-
 void CoordinateAxisView::draw()
 {
-	gl::ScopedViewport viewportScope( 0, 0, mViewportSize.x, mViewportSize.y );
+	Rectf worldBounds = getWorldBounds();
+	ivec2 pos = worldBounds.getLowerLeft();
+	float windowHeight = app::getWindowHeight();
+	pos.y = app::getWindowHeight() - pos.y; // flip y relative to window's bottom left
+	ivec2 size = getSize();
+
+	gl::ScopedViewport scopedViewport( pos, size );
+
 	gl::ScopedGlslProg glslScope( gl::getStockShader( gl::ShaderDef().lambert().color() ) );
 	gl::ScopedDepth depthScope( true );
 	gl::ScopedMatrices matricesScope;

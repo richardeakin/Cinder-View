@@ -37,10 +37,10 @@ class CoordinateAxisView : public View {
 	void	setOrientation( const ci::quat &orientation )	{ mOrientation = orientation; }
 
 protected:
+	void layout()	override;
 	void draw()	override;
-private:
 
-	const ci::ivec2 mViewportSize = { 180, 90 };
+private:
 	ci::CameraPersp mCoordFrameCam;
 	ci::quat		mOrientation;
 };
