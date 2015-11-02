@@ -140,6 +140,8 @@ BasicViewTests::BasicViewTests()
 
 void BasicViewTests::layout()
 {
+	CI_LOG_I( "bang" );
+
 	mContainerView->setBounds( Rectf( PADDING, PADDING, getWidth() - PADDING, getHeight() - PADDING ) );
 	mBorderView->setSize( mContainerView->getSize() );
 
@@ -178,6 +180,7 @@ void BasicViewTests::keyEvent( app::KeyEvent &event )
 				auto lastChild = mContainerView->getSubviews().back();
 				lastChild->removeFromParent();
 			}
+			break;
 		}
 		case app::KeyEvent::KEY_b: {
 			float nextBorderWidth = randFloat( 1, 30 );
@@ -190,11 +193,13 @@ void BasicViewTests::keyEvent( app::KeyEvent &event )
 			for( const auto &view : mContainerView->getSubviews() )
 				app::console() << "(" << view->getLabel() << ") " << view->getWorldPos() << endl;
 
+			break;
 		}
 		case app::KeyEvent::KEY_i: {
 			auto nextMode = view::ImageScaleMode( ( (int)mImageView->getScaleMode() + 1 ) % view::ImageScaleMode::NUM_MODES );
 			CI_LOG_I( "setting scale mode to: " << nextMode );
 			mImageView->setScaleMode( nextMode );
+			break;
 		}
 	}
 }
