@@ -205,9 +205,6 @@ void View::propagateLayout()
 {
 	mWorldPosDirty = true;
 
-	for( auto& view : mSubviews )
-		view->propagateLayout();
-
 	if( mBackground )
 		mBackground->propagateLayout();
 
@@ -221,6 +218,11 @@ void View::propagateLayout()
 
 	layout();
 	mNeedsLayout = false;
+
+	for( auto &view : mSubviews ) {
+		if( view->mNeedsLayout )
+			view->propagateLayout();
+	}
 }
 
 void View::propagateUpdate()
