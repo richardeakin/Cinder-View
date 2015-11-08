@@ -24,6 +24,8 @@
 
 #include "cinder/Log.h"
 
+#include "cinder/gl/gl.h"
+
 using namespace ci;
 using namespace std;
 
@@ -58,7 +60,39 @@ void Layer::update()
 			mFrameBuffer = make_shared<FrameBuffer>( mView->getSize() );
 		}
 	}
+	else if( mFrameBuffer ) {
+		CI_LOG_I( "removing FrameBuffer for view '" << mView->getName() << "'" );
+		mFrameBuffer.reset();
+	}
 
+}
+
+void Layer::draw()
+{
+	if( mView->isHidden() )
+		return;
+
+	if( mFrameBuffer ) {
+		gl::context()->pushFramebuffer( mFrameBuffer->mFbo );
+		gl::setMatricesWindow( mView->getWidth(), mView->getHeight() );
+		gl::clear();
+	}
+
+	mView->beginClip();
+
+	gl::ScopedModelMatrix modelScope1;
+	gl::translate( mView->getPos() );
+
+	mView->drawImpl();
+
+	for( auto &view : mView->getSubviews() )
+		view->getLayer()->draw();
+
+	mView->endClip();
+
+	if( mFrameBuffer ) {
+		gl::context()->popFramebuffer();
+	}
 }
 
 } // namespace view

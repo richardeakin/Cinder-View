@@ -156,6 +156,7 @@ protected:
 
 private:
 	void calcWorldPos() const;
+	void drawImpl();
 
 	typedef std::map<uint32_t, ci::app::TouchEvent::Touch> TouchMapT;
 
@@ -181,6 +182,8 @@ private:
 	std::list<ViewRef>		mSubviews; // TODO: using list so iterators aren't invalidated during add / remove operations. A more efficient solution could be deferring the add remove until after iteration loops
 	RectViewRef				mBackground;
 	LayerRef				mLayer;
+
+	friend class Layer;
 };
 
 class RectView : public View {

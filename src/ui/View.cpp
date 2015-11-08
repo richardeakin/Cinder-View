@@ -259,6 +259,9 @@ void View::propagateUpdate()
 
 void View::propagateDraw()
 {
+#if 1
+	mLayer->draw();
+#else
 	if( mHidden )
 		return;
 
@@ -276,6 +279,15 @@ void View::propagateDraw()
 		view->propagateDraw();
 
 	endClip();
+#endif
+}
+
+void View::drawImpl()
+{
+	if( mBackground )
+		mBackground->draw();
+
+	draw();
 }
 
 bool View::hitTest( const vec2 &localPos ) const

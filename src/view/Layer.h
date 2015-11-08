@@ -46,6 +46,8 @@ class Layer {
 
 	void update();
 
+	void draw();
+
   private:
 	View*			mView;
 	FrameBufferRef	mFrameBuffer;
