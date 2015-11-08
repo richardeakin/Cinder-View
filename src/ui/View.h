@@ -134,6 +134,8 @@ class View : public std::enable_shared_from_this<View> {
 	friend std::ostream& operator<<( std::ostream &os, const ViewRef &rhs );
 	void printHeirarchy( std::ostream &os );
 
+	LayerRef	getLayer() const	{ return mLayer; }
+
 protected:
 	View( const View& )				= delete;
 	View& operator=( const View& )	= delete;
