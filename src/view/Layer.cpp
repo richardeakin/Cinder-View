@@ -26,15 +26,49 @@
 
 #include "cinder/gl/gl.h"
 
+#define ENABLE_FRAMEBUFFER_CACHING 1
+
 using namespace ci;
 using namespace std;
 
 namespace view {
 
-FrameBuffer::FrameBuffer( const vec2 &size )
+FrameBuffer::FrameBuffer( const Format &format )
 {
-	auto format = gl::Fbo::Format();
-	mFbo = gl::Fbo::create( (int)size.x, (int)size.y, format );
+	auto fboFormat = gl::Fbo::Format();
+	mFbo = gl::Fbo::create( format.mSize.x, format.mSize.y, fboFormat );
+	CI_LOG_I( "created gl::Fbo of size: " << format.mSize );
+}
+
+bool FrameBuffer::Format::operator==(const Format &other) const
+{
+	return mSize == other.mSize;
+}
+
+// static
+FrameBufferCache* FrameBufferCache::instance()
+{
+	static FrameBufferCache sInstance;
+	return &sInstance;
+}
+
+// static
+FrameBufferRef FrameBufferCache::getFrameBuffer( const ci::ivec2 &size )
+{
+	auto format = FrameBuffer::Format().size( size );
+#if ENABLE_FRAMEBUFFER_CACHING
+	auto it = instance()->mCache.find( format );
+	if( it != instance()->mCache.end() ) {
+		return it->second;
+	}
+	else {
+		auto result = make_shared<FrameBuffer>( format );
+		instance()->mCache.insert( make_pair( format, result ) );
+		return result;
+	}
+#else
+	return make_shared<FrameBuffer>( format );
+#endif
 }
 
 Layer::Layer( View *view )
@@ -54,10 +88,9 @@ float Layer::getAlpha() const
 void Layer::update()
 {
 	if( getAlpha() < 0.9999f && mRenderTransparencyToFrameBuffer ) {
-		// TODO: pull FrameBuffer from a cache
 		if( ! mFrameBuffer ) {
-			CI_LOG_I( "creating FrameBuffer for view '" << mView->getName() << "', size: " << mView->getSize() );
-			mFrameBuffer = make_shared<FrameBuffer>( mView->getSize() );
+			CI_LOG_I( "aquiring FrameBuffer for view '" << mView->getName() << "', size: " << mView->getSize() );
+			mFrameBuffer = FrameBufferCache::getFrameBuffer( ivec2( mView->getSize() ) );
 		}
 	}
 	else if( mFrameBuffer ) {

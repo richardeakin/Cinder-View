@@ -23,6 +23,8 @@
 
 #include "cinder/gl/Fbo.h"
 
+#include <unordered_map>
+
 namespace view {
 
 class View;
@@ -32,9 +34,44 @@ typedef std::shared_ptr<class Layer>		LayerRef;
 
 class FrameBuffer {
   public:
-	FrameBuffer( const ci::vec2 &size );
+	struct Format {
+		Format& size( const ci::ivec2 &size )	{ mSize = size; return *this; }
+
+		//! Overloaded to allow Format to be used as a key in std::unordered_map
+		bool operator==(const Format &other) const;
+
+		ci::ivec2 mSize;
+	};
+
+	FrameBuffer( const Format &format );
 
 	cinder::gl::FboRef mFbo;
+};
+
+} // namespace view
+
+namespace std {
+
+template <>
+struct hash<view::FrameBuffer::Format> {
+	inline size_t operator()( const view::FrameBuffer::Format &format ) const
+	{
+		return hash<int>()( format.mSize.x ) ^ hash<int>()( format.mSize.y );
+	}
+};
+
+} // namespace std
+
+namespace view {
+
+class FrameBufferCache {
+  public:
+	static FrameBufferCache* instance();
+
+	static FrameBufferRef getFrameBuffer( const ci::ivec2 &size );
+
+  private:
+	std::unordered_map<FrameBuffer::Format, FrameBufferRef>	mCache;
 };
 
 class Layer {
