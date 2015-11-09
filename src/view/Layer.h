@@ -48,9 +48,13 @@ class Layer {
 
 	void draw();
 
+	void setRenderTransparencyToFrameBufferEnabled( bool enable )	{ mRenderTransparencyToFrameBuffer = enable; }
+	bool isRenderTransparencyToFrameBufferEnabled() const			{ return mRenderTransparencyToFrameBuffer; }
+
   private:
 	View*			mView;
 	FrameBufferRef	mFrameBuffer;
+	bool			mRenderTransparencyToFrameBuffer = true;
 };
 
 } // namespace view

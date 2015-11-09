@@ -140,7 +140,7 @@ BasicViewTests::BasicViewTests()
 
 void BasicViewTests::layout()
 {
-	CI_LOG_I( "bang" );
+//	CI_LOG_I( "bounds: " << getBounds() );
 
 	mContainerView->setBounds( Rectf( PADDING, PADDING, getWidth() - PADDING, getHeight() - PADDING ) );
 	mBorderView->setSize( mContainerView->getSize() );
@@ -199,6 +199,11 @@ void BasicViewTests::keyEvent( app::KeyEvent &event )
 			auto nextMode = ui::ImageScaleMode( ( (int)mImageView->getScaleMode() + 1 ) % ui::ImageScaleMode::NUM_MODES );
 			CI_LOG_I( "setting scale mode to: " << nextMode );
 			mImageView->setScaleMode( nextMode );
+			break;
+		}
+		case app::KeyEvent::KEY_t: {
+			mContainerView->getLayer()->setRenderTransparencyToFrameBufferEnabled( ! mContainerView->getLayer()->isRenderTransparencyToFrameBufferEnabled() );
+			CI_LOG_I( "container view renders transparency to framebuffer: " << boolalpha << mContainerView->getLayer()->isRenderTransparencyToFrameBufferEnabled() << dec );
 			break;
 		}
 	}

@@ -53,7 +53,7 @@ float Layer::getAlpha() const
 
 void Layer::update()
 {
-	if( getAlpha() < 0.9999f ) {
+	if( getAlpha() < 0.9999f && mRenderTransparencyToFrameBuffer ) {
 		// TODO: pull FrameBuffer from a cache
 		if( ! mFrameBuffer ) {
 			CI_LOG_I( "creating FrameBuffer for view '" << mView->getName() << "', size: " << mView->getSize() );
@@ -74,14 +74,18 @@ void Layer::draw()
 
 	if( mFrameBuffer ) {
 		gl::context()->pushFramebuffer( mFrameBuffer->mFbo );
-		gl::setMatricesWindow( mView->getWidth(), mView->getHeight() );
+		gl::pushViewport( mView->getSize() );
+		gl::pushMatrices();
+		gl::setMatricesWindow( mView->getSize() );
+
 		gl::clear();
+	}
+	else {
+		gl::pushModelMatrix();
+		gl::translate( mView->getPos() );
 	}
 
 	mView->beginClip();
-
-	gl::ScopedModelMatrix modelScope1;
-	gl::translate( mView->getPos() );
 
 	mView->drawImpl();
 
@@ -92,6 +96,16 @@ void Layer::draw()
 
 	if( mFrameBuffer ) {
 		gl::context()->popFramebuffer();
+		gl::popViewport();
+		gl::popMatrices();
+
+		gl::ScopedColor colorScope( ColorA::gray( getAlpha() ) );
+
+		auto destRect = Rectf( 0, 0, mFrameBuffer->mFbo->getWidth(), mFrameBuffer->mFbo->getHeight() ) + mView->getPos();
+		gl::draw( mFrameBuffer->mFbo->getColorTexture(), destRect );
+	}
+	else {
+		gl::popModelMatrix();
 	}
 }
 
