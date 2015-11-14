@@ -43,6 +43,7 @@ protected:
 private:
 	ci::CameraPersp mCoordFrameCam;
 	ci::quat		mOrientation;
+	float			mArrowLength = 0;
 };
 
 } // namespace view
