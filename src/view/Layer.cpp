@@ -36,6 +36,11 @@ namespace view {
 FrameBuffer::FrameBuffer( const Format &format )
 {
 	auto fboFormat = gl::Fbo::Format();
+	fboFormat.colorTexture(
+		gl::Texture2d::Format()
+ 			.minFilter( GL_LINEAR ).magFilter( GL_LINEAR )
+	);
+
 	mFbo = gl::Fbo::create( format.mSize.x, format.mSize.y, fboFormat );
 	CI_LOG_I( "created gl::Fbo of size: " << format.mSize );
 }

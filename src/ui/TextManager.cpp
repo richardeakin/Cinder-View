@@ -69,7 +69,7 @@ TextRef TextManager::loadTextImpl( FontFace face, float size )
 
 	auto font = Font( getFontName( face ), size );
 
-	TextRef result( new Text( gl::TextureFont::create( font ), face ) );
+	TextRef result( new Text( font, face ) );
 
 	lock_guard<mutex> lock( mMutex );
 	mTextCache.push_back( result );
@@ -109,6 +109,19 @@ std::string TextManager::getFontName( FontFace face ) const
 // ----------------------------------------------------------------------------------------------------
 // MARK: - Text
 // ----------------------------------------------------------------------------------------------------
+
+Text::Text()
+	: mIsReady( false )
+{
+}
+
+Text::Text( const ci::Font &font, FontFace face )
+	: mFace( face ), mIsReady( false )
+{
+	auto format = gl::TextureFont::Format().premultiply( true );
+	mTextureFont = gl::TextureFont::create( font, format );
+	mIsReady = true;
+}
 
 float Text::getSize() const
 {

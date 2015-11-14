@@ -63,11 +63,14 @@ void Label::draw()
 	if( mText.empty() )
 		return;
 
-	float alpha = getAlphaCombined();
-	if( alpha < 0.000001f )
-		return;
+//	float alpha = getAlphaCombined();
+//	if( alpha < 0.000001f )
+//		return;
 
-	gl::ScopedColor colorScope( mTextColor * alpha );
+//	gl::ScopedColor colorScope( mTextColor * alpha );
+
+	gl::ScopedBlendPremult blendPremultScope;
+	gl::ScopedColor colorScope( mTextColor );
 
 	auto baseline = getBaseLine();
 	mFont->drawString( mText, baseline );
