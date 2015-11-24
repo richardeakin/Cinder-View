@@ -100,4 +100,10 @@ std::string toString( const ImageScaleMode &scaleMode )
 	return "(unhandled enum value)";
 }
 
+std::ostream& operator<<( std::ostream &os, const ImageScaleMode &rhs )
+{
+	os << toString( rhs );
+	return os;
+}
+
 } // namespace view
