@@ -8,7 +8,8 @@ set( CMAKE_VERBOSE_MAKEFILE ON )
 
 message( STATUS "REPO_PATH: ${REPO_PATH}" )
 
-add_subdirectory( ${REPO_PATH} ${REPO_PATH}/build )
+#add_subdirectory( ${REPO_PATH} ${REPO_PATH}/build )
+add_subdirectory( ${REPO_PATH} ${PROJECT_BINARY_DIR}/lib ) # for use in CLion
 
 include( "${REPO_PATH}/cmake/modules/ci_make_app.cmake" )
 
