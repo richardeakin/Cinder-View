@@ -62,10 +62,6 @@ class ImageView : public View {
 //! Returns scaleMode in string representation.
 std::string toString( const ImageScaleMode &scaleMode );
 //! Stream support for ScaleMode
-std::ostream& operator<<( std::ostream &os, const ImageScaleMode &rhs )
-{
-	os << toString( rhs );
-	return os;
-}
+std::ostream& operator<<( std::ostream &os, const ImageScaleMode &rhs );
 
 } // namespace view

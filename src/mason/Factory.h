@@ -35,7 +35,7 @@ class FactoryException : public cinder::Exception {
 	{}
 };
 
-//! Allows for constructing shared_ptr<T> object's by string, passing \a Args to T's constructor.
+//! Allows for constructing shared_ptr<T> objects by string, passing \a Args to T's constructor.
 template <typename T, typename... Args>
 class Factory {
   public:
