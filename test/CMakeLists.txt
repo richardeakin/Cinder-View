@@ -1,4 +1,4 @@
-cmake_minimum_required( VERSION 2.8 )
+cmake_minimum_required( VERSION 3.1 )
 project( ViewTests )
 
 set( APP_TARGET "ViewTests" )
@@ -6,7 +6,10 @@ set( REPO_PATH "${PROJECT_SOURCE_DIR}/.." )
 set( CINDER_PATH "${PROJECT_SOURCE_DIR}/../../cinder" )
 set( CMAKE_VERBOSE_MAKEFILE ON )
 
-include( "${REPO_PATH}/CMakeLists.txt" )
+message( STATUS "REPO_PATH: ${REPO_PATH}" )
+
+add_subdirectory( ${REPO_PATH} ${REPO_PATH}/build )
+
 include( "${REPO_PATH}/cmake/modules/ci_make_app.cmake" )
 
 set( APP_SOURCES
@@ -27,9 +30,4 @@ ci_make_app(
 	CINDER_PATH ${CINDER_PATH}
 )
 
-set( VIEW_LIB "${REPO_PATH}/lib/${CMAKE_BUILD_TYPE}/libcinder-view.a" )
-if( NOT EXISTS ${VIEW_LIB} )
-	message( FATAL_ERROR "cannot find libcinder-view at path: ${VIEW_LIB}" )
-endif()
-
-target_link_libraries( ${APP_TARGET} ${VIEW_LIB} )
+target_link_libraries( ${APP_TARGET} cinder-view )
