@@ -1,10 +1,3 @@
-# dart packages
-pubspec.lock
-.pub
-studies/Sequencing/assets/packages
-studies/ScriptedTimeline/assets/packages
-test/MasonTests/assets/wisps/packages
-
 # Mac OS X cruft
 *.pbxuser
 *.mode1v3
@@ -16,10 +9,6 @@ xcuserdata/
 .DS_Store
 
 build/
-lib/libcinder*.a
-lib/cinder*.lib
-lib/cinder*.idb
-lib/cinder*.pdb
 
 # Windows cruft
 *.suo
@@ -29,7 +18,3 @@ lib/cinder*.pdb
 Debug/
 Release/
 ipch/
-
-# doxygen generated files
-docs/html
-docs/doxygen/cinder.tag
