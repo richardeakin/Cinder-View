@@ -358,7 +358,8 @@ std::string View::getName() const
 
 std::ostream& operator<<( std::ostream &os, const ViewRef &rhs )
 {
-	os << System::demangleTypeName( typeid( *rhs ).name() );
+	auto rhsPtr = rhs.get();
+	os << System::demangleTypeName( typeid( *rhsPtr ).name() );
 	if( ! rhs->getLabel().empty() )
 		os << " (" << rhs->getLabel() << ")";
 
