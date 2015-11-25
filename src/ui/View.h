@@ -22,6 +22,7 @@
 #pragma once
 
 #include "view/Layer.h"
+#include "view/Renderer.h"
 
 #include "cinder/app/TouchEvent.h"
 #include "cinder/app/MouseEvent.h"
@@ -39,11 +40,10 @@ namespace ui {
 typedef std::shared_ptr<class View>				ViewRef;
 typedef std::shared_ptr<class RectView>			RectViewRef;
 typedef std::shared_ptr<class StrokedRectView>	StrokedRectViewRef;
+class Graph;
 
 class View : public std::enable_shared_from_this<View> {
   public:
-
-	View( const ci::Rectf &bounds = ci::Rectf::zero() );
 	virtual ~View();
 
 	void		addSubviews( const std::vector<ViewRef> &views );
@@ -60,7 +60,7 @@ class View : public std::enable_shared_from_this<View> {
 	void	setAlpha( float alpha )							{ mAlpha = alpha; }
 
 	float					getAlpha()	const		{ return mAlpha; }
-	float					getAlphaCombined() const;
+//	float					getAlphaCombined() const;
 	//! Returns the bounds of this View, relative to its parent (or self if there is no parent).
 	ci::Rectf				getBounds() const;
 	//! Returns the bounds of thie View, relative to itself (origin = [0,0]).
@@ -81,6 +81,17 @@ class View : public std::enable_shared_from_this<View> {
 	ViewRef&				getSubview( size_t index );
 	const ViewRef&			getSubview( size_t index ) const;
 	const View*				getParent() const	{ return mParent; }
+
+	//!
+	const Graph*            getGraph() const    { return mGraph; }
+	//!
+	Graph*                  getGraph()          { return mGraph; }
+	//! Returns the Renderer that is responsible for drawing
+	RendererRef             getRenderer() const;
+	//! Returns the Renderer that is responsible for drawing
+	RendererRef             getRenderer();
+	//!
+	LayerRef	            getLayer() const	{ return mLayer; }
 
 	//! Sets a label that can be used to identify this View
 	void				setLabel( const std::string &label )	{ mLabel = label; }
@@ -134,11 +145,8 @@ class View : public std::enable_shared_from_this<View> {
 	friend std::ostream& operator<<( std::ostream &os, const ViewRef &rhs );
 	void printHeirarchy( std::ostream &os );
 
-	LayerRef	getLayer() const	{ return mLayer; }
-
 protected:
-	View( const View& )				= delete;
-	View& operator=( const View& )	= delete;
+	View( const ci::Rectf &bounds = ci::Rectf::zero() );
 
 	virtual void layout()		{}
 	virtual void update()		{}
@@ -155,6 +163,10 @@ protected:
 	virtual bool touchesEnded( const ci::app::TouchEvent &event )	{ return false; }
 
 private:
+
+	View( const View& )				= delete;
+	View& operator=( const View& )	= delete;
+
 	void calcWorldPos() const;
 	void drawImpl();
 
@@ -179,16 +191,19 @@ private:
 	bool					mFillParent = false; // TODO: replace this with proper layout system
 
 	View*					mParent = nullptr;
+	Graph*                  mGraph = nullptr;
 	std::list<ViewRef>		mSubviews; // TODO: using list so iterators aren't invalidated during add / remove operations. A more efficient solution could be deferring the add remove until after iteration loops
 	RectViewRef				mBackground;
 	LayerRef				mLayer;
 
 	friend class Layer;
+//	friend class Graph;
 };
 
 class RectView : public View {
 public:
-	RectView( const ci::Rectf &bounds = ci::Rectf::zero() )	: View( bounds ), mColor( ci::ColorA::black() )
+	RectView( const ci::Rectf &bounds = ci::Rectf::zero() )
+		: View( bounds )
 	{}
 
 	void					setColor( const ci::ColorA &color )	{ mColor = color; }
@@ -196,28 +211,27 @@ public:
 	ci::Anim<ci::ColorA>*	getColorAnim()						{ return &mColor; }
 
 protected:
-	virtual void draw()		override;
-	virtual void drawRect();
+	void draw()		override;
 
-	ci::Anim<ci::ColorA>	mColor;
+	ci::Anim<ci::ColorA>	mColor = { ci::ColorA::black() };
 private:
 	friend class View;
 };
 
 class StrokedRectView : public RectView {
 public:
-	StrokedRectView( const ci::Rectf &bounds = ci::Rectf::zero() )	: RectView( bounds ), mLineWidth( 1 )
+	StrokedRectView( const ci::Rectf &bounds = ci::Rectf::zero() )
+		: RectView( bounds )
 	{}
 
 	void				setLineWidth( float lineWidth )		{ mLineWidth = lineWidth; }
 	float				getLineWidth() const				{ return mLineWidth; }
 	ci::Anim<float>*	getLineWidthAnim()					{ return &mLineWidth; }
 
-
 protected:
-	virtual void drawRect()		override;
+	void draw()		    override;
 
-	ci::Anim<float>		mLineWidth;
+	ci::Anim<float>		mLineWidth = { 1 };
 };
 
 } // namespace ui

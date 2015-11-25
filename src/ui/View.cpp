@@ -20,6 +20,7 @@
 */
 
 #include "ui/View.h"
+#include "ui/Graph.h"
 
 #include "glm/gtc/epsilon.hpp"
 
@@ -186,6 +187,16 @@ void View::setParent( View *parent )
 {
 	removeFromParent();
 	mParent = parent;
+}
+
+RendererRef View::getRenderer() const
+{
+	getGraph()->getRenderer();
+}
+
+RendererRef View::getRenderer()
+{
+	getGraph()->getRenderer();
 }
 
 void View::setNeedsLayout()
@@ -356,14 +367,14 @@ const RectViewRef& View::getBackground()
 	return mBackground;
 }
 
-float View::getAlphaCombined() const
-{
-	float alpha = mAlpha;
-	if( mParent )
-		alpha *= mParent->getAlphaCombined();
-
-	return alpha;
-}
+//float View::getAlphaCombined() const
+//{
+//	float alpha = mAlpha;
+//	if( mParent )
+//		alpha *= mParent->getAlphaCombined();
+//
+//	return alpha;
+//}
 
 std::string View::getName() const
 {
@@ -539,26 +550,32 @@ void View::endClip()
 
 void RectView::draw()
 {
-	ColorA color = mColor;
-	color.a *= getAlphaCombined();
+//	ColorA color = mColor;
+//	color.a *= getAlphaCombined();
+//
+//	if( color.a > 0.000001f ) {
+//		gl::ScopedColor colorScope( color );
+//		drawRect();
+//	}
 
-	if( color.a > 0.000001f ) {
-		gl::ScopedColor colorScope( color );
-		drawRect();
-	}
+	auto renderer = getRenderer();
+
+	gl::ScopedColor colorScope( getColor() ); // TODO: how to manage scope and draw with Renderer?
+	renderer->drawSolidRect( getBoundsLocal() );
 }
 
-void RectView::drawRect()
-{
-	gl::drawSolidRect( getBoundsLocal() );
-}
 
-void StrokedRectView::drawRect()
+void StrokedRectView::draw()
 {
+	auto renderer = getRenderer();
+
+	gl::ScopedColor colorScope( getColor() ); // TODO: how to manage scope and draw with Renderer?
+
 	if( mLineWidth == 1 )
-		gl::drawStrokedRect( getBoundsLocal() );
+		renderer->drawStrokedRect( getBoundsLocal() );
 	else
-		gl::drawStrokedRect( getBoundsLocal(), mLineWidth );
-}	
+		renderer->->drawStrokedRect( getBoundsLocal(), mLineWidth );
+
+}
 
 } // namespace ui

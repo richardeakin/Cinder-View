@@ -3,10 +3,12 @@
 list( APPEND VIEW_SOURCES
 	${VIEW_SOURCE_PATH}/ui/Button.cpp
 	${VIEW_SOURCE_PATH}/ui/Control.cpp
+	${VIEW_SOURCE_PATH}/ui/Graph.cpp
 	${VIEW_SOURCE_PATH}/ui/ImageView.cpp
 	${VIEW_SOURCE_PATH}/ui/Interface3d.cpp
 	${VIEW_SOURCE_PATH}/ui/Label.cpp
 	${VIEW_SOURCE_PATH}/ui/Layer.cpp
+	${VIEW_SOURCE_PATH}/ui/Renderer.cpp
 	${VIEW_SOURCE_PATH}/ui/ScrollView.cpp
 	${VIEW_SOURCE_PATH}/ui/Selector.cpp
 	${VIEW_SOURCE_PATH}/ui/Slider.cpp
