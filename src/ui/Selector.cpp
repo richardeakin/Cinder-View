@@ -21,7 +21,6 @@
 
 #include "ui/Selector.h"
 
-#include "cinder/gl/gl.h"
 #include "cinder/Log.h"
 
 using namespace ci;
@@ -37,35 +36,34 @@ SelectorBase::SelectorBase( const Rectf &bounds )
 
 void SelectorBase::draw()
 {
-	gl::ScopedColor colorScope;
+	auto renderer = getRenderer();
 
 	const float padding = 10;
 
 	float sectionHeight = getHeight() / (float)mSegments.size();
 	Rectf section( 0, 0, getWidth(), sectionHeight );
-	gl::color( mUnselectedColor );
+
+	renderer->setColor( mUnselectedColor );
 	for( size_t i = 0; i < mSegments.size(); i++ ) {
 		if( i != mSelectedIndex ) {
-			gl::drawStrokedRect( section );
-			gl::color( mUnselectedColor );
+			renderer->drawStrokedRect( section );
 			mTextLabel->drawString( mSegments[i], vec2( section.x1 + padding, section.getCenter().y + mTextLabel->getDescent() ) );
 		}
 		section += vec2( 0.0f, sectionHeight );
 	}
 
-	gl::color( mSelectedColor );
+	renderer->setColor( mSelectedColor );
 
 	section.y1 = mSelectedIndex * sectionHeight;
 	section.y2 = section.y1 + sectionHeight;
-	gl::drawStrokedRect( section );
+	renderer->drawStrokedRect( section );
 
 	if( ! mSegments.empty() ) {
-		gl::color( mSelectedColor );
 		mTextLabel->drawString( mSegments[mSelectedIndex], vec2( section.x1 + padding, section.getCenter().y + mTextLabel->getDescent() ) );
 	}
 
 	if( ! mTitle.empty() ) {
-		gl::color( mTitleColor );
+		renderer->setColor( mTitleColor );
 		mTextLabel->drawString( mTitle, vec2( padding, - mTextLabel->getDescent() ) );
 	}
 }

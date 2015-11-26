@@ -21,8 +21,6 @@
 
 #include "ui/Slider.h"
 
-#include "cinder/gl/gl.h"
-
 #include "cppformat/format.h"
 
 using namespace std;

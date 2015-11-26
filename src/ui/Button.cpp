@@ -21,8 +21,6 @@
 
 #include "ui/Button.h"
 
-#include "cinder/gl/gl.h"
-
 using namespace ci;
 using namespace std;
 
