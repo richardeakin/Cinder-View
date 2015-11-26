@@ -32,6 +32,8 @@ namespace view {
 Graph::Graph( const ci::app::WindowRef &window )
 	: mWindow( window )
 {
+	mGraph = this;
+	
 	if( ! mWindow ) {
 		auto app = app::AppBase::get();
 		if( ! app ) {
@@ -40,6 +42,7 @@ Graph::Graph( const ci::app::WindowRef &window )
 
 		mWindow = app->getWindow();
 		mMultiTouchEnabled = app->isMultiTouchEnabled();
+		setBounds( mWindow->getBounds() );
 	}
 
 	mRenderer = make_shared<view::Renderer>();
@@ -51,21 +54,14 @@ Graph::~Graph()
 		disconnectEvents();
 }
 
-//ViewRef Graph::getRootView()
-//{
-//	if( ! mRootView ) {
-//		mRootView.reset( new View( mWindow->getBounds() ) );
-//	}
-//}
-
-void Graph::update()
+void Graph::propagateUpdate()
 {
-	propagateUpdate();
+	View::propagateUpdate();
 }
 
-void Graph::draw()
+void Graph::propagateDraw()
 {
-	propagateDraw();
+	View::propagateDraw();
 }
 
 void Graph::connectTouchEvents( int priority )

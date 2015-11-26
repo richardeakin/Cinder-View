@@ -111,12 +111,12 @@ void Suite::update()
 	if( ! mCurrentSuiteView && ! mSelector->getSegmentLabels().empty() )
 		selectTest( mSelector->getSelectedLabel() );
 
-	mGraph->update();
+	mGraph->propagateUpdate();
 }
 
 void Suite::draw()
 {
-	mGraph->draw();
+	mGraph->propagateDraw();
 }
 
 } // namespace ui

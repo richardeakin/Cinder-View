@@ -48,11 +48,12 @@ class Graph : public View {
 	RendererRef getRenderer()       { return mRenderer; }
 	RendererRef getRenderer() const { return mRenderer; }
 
-	void update();
-	void draw();
+	void propagateUpdate();
+	void propagateDraw();
 
-	//! Connects this View's touches propagation methods to the App's touch event signals
+	//! Connects this View's touches propagation methods to the Window's touch event signals
 	void connectTouchEvents( int prioririty = 1 );
+	//! Disconnects touches propagation methods.
 	void disconnectEvents();
 
   private:

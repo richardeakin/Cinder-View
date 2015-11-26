@@ -189,12 +189,14 @@ void View::setParent( View *parent )
 
 RendererRef View::getRenderer() const
 {
-	getGraph()->getRenderer();
+	CI_ASSERT( getGraph() != nullptr );
+	return getGraph()->getRenderer();
 }
 
 RendererRef View::getRenderer()
 {
-	getGraph()->getRenderer();
+	CI_ASSERT( getGraph() != nullptr );
+	return getGraph()->getRenderer();
 }
 
 void View::setNeedsLayout()
@@ -214,6 +216,8 @@ void View::setWorldPosDirty()
 void View::propagateLayout()
 {
 	mWorldPosDirty = true;
+	if( ! mGraph )
+		mGraph = getParent()->mGraph;
 
 	if( mBackground )
 		mBackground->propagateLayout();
@@ -230,6 +234,8 @@ void View::propagateLayout()
 	mNeedsLayout = false;
 
 	for( auto &view : mSubviews ) {
+		if( ! view->mGraph )
+			view->mGraph = mGraph;
 		if( view->mNeedsLayout )
 			view->propagateLayout();
 	}
