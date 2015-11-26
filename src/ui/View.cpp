@@ -184,6 +184,7 @@ void View::setParent( View *parent )
 {
 	removeFromParent();
 	mParent = parent;
+	mGraph = parent->getGraph();
 }
 
 RendererRef View::getRenderer() const
