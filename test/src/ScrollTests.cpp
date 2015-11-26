@@ -1,6 +1,6 @@
 #include "ScrollTests.h"
-#include "view/ImageView.h"
-#include "view/Button.h"
+#include "ui/ImageView.h"
+#include "ui/Button.h"
 
 #include "cinder/app/App.h"
 #include "cinder/gl/gl.h"
@@ -14,7 +14,7 @@ using namespace mason;
 
 const float PADDING = 40.0f;
 
-class CustomView : public view::RectView {
+class CustomView : public ui::RectView {
 public:
 	CustomView( const Rectf &bounds )
 		: RectView( bounds )
@@ -72,11 +72,11 @@ ScrollTests::ScrollTests()
 	: SuiteView()
 {
 	// Free scrolling ScrollView
-	mScrollView = make_shared<view::ScrollView>();
+	mScrollView = make_shared<ui::ScrollView>();
 //	mScrollView->setClipEnabled( false );
 	mScrollView->getContentView()->getBackground()->setColor( Color( 0.15f, 0, 0 ) );
 
-	auto scrollBorder = make_shared<view::StrokedRectView>();
+	auto scrollBorder = make_shared<ui::StrokedRectView>();
 	scrollBorder->setFillParentEnabled();
 	scrollBorder->setColor( ColorA( 0.9f, 0.5f, 0.0f, 0.7f ) );
 	mScrollView->addSubview( scrollBorder );
@@ -84,14 +84,14 @@ ScrollTests::ScrollTests()
 	// add some content views:
 	auto custom = make_shared<CustomView>( Rectf( 40, 60, 180, 160 ) );
 
-	auto button = make_shared<view::Button>( Rectf( 200, 60, 300, 100 ) );
+	auto button = make_shared<ui::Button>( Rectf( 200, 60, 300, 100 ) );
 	button->setTitle( "tap me" );
 	button->setTitleColor( Color( 0, 0.2f, 0.8f ) );
-	button->setColor( Color( 0.6f, 0.6f, 0.8f ), view::Button::State::PRESSED );
+	button->setColor( Color( 0.6f, 0.6f, 0.8f ), ui::Button::State::PRESSED );
 	button->getSignalPressed().connect( [] { CI_LOG_V( "button pressed" ); } );
 	button->getSignalReleased().connect( [] { CI_LOG_V( "button released" ); } );
 
-	auto imageView = make_shared<view::ImageView>( Rectf( 40, 200, 600, 600 ) );
+	auto imageView = make_shared<ui::ImageView>( Rectf( 40, 200, 600, 600 ) );
 	imageView->getBackground()->setColor( Color( 0, 0.2f, 0 ) );
 
 	fs::path imageFilePath = app::getAssetPath( "images/monkey_hitchhike.jpg" );
@@ -110,12 +110,12 @@ ScrollTests::ScrollTests()
 	mScrollView->addContentViews( { custom, imageView, button } );
 
 	// Horizontal paging ScrollView
-	mHorizontalPager = make_shared<view::PagingScrollView>();
+	mHorizontalPager = make_shared<ui::PagingScrollView>();
 	mHorizontalPager->setPageMargin( vec2( 4, 0 ) );
 	mHorizontalPager->getBackground()->setColor( Color( 0.8f, 0.4f, 0 ) );
 	const size_t numHorizontalPages = 4;
 	for( size_t i = 0; i < numHorizontalPages; i++ ) {
-		auto label = make_shared<view::Label>( Rectf( 40, 100, 140, 130 ) );
+		auto label = make_shared<ui::Label>( Rectf( 40, 100, 140, 130 ) );
 		label->setFontSize( 36 );
 		label->setText( "Page " + to_string( i ) );
 		label->setTextColor( Color::white() );
@@ -124,13 +124,13 @@ ScrollTests::ScrollTests()
 	}
 
 	// Vertical paging ScrollView
-	mVerticalPager = make_shared<view::PagingScrollView>();
-	mVerticalPager->setAxis( view::PagingScrollView::Axis::VERTICAL );
+	mVerticalPager = make_shared<ui::PagingScrollView>();
+	mVerticalPager->setAxis( ui::PagingScrollView::Axis::VERTICAL );
 	mVerticalPager->setPageMargin( vec2( 0, 4 ) );
 	mVerticalPager->getBackground()->setColor( Color( 0.8f, 0.4f, 0 ) );
 	const size_t numVerticalPages = 10;
 	for( size_t i = 0; i < numVerticalPages; i++ ) {
-		auto label = make_shared<view::Label>( Rectf( 40, 100, 140, 130 ) );
+		auto label = make_shared<ui::Label>( Rectf( 40, 100, 140, 130 ) );
 		label->setFontSize( 36 );
 		label->setText( "Page " + to_string( i ) );
 		label->setTextColor( Color::white() );

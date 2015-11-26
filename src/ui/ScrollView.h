@@ -21,9 +21,9 @@
 
 #pragma once
 
-#include "view/View.h"
+#include "ui/View.h"
 
-namespace view {
+namespace ui {
 
 typedef std::shared_ptr<class ScrollView>			ScrollViewRef;
 typedef std::shared_ptr<class PagingScrollView>		PagingScrollViewRef;
@@ -215,4 +215,4 @@ class PagingScrollView : public ScrollView {
 	ci::signals::Signal<void ()>	mSignalDidChangePage;
 };
 
-} // namespace view
+} // namespace ui

@@ -12,7 +12,7 @@ using namespace mason;
 #define PADDING 50.0f
 #define ANIM_TIME 1.0f
 
-class ChildView : public view::RectView {
+class ChildView : public ui::RectView {
 public:
 	ChildView( const Rectf &bounds ) : RectView( bounds )	{}
 
@@ -89,23 +89,23 @@ BasicViewTests::BasicViewTests()
 	mContainerView->addSubview( view3 );
 	mContainerView->addSubview( view1 ); // with this call, view1 will only be in root's view heirarchy once, but it will be moved to the top.
 
-	mBorderView = make_shared<view::StrokedRectView>();
+	mBorderView = make_shared<ui::StrokedRectView>();
 	mBorderView->setColor( ColorA( "red", 1 ) );
 	mContainerView->addSubview( mBorderView );
 
-	mLabel = make_shared<view::Label>();
+	mLabel = make_shared<ui::Label>();
 	mLabel->setText( "a label" );
-	mLabel->setAlignment( view::TextAlignment::CENTER );
+	mLabel->setAlignment( ui::TextAlignment::CENTER );
 	mLabel->setTextColor( Color::white() );
 	mLabel->getBackground()->setColor( Color( 0, 0, 0.4 ) );
 
-	mLabelClipped = make_shared<view::Label>();
+	mLabelClipped = make_shared<ui::Label>();
 	mLabelClipped->setText( "blah blah blah blah blah" );
 	mLabelClipped->setClipEnabled();
 	mLabelClipped->setTextColor( Color::white() );
 	mLabelClipped->getBackground()->setColor( Color( 0, 0, 0.4 ) );
 
-	mLabelGrid = make_shared<view::LabelGrid>();
+	mLabelGrid = make_shared<ui::LabelGrid>();
 	mLabelGrid->getBackground()->setColor( ColorA( "yellow", 0.5f ) );
 	mLabelGrid->setCell( 0, 0, "hey:" );
 	mLabelGrid->setCell( 0, 1, "how ya goin:" );
@@ -114,9 +114,9 @@ BasicViewTests::BasicViewTests()
 	mLabelGrid->setCell( 0, 2, "writing ui code:" );
 	mLabelGrid->setCell( 1, 2, "sucks" );
 
-	mImageView = make_shared<view::ImageView>();
+	mImageView = make_shared<ui::ImageView>();
 
-	auto imageBorder = make_shared<view::StrokedRectView>();
+	auto imageBorder = make_shared<ui::StrokedRectView>();
 	imageBorder->setFillParentEnabled();
 	imageBorder->setColor( ColorA( 0.9f, 0.5f, 0.0f, 0.7f ) );
 	mImageView->addSubview( imageBorder );
@@ -196,7 +196,7 @@ void BasicViewTests::keyEvent( app::KeyEvent &event )
 			break;
 		}
 		case app::KeyEvent::KEY_i: {
-			auto nextMode = view::ImageScaleMode( ( (int)mImageView->getScaleMode() + 1 ) % view::ImageScaleMode::NUM_MODES );
+			auto nextMode = ui::ImageScaleMode( ( (int)mImageView->getScaleMode() + 1 ) % ui::ImageScaleMode::NUM_MODES );
 			CI_LOG_I( "setting scale mode to: " << nextMode );
 			mImageView->setScaleMode( nextMode );
 			break;

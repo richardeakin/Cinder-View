@@ -19,7 +19,7 @@
  POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "view/Suite.h"
+#include "ui/Suite.h"
 #include "cinder/app/App.h"
 #include "cinder/Log.h"
 #include "cinder/audio/Context.h"
@@ -27,7 +27,7 @@
 using namespace std;
 using namespace ci;
 
-namespace view {
+namespace ui {
 
 // ----------------------------------------------------------------------------------------------------
 // MARK: - SuiteView
@@ -44,11 +44,11 @@ void SuiteView::connectKeyDown( const std::function<void( ci::app::KeyEvent& )> 
 
 Suite::Suite()
 {
-	mRootView = make_shared<view::View>( app::getWindowBounds() );
+	mRootView = make_shared<ui::View>( app::getWindowBounds() );
 	mRootView->setLabel( "Suite root" );
 	mRootView->connectTouchEvents();
 
-	mSelector = make_shared<view::VSelector>(); // bounds is set in resize()
+	mSelector = make_shared<ui::VSelector>(); // bounds is set in resize()
 	mSelector->getBackground()->setColor( ColorA::gray( 0, 0.3f ) );
 
 	mSelector->getSignalValueChanged().connect( [this] {
@@ -120,4 +120,4 @@ void Suite::draw()
 	mRootView->propagateDraw();
 }
 
-} // namespace view
+} // namespace ui

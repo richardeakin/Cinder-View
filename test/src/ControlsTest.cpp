@@ -12,27 +12,27 @@ using namespace mason;
 ControlsTest::ControlsTest()
 	: SuiteView()
 {
-	mButton = make_shared<view::Button>();
+	mButton = make_shared<ui::Button>();
 	mButton->setTitle( "Moe" );
 	mButton->getSignalPressed().connect( [] { CI_LOG_V( "Bob pressed" ); } );
 	mButton->getSignalReleased().connect( [] { CI_LOG_V( "Bob released" ); } );
 
-	mToggle = make_shared<view::Button>();
+	mToggle = make_shared<ui::Button>();
 	mToggle->setAsToggle();
 	mToggle->setLabel( "toggle" );
 	mToggle->setTitle( "Larry" );
-	mToggle->setTitle( "Curly", view::Button::State::ENABLED );
+	mToggle->setTitle( "Curly", ui::Button::State::ENABLED );
 	mToggle->getSignalPressed().connect( [] { CI_LOG_V( "toggle pressed" ); } );
 	mToggle->getSignalReleased().connect( [] { CI_LOG_V( "toggle released" ); } );
 
 	// temp - adding constrols to this test
-	mHSlider = make_shared<view::HSlider>();
+	mHSlider = make_shared<ui::HSlider>();
 	mHSlider->getBackground()->setColor( ColorA( "green", 0.5f ) );
 	mHSlider->getSignalValueChanged().connect( [this] {
 		CI_LOG_V( "mHSlider value: " << mHSlider->getValue() );
 	} );
 
-	mVSlider = make_shared<view::VSlider>();
+	mVSlider = make_shared<ui::VSlider>();
 	mVSlider->getBackground()->setColor( ColorA( "green", 0.5f ) );
 	mVSlider->getSignalValueChanged().connect( [this] {
 		CI_LOG_V( "mVSlider value: " << mVSlider->getValue() );

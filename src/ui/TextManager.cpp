@@ -19,7 +19,7 @@
  POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "view/TextManager.h"
+#include "ui/TextManager.h"
 
 #include "cinder/Cinder.h"
 #include "cinder/gl/TextureFont.h"
@@ -30,7 +30,7 @@
 using namespace ci;
 using namespace std;
 
-namespace view {
+namespace ui {
 
 // ----------------------------------------------------------------------------------------------------
 // MARK: - TextManager
@@ -155,4 +155,4 @@ void Text::drawString( const string &str, const vec2 &baseline )
 	mTextureFont->drawString( str, baseline );
 }
 
-} // namespace view
+} // namespace ui

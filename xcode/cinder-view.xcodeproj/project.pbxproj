@@ -7,50 +7,50 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		114F64D51BE09AE7000CE3EE /* ImageView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64BF1BE09AE7000CE3EE /* ImageView.cpp */; };
-		114F64D61BE09AE7000CE3EE /* ImageView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64BF1BE09AE7000CE3EE /* ImageView.cpp */; };
-		114F64D71BE09AE7000CE3EE /* ImageView.h in Headers */ = {isa = PBXBuildFile; fileRef = 114F64C01BE09AE7000CE3EE /* ImageView.h */; };
-		114F64D81BE09AE7000CE3EE /* ImageView.h in Headers */ = {isa = PBXBuildFile; fileRef = 114F64C01BE09AE7000CE3EE /* ImageView.h */; };
-		114F64D91BE09AE7000CE3EE /* Interface3d.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64C11BE09AE7000CE3EE /* Interface3d.cpp */; };
-		114F64DA1BE09AE7000CE3EE /* Interface3d.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64C11BE09AE7000CE3EE /* Interface3d.cpp */; };
-		114F64DB1BE09AE7000CE3EE /* Interface3d.h in Headers */ = {isa = PBXBuildFile; fileRef = 114F64C21BE09AE7000CE3EE /* Interface3d.h */; };
-		114F64DC1BE09AE7000CE3EE /* Interface3d.h in Headers */ = {isa = PBXBuildFile; fileRef = 114F64C21BE09AE7000CE3EE /* Interface3d.h */; };
-		114F64DD1BE09AE7000CE3EE /* Label.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64C31BE09AE7000CE3EE /* Label.cpp */; };
-		114F64DE1BE09AE7000CE3EE /* Label.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64C31BE09AE7000CE3EE /* Label.cpp */; };
-		114F64DF1BE09AE7000CE3EE /* Label.h in Headers */ = {isa = PBXBuildFile; fileRef = 114F64C41BE09AE7000CE3EE /* Label.h */; };
-		114F64E01BE09AE7000CE3EE /* Label.h in Headers */ = {isa = PBXBuildFile; fileRef = 114F64C41BE09AE7000CE3EE /* Label.h */; };
-		114F64E11BE09AE7000CE3EE /* ScrollView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64C51BE09AE7000CE3EE /* ScrollView.cpp */; };
-		114F64E21BE09AE7000CE3EE /* ScrollView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64C51BE09AE7000CE3EE /* ScrollView.cpp */; };
-		114F64E31BE09AE7000CE3EE /* ScrollView.h in Headers */ = {isa = PBXBuildFile; fileRef = 114F64C61BE09AE7000CE3EE /* ScrollView.h */; };
-		114F64E41BE09AE7000CE3EE /* ScrollView.h in Headers */ = {isa = PBXBuildFile; fileRef = 114F64C61BE09AE7000CE3EE /* ScrollView.h */; };
-		114F64E51BE09AE7000CE3EE /* View.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64C71BE09AE7000CE3EE /* View.cpp */; };
-		114F64E61BE09AE7000CE3EE /* View.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64C71BE09AE7000CE3EE /* View.cpp */; };
-		114F64E71BE09AE7000CE3EE /* View.h in Headers */ = {isa = PBXBuildFile; fileRef = 114F64C81BE09AE7000CE3EE /* View.h */; };
-		114F64E81BE09AE7000CE3EE /* View.h in Headers */ = {isa = PBXBuildFile; fileRef = 114F64C81BE09AE7000CE3EE /* View.h */; };
-		114F64E91BE09AE7000CE3EE /* Button.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64C91BE09AE7000CE3EE /* Button.cpp */; };
-		114F64EA1BE09AE7000CE3EE /* Button.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64C91BE09AE7000CE3EE /* Button.cpp */; };
-		114F64EB1BE09AE7000CE3EE /* TextManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64CA1BE09AE7000CE3EE /* TextManager.cpp */; };
-		114F64EC1BE09AE7000CE3EE /* TextManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64CA1BE09AE7000CE3EE /* TextManager.cpp */; };
-		114F64ED1BE09AE7000CE3EE /* Button.h in Headers */ = {isa = PBXBuildFile; fileRef = 114F64CB1BE09AE7000CE3EE /* Button.h */; };
-		114F64EE1BE09AE7000CE3EE /* Button.h in Headers */ = {isa = PBXBuildFile; fileRef = 114F64CB1BE09AE7000CE3EE /* Button.h */; };
-		114F64EF1BE09AE7000CE3EE /* Control.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64CC1BE09AE7000CE3EE /* Control.cpp */; };
-		114F64F01BE09AE7000CE3EE /* Control.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64CC1BE09AE7000CE3EE /* Control.cpp */; };
-		114F64F11BE09AE7000CE3EE /* Control.h in Headers */ = {isa = PBXBuildFile; fileRef = 114F64CD1BE09AE7000CE3EE /* Control.h */; };
-		114F64F21BE09AE7000CE3EE /* Control.h in Headers */ = {isa = PBXBuildFile; fileRef = 114F64CD1BE09AE7000CE3EE /* Control.h */; };
-		114F64F31BE09AE7000CE3EE /* Selector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64CE1BE09AE7000CE3EE /* Selector.cpp */; };
-		114F64F41BE09AE7000CE3EE /* Selector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64CE1BE09AE7000CE3EE /* Selector.cpp */; };
-		114F64F51BE09AE7000CE3EE /* Selector.h in Headers */ = {isa = PBXBuildFile; fileRef = 114F64CF1BE09AE7000CE3EE /* Selector.h */; };
-		114F64F61BE09AE7000CE3EE /* Selector.h in Headers */ = {isa = PBXBuildFile; fileRef = 114F64CF1BE09AE7000CE3EE /* Selector.h */; };
-		114F64F71BE09AE7000CE3EE /* Slider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64D01BE09AE7000CE3EE /* Slider.cpp */; };
-		114F64F81BE09AE7000CE3EE /* Slider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64D01BE09AE7000CE3EE /* Slider.cpp */; };
-		114F64F91BE09AE7000CE3EE /* Slider.h in Headers */ = {isa = PBXBuildFile; fileRef = 114F64D11BE09AE7000CE3EE /* Slider.h */; };
-		114F64FA1BE09AE7000CE3EE /* Slider.h in Headers */ = {isa = PBXBuildFile; fileRef = 114F64D11BE09AE7000CE3EE /* Slider.h */; };
-		114F64FB1BE09AE7000CE3EE /* Suite.h in Headers */ = {isa = PBXBuildFile; fileRef = 114F64D21BE09AE7000CE3EE /* Suite.h */; };
-		114F64FC1BE09AE7000CE3EE /* Suite.h in Headers */ = {isa = PBXBuildFile; fileRef = 114F64D21BE09AE7000CE3EE /* Suite.h */; };
-		114F64FD1BE09AE7000CE3EE /* Suite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64D31BE09AE7000CE3EE /* Suite.cpp */; };
-		114F64FE1BE09AE7000CE3EE /* Suite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64D31BE09AE7000CE3EE /* Suite.cpp */; };
-		114F64FF1BE09AE7000CE3EE /* TextManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 114F64D41BE09AE7000CE3EE /* TextManager.h */; };
-		114F65001BE09AE7000CE3EE /* TextManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 114F64D41BE09AE7000CE3EE /* TextManager.h */; };
+		1146C15E1C07263400434C81 /* Button.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1146C1481C07263400434C81 /* Button.cpp */; };
+		1146C15F1C07263400434C81 /* Button.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1146C1481C07263400434C81 /* Button.cpp */; };
+		1146C1601C07263400434C81 /* Button.h in Headers */ = {isa = PBXBuildFile; fileRef = 1146C1491C07263400434C81 /* Button.h */; };
+		1146C1611C07263400434C81 /* Button.h in Headers */ = {isa = PBXBuildFile; fileRef = 1146C1491C07263400434C81 /* Button.h */; };
+		1146C1621C07263400434C81 /* Control.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1146C14A1C07263400434C81 /* Control.cpp */; };
+		1146C1631C07263400434C81 /* Control.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1146C14A1C07263400434C81 /* Control.cpp */; };
+		1146C1641C07263400434C81 /* Control.h in Headers */ = {isa = PBXBuildFile; fileRef = 1146C14B1C07263400434C81 /* Control.h */; };
+		1146C1651C07263400434C81 /* Control.h in Headers */ = {isa = PBXBuildFile; fileRef = 1146C14B1C07263400434C81 /* Control.h */; };
+		1146C1661C07263400434C81 /* ImageView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1146C14C1C07263400434C81 /* ImageView.cpp */; };
+		1146C1671C07263400434C81 /* ImageView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1146C14C1C07263400434C81 /* ImageView.cpp */; };
+		1146C1681C07263400434C81 /* ImageView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1146C14D1C07263400434C81 /* ImageView.h */; };
+		1146C1691C07263400434C81 /* ImageView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1146C14D1C07263400434C81 /* ImageView.h */; };
+		1146C16A1C07263400434C81 /* Interface3d.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1146C14E1C07263400434C81 /* Interface3d.cpp */; };
+		1146C16B1C07263400434C81 /* Interface3d.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1146C14E1C07263400434C81 /* Interface3d.cpp */; };
+		1146C16C1C07263400434C81 /* Interface3d.h in Headers */ = {isa = PBXBuildFile; fileRef = 1146C14F1C07263400434C81 /* Interface3d.h */; };
+		1146C16D1C07263400434C81 /* Interface3d.h in Headers */ = {isa = PBXBuildFile; fileRef = 1146C14F1C07263400434C81 /* Interface3d.h */; };
+		1146C16E1C07263400434C81 /* Label.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1146C1501C07263400434C81 /* Label.cpp */; };
+		1146C16F1C07263400434C81 /* Label.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1146C1501C07263400434C81 /* Label.cpp */; };
+		1146C1701C07263400434C81 /* Label.h in Headers */ = {isa = PBXBuildFile; fileRef = 1146C1511C07263400434C81 /* Label.h */; };
+		1146C1711C07263400434C81 /* Label.h in Headers */ = {isa = PBXBuildFile; fileRef = 1146C1511C07263400434C81 /* Label.h */; };
+		1146C1721C07263400434C81 /* ScrollView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1146C1521C07263400434C81 /* ScrollView.cpp */; };
+		1146C1731C07263400434C81 /* ScrollView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1146C1521C07263400434C81 /* ScrollView.cpp */; };
+		1146C1741C07263400434C81 /* ScrollView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1146C1531C07263400434C81 /* ScrollView.h */; };
+		1146C1751C07263400434C81 /* ScrollView.h in Headers */ = {isa = PBXBuildFile; fileRef = 1146C1531C07263400434C81 /* ScrollView.h */; };
+		1146C1761C07263400434C81 /* Selector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1146C1541C07263400434C81 /* Selector.cpp */; };
+		1146C1771C07263400434C81 /* Selector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1146C1541C07263400434C81 /* Selector.cpp */; };
+		1146C1781C07263400434C81 /* Selector.h in Headers */ = {isa = PBXBuildFile; fileRef = 1146C1551C07263400434C81 /* Selector.h */; };
+		1146C1791C07263400434C81 /* Selector.h in Headers */ = {isa = PBXBuildFile; fileRef = 1146C1551C07263400434C81 /* Selector.h */; };
+		1146C17A1C07263400434C81 /* Slider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1146C1561C07263400434C81 /* Slider.cpp */; };
+		1146C17B1C07263400434C81 /* Slider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1146C1561C07263400434C81 /* Slider.cpp */; };
+		1146C17C1C07263400434C81 /* Slider.h in Headers */ = {isa = PBXBuildFile; fileRef = 1146C1571C07263400434C81 /* Slider.h */; };
+		1146C17D1C07263400434C81 /* Slider.h in Headers */ = {isa = PBXBuildFile; fileRef = 1146C1571C07263400434C81 /* Slider.h */; };
+		1146C17E1C07263400434C81 /* Suite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1146C1581C07263400434C81 /* Suite.cpp */; };
+		1146C17F1C07263400434C81 /* Suite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1146C1581C07263400434C81 /* Suite.cpp */; };
+		1146C1801C07263400434C81 /* Suite.h in Headers */ = {isa = PBXBuildFile; fileRef = 1146C1591C07263400434C81 /* Suite.h */; };
+		1146C1811C07263400434C81 /* Suite.h in Headers */ = {isa = PBXBuildFile; fileRef = 1146C1591C07263400434C81 /* Suite.h */; };
+		1146C1821C07263400434C81 /* TextManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1146C15A1C07263400434C81 /* TextManager.cpp */; };
+		1146C1831C07263400434C81 /* TextManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1146C15A1C07263400434C81 /* TextManager.cpp */; };
+		1146C1841C07263400434C81 /* TextManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 1146C15B1C07263400434C81 /* TextManager.h */; };
+		1146C1851C07263400434C81 /* TextManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 1146C15B1C07263400434C81 /* TextManager.h */; };
+		1146C1861C07263400434C81 /* View.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1146C15C1C07263400434C81 /* View.cpp */; };
+		1146C1871C07263400434C81 /* View.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1146C15C1C07263400434C81 /* View.cpp */; };
+		1146C1881C07263400434C81 /* View.h in Headers */ = {isa = PBXBuildFile; fileRef = 1146C15D1C07263400434C81 /* View.h */; };
+		1146C1891C07263400434C81 /* View.h in Headers */ = {isa = PBXBuildFile; fileRef = 1146C15D1C07263400434C81 /* View.h */; };
 		114F650A1BE0A512000CE3EE /* Factory.h in Headers */ = {isa = PBXBuildFile; fileRef = 114F65051BE0A512000CE3EE /* Factory.h */; };
 		114F650B1BE0A512000CE3EE /* Factory.h in Headers */ = {isa = PBXBuildFile; fileRef = 114F65051BE0A512000CE3EE /* Factory.h */; };
 		114F650D1BE0A512000CE3EE /* format.cc in Sources */ = {isa = PBXBuildFile; fileRef = 114F65071BE0A512000CE3EE /* format.cc */; };
@@ -63,28 +63,28 @@
 		1104F3C917753F10003EAA2B /* libcinder-view.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libcinder-view.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		1104F3CC17753F10003EAA2B /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		1104F3CF17753F10003EAA2B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		114F64BF1BE09AE7000CE3EE /* ImageView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ImageView.cpp; path = view/ImageView.cpp; sourceTree = "<group>"; };
-		114F64C01BE09AE7000CE3EE /* ImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ImageView.h; path = view/ImageView.h; sourceTree = "<group>"; };
-		114F64C11BE09AE7000CE3EE /* Interface3d.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Interface3d.cpp; path = view/Interface3d.cpp; sourceTree = "<group>"; };
-		114F64C21BE09AE7000CE3EE /* Interface3d.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Interface3d.h; path = view/Interface3d.h; sourceTree = "<group>"; };
-		114F64C31BE09AE7000CE3EE /* Label.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Label.cpp; path = view/Label.cpp; sourceTree = "<group>"; };
-		114F64C41BE09AE7000CE3EE /* Label.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Label.h; path = view/Label.h; sourceTree = "<group>"; };
-		114F64C51BE09AE7000CE3EE /* ScrollView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScrollView.cpp; path = view/ScrollView.cpp; sourceTree = "<group>"; };
-		114F64C61BE09AE7000CE3EE /* ScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScrollView.h; path = view/ScrollView.h; sourceTree = "<group>"; };
-		114F64C71BE09AE7000CE3EE /* View.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = View.cpp; path = view/View.cpp; sourceTree = "<group>"; };
-		114F64C81BE09AE7000CE3EE /* View.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = View.h; path = view/View.h; sourceTree = "<group>"; };
-		114F64C91BE09AE7000CE3EE /* Button.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Button.cpp; path = view/Button.cpp; sourceTree = "<group>"; };
-		114F64CA1BE09AE7000CE3EE /* TextManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextManager.cpp; path = view/TextManager.cpp; sourceTree = "<group>"; };
-		114F64CB1BE09AE7000CE3EE /* Button.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Button.h; path = view/Button.h; sourceTree = "<group>"; };
-		114F64CC1BE09AE7000CE3EE /* Control.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Control.cpp; path = view/Control.cpp; sourceTree = "<group>"; };
-		114F64CD1BE09AE7000CE3EE /* Control.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Control.h; path = view/Control.h; sourceTree = "<group>"; };
-		114F64CE1BE09AE7000CE3EE /* Selector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Selector.cpp; path = view/Selector.cpp; sourceTree = "<group>"; };
-		114F64CF1BE09AE7000CE3EE /* Selector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Selector.h; path = view/Selector.h; sourceTree = "<group>"; };
-		114F64D01BE09AE7000CE3EE /* Slider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Slider.cpp; path = view/Slider.cpp; sourceTree = "<group>"; };
-		114F64D11BE09AE7000CE3EE /* Slider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Slider.h; path = view/Slider.h; sourceTree = "<group>"; };
-		114F64D21BE09AE7000CE3EE /* Suite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Suite.h; path = view/Suite.h; sourceTree = "<group>"; };
-		114F64D31BE09AE7000CE3EE /* Suite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Suite.cpp; path = view/Suite.cpp; sourceTree = "<group>"; };
-		114F64D41BE09AE7000CE3EE /* TextManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextManager.h; path = view/TextManager.h; sourceTree = "<group>"; };
+		1146C1481C07263400434C81 /* Button.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Button.cpp; sourceTree = "<group>"; };
+		1146C1491C07263400434C81 /* Button.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Button.h; sourceTree = "<group>"; };
+		1146C14A1C07263400434C81 /* Control.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Control.cpp; sourceTree = "<group>"; };
+		1146C14B1C07263400434C81 /* Control.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Control.h; sourceTree = "<group>"; };
+		1146C14C1C07263400434C81 /* ImageView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageView.cpp; sourceTree = "<group>"; };
+		1146C14D1C07263400434C81 /* ImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageView.h; sourceTree = "<group>"; };
+		1146C14E1C07263400434C81 /* Interface3d.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Interface3d.cpp; sourceTree = "<group>"; };
+		1146C14F1C07263400434C81 /* Interface3d.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Interface3d.h; sourceTree = "<group>"; };
+		1146C1501C07263400434C81 /* Label.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Label.cpp; sourceTree = "<group>"; };
+		1146C1511C07263400434C81 /* Label.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Label.h; sourceTree = "<group>"; };
+		1146C1521C07263400434C81 /* ScrollView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollView.cpp; sourceTree = "<group>"; };
+		1146C1531C07263400434C81 /* ScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollView.h; sourceTree = "<group>"; };
+		1146C1541C07263400434C81 /* Selector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Selector.cpp; sourceTree = "<group>"; };
+		1146C1551C07263400434C81 /* Selector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Selector.h; sourceTree = "<group>"; };
+		1146C1561C07263400434C81 /* Slider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Slider.cpp; sourceTree = "<group>"; };
+		1146C1571C07263400434C81 /* Slider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Slider.h; sourceTree = "<group>"; };
+		1146C1581C07263400434C81 /* Suite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Suite.cpp; sourceTree = "<group>"; };
+		1146C1591C07263400434C81 /* Suite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Suite.h; sourceTree = "<group>"; };
+		1146C15A1C07263400434C81 /* TextManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextManager.cpp; sourceTree = "<group>"; };
+		1146C15B1C07263400434C81 /* TextManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextManager.h; sourceTree = "<group>"; };
+		1146C15C1C07263400434C81 /* View.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = View.cpp; sourceTree = "<group>"; };
+		1146C15D1C07263400434C81 /* View.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = View.h; sourceTree = "<group>"; };
 		114F65051BE0A512000CE3EE /* Factory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Factory.h; sourceTree = "<group>"; };
 		114F65071BE0A512000CE3EE /* format.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = format.cc; sourceTree = "<group>"; };
 		114F65081BE0A512000CE3EE /* format.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = format.h; sourceTree = "<group>"; };
@@ -149,10 +149,39 @@
 			children = (
 				114F65061BE0A512000CE3EE /* cppformat */,
 				114F65041BE0A512000CE3EE /* mason */,
-				11576A44196F591600BE66B3 /* view */,
+				1146C1471C07263400434C81 /* ui */,
 			);
 			name = src;
 			path = ../src;
+			sourceTree = "<group>";
+		};
+		1146C1471C07263400434C81 /* ui */ = {
+			isa = PBXGroup;
+			children = (
+				1146C1481C07263400434C81 /* Button.cpp */,
+				1146C1491C07263400434C81 /* Button.h */,
+				1146C14A1C07263400434C81 /* Control.cpp */,
+				1146C14B1C07263400434C81 /* Control.h */,
+				1146C14C1C07263400434C81 /* ImageView.cpp */,
+				1146C14D1C07263400434C81 /* ImageView.h */,
+				1146C14E1C07263400434C81 /* Interface3d.cpp */,
+				1146C14F1C07263400434C81 /* Interface3d.h */,
+				1146C1501C07263400434C81 /* Label.cpp */,
+				1146C1511C07263400434C81 /* Label.h */,
+				1146C1521C07263400434C81 /* ScrollView.cpp */,
+				1146C1531C07263400434C81 /* ScrollView.h */,
+				1146C1541C07263400434C81 /* Selector.cpp */,
+				1146C1551C07263400434C81 /* Selector.h */,
+				1146C1561C07263400434C81 /* Slider.cpp */,
+				1146C1571C07263400434C81 /* Slider.h */,
+				1146C1581C07263400434C81 /* Suite.cpp */,
+				1146C1591C07263400434C81 /* Suite.h */,
+				1146C15A1C07263400434C81 /* TextManager.cpp */,
+				1146C15B1C07263400434C81 /* TextManager.h */,
+				1146C15C1C07263400434C81 /* View.cpp */,
+				1146C15D1C07263400434C81 /* View.h */,
+			);
+			path = ui;
 			sourceTree = "<group>";
 		};
 		114F65041BE0A512000CE3EE /* mason */ = {
@@ -172,35 +201,6 @@
 			path = cppformat;
 			sourceTree = "<group>";
 		};
-		11576A44196F591600BE66B3 /* view */ = {
-			isa = PBXGroup;
-			children = (
-				114F64C91BE09AE7000CE3EE /* Button.cpp */,
-				114F64CB1BE09AE7000CE3EE /* Button.h */,
-				114F64CC1BE09AE7000CE3EE /* Control.cpp */,
-				114F64CD1BE09AE7000CE3EE /* Control.h */,
-				114F64BF1BE09AE7000CE3EE /* ImageView.cpp */,
-				114F64C01BE09AE7000CE3EE /* ImageView.h */,
-				114F64C11BE09AE7000CE3EE /* Interface3d.cpp */,
-				114F64C21BE09AE7000CE3EE /* Interface3d.h */,
-				114F64C31BE09AE7000CE3EE /* Label.cpp */,
-				114F64C41BE09AE7000CE3EE /* Label.h */,
-				114F64C51BE09AE7000CE3EE /* ScrollView.cpp */,
-				114F64C61BE09AE7000CE3EE /* ScrollView.h */,
-				114F64CE1BE09AE7000CE3EE /* Selector.cpp */,
-				114F64CF1BE09AE7000CE3EE /* Selector.h */,
-				114F64D01BE09AE7000CE3EE /* Slider.cpp */,
-				114F64D11BE09AE7000CE3EE /* Slider.h */,
-				114F64D31BE09AE7000CE3EE /* Suite.cpp */,
-				114F64D21BE09AE7000CE3EE /* Suite.h */,
-				114F64CA1BE09AE7000CE3EE /* TextManager.cpp */,
-				114F64D41BE09AE7000CE3EE /* TextManager.h */,
-				114F64C71BE09AE7000CE3EE /* View.cpp */,
-				114F64C81BE09AE7000CE3EE /* View.h */,
-			);
-			name = view;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -208,19 +208,19 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				114F64F91BE09AE7000CE3EE /* Slider.h in Headers */,
-				114F64FB1BE09AE7000CE3EE /* Suite.h in Headers */,
-				114F64E71BE09AE7000CE3EE /* View.h in Headers */,
-				114F64F51BE09AE7000CE3EE /* Selector.h in Headers */,
-				114F64E31BE09AE7000CE3EE /* ScrollView.h in Headers */,
-				114F64F11BE09AE7000CE3EE /* Control.h in Headers */,
-				114F64ED1BE09AE7000CE3EE /* Button.h in Headers */,
+				1146C1881C07263400434C81 /* View.h in Headers */,
+				1146C1641C07263400434C81 /* Control.h in Headers */,
+				1146C1781C07263400434C81 /* Selector.h in Headers */,
+				1146C1681C07263400434C81 /* ImageView.h in Headers */,
+				1146C1841C07263400434C81 /* TextManager.h in Headers */,
+				1146C1701C07263400434C81 /* Label.h in Headers */,
 				114F650A1BE0A512000CE3EE /* Factory.h in Headers */,
-				114F64DF1BE09AE7000CE3EE /* Label.h in Headers */,
-				114F64FF1BE09AE7000CE3EE /* TextManager.h in Headers */,
+				1146C1741C07263400434C81 /* ScrollView.h in Headers */,
+				1146C16C1C07263400434C81 /* Interface3d.h in Headers */,
 				114F650E1BE0A512000CE3EE /* format.h in Headers */,
-				114F64D71BE09AE7000CE3EE /* ImageView.h in Headers */,
-				114F64DB1BE09AE7000CE3EE /* Interface3d.h in Headers */,
+				1146C1601C07263400434C81 /* Button.h in Headers */,
+				1146C1801C07263400434C81 /* Suite.h in Headers */,
+				1146C17C1C07263400434C81 /* Slider.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -228,19 +228,19 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				114F64FA1BE09AE7000CE3EE /* Slider.h in Headers */,
-				114F64FC1BE09AE7000CE3EE /* Suite.h in Headers */,
-				114F64E81BE09AE7000CE3EE /* View.h in Headers */,
-				114F64F61BE09AE7000CE3EE /* Selector.h in Headers */,
-				114F64E41BE09AE7000CE3EE /* ScrollView.h in Headers */,
-				114F64F21BE09AE7000CE3EE /* Control.h in Headers */,
-				114F64EE1BE09AE7000CE3EE /* Button.h in Headers */,
+				1146C1891C07263400434C81 /* View.h in Headers */,
+				1146C1651C07263400434C81 /* Control.h in Headers */,
+				1146C1791C07263400434C81 /* Selector.h in Headers */,
+				1146C1691C07263400434C81 /* ImageView.h in Headers */,
+				1146C1851C07263400434C81 /* TextManager.h in Headers */,
+				1146C1711C07263400434C81 /* Label.h in Headers */,
 				114F650B1BE0A512000CE3EE /* Factory.h in Headers */,
-				114F64E01BE09AE7000CE3EE /* Label.h in Headers */,
-				114F65001BE09AE7000CE3EE /* TextManager.h in Headers */,
+				1146C1751C07263400434C81 /* ScrollView.h in Headers */,
+				1146C16D1C07263400434C81 /* Interface3d.h in Headers */,
 				114F650F1BE0A512000CE3EE /* format.h in Headers */,
-				114F64D81BE09AE7000CE3EE /* ImageView.h in Headers */,
-				114F64DC1BE09AE7000CE3EE /* Interface3d.h in Headers */,
+				1146C1611C07263400434C81 /* Button.h in Headers */,
+				1146C1811C07263400434C81 /* Suite.h in Headers */,
+				1146C17D1C07263400434C81 /* Slider.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -313,18 +313,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				114F64FD1BE09AE7000CE3EE /* Suite.cpp in Sources */,
-				114F64F31BE09AE7000CE3EE /* Selector.cpp in Sources */,
-				114F64DD1BE09AE7000CE3EE /* Label.cpp in Sources */,
-				114F64E11BE09AE7000CE3EE /* ScrollView.cpp in Sources */,
-				114F64D91BE09AE7000CE3EE /* Interface3d.cpp in Sources */,
-				114F64D51BE09AE7000CE3EE /* ImageView.cpp in Sources */,
+				1146C1861C07263400434C81 /* View.cpp in Sources */,
+				1146C16E1C07263400434C81 /* Label.cpp in Sources */,
+				1146C1661C07263400434C81 /* ImageView.cpp in Sources */,
+				1146C17E1C07263400434C81 /* Suite.cpp in Sources */,
 				114F65111BE0AA0B000CE3EE /* format.cc in Sources */,
-				114F64E51BE09AE7000CE3EE /* View.cpp in Sources */,
-				114F64EF1BE09AE7000CE3EE /* Control.cpp in Sources */,
-				114F64EB1BE09AE7000CE3EE /* TextManager.cpp in Sources */,
-				114F64F71BE09AE7000CE3EE /* Slider.cpp in Sources */,
-				114F64E91BE09AE7000CE3EE /* Button.cpp in Sources */,
+				1146C15E1C07263400434C81 /* Button.cpp in Sources */,
+				1146C16A1C07263400434C81 /* Interface3d.cpp in Sources */,
+				1146C1621C07263400434C81 /* Control.cpp in Sources */,
+				1146C1761C07263400434C81 /* Selector.cpp in Sources */,
+				1146C17A1C07263400434C81 /* Slider.cpp in Sources */,
+				1146C1721C07263400434C81 /* ScrollView.cpp in Sources */,
+				1146C1821C07263400434C81 /* TextManager.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -332,18 +332,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				114F64FE1BE09AE7000CE3EE /* Suite.cpp in Sources */,
-				114F64F41BE09AE7000CE3EE /* Selector.cpp in Sources */,
-				114F64DE1BE09AE7000CE3EE /* Label.cpp in Sources */,
-				114F64E21BE09AE7000CE3EE /* ScrollView.cpp in Sources */,
-				114F64DA1BE09AE7000CE3EE /* Interface3d.cpp in Sources */,
-				114F64D61BE09AE7000CE3EE /* ImageView.cpp in Sources */,
+				1146C1871C07263400434C81 /* View.cpp in Sources */,
+				1146C16F1C07263400434C81 /* Label.cpp in Sources */,
+				1146C1671C07263400434C81 /* ImageView.cpp in Sources */,
+				1146C17F1C07263400434C81 /* Suite.cpp in Sources */,
 				114F650D1BE0A512000CE3EE /* format.cc in Sources */,
-				114F64E61BE09AE7000CE3EE /* View.cpp in Sources */,
-				114F64F01BE09AE7000CE3EE /* Control.cpp in Sources */,
-				114F64EC1BE09AE7000CE3EE /* TextManager.cpp in Sources */,
-				114F64F81BE09AE7000CE3EE /* Slider.cpp in Sources */,
-				114F64EA1BE09AE7000CE3EE /* Button.cpp in Sources */,
+				1146C15F1C07263400434C81 /* Button.cpp in Sources */,
+				1146C16B1C07263400434C81 /* Interface3d.cpp in Sources */,
+				1146C1631C07263400434C81 /* Control.cpp in Sources */,
+				1146C1771C07263400434C81 /* Selector.cpp in Sources */,
+				1146C17B1C07263400434C81 /* Slider.cpp in Sources */,
+				1146C1731C07263400434C81 /* ScrollView.cpp in Sources */,
+				1146C1831C07263400434C81 /* TextManager.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

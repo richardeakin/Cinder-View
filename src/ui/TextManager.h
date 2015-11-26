@@ -35,7 +35,7 @@ namespace gl {
 	
 }
 
-namespace view {
+namespace ui {
 
 enum class FontFace {
 	NORMAL,
@@ -94,4 +94,4 @@ private:
 	std::mutex				mMutex;
 };
 
-} // namespace view
+} // namespace ui

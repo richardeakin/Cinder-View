@@ -1,13 +1,13 @@
 #pragma once
 
-#include "view/Suite.h"
+#include "ui/Suite.h"
 
-#include "view/Slider.h"
-#include "view/Button.h"
-#include "view/Label.h"
-#include "view/ImageView.h"
+#include "ui/Slider.h"
+#include "ui/Button.h"
+#include "ui/Label.h"
+#include "ui/ImageView.h"
 
-class BasicViewTests : public view::SuiteView {
+class BasicViewTests : public ui::SuiteView {
 public:
 	BasicViewTests();
 
@@ -16,10 +16,10 @@ public:
 private:
 	void keyEvent( ci::app::KeyEvent &event );
 
-	view::ViewRef				mContainerView;
-	view::StrokedRectViewRef	mBorderView;
+	ui::ViewRef				mContainerView;
+	ui::StrokedRectViewRef	mBorderView;
 
-	view::LabelRef				mLabel, mLabelClipped;
-	view::LabelGridRef			mLabelGrid;
-	view::ImageViewRef			mImageView;
+	ui::LabelRef				mLabel, mLabelClipped;
+	ui::LabelGridRef			mLabelGrid;
+	ui::ImageViewRef			mImageView;
 };

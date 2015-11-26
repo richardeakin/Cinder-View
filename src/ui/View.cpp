@@ -19,7 +19,7 @@
  POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "view/View.h"
+#include "ui/View.h"
 
 #include "glm/gtc/epsilon.hpp"
 
@@ -32,7 +32,7 @@
 using namespace std;
 using namespace ci;
 
-namespace view {
+namespace ui {
 
 const float BOUNDS_EPSILON = 0.00001f;
 
@@ -547,4 +547,4 @@ void StrokedRectView::drawRect()
 		gl::drawStrokedRect( getBoundsLocal(), mLineWidth );
 }	
 
-} // namespace view
+} // namespace ui

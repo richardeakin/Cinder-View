@@ -1,11 +1,11 @@
 #pragma once
 
-#include "view/Suite.h"
-#include "view/ScrollView.h"
-#include "view/Button.h"
-#include "view/Label.h"
+#include "ui/Suite.h"
+#include "ui/ScrollView.h"
+#include "ui/Button.h"
+#include "ui/Label.h"
 
-class ScrollTests : public view::SuiteView {
+class ScrollTests : public ui::SuiteView {
 public:
 	ScrollTests();
 
@@ -14,6 +14,6 @@ public:
 private:
 	void keyEvent( ci::app::KeyEvent &event );
 
-	view::ScrollViewRef			mScrollView;
-	view::PagingScrollViewRef	mHorizontalPager, mVerticalPager;
+	ui::ScrollViewRef			mScrollView;
+	ui::PagingScrollViewRef	mHorizontalPager, mVerticalPager;
 };

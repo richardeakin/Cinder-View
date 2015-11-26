@@ -26,7 +26,7 @@
 using namespace ci;
 using namespace std;
 
-namespace view {
+namespace ui {
 
 
 ImageView::ImageView( const ci::Rectf &bounds )
@@ -106,4 +106,4 @@ std::ostream& operator<<( std::ostream &os, const ImageScaleMode &rhs )
 	return os;
 }
 
-} // namespace view
+} // namespace ui

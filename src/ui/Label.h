@@ -21,10 +21,10 @@
 
 #pragma once
 
-#include "view/View.h"
-#include "view/TextManager.h"
+#include "ui/View.h"
+#include "ui/TextManager.h"
 
-namespace view {
+namespace ui {
 
 typedef std::shared_ptr<class Label>		LabelRef;
 typedef std::shared_ptr<class LabelGrid>	LabelGridRef;
@@ -91,4 +91,4 @@ private:
 	ci::ColorA			mTextColor = ci::ColorA::black();
 };
 
-} // namespace view
+} // namespace ui

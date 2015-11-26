@@ -21,21 +21,21 @@
 
 #pragma once
 
-#include "view/View.h"
-#include "view/Button.h"
-#include "view/Selector.h"
-#include "view/Slider.h"
+#include "ui/View.h"
+#include "ui/Button.h"
+#include "ui/Selector.h"
+#include "ui/Slider.h"
 
 #include "mason/Factory.h"
 
 #include "cinder/app/KeyEvent.h"
 
-namespace view {
+namespace ui {
 
 typedef std::shared_ptr<class Suite>		SuiteRef;
 typedef std::shared_ptr<class SuiteView>	SuiteViewRef;
 
-class SuiteView : public view::View {
+class SuiteView : public ui::View {
 public:
 	void connectKeyDown( const std::function<void ( ci::app::KeyEvent& )> &callback );
 
@@ -64,18 +64,18 @@ public:
 
 	void reloadCurrentTest();
 
-	view::ViewRef	getRootView() const	{ return mRootView; }
+	ui::ViewRef	getRootView() const	{ return mRootView; }
 
 private:
 	void resize();
 	void selectTest( const std::string &key );
 
-	view::ViewRef		mRootView;
+	ui::ViewRef		mRootView;
 	SuiteViewRef		mCurrentSuiteView;
-	view::VSelectorRef	mSelector;
+	ui::VSelectorRef	mSelector;
 	std::string			mCurrentTestKey;
 
 	mason::Factory<SuiteView>	mFactory;
 };
 
-} // namespace view
+} // namespace ui

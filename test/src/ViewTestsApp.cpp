@@ -3,7 +3,7 @@
 #include "cinder/gl/gl.h"
 #include "cinder/Log.h"
 
-#include "view/Suite.h"
+#include "ui/Suite.h"
 
 #include "BasicViewTests.h"
 #include "ControlsTest.h"
@@ -20,12 +20,12 @@ class ViewTestsApp : public App {
 	void update() override;
 	void draw() override;
 
-	view::SuiteRef	mTestSuite;
+	ui::SuiteRef	mTestSuite;
 };
 
 void ViewTestsApp::setup()
 {
-	mTestSuite = make_shared<view::Suite>();
+	mTestSuite = make_shared<ui::Suite>();
 
 	mTestSuite->registerSuiteView<BasicViewTests>( "basic" );
 	mTestSuite->registerSuiteView<ControlsTest>( "controls" );

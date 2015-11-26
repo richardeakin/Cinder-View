@@ -21,12 +21,12 @@
 
 #pragma once
 
-#include "view/Control.h"
-#include "view/TextManager.h"
+#include "ui/Control.h"
+#include "ui/TextManager.h"
 
 #include <vector>
 
-namespace view {
+namespace ui {
 
 typedef std::shared_ptr<class VSelector>	VSelectorRef;
 
@@ -86,5 +86,4 @@ public:
 protected:
 };
 
-
-} // namespace view
+} // namespace ui

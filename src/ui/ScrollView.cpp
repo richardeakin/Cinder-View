@@ -19,7 +19,7 @@
  POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "view/ScrollView.h"
+#include "ui/ScrollView.h"
 
 #include "cinder/gl/scoped.h"
 #include "cinder/gl/wrapper.h"
@@ -32,7 +32,7 @@ using namespace std;
 //#define LOG_SCROLL( stream )	CI_LOG_I( stream )
 #define LOG_SCROLL( stream )	( (void)( 0 ) )
 
-namespace view {
+namespace ui {
 
 class ScrollView::ContentView : public View {
   public:
@@ -543,4 +543,4 @@ bool PagingScrollView::isOnLastPage() const
 	return mCurrentPageIndex == getNumPages() - 1;
 }
 
-} // namespace view
+} // namespace ui

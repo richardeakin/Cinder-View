@@ -19,11 +19,11 @@
  POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "view/Control.h"
+#include "ui/Control.h"
 
 using namespace ci;
 
-namespace view {
+namespace ui {
 
 bool Control::hitTestInsideCancelPadding( const vec2 &localPos ) const
 {
@@ -33,4 +33,4 @@ bool Control::hitTestInsideCancelPadding( const vec2 &localPos ) const
 			( localPos.y <= ( getSize().y + mCancelPadding.y2 ) );
 }
 
-} // namespace view
+} // namespace ui

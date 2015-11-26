@@ -19,7 +19,7 @@
  POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "view/Interface3d.h"
+#include "ui/Interface3d.h"
 
 #include "cinder/gl/gl.h"
 #include "cinder/Log.h"
@@ -28,7 +28,7 @@
 using namespace ci;
 using namespace std;
 
-namespace view {
+namespace ui {
 
 const float Z_PLACEMENT = -2.0f;
 const float RAY_PADDING = 0.27f;
@@ -84,4 +84,4 @@ void CoordinateAxisView::draw()
 	gl::drawCoordinateFrame( mArrowLength, headLength, headRadius );
 }
 
-} // namespace view
+} // namespace ui

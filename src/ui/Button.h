@@ -21,10 +21,10 @@
 
 #pragma once
 
-#include "view/Control.h"
-#include "view/TextManager.h"
+#include "ui/Control.h"
+#include "ui/TextManager.h"
 
-namespace view {
+namespace ui {
 
 typedef std::shared_ptr<class Button>	ButtonRef;
 
@@ -76,10 +76,10 @@ protected:
 	ci::ColorA	mColorTitleEnabled = ci::ColorA::gray( 0.2f, 0.6f );
 	bool		mHasColorTitleEnabled = false; // keep track of when user hasn't set the title color for enabled, will use normal color otherwise
 
-	view::TextRef	mTextTitle;
+	TextRef			mTextTitle;
 	std::string		mTitleNormal, mTitleEnabled;
 
 	ci::signals::Signal<void ()>	mSignalPressed, mSignalReleased; // TODO: look at other frameworks (like html5, dart) and see what they name these, and how they organize the events
 };
 
-} // namespace view
+} // namespace ui

@@ -21,10 +21,10 @@
 
 #pragma once
 
-#include "view/View.h"
+#include "ui/View.h"
 #include "cinder/gl/Texture.h"
 
-namespace view {
+namespace ui {
 
 typedef std::shared_ptr<class ImageView>	ImageViewRef;
 
@@ -64,4 +64,4 @@ std::string toString( const ImageScaleMode &scaleMode );
 //! Stream support for ScaleMode
 std::ostream& operator<<( std::ostream &os, const ImageScaleMode &rhs );
 
-} // namespace view
+} // namespace ui

@@ -19,7 +19,7 @@
  POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "view/Selector.h"
+#include "ui/Selector.h"
 
 #include "cinder/gl/gl.h"
 #include "cinder/Log.h"
@@ -27,7 +27,7 @@
 using namespace ci;
 using namespace std;
 
-namespace view {
+namespace ui {
 
 SelectorBase::SelectorBase( const Rectf &bounds )
 	: Control( bounds )
@@ -147,4 +147,4 @@ void SelectorBase::select( const string &label )
 	CI_LOG_E( "unknown label: " << label );
 }
 
-} // namespace view
+} // namespace ui

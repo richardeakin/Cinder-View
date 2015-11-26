@@ -19,7 +19,7 @@
  POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "view/Slider.h"
+#include "ui/Slider.h"
 
 #include "cinder/gl/gl.h"
 
@@ -28,7 +28,7 @@
 using namespace std;
 using namespace ci;
 
-namespace view {
+namespace ui {
 
 SliderBase::SliderBase( const Rectf &bounds )
 	: Control( bounds )
@@ -184,4 +184,4 @@ Rectf VSlider::getValueRect( float sliderPos, float sliderRadius ) const
 	return Rectf( 0, offset - sliderRadius, getWidth(), offset + sliderRadius );
 }
 
-} // namespace view
+} // namespace ui

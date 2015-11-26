@@ -21,10 +21,10 @@
 
 #pragma once
 
-#include "view/Control.h"
-#include "view/TextManager.h"
+#include "ui/Control.h"
+#include "ui/TextManager.h"
 
-namespace view {
+namespace ui {
 
 typedef std::shared_ptr<class HSlider>	HSliderRef;
 typedef std::shared_ptr<class VSlider>	VSliderRef;
@@ -103,4 +103,4 @@ protected:
 	float		getValuePercentage( const ci::vec2 &pos )					override;
 };
 
-} // namespace view
+} // namespace ui

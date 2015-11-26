@@ -20,7 +20,7 @@
 */
 
 
-#include "view/Label.h"
+#include "ui/Label.h"
 
 #include "cinder/gl/gl.h"
 #include "cinder/Log.h"
@@ -31,7 +31,7 @@
 using namespace std;
 using namespace ci;
 
-namespace view {
+namespace ui {
 
 // ----------------------------------------------------------------------------------------------------
 // MARK: - Label
@@ -168,4 +168,4 @@ void LabelGrid::layout()
 	}
 }
 
-} // namespace view
+} // namespace ui

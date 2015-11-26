@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2014, Richard Eakin - All rights reserved.
+ Copyright (c) 2015, Richard Eakin - All rights reserved.
 
  Redistribution and use in source and binary forms, with or without modification, are permitted provided
  that the following conditions are met:
@@ -8,7 +8,7 @@
  the following disclaimer.
  2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and
  the following disclaimer in the documentation and/or other materials provided with the distribution.
- 
+
  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED
  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
  PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
@@ -17,27 +17,33 @@
  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  POSSIBILITY OF SUCH DAMAGE.
-*/
+ */
 
 #pragma once
 
-#include "view/View.h"
+#include "ui/View.h"
 
-namespace view {
+#include "cinder/Camera.h"
 
-class Control : public View {
-public:
-	Control( const ci::Rectf &bounds = ci::Rectf::zero() )	: View( bounds ) {}
+namespace ui {
 
-	void setTouchCanceled( bool cancel )	{ mTouchCanceled = cancel; }
-	bool isTouchCanceled() const			{ return mTouchCanceled; }
+typedef std::shared_ptr<class CoordinateAxisView>		CoordinateAxisViewRef;
+
+//! Draws a 3d coordinate axis of a Camera's Orientation
+class CoordinateAxisView : public View {
+  public:
+	CoordinateAxisView( const ci::Rectf &bounds = ci::Rectf::zero() );
+
+	void	setOrientation( const ci::quat &orientation )	{ mOrientation = orientation; }
 
 protected:
-	bool hitTestInsideCancelPadding( const ci::vec2 &localPos ) const;
+	void layout()	override;
+	void draw()	override;
 
 private:
-	ci::Rectf	mCancelPadding = ci::Rectf( 40, 40, 40, 40 );
-	bool		mTouchCanceled = false;
+	ci::CameraPersp mCoordFrameCam;
+	ci::quat		mOrientation;
+	float			mArrowLength = 0;
 };
 
-} // namespace view
+} // namespace ui

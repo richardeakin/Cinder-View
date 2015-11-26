@@ -19,14 +19,14 @@
  POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "view/Button.h"
+#include "ui/Button.h"
 
 #include "cinder/gl/gl.h"
 
 using namespace ci;
 using namespace std;
 
-namespace view {
+namespace ui {
 
 Button::Button( const Rectf &bounds )
 	: Control( bounds )
@@ -172,4 +172,4 @@ bool Button::touchesEnded( const ci::app::TouchEvent &event )
 	return true;
 }
 
-} // namespace view
+} // namespace ui

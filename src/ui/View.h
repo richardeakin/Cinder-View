@@ -32,7 +32,7 @@
 #include <list>
 #include <memory>
 
-namespace view {
+namespace ui {
 
 typedef std::shared_ptr<class View>				ViewRef;
 typedef std::shared_ptr<class RectView>			RectViewRef;
@@ -212,5 +212,5 @@ protected:
 	ci::Anim<float>		mLineWidth;
 };
 
-} // namespace view
+} // namespace ui
 

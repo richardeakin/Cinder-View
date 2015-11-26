@@ -1,11 +1,11 @@
 #pragma once
 
-#include "view/Suite.h"
+#include "ui/Suite.h"
 
-#include "view/Slider.h"
-#include "view/Button.h"
+#include "ui/Slider.h"
+#include "ui/Button.h"
 
-class ControlsTest : public view::SuiteView {
+class ControlsTest : public ui::SuiteView {
 public:
 	ControlsTest();
 
@@ -14,7 +14,7 @@ public:
 private:
 	void keyEvent( ci::app::KeyEvent &event );
 
-	view::HSliderRef			mHSlider;
-	view::VSliderRef			mVSlider;
-	view::ButtonRef				mButton, mToggle;
+	ui::HSliderRef			mHSlider;
+	ui::VSliderRef			mVSlider;
+	ui::ButtonRef				mButton, mToggle;
 };

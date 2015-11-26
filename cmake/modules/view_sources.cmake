@@ -1,18 +1,18 @@
 
 # view sources
 list( APPEND VIEW_SOURCES
-	${VIEW_SOURCE_PATH}/view/Button.cpp
-	${VIEW_SOURCE_PATH}/view/Control.cpp
-	${VIEW_SOURCE_PATH}/view/ImageView.cpp
-	${VIEW_SOURCE_PATH}/view/Interface3d.cpp
-	${VIEW_SOURCE_PATH}/view/Label.cpp
-#	${VIEW_SOURCE_PATH}/view/Layer.cpp
-	${VIEW_SOURCE_PATH}/view/ScrollView.cpp
-	${VIEW_SOURCE_PATH}/view/Selector.cpp
-	${VIEW_SOURCE_PATH}/view/Slider.cpp
-	${VIEW_SOURCE_PATH}/view/Suite.cpp
-	${VIEW_SOURCE_PATH}/view/TextManager.cpp
-	${VIEW_SOURCE_PATH}/view/View.cpp
+	${VIEW_SOURCE_PATH}/ui/Button.cpp
+	${VIEW_SOURCE_PATH}/ui/Control.cpp
+	${VIEW_SOURCE_PATH}/ui/ImageView.cpp
+	${VIEW_SOURCE_PATH}/ui/Interface3d.cpp
+	${VIEW_SOURCE_PATH}/ui/Label.cpp
+#	${VIEW_SOURCE_PATH}/ui/Layer.cpp
+	${VIEW_SOURCE_PATH}/ui/ScrollView.cpp
+	${VIEW_SOURCE_PATH}/ui/Selector.cpp
+	${VIEW_SOURCE_PATH}/ui/Slider.cpp
+	${VIEW_SOURCE_PATH}/ui/Suite.cpp
+	${VIEW_SOURCE_PATH}/ui/TextManager.cpp
+	${VIEW_SOURCE_PATH}/ui/View.cpp
 )
 
 # cppformat
