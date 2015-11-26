@@ -21,8 +21,10 @@
 
 #include "view/Renderer.h"
 
+#include "cinder/gl/Context.h"
 #include "cinder/gl/wrapper.h"
 #include "cinder/gl/draw.h"
+#include "cinder/Log.h"
 
 using namespace ci;
 using namespace std;
@@ -31,8 +33,29 @@ namespace view {
 
 void Renderer::setColor( const ColorA &color )
 {
-	// TODO: how to manage scope?
 	gl::color( color );
+}
+
+void Renderer::pushColor()
+{
+	mColorStack.push_back( gl::context()->getCurrentColor() );
+}
+
+void Renderer::pushColor( const ci::ColorA &color )
+{
+	pushColor();
+	setColor( color );
+}
+
+void Renderer::popColor()
+{
+	if( mColorStack.empty() ) {
+		CI_LOG_E( "Color stack underflow" );
+	}
+	else {
+		setColor( mColorStack.back() );
+		mColorStack.pop_back();
+	}
 }
 
 void Renderer::drawSolidRect( const Rectf &rect )

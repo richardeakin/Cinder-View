@@ -292,10 +292,14 @@ void View::propagateDraw()
 
 void View::drawImpl()
 {
+	auto renderer = getRenderer();
+
+	renderer->pushColor();
 	if( mBackground )
 		mBackground->draw();
 
 	draw();
+	renderer->popColor();
 }
 
 bool View::hitTest( const vec2 &localPos ) const
@@ -506,17 +510,8 @@ void View::endClip()
 
 void RectView::draw()
 {
-//	ColorA color = mColor;
-//	color.a *= getAlphaCombined();
-//
-//	if( color.a > 0.000001f ) {
-//		gl::ScopedColor colorScope( color );
-//		drawRect();
-//	}
-
 	auto renderer = getRenderer();
-
-	gl::ScopedColor colorScope( getColor() ); // TODO: how to manage scope and draw with Renderer?
+	renderer->setColor( getColor() );
 	renderer->drawSolidRect( getBoundsLocal() );
 }
 
@@ -524,14 +519,12 @@ void RectView::draw()
 void StrokedRectView::draw()
 {
 	auto renderer = getRenderer();
-
-	gl::ScopedColor colorScope( getColor() ); // TODO: how to manage scope and draw with Renderer?
+	renderer->setColor( getColor() );
 
 	if( mLineWidth == 1 )
 		renderer->drawStrokedRect( getBoundsLocal() );
 	else
-		renderer->->drawStrokedRect( getBoundsLocal(), mLineWidth );
-
+		renderer->drawStrokedRect( getBoundsLocal(), mLineWidth );
 }
 
 } // namespace ui

@@ -31,8 +31,14 @@ typedef std::shared_ptr<class Renderer>     RendererRef;
 
 class Renderer {
   public:
-	//! Sets the current color.
+	//! Sets the current color used for rendering
 	void setColor( const ci::ColorA &color );
+	//! Stores the current color.
+	void pushColor();
+	//! Makes \a color the current color used when rendering, first storing the current color.
+	void pushColor( const ci::ColorA &color );
+	//! Restores the color to what was previously set before the last pushColor().
+	void popColor();
 	//! Draws a solid rectangle with dimensions \a rect.
 	void drawSolidRect( const ci::Rectf &rect );
 	//! Draws a stroked rectangle with dimensions \a rect.
@@ -41,7 +47,7 @@ class Renderer {
 	void drawStrokedRect( const ci::Rectf &rect, float lineWidth );
 
   private:
-
+	std::vector<ci::ColorA>		mColorStack;
 };
 
 } // namespace view
