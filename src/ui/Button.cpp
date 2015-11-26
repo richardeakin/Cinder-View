@@ -69,29 +69,16 @@ const ColorA& Button::getTitleColorForState( State state ) const
 
 void Button::draw()
 {
-	float alpha = getAlphaCombined();
-	auto color = getColor();
-	color.a *= alpha;
+	auto renderer = getRenderer();
 
-	gl::ScopedColor colorScope( color );
-	gl::drawSolidRect( getBoundsLocal() );
+	// draw background
+	renderer->setColor( getColor() );
+	renderer->drawSolidRect( getBoundsLocal() );
 
-	drawTitle();
-}
-
-void Button::drawTitle() const
-{
-	const string &title = getTitle();
-	ColorA color = getTitleColor();
-
-	float alpha = getAlphaCombined();
-	color.a *= alpha;
-
-	gl::ScopedColor colorScope( color );
-
+	// draw title
 	const float padding = 6;
-
-	mTextTitle->drawString( title, vec2( padding, getCenter().y + mTextTitle->getDescent() ) );
+	renderer->setColor( getTitleColor() );
+	mTextTitle->drawString( getTitle(), vec2( padding, getCenter().y + mTextTitle->getDescent() ) );
 }
 
 void Button::setEnabled( bool enabled )

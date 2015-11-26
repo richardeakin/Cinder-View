@@ -71,21 +71,15 @@ void SliderBase::setValue( float value, bool emitChanged )
 
 void SliderBase::draw()
 {
-	float alpha = getAlphaCombined();
-	if( alpha < 0.000001f )
-		return;
-
 	const float sliderRadius = mValueThickness / 2;
 	const Rectf valRect = getValueRect( mSliderPos, sliderRadius );
-
-	// TODO it probably isn't correct to multiply all channels by alpha here because we're not in premulled alpha land,
-	// but it looks better given alpha isn't yet handled with layers
-	gl::ScopedColor colorScope( mValueColor * alpha );
-	gl::drawSolidRect( valRect );
-
 	const float padding = 6;
 
-	gl::color( mTitleColor * alpha );
+	auto renderer = getRenderer();
+	renderer->setColor( mValueColor );
+	renderer->drawSolidRect( valRect );
+
+	renderer->setColor( mTitleColor );
 	mTextLabel->drawString( getTitleLabel(), vec2( padding, getCenter().y + mTextLabel->getDescent() ) );
 }
 

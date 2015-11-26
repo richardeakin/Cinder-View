@@ -45,12 +45,7 @@ void ImageView::draw()
 	if( ! mTexture )
 		return;
 
-
-	float alpha = getAlphaCombined();
-	if( alpha > 0.000001f ) {
-		gl::color( ColorA::gray( 1, alpha ) );
-		gl::draw( mTexture, getDestRect() );
-	}
+	gl::draw( mTexture, getDestRect() );
 }
 
 Rectf ImageView::getDestRect() const
