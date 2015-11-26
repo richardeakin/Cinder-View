@@ -37,7 +37,7 @@ void ViewTestsApp::setup()
 void ViewTestsApp::keyDown( app::KeyEvent event )
 {
 	if( event.getChar() == 'p' ) {
-		mTestSuite->getRootView()->printHeirarchy( app::console() );
+		mTestSuite->getGraph()->printHeirarchy( app::console() );
 	}
 }
 

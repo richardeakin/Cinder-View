@@ -26,7 +26,6 @@
 
 #include "cinder/app/TouchEvent.h"
 #include "cinder/app/MouseEvent.h"
-#include "cinder/Signals.h"
 #include "cinder/Tween.h"
 #include "cinder/Rect.h"
 #include "cinder/Color.h"
@@ -44,6 +43,7 @@ class Graph;
 
 class View : public std::enable_shared_from_this<View> {
   public:
+	View( const ci::Rectf &bounds = ci::Rectf::zero() );
 	virtual ~View();
 
 	void		addSubviews( const std::vector<ViewRef> &views );
@@ -53,6 +53,9 @@ class View : public std::enable_shared_from_this<View> {
 	virtual void removeAllSubviews();
 	virtual void removeFromParent();
 	virtual bool containsSubview( const ViewRef &view );
+
+	template<typename ViewT, typename... Args>
+	std::shared_ptr<ViewT> makeSubview( Args&&... args );
 
 	void	setBounds( const ci::Rectf &bounds );
 	void	setPos( const ci::vec2 &position );
@@ -125,29 +128,15 @@ class View : public std::enable_shared_from_this<View> {
 	void	setFillParentEnabled( bool enable = true )	{ mFillParent = enable; }
 	bool	isFillParentEnabled() const					{ return mFillParent; }
 
-	void propagateLayout();
-	void propagateUpdate();
-	void propagateDraw();
-
-	void propagateTouchesBegan( ci::app::TouchEvent &event );
-	void propagateTouchesMoved( ci::app::TouchEvent &event );
-	void propagateTouchesEnded( ci::app::TouchEvent &event );
-
 	//! Informs layout propagation that this View and its subviews need layout() to be called.
 	void setNeedsLayout();
 	//! This is done when the world position should be recalculated but calling layout isn't necessary (ex. when ScrollView offset moves)
 	void setWorldPosDirty();
 
-	//! Connects this View's touches propagation methods to the App's touch event signals
-	void connectTouchEvents( int prioririty = 1 );
-	void disconnectEvents();
-
 	friend std::ostream& operator<<( std::ostream &os, const ViewRef &rhs );
 	void printHeirarchy( std::ostream &os );
 
 protected:
-	View( const ci::Rectf &bounds = ci::Rectf::zero() );
-
 	virtual void layout()		{}
 	virtual void update()		{}
 	virtual void draw()			{}
@@ -170,11 +159,18 @@ private:
 	void calcWorldPos() const;
 	void drawImpl();
 
+	// TODO: consider moving propagation methods to Graph and passing View as argument
+	void propagateLayout();
+	void propagateUpdate();
+	void propagateDraw();
+
+	void propagateTouchesBegan( ci::app::TouchEvent &event );
+	void propagateTouchesMoved( ci::app::TouchEvent &event );
+	void propagateTouchesEnded( ci::app::TouchEvent &event );
+
 	typedef std::map<uint32_t, ci::app::TouchEvent::Touch> TouchMapT;
 
 	TouchMapT								mActiveTouches;
-	int										mEventSlotPriority = 1;
-	std::vector<ci::signals::Connection>	mEventConnections;
 
 	bool					mClipEnabled = false;
 	bool					mInteractive = true;
@@ -197,8 +193,18 @@ private:
 	LayerRef				mLayer;
 
 	friend class Layer;
-//	friend class Graph;
+	friend class Graph;
 };
+
+template<typename ViewT, typename... Args>
+std::shared_ptr<ViewT> View::makeSubview( Args&&... args )
+{
+	static_assert( std::is_base_of<View, ViewT>::value, "ViewT must inherit from view::View" );
+
+	std::shared_ptr<ViewT> result( new ViewT( std::forward<Args>( args )... ) );
+	addSubview( result );
+	return result;
+}
 
 class RectView : public View {
 public:

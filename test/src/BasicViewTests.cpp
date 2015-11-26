@@ -59,7 +59,6 @@ BasicViewTests::BasicViewTests()
 {
 	mContainerView = make_shared<View>();
 	mContainerView->getBackground()->setColor( Color::gray( 0.75f ) );
-	mContainerView->connectTouchEvents();
 	mContainerView->setLabel( "container" );
 
 	Rectf childBounds = Rectf( 30, 30, 300, 100 );

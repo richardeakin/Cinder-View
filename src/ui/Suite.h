@@ -25,6 +25,7 @@
 #include "ui/Button.h"
 #include "ui/Selector.h"
 #include "ui/Slider.h"
+#include "ui/Graph.h"
 
 #include "mason/Factory.h"
 
@@ -60,17 +61,18 @@ public:
 
 	void selectTest( size_t index );
 	size_t getCurrentTestIndex() const	{ return mSelector->getSelectedIndex(); }
+	view::VSelectorRef	getSelector() const	{ return mSelector; }
 	const std::string& getCurrentTestKey() const { return mCurrentTestKey; }
 
 	void reloadCurrentTest();
 
-	ui::ViewRef	getRootView() const	{ return mRootView; }
+	view::GraphRef	getGraph() const	{ return mGraph; }
 
 private:
 	void resize();
 	void selectTest( const std::string &key );
 
-	ui::ViewRef		mRootView;
+	view::GraphRef		mGraph;
 	SuiteViewRef		mCurrentSuiteView;
 	ui::VSelectorRef	mSelector;
 	std::string			mCurrentTestKey;

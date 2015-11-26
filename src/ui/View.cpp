@@ -45,9 +45,6 @@ View::View( const ci::Rectf &bounds )
 
 View::~View()
 {
-	if( ! mEventConnections.empty() )
-		disconnectEvents();
-
 	for( auto &subview : mSubviews )
 		subview->mParent = nullptr;
 }
@@ -411,47 +408,6 @@ void printRecursive( ostream &os, const ViewRef &view, size_t depth )
 void View::printHeirarchy( ostream &os )
 {
 	printRecursive( os, shared_from_this(), 0 );
-}
-
-void View::connectTouchEvents( int priority )
-{
-	mEventSlotPriority = priority;
-
-	if( ! mEventConnections.empty() )
-		disconnectEvents();
-
-	auto window = app::getWindow();
-
-	if( app::App::get()->isMultiTouchEnabled() ) {
-		mEventConnections.push_back( window->getSignalTouchesBegan().connect( mEventSlotPriority,	bind( &View::propagateTouchesBegan, this, placeholders::_1 ) ) );
-		mEventConnections.push_back( window->getSignalTouchesMoved().connect( mEventSlotPriority,	bind( &View::propagateTouchesMoved, this, placeholders::_1 ) ) );
-		mEventConnections.push_back( window->getSignalTouchesEnded().connect( mEventSlotPriority,	bind( &View::propagateTouchesEnded, this, placeholders::_1 ) ) );
-	}
-	else {
-		mEventConnections.push_back( window->getSignalMouseDown().connect( mEventSlotPriority, [&]( app::MouseEvent &event ) {
-			app::TouchEvent touchEvent( event.getWindow(), vector<app::TouchEvent::Touch>( 1, app::TouchEvent::Touch( event.getPos(), vec2( 0 ), 0, 0, &event ) ) );
-			propagateTouchesBegan( touchEvent );
-			event.setHandled( touchEvent.isHandled() );
-		} ) );
-		mEventConnections.push_back( window->getSignalMouseDrag().connect( mEventSlotPriority, [&]( app::MouseEvent &event ) {
-			app::TouchEvent touchEvent( event.getWindow(), vector<app::TouchEvent::Touch>( 1, app::TouchEvent::Touch( event.getPos(), vec2( 0 ), 0, 0, &event ) ) );
-			propagateTouchesMoved( touchEvent );
-			event.setHandled( touchEvent.isHandled() );
-		} ) );
-		mEventConnections.push_back( window->getSignalMouseUp().connect( mEventSlotPriority, [&]( app::MouseEvent &event ) {
-			app::TouchEvent touchEvent( event.getWindow(), vector<app::TouchEvent::Touch>( 1, app::TouchEvent::Touch( event.getPos(), vec2( 0 ), 0, 0, &event ) ) );
-			propagateTouchesEnded( touchEvent );
-			event.setHandled( touchEvent.isHandled() );
-		} ) );
-	}
-}
-
-void View::disconnectEvents()
-{
-	for( auto &connection : mEventConnections )
-		connection.disconnect();
-
-	mEventConnections.clear();
 }
 
 void View::propagateTouchesBegan( ci::app::TouchEvent &event )

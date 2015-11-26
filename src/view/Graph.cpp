@@ -20,6 +20,7 @@
 */
 
 #include "view/Graph.h"
+#include "view/View.h"
 
 #include "cinder/app/AppBase.h"
 
@@ -38,26 +39,72 @@ Graph::Graph( const ci::app::WindowRef &window )
 		}
 
 		mWindow = app->getWindow();
+		mMultiTouchEnabled = app->isMultiTouchEnabled();
 	}
 
 	mRenderer = make_shared<view::Renderer>();
 }
 
-ViewRef Graph::getRootView()
+Graph::~Graph()
 {
-	if( ! mRootView ) {
-		mRootView.reset( new View );
-	}
+	if( ! mEventConnections.empty() )
+		disconnectEvents();
 }
+
+//ViewRef Graph::getRootView()
+//{
+//	if( ! mRootView ) {
+//		mRootView.reset( new View( mWindow->getBounds() ) );
+//	}
+//}
 
 void Graph::update()
 {
-
+	propagateUpdate();
 }
 
 void Graph::draw()
 {
+	propagateDraw();
+}
 
+void Graph::connectTouchEvents( int priority )
+{
+	mEventSlotPriority = priority;
+
+	if( ! mEventConnections.empty() )
+		disconnectEvents();
+
+	if( mMultiTouchEnabled ) {
+		mEventConnections.push_back( mWindow->getSignalTouchesBegan().connect( mEventSlotPriority,	bind( &View::propagateTouchesBegan, this, placeholders::_1 ) ) );
+		mEventConnections.push_back( mWindow->getSignalTouchesMoved().connect( mEventSlotPriority,	bind( &View::propagateTouchesMoved, this, placeholders::_1 ) ) );
+		mEventConnections.push_back( mWindow->getSignalTouchesEnded().connect( mEventSlotPriority,	bind( &View::propagateTouchesEnded, this, placeholders::_1 ) ) );
+	}
+	else {
+		mEventConnections.push_back( mWindow->getSignalMouseDown().connect( mEventSlotPriority, [&]( app::MouseEvent &event ) {
+			app::TouchEvent touchEvent( event.getWindow(), vector<app::TouchEvent::Touch>( 1, app::TouchEvent::Touch( event.getPos(), vec2( 0 ), 0, 0, &event ) ) );
+			propagateTouchesBegan( touchEvent );
+			event.setHandled( touchEvent.isHandled() );
+		} ) );
+		mEventConnections.push_back( mWindow->getSignalMouseDrag().connect( mEventSlotPriority, [&]( app::MouseEvent &event ) {
+			app::TouchEvent touchEvent( event.getWindow(), vector<app::TouchEvent::Touch>( 1, app::TouchEvent::Touch( event.getPos(), vec2( 0 ), 0, 0, &event ) ) );
+			propagateTouchesMoved( touchEvent );
+			event.setHandled( touchEvent.isHandled() );
+		} ) );
+		mEventConnections.push_back( mWindow->getSignalMouseUp().connect( mEventSlotPriority, [&]( app::MouseEvent &event ) {
+			app::TouchEvent touchEvent( event.getWindow(), vector<app::TouchEvent::Touch>( 1, app::TouchEvent::Touch( event.getPos(), vec2( 0 ), 0, 0, &event ) ) );
+			propagateTouchesEnded( touchEvent );
+			event.setHandled( touchEvent.isHandled() );
+		} ) );
+	}
+}
+
+void Graph::disconnectEvents()
+{
+	for( auto &connection : mEventConnections )
+		connection.disconnect();
+
+	mEventConnections.clear();
 }
 
 } // namespace view

@@ -22,9 +22,11 @@
 #pragma once
 
 #include "view/Renderer.h"
+#include "view/View.h"
 
 #include "cinder/Cinder.h"
 #include "cinder/Exception.h"
+#include "cinder/Signals.h"
 
 namespace cinder { namespace app {
 
@@ -34,13 +36,14 @@ typedef std::shared_ptr<class Window>   WindowRef;
 
 namespace view {
 
-typedef std::shared_ptr<class View>				ViewRef;
+typedef std::shared_ptr<class Graph>	GraphRef;
+typedef std::shared_ptr<class View>		ViewRef;
 
-class Graph {
+//! This is where it all starts! Construct a Graph as the root of your UI scene graph, add other views to it.
+class Graph : public View {
   public:
-	Graph( const ci::app::WindowRef &window );
-
-	ViewRef getRootView();
+	Graph( const ci::app::WindowRef &window = nullptr );
+	~Graph();
 
 	RendererRef getRenderer()       { return mRenderer; }
 	RendererRef getRenderer() const { return mRenderer; }
@@ -48,10 +51,17 @@ class Graph {
 	void update();
 	void draw();
 
+	//! Connects this View's touches propagation methods to the App's touch event signals
+	void connectTouchEvents( int prioririty = 1 );
+	void disconnectEvents();
+
   private:
-	ViewRef             mRootView;
 	RendererRef         mRenderer;
 	ci::app::WindowRef  mWindow;
+	bool                mMultiTouchEnabled = false;
+	int					mEventSlotPriority = 1;
+
+	std::vector<ci::signals::Connection>	mEventConnections;
 };
 
 class GraphExc : public ci::Exception {

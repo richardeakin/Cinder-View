@@ -20,6 +20,7 @@
 */
 
 #include "ui/Suite.h"
+
 #include "cinder/app/App.h"
 #include "cinder/Log.h"
 #include "cinder/audio/Context.h"
@@ -44,11 +45,11 @@ void SuiteView::connectKeyDown( const std::function<void( ci::app::KeyEvent& )> 
 
 Suite::Suite()
 {
-	mRootView = make_shared<ui::View>( app::getWindowBounds() );
-	mRootView->setLabel( "Suite root" );
-	mRootView->connectTouchEvents();
+	mGraph = make_shared<view::Graph>();
+	mGraph->setLabel( "Suite root" );
+	mGraph->connectTouchEvents();
 
-	mSelector = make_shared<ui::VSelector>(); // bounds is set in resize()
+	mSelector = mGraph->makeSubview<ui::VSelector>();
 	mSelector->getBackground()->setColor( ColorA::gray( 0, 0.3f ) );
 
 	mSelector->getSignalValueChanged().connect( [this] {
@@ -56,26 +57,24 @@ Suite::Suite()
 		selectTest( mSelector->getSelectedLabel() );
 	} );
 
-	mRootView->addSubview( mSelector );
-
 	app::getWindow()->getSignalResize().connect( bind( &Suite::resize, this ) );
 }
 
 void Suite::resize()
 {
-	mRootView->setSize( app::getWindowSize() );
+	mGraph->setSize( app::getWindowSize() );
 	if( mCurrentSuiteView )
-		mCurrentSuiteView->setSize( mRootView->getSize() ); // TODO: autoresize flags?
+		mCurrentSuiteView->setSize( mGraph->getSize() ); // TODO: autoresize flags? - use fillParentw
 
 	const float padding = 6;
 	const float width = 120; // TODO: calculate widest segment
 	const float height = 22 * mSelector->getSegmentLabels().size();
-	mSelector->setBounds( Rectf( (float)mRootView->getWidth() - width - padding, padding, (float)mRootView->getWidth() - padding, height + padding ) );
+	mSelector->setBounds( Rectf( (float)mGraph->getWidth() - width - padding, padding, (float)mGraph->getWidth() - padding, height + padding ) );
 }
 
 void Suite::selectTest( const string &key )
 {
-	CI_LOG_V( "selecting test: " << key );
+	CI_LOG_V( "selecting test: " << key ); // TODO: register signal instead, move log to test
 
 	// first remove and destroy the current test
 	if( mCurrentSuiteView ) {
@@ -89,9 +88,9 @@ void Suite::selectTest( const string &key )
 		return;
 	}
 
-	suiteView->setBounds( Rectf( 0, 0, mRootView->getWidth(), mRootView->getHeight() ) );
+	suiteView->setBounds( Rectf( 0, 0, mGraph->getWidth(), mGraph->getHeight() ) );
 	suiteView->setLabel( key );
-	mRootView->insertSubview( suiteView, 0 );
+	mGraph->insertSubview( suiteView, 0 );
 	mCurrentSuiteView = suiteView;
 	mCurrentTestKey = key;
 }
@@ -112,12 +111,12 @@ void Suite::update()
 	if( ! mCurrentSuiteView && ! mSelector->getSegmentLabels().empty() )
 		selectTest( mSelector->getSelectedLabel() );
 
-	mRootView->propagateUpdate();
+	mGraph->update();
 }
 
 void Suite::draw()
 {
-	mRootView->propagateDraw();
+	mGraph->draw();
 }
 
 } // namespace ui
