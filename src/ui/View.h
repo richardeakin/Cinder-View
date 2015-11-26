@@ -63,6 +63,7 @@ class View : public std::enable_shared_from_this<View> {
 	void	setAlpha( float alpha )							{ mAlpha = alpha; }
 
 	float					getAlpha()	const		{ return mAlpha; }
+	// TODO: bring this back, but it doesn't walk up graph. Instead the current combined alpha is stored in Renderer, Layer, or Graph
 //	float					getAlphaCombined() const;
 	//! Returns the bounds of this View, relative to its parent (or self if there is no parent).
 	ci::Rectf				getBounds() const;
@@ -144,7 +145,7 @@ protected:
 	void beginClip();
 	void endClip();
 
-	void setParent( View *parent );
+	void setParent( View *parent ); // TODO: make private if not used by ScrollView anymore
 
 	// Override to handle UI events. Return true if handled, false otherwise.
 	virtual bool touchesBegan( const ci::app::TouchEvent &event )	{ return false; }

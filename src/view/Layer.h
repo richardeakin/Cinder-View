@@ -21,6 +21,8 @@
 
 #pragma once
 
+#include "view/Renderer.h"
+
 #include "cinder/gl/Fbo.h"
 
 #include <unordered_map>
@@ -90,6 +92,7 @@ class Layer {
 
   private:
 	View*			mView;
+	RendererRef		mRenderer;
 	FrameBufferRef	mFrameBuffer;
 	bool			mRenderTransparencyToFrameBuffer = true;
 };

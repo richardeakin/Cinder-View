@@ -79,6 +79,8 @@ FrameBufferRef FrameBufferCache::getFrameBuffer( const ci::ivec2 &size )
 Layer::Layer( View *view )
 	: mView( view )
 {
+	// TODO: View is constructing Layer in it's constructor, but it doesn't yet have a graph yet so no renderer
+//	mRenderer = mView->getRenderer();
 }
 
 Layer::~Layer()
@@ -141,6 +143,11 @@ void Layer::draw()
 
 		auto destRect = Rectf( 0, 0, mFrameBuffer->mFbo->getWidth(), mFrameBuffer->mFbo->getHeight() ) + mView->getPos();
 		gl::draw( mFrameBuffer->mFbo->getColorTexture(), destRect );
+
+//		writeImage( "framebuffer.png", mFrameBuffer->mFbo->getColorTexture()->createSource() );
+//
+//		gl::color( 0, 1, 0 );
+//		gl::drawStrokedRect( destRect, 2 );
 	}
 	else {
 		gl::popModelMatrix();

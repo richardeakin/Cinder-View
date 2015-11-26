@@ -31,6 +31,11 @@ void ViewTestsApp::setup()
 	mTestSuite->registerSuiteView<ControlsTest>( "controls" );
 	mTestSuite->registerSuiteView<ScrollTests>( "scroll" );
 
+	// TODO: this doesn't cover the case of calling selectTest() directly - should probably add new signal that ties to both Selector and that
+	mTestSuite->getSelector()->getSignalValueChanged().connect( [this] {
+		CI_LOG_I( "selected test index: " << mTestSuite->getCurrentTestIndex() << ", key: " << mTestSuite->getCurrentTestKey() );
+	} );
+
 	mTestSuite->selectTest( 0 );
 }
 
