@@ -19,15 +19,15 @@
  POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "view/Graph.h"
-#include "view/View.h"
+#include "ui/Graph.h"
+#include "ui/View.h"
 
 #include "cinder/app/AppBase.h"
 
 using namespace ci;
 using namespace std;
 
-namespace view {
+namespace ui {
 
 Graph::Graph( const ci::app::WindowRef &window )
 	: mWindow( window )
@@ -45,7 +45,7 @@ Graph::Graph( const ci::app::WindowRef &window )
 		setBounds( mWindow->getBounds() );
 	}
 
-	mRenderer = make_shared<view::Renderer>();
+	mRenderer = make_shared<ui::Renderer>();
 }
 
 Graph::~Graph()
@@ -103,4 +103,4 @@ void Graph::disconnectEvents()
 	mEventConnections.clear();
 }
 
-} // namespace view
+} // namespace ui

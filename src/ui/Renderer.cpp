@@ -19,7 +19,7 @@
  POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "view/Renderer.h"
+#include "ui/Renderer.h"
 
 #include "cinder/gl/Context.h"
 #include "cinder/gl/wrapper.h"
@@ -29,7 +29,7 @@
 using namespace ci;
 using namespace std;
 
-namespace view {
+namespace ui {
 
 void Renderer::setColor( const ColorA &color )
 {
@@ -73,4 +73,4 @@ void Renderer::drawStrokedRect( const Rectf &rect, float lineWidth )
 	gl::drawStrokedRect( rect, lineWidth );
 }
 
-} // namespace view
+} // namespace ui

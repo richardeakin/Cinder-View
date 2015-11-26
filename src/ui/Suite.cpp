@@ -45,7 +45,7 @@ void SuiteView::connectKeyDown( const std::function<void( ci::app::KeyEvent& )> 
 
 Suite::Suite()
 {
-	mGraph = make_shared<view::Graph>();
+	mGraph = make_shared<ui::Graph>();
 	mGraph->setLabel( "Suite root" );
 	mGraph->connectTouchEvents();
 

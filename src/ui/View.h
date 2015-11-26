@@ -21,8 +21,8 @@
 
 #pragma once
 
-#include "view/Layer.h"
-#include "view/Renderer.h"
+#include "ui/Layer.h"
+#include "ui/Renderer.h"
 
 #include "cinder/app/TouchEvent.h"
 #include "cinder/app/MouseEvent.h"
@@ -200,7 +200,7 @@ private:
 template<typename ViewT, typename... Args>
 std::shared_ptr<ViewT> View::makeSubview( Args&&... args )
 {
-	static_assert( std::is_base_of<View, ViewT>::value, "ViewT must inherit from view::View" );
+	static_assert( std::is_base_of<View, ViewT>::value, "ViewT must inherit from ui::View" );
 
 	std::shared_ptr<ViewT> result( new ViewT( std::forward<Args>( args )... ) );
 	addSubview( result );

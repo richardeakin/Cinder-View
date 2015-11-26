@@ -21,55 +21,33 @@
 
 #pragma once
 
-#include "view/Renderer.h"
-#include "view/View.h"
-
 #include "cinder/Cinder.h"
-#include "cinder/Exception.h"
-#include "cinder/Signals.h"
+#include "cinder/Color.h"
+#include "cinder/Rect.h"
 
-namespace cinder { namespace app {
+namespace ui {
 
-typedef std::shared_ptr<class Window>   WindowRef;
+typedef std::shared_ptr<class Renderer>     RendererRef;
 
-} } // namespace ci::app
-
-namespace view {
-
-typedef std::shared_ptr<class Graph>	GraphRef;
-typedef std::shared_ptr<class View>		ViewRef;
-
-//! This is where it all starts! Construct a Graph as the root of your UI scene graph, add other views to it.
-class Graph : public View {
+class Renderer {
   public:
-	Graph( const ci::app::WindowRef &window = nullptr );
-	~Graph();
-
-	RendererRef getRenderer()       { return mRenderer; }
-	RendererRef getRenderer() const { return mRenderer; }
-
-	void propagateUpdate();
-	void propagateDraw();
-
-	//! Connects this View's touches propagation methods to the Window's touch event signals
-	void connectTouchEvents( int prioririty = 1 );
-	//! Disconnects touches propagation methods.
-	void disconnectEvents();
+	//! Sets the current color used for rendering
+	void setColor( const ci::ColorA &color );
+	//! Stores the current color.
+	void pushColor();
+	//! Makes \a color the current color used when rendering, first storing the current color.
+	void pushColor( const ci::ColorA &color );
+	//! Restores the color to what was previously set before the last pushColor().
+	void popColor();
+	//! Draws a solid rectangle with dimensions \a rect.
+	void drawSolidRect( const ci::Rectf &rect );
+	//! Draws a stroked rectangle with dimensions \a rect.
+	void drawStrokedRect( const ci::Rectf &rect );
+	//! Draws a stroked rectangle centered around \a rect, with a line width of \a lineWidth
+	void drawStrokedRect( const ci::Rectf &rect, float lineWidth );
 
   private:
-	RendererRef         mRenderer;
-	ci::app::WindowRef  mWindow;
-	bool                mMultiTouchEnabled = false;
-	int					mEventSlotPriority = 1;
-
-	std::vector<ci::signals::Connection>	mEventConnections;
+	std::vector<ci::ColorA>		mColorStack;
 };
 
-class GraphExc : public ci::Exception {
-  public:
-	GraphExc( const std::string &description )
-		: Exception( description )
-	{}
-};
-
-} // namespace view
+} // namespace ui

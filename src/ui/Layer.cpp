@@ -19,8 +19,8 @@
  POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "view/Layer.h"
-#include "view/View.h"
+#include "ui/Layer.h"
+#include "ui/View.h"
 
 #include "cinder/Log.h"
 
@@ -31,7 +31,7 @@
 using namespace ci;
 using namespace std;
 
-namespace view {
+namespace ui {
 
 FrameBuffer::FrameBuffer( const Format &format )
 {
@@ -154,4 +154,4 @@ void Layer::draw()
 	}
 }
 
-} // namespace view
+} // namespace ui

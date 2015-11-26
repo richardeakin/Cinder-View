@@ -21,13 +21,13 @@
 
 #pragma once
 
-#include "view/Renderer.h"
+#include "ui/Renderer.h"
 
 #include "cinder/gl/Fbo.h"
 
 #include <unordered_map>
 
-namespace view {
+namespace ui {
 
 class View;
 
@@ -50,13 +50,13 @@ class FrameBuffer {
 	cinder::gl::FboRef mFbo;
 };
 
-} // namespace view
+} // namespace ui
 
 namespace std {
 
 template <>
-struct hash<view::FrameBuffer::Format> {
-	inline size_t operator()( const view::FrameBuffer::Format &format ) const
+struct hash<ui::FrameBuffer::Format> {
+	inline size_t operator()( const ui::FrameBuffer::Format &format ) const
 	{
 		return hash<int>()( format.mSize.x ) ^ hash<int>()( format.mSize.y );
 	}
@@ -64,7 +64,7 @@ struct hash<view::FrameBuffer::Format> {
 
 } // namespace std
 
-namespace view {
+namespace ui {
 
 class FrameBufferCache {
   public:
@@ -97,4 +97,4 @@ class Layer {
 	bool			mRenderTransparencyToFrameBuffer = true;
 };
 
-} // namespace view
+} // namespace ui

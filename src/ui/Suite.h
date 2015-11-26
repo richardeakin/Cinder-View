@@ -61,18 +61,18 @@ public:
 
 	void selectTest( size_t index );
 	size_t getCurrentTestIndex() const	{ return mSelector->getSelectedIndex(); }
-	view::VSelectorRef	getSelector() const	{ return mSelector; }
+	ui::VSelectorRef	getSelector() const	{ return mSelector; }
 	const std::string& getCurrentTestKey() const { return mCurrentTestKey; }
 
 	void reloadCurrentTest();
 
-	view::GraphRef	getGraph() const	{ return mGraph; }
+	ui::GraphRef	getGraph() const	{ return mGraph; }
 
 private:
 	void resize();
 	void selectTest( const std::string &key );
 
-	view::GraphRef		mGraph;
+	ui::GraphRef		mGraph;
 	SuiteViewRef		mCurrentSuiteView;
 	ui::VSelectorRef	mSelector;
 	std::string			mCurrentTestKey;
