@@ -7,6 +7,7 @@
 
 #include "BasicViewTests.h"
 #include "ControlsTest.h"
+#include "LayerTest.h"
 #include "ScrollTests.h"
 
 using namespace ci;
@@ -29,6 +30,7 @@ void ViewTestsApp::setup()
 
 	mTestSuite->registerSuiteView<BasicViewTests>( "basic" );
 	mTestSuite->registerSuiteView<ControlsTest>( "controls" );
+	mTestSuite->registerSuiteView<LayerTest>( "layer" );
 	mTestSuite->registerSuiteView<ScrollTests>( "scroll" );
 
 	// TODO: this doesn't cover the case of calling selectTest() directly - should probably add new signal that ties to both Selector and that
