@@ -31,6 +31,8 @@ namespace ui {
 SelectorBase::SelectorBase( const Rectf &bounds )
 	: Control( bounds )
 {
+	setBlendMode( BlendMode::PREMULT_ALPHA );
+
 	mTextLabel = TextManager::loadText( FontFace::NORMAL );
 }
 

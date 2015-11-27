@@ -509,11 +509,22 @@ void View::propagateTouchesEnded( ci::app::TouchEvent &event )
 // MARK: - RectView
 // ----------------------------------------------------------------------------------------------------
 
+RectView::RectView( const ci::Rectf &bounds )
+	: View( bounds )
+{
+	setBlendMode( BlendMode::PREMULT_ALPHA );
+}
+
 void RectView::draw()
 {
 	auto renderer = getRenderer();
 	renderer->setColor( getColor() );
 	renderer->drawSolidRect( getBoundsLocal() );
+}
+
+StrokedRectView::StrokedRectView( const ci::Rectf &bounds )
+	: RectView( bounds )
+{
 }
 
 

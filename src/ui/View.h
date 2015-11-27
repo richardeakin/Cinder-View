@@ -209,9 +209,7 @@ std::shared_ptr<ViewT> View::makeSubview( Args&&... args )
 
 class RectView : public View {
 public:
-	RectView( const ci::Rectf &bounds = ci::Rectf::zero() )
-		: View( bounds )
-	{}
+	RectView( const ci::Rectf &bounds = ci::Rectf::zero() );
 
 	void					setColor( const ci::ColorA &color )	{ mColor = color; }
 	const ci::ColorA&		getColor() const					{ return mColor; }
@@ -227,9 +225,7 @@ private:
 
 class StrokedRectView : public RectView {
 public:
-	StrokedRectView( const ci::Rectf &bounds = ci::Rectf::zero() )
-		: RectView( bounds )
-	{}
+	StrokedRectView( const ci::Rectf &bounds = ci::Rectf::zero() );
 
 	void				setLineWidth( float lineWidth )		{ mLineWidth = lineWidth; }
 	float				getLineWidth() const				{ return mLineWidth; }

@@ -38,7 +38,12 @@ Renderer::Renderer()
 
 void Renderer::setColor( const ColorA &color )
 {
-	gl::color( color );
+	if( mBlendModeStack.back() == BlendMode::PREMULT_ALPHA ) {
+		gl::color( color.r * color.a, color.g * color.a, color.b * color.a, color.a );
+	}
+	else {
+		gl::color( color );
+	}
 }
 
 void Renderer::pushColor()
