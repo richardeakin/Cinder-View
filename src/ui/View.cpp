@@ -26,7 +26,6 @@
 
 #include "cinder/CinderAssert.h"
 #include "cinder/gl/gl.h"
-#include "cinder/app/App.h"
 #include "cinder/Log.h"
 #include "cinder/System.h"
 
@@ -99,6 +98,16 @@ Rectf View::getBoundsLocal() const
 bool View::isBoundsAnimating() const
 {
 	return ( ! mPos.isComplete() || ! mSize.isComplete() );
+}
+
+void View::setClipEnabled( bool enable )
+{
+	getLayer()->setClipEnabled( enable );
+}
+
+bool View::isClipEnabled() const
+{
+	return getLayer()->isClipEnabled();
 }
 
 void View::addSubview( const ViewRef &view )
@@ -494,28 +503,6 @@ void View::propagateTouchesEnded( ci::app::TouchEvent &event )
 	mActiveTouches.erase( touchIt );
 	bool handled = touchesEnded( event );
 	event.setHandled( handled );
-}
-
-void View::beginClip()
-{
-	if( mClipEnabled ) {
-		Rectf worldBounds = getWorldBounds();
-		ivec2 pos = worldBounds.getLowerLeft();
-		pos.y = app::getWindowHeight() - pos.y; // flip y relative to window's bottom left
-
-		auto ctx = gl::context();
-		ctx->pushBoolState( GL_SCISSOR_TEST, GL_TRUE );
-		ctx->pushScissor( std::pair<ivec2, ivec2>( pos, getSize() ) );
-	}
-}
-
-void View::endClip()
-{
-	if( mClipEnabled ) {
-		auto ctx = gl::context();
-		ctx->popBoolState( GL_SCISSOR_TEST );
-		ctx->popScissor();
-	}
 }
 
 // ----------------------------------------------------------------------------------------------------

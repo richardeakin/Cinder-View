@@ -123,8 +123,8 @@ class View : public std::enable_shared_from_this<View> {
 	bool	isUserInteracting() const				{ return ! mActiveTouches.empty(); }
 	bool	isBoundsAnimating() const;
 
-	void	setClipEnabled( bool b = true )			{ mClipEnabled = b; }
-	bool	isClipEnabled() const					{ return mClipEnabled; }
+	void	setClipEnabled( bool enable = true );
+	bool	isClipEnabled() const;
 
 	void	setBlendMode( BlendMode mode )				{ mBlendMode = mode; }
 	BlendMode	getBlendMode() const					{ return mBlendMode; }
@@ -144,9 +144,6 @@ protected:
 	virtual void layout()		{}
 	virtual void update()		{}
 	virtual void draw()			{}
-
-	void beginClip();
-	void endClip();
 
 	void setParent( View *parent ); // TODO: make private if not used by ScrollView anymore
 
@@ -176,7 +173,6 @@ private:
 
 	TouchMapT								mActiveTouches;
 
-	bool					mClipEnabled = false;
 	bool					mInteractive = true;
 	bool					mHidden = false;
 	bool					mNeedsLayout = false;

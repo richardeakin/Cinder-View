@@ -20,11 +20,12 @@
  */
 
 #include "ui/Layer.h"
+#include "ui/Graph.h"
 #include "ui/View.h"
 
 #include "cinder/Log.h"
-
 #include "cinder/gl/gl.h"
+#include "cinder/app/Window.h"
 
 #define ENABLE_FRAMEBUFFER_CACHING 1
 
@@ -125,14 +126,14 @@ void Layer::draw()
 		gl::translate( mView->getPos() );
 	}
 
-	mView->beginClip();
+	beginClip();
 
 	mView->drawImpl();
 
 	for( auto &view : mView->getSubviews() )
 		view->getLayer()->draw();
 
-	mView->endClip();
+	endClip();
 
 	if( mFrameBuffer ) {
 		gl::context()->popFramebuffer();
@@ -151,6 +152,55 @@ void Layer::draw()
 	}
 	else {
 		gl::popModelMatrix();
+	}
+}
+
+void Layer::beginClip()
+{
+	if( mClipEnabled ) {
+		auto window = mView->getGraph()->getWindow();
+
+		// Search up the tree for a FrameBuffer
+		const View *viewWithFrameBuffer = mView;
+		bool hasFrameBufferInParentTree = false;
+		while( viewWithFrameBuffer ) {
+			if( viewWithFrameBuffer->getLayer()->getFrameBuffer() ) {
+				hasFrameBufferInParentTree = true;
+				break;
+			}
+
+			viewWithFrameBuffer = viewWithFrameBuffer->getParent();
+		}
+
+		Rectf viewWorldBounds = mView->getWorldBounds();
+		vec2 lowerLeft = viewWorldBounds.getLowerLeft();
+		if( hasFrameBufferInParentTree ) {
+			// get bounds of view relative to framebuffer. // TODO: need a method like convertPointToView( view, point );
+			Rectf frameBufferWorldBounds = viewWithFrameBuffer->getWorldBounds();
+			Rectf boundsInFrameBuffer = viewWorldBounds - frameBufferWorldBounds.getUpperLeft();
+
+			// Take lower left relative to FrameBuffer, still need to flip y
+			lowerLeft = boundsInFrameBuffer.getLowerLeft();
+			lowerLeft.y = frameBufferWorldBounds.getHeight() - lowerLeft.y;
+		}
+		else {
+			// x is already in windows coordinates, flip y relative to window's bottom left
+			lowerLeft.y = window->getHeight() - lowerLeft.y;
+		}
+
+		auto ctx = gl::context();
+		ctx->pushBoolState( GL_SCISSOR_TEST, GL_TRUE );
+		ctx->pushScissor( std::pair<ivec2, ivec2>( lowerLeft, mView->getSize() ) );
+	}
+}
+
+void Layer::endClip()
+{
+	if( mClipEnabled ) {
+
+		auto ctx = gl::context();
+		ctx->popBoolState( GL_SCISSOR_TEST );
+		ctx->popScissor();
 	}
 }
 

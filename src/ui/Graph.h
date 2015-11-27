@@ -48,6 +48,8 @@ class Graph : public View {
 	RendererRef getRenderer()       { return mRenderer; }
 	RendererRef getRenderer() const { return mRenderer; }
 
+	ci::app::WindowRef	getWindow() const	{ return mWindow; }
+
 	void propagateUpdate();
 	void propagateDraw();
 

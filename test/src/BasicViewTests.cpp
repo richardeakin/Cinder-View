@@ -100,7 +100,7 @@ BasicViewTests::BasicViewTests()
 
 	mLabelClipped = make_shared<ui::Label>();
 	mLabelClipped->setText( "blah blah blah blah blah" );
-//	mLabelClipped->setClipEnabled(); // FIXME: broken when rendering to fbo
+	mLabelClipped->setClipEnabled();
 	mLabelClipped->setTextColor( Color::white() );
 	mLabelClipped->getBackground()->setColor( Color( 0, 0, 0.4 ) );
 

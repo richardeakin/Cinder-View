@@ -90,11 +90,20 @@ class Layer {
 	void setRenderTransparencyToFrameBufferEnabled( bool enable )	{ mRenderTransparencyToFrameBuffer = enable; }
 	bool isRenderTransparencyToFrameBufferEnabled() const			{ return mRenderTransparencyToFrameBuffer; }
 
+	FrameBufferRef  getFrameBuffer() const      { return mFrameBuffer; }
+
+	void setClipEnabled( bool enable )	{ mClipEnabled = enable; }
+	bool isClipEnabled() const			{ return mClipEnabled; }
+
   private:
+	void beginClip();
+	void endClip();
+
 	View*			mView;
 	RendererRef		mRenderer;
 	FrameBufferRef	mFrameBuffer;
 	bool			mRenderTransparencyToFrameBuffer = true;
+	bool			mClipEnabled = false;
 };
 
 } // namespace ui
