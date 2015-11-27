@@ -301,6 +301,8 @@ void View::drawImpl()
 {
 	auto renderer = getRenderer();
 
+	renderer->pushBlendMode( mBlendMode ); // TEMPORARY: this will be handled by Layer
+
 	if( mBackground ) {
 		renderer->pushColor();
 		mBackground->draw();
@@ -310,6 +312,8 @@ void View::drawImpl()
 	renderer->pushColor();
 	draw();
 	renderer->popColor();
+
+	renderer->popBlendMode();
 }
 
 bool View::hitTest( const vec2 &localPos ) const

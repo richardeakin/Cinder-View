@@ -28,7 +28,6 @@ using namespace std;
 
 namespace ui {
 
-
 ImageView::ImageView( const ci::Rectf &bounds )
 	: View( bounds )
 {

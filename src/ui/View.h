@@ -126,6 +126,9 @@ class View : public std::enable_shared_from_this<View> {
 	void	setClipEnabled( bool b = true )			{ mClipEnabled = b; }
 	bool	isClipEnabled() const					{ return mClipEnabled; }
 
+	void	setBlendMode( BlendMode mode )				{ mBlendMode = mode; }
+	BlendMode	getBlendMode() const					{ return mBlendMode; }
+
 	void	setFillParentEnabled( bool enable = true )	{ mFillParent = enable; }
 	bool	isFillParentEnabled() const					{ return mFillParent; }
 
@@ -186,6 +189,7 @@ private:
 	ci::Anim<ci::vec2>		mSize;
 	std::string				mLabel;
 	bool					mFillParent = false; // TODO: replace this with proper layout system
+	BlendMode				mBlendMode = BlendMode::ALPHA;
 
 	View*					mParent = nullptr;
 	Graph*                  mGraph = nullptr;

@@ -29,8 +29,15 @@ namespace ui {
 
 typedef std::shared_ptr<class Renderer>     RendererRef;
 
+enum class BlendMode {
+	ALPHA,
+	PREMULT_ALPHA
+};
+
 class Renderer {
   public:
+	Renderer();
+
 	//! Sets the current color used for rendering
 	void setColor( const ci::ColorA &color );
 	//! Stores the current color.
@@ -39,6 +46,12 @@ class Renderer {
 	void pushColor( const ci::ColorA &color );
 	//! Restores the color to what was previously set before the last pushColor().
 	void popColor();
+	//!
+	void setBlendMode( BlendMode mode );
+	//!
+	void pushBlendMode( BlendMode mode );
+	//!
+	void popBlendMode();
 	//! Draws a solid rectangle with dimensions \a rect.
 	void drawSolidRect( const ci::Rectf &rect );
 	//! Draws a stroked rectangle with dimensions \a rect.
@@ -48,6 +61,7 @@ class Renderer {
 
   private:
 	std::vector<ci::ColorA>		mColorStack;
+	std::vector<BlendMode>		mBlendModeStack;
 };
 
 } // namespace ui

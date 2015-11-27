@@ -31,6 +31,11 @@ using namespace std;
 
 namespace ui {
 
+Renderer::Renderer()
+{
+	mBlendModeStack.push_back( BlendMode::ALPHA );
+}
+
 void Renderer::setColor( const ColorA &color )
 {
 	gl::color( color );
@@ -55,6 +60,38 @@ void Renderer::popColor()
 	else {
 		setColor( mColorStack.back() );
 		mColorStack.pop_back();
+	}
+}
+
+void Renderer::setBlendMode( BlendMode mode )
+{
+	auto ctx = gl::context();
+	switch( mode ) {
+		case BlendMode::ALPHA:
+			gl::enableAlphaBlending();
+		break;
+		case BlendMode::PREMULT_ALPHA:
+			gl::enableAlphaBlendingPremult();
+		break;
+		default:
+			CI_ASSERT_NOT_REACHABLE();
+	}
+}
+
+void Renderer::pushBlendMode( BlendMode mode )
+{
+	mBlendModeStack.push_back( mode );
+	setBlendMode( mode );
+}
+
+void Renderer::popBlendMode()
+{
+	if( mBlendModeStack.empty() ) {
+		CI_LOG_E( "BlendMode stack underflow" );
+	}
+	else {
+		setBlendMode( mBlendModeStack.back() );
+		mBlendModeStack.pop_back();
 	}
 }
 
