@@ -60,7 +60,7 @@ protected:
 	{
 		RectView::draw();
 
-		gl::ScopedColor colorScope( mLocalTouchColor );
+		getRenderer()->setColor( mLocalTouchColor );
 		gl::drawSolidCircle( mLocalTouchPos, 10.0f );
 	}
 
