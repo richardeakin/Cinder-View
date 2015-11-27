@@ -301,10 +301,13 @@ void View::drawImpl()
 {
 	auto renderer = getRenderer();
 
-	renderer->pushColor();
-	if( mBackground )
+	if( mBackground ) {
+		renderer->pushColor();
 		mBackground->draw();
+		renderer->popColor();
+	}
 
+	renderer->pushColor();
 	draw();
 	renderer->popColor();
 }
