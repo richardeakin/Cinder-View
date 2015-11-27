@@ -63,8 +63,7 @@ class View : public std::enable_shared_from_this<View> {
 	void	setAlpha( float alpha )							{ mAlpha = alpha; }
 
 	float					getAlpha()	const		{ return mAlpha; }
-	// TODO: bring this back, but it doesn't walk up graph. Instead the current combined alpha is stored in Renderer, Layer, or Graph
-//	float					getAlphaCombined() const;
+	float					getAlphaCombined() const;
 	//! Returns the bounds of this View, relative to its parent (or self if there is no parent).
 	ci::Rectf				getBounds() const;
 	//! Returns the bounds of thie View, relative to itself (origin = [0,0]).
@@ -145,18 +144,16 @@ protected:
 	virtual void update()		{}
 	virtual void draw()			{}
 
-	void setParent( View *parent ); // TODO: make private if not used by ScrollView anymore
-
 	// Override to handle UI events. Return true if handled, false otherwise.
 	virtual bool touchesBegan( const ci::app::TouchEvent &event )	{ return false; }
 	virtual bool touchesMoved( const ci::app::TouchEvent &event )	{ return false; }
 	virtual bool touchesEnded( const ci::app::TouchEvent &event )	{ return false; }
 
 private:
-
 	View( const View& )				= delete;
 	View& operator=( const View& )	= delete;
 
+	void setParent( View *parent );
 	void calcWorldPos() const;
 	void drawImpl();
 
@@ -171,7 +168,7 @@ private:
 
 	typedef std::map<uint32_t, ci::app::TouchEvent::Touch> TouchMapT;
 
-	TouchMapT								mActiveTouches;
+	TouchMapT				mActiveTouches;
 
 	bool					mInteractive = true;
 	bool					mHidden = false;

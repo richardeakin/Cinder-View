@@ -391,14 +391,15 @@ const RectViewRef& View::getBackground()
 	return mBackground;
 }
 
-//float View::getAlphaCombined() const
-//{
-//	float alpha = mAlpha;
-//	if( mParent )
-//		alpha *= mParent->getAlphaCombined();
-//
-//	return alpha;
-//}
+float View::getAlphaCombined() const
+{
+	// TODO: Get this value from Renderer, which knows current alpha based on layer
+	float alpha = mAlpha;
+	if( mParent )
+		alpha *= mParent->getAlphaCombined();
+
+	return alpha;
+}
 
 std::string View::getName() const
 {
