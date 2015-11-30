@@ -3,10 +3,10 @@ project( ViewTests )
 
 set( APP_TARGET "ViewTests" )
 set( REPO_PATH "${PROJECT_SOURCE_DIR}/.." )
-set( CINDER_PATH "${PROJECT_SOURCE_DIR}/../../cinder" )
 set( CMAKE_VERBOSE_MAKEFILE ON )
 
 message( STATUS "REPO_PATH: ${REPO_PATH}" )
+message( STATUS "[test] CINDER_PATH_FULL: ${CINDER_PATH_FULL}" )
 
 get_property( inc_dirs DIRECTORY PROPERTY INCLUDE_DIRECTORIES )
 message( STATUS "[test] include dirs: ${inc_dirs}" )
@@ -29,7 +29,7 @@ include_directories(
 ci_make_app(
 	APP_NAME ${APP_TARGET}
 	SOURCES ${APP_SOURCES}
-	CINDER_PATH ${CINDER_PATH}
+	CINDER_PATH ${CINDER_PATH_FULL}
 )
 
 target_link_libraries( ${APP_TARGET} cinder-view )
