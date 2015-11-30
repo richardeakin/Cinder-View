@@ -9,8 +9,6 @@ option( CINDER_VIEW_TEST_ENABLE "ViewTests" OFF )
 set( CMAKE_VERBOSE_MAKEFILE ON )
 set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14" )
 
-add_definitions( -Wfatal-errors )
-
 get_filename_component( CINDER_PATH_FULL "${CMAKE_CURRENT_SOURCE_DIR}/../cinder" ABSOLUTE )
 get_filename_component( VIEW_SOURCE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/src" ABSOLUTE )
 
@@ -40,9 +38,9 @@ set( VIEW_INCLUDE_SYSTEM
 include_directories( ${VIEW_INCLUDE_USER} )
 include_directories( ${VIEW_INCLUDE_SYSTEM} SYSTEM )
 
-include( ${CMAKE_CURRENT_SOURCE_DIR}/cmake/view_sources.cmake )
+add_definitions( -Wfatal-errors )
 
-add_library( cinder-view ${VIEW_SOURCES} )
+include( ${CMAKE_CURRENT_SOURCE_DIR}/cmake/libcinder-view.cmake )
 
 #export( TARGETS cinder-view FILE cinder-view-exports.cmake )
 

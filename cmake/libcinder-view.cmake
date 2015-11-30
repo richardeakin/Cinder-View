@@ -21,3 +21,5 @@ list( APPEND VIEW_SOURCES
 list( APPEND VIEW_SOURCES
 	${VIEW_SOURCE_PATH}/cppformat/format.cc
 )
+
+add_library( cinder-view ${VIEW_SOURCES} )
