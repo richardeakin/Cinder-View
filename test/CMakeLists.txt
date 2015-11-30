@@ -8,10 +8,10 @@ set( CMAKE_VERBOSE_MAKEFILE ON )
 
 message( STATUS "REPO_PATH: ${REPO_PATH}" )
 
-#add_subdirectory( ${REPO_PATH} ${REPO_PATH}/build )
-add_subdirectory( ${REPO_PATH} ${PROJECT_BINARY_DIR}/lib ) # for use in CLion
+get_property( inc_dirs DIRECTORY PROPERTY INCLUDE_DIRECTORIES )
+message( STATUS "[test] include dirs: ${inc_dirs}" )
 
-include( "${REPO_PATH}/cmake/modules/ci_make_app.cmake" )
+include( "${REPO_PATH}/cmake/ci_make_app.cmake" )
 
 set( APP_SOURCES
 	src/BasicViewTests.cpp
