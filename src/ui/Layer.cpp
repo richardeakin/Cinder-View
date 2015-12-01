@@ -82,6 +82,8 @@ Layer::Layer( View *view )
 {
 	// TODO: View is constructing Layer in it's constructor, but it doesn't yet have a graph yet so no renderer
 //	mRenderer = mView->getRenderer();
+
+	CI_LOG_I( "view: " << view->getName() );
 }
 
 Layer::~Layer()
@@ -91,6 +93,29 @@ Layer::~Layer()
 float Layer::getAlpha() const
 {
 	return mView->getAlpha();
+}
+
+// TODO: this assumes its always called at the top-level of the Layer's view tree, but that won't be the case when things like alpha or clip change
+void Layer::configureViewList()
+{
+	CI_LOG_I( "mView: " << mView->getName() );
+
+	function<void( View *view )> addViewToDrawList = [&] ( View *view ) {
+		if( view->getLayer() ) {
+			return;
+		}
+
+		CI_LOG_I( "adding view to draw list: '" << view->getName() << "'" );
+		mViews.push_back( view );
+		for( const auto &subview : view->getSubviews() ) {
+			addViewToDrawList( subview.get() );
+		}
+	};
+
+	mViews.clear();
+	addViewToDrawList( mView );
+
+	CI_LOG_I( "mViews.size(): " << mViews.size() ); // TODO NEXT: this is always zero
 }
 
 void Layer::update()
@@ -110,14 +135,21 @@ void Layer::update()
 
 void Layer::draw()
 {
-	if( mView->isHidden() )
+	for( auto &view : mViews ) {
+		drawView( view );
+	}
+}
+
+void Layer::drawView( View *view )
+{
+	if( view->isHidden() )
 		return;
 
 	if( mFrameBuffer ) {
 		gl::context()->pushFramebuffer( mFrameBuffer->mFbo );
-		gl::pushViewport( mView->getSize() );
+		gl::pushViewport( mFrameBuffer->getSize() );
 		gl::pushMatrices();
-		gl::setMatricesWindow( mView->getSize() );
+		gl::setMatricesWindow( mFrameBuffer->getSize() );
 
 		gl::clear();
 	}
@@ -128,7 +160,7 @@ void Layer::draw()
 
 	beginClip();
 
-	mView->drawImpl();
+	view->drawImpl();
 
 	for( auto &view : mView->getSubviews() )
 		view->getLayer()->draw();

@@ -46,6 +46,7 @@ Graph::Graph( const ci::app::WindowRef &window )
 	}
 
 	mRenderer = make_shared<ui::Renderer>();
+	configureLayerTree();
 }
 
 Graph::~Graph()
@@ -61,7 +62,9 @@ void Graph::propagateUpdate()
 
 void Graph::propagateDraw()
 {
-	View::propagateDraw();
+	CI_ASSERT( getLayer() );
+
+	getLayer()->draw();
 }
 
 void Graph::connectTouchEvents( int priority )

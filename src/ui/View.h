@@ -149,6 +149,8 @@ protected:
 	virtual bool touchesMoved( const ci::app::TouchEvent &event )	{ return false; }
 	virtual bool touchesEnded( const ci::app::TouchEvent &event )	{ return false; }
 
+	void configureLayerTree();
+
 private:
 	View( const View& )				= delete;
 	View& operator=( const View& )	= delete;
@@ -160,7 +162,7 @@ private:
 	// TODO: consider moving propagation methods to Graph and passing View as argument
 	void propagateLayout();
 	void propagateUpdate();
-	void propagateDraw();
+//	void propagateDraw();
 
 	void propagateTouchesBegan( ci::app::TouchEvent &event );
 	void propagateTouchesMoved( ci::app::TouchEvent &event );

@@ -39,7 +39,7 @@ const float BOUNDS_EPSILON = 0.00001f;
 View::View( const ci::Rectf &bounds )
 	: mPos( bounds.getUpperLeft() ), mSize( vec2( bounds.x2 - bounds.x1, bounds.y2 - bounds.y1 ) )
 {
-	mLayer = make_shared<Layer>( this );
+//	mLayer = make_shared<Layer>( this );
 }
 
 View::~View()
@@ -117,6 +117,8 @@ void View::addSubview( const ViewRef &view )
 	// first set the parent to be us, which will remove it from any existing parent (including this view).
 	view->setParent( this );
 	mSubviews.push_back( view );
+
+	configureLayerTree();
 }
 
 void View::addSubviews( const vector<ViewRef> &views )
@@ -164,6 +166,7 @@ void View::removeFromParent()
 		return;
 
 	mParent->removeSubview( shared_from_this() );
+	configureLayerTree();
 }
 
 ViewRef& View::getSubview( size_t index )
@@ -277,34 +280,39 @@ void View::propagateUpdate()
 	if( hasBackground )
 		mBackground->propagateUpdate();
 
-	mLayer->update();
+	// TODO: this should probably be moved to Graph::propagateUpdate()
+	// - that update needs to manage building the draw list anyway so it doesn't happen repeatedly
+	if( mLayer ) {
+		mLayer->update();
+	}
+
 	update();
 }
 
-void View::propagateDraw()
-{
-#if 1
-	mLayer->draw();
-#else
-	if( mHidden )
-		return;
-
-	beginClip();
-
-	gl::ScopedModelMatrix modelScope1;
-	gl::translate( mPos() );
-
-	if( mBackground )
-		mBackground->draw();
-
-	draw();
-
-	for( auto &view : mSubviews )
-		view->propagateDraw();
-
-	endClip();
-#endif
-}
+//void View::propagateDraw()
+//{
+//#if 1
+//	mLayer->draw(); // TODO: remove, will be called from Layer's draw list
+//#else
+//	if( mHidden )
+//		return;
+//
+//	beginClip();
+//
+//	gl::ScopedModelMatrix modelScope1;
+//	gl::translate( mPos() );
+//
+//	if( mBackground )
+//		mBackground->draw();
+//
+//	draw();
+//
+//	for( auto &view : mSubviews )
+//		view->propagateDraw();
+//
+//	endClip();
+//#endif
+//}
 
 void View::drawImpl()
 {
@@ -323,6 +331,21 @@ void View::drawImpl()
 	renderer->popColor();
 
 	renderer->popBlendMode();
+}
+
+// TODO: here I just want to mark something as needing Layer updates
+// - Layer will manage configuring itself and tree during its own update()
+// - for this reason, need to make sure there is always at least one Layer
+//    - although this could just as well be done from within Graph
+void View::configureLayerTree()
+{
+	if( ! getParent() ) {
+		mLayer = make_shared<Layer>( this );
+		mLayer->configureViewList();
+	}
+	else {
+		getGraph()->getLayer()->configureViewList();
+	}
 }
 
 bool View::hitTest( const vec2 &localPos ) const

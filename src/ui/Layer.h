@@ -47,6 +47,8 @@ class FrameBuffer {
 
 	FrameBuffer( const Format &format );
 
+	ci::ivec2    getSize() const     { return mFbo->getSize(); }
+
 	cinder::gl::FboRef mFbo;
 };
 
@@ -83,6 +85,8 @@ class Layer {
 
 	float	getAlpha() const;
 
+	void configureViewList();
+
 	void update();
 
 	void draw();
@@ -96,6 +100,8 @@ class Layer {
 	bool isClipEnabled() const			{ return mClipEnabled; }
 
   private:
+
+	void drawView( View *view );
 	void beginClip();
 	void endClip();
 
@@ -104,6 +110,8 @@ class Layer {
 	FrameBufferRef	mFrameBuffer;
 	bool			mRenderTransparencyToFrameBuffer = true;
 	bool			mClipEnabled = false;
+
+	std::vector<View *> mViews;
 };
 
 } // namespace ui

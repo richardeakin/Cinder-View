@@ -22,6 +22,7 @@
 #pragma once
 
 #include "ui/Renderer.h"
+#include "ui/Layer.h"
 #include "ui/View.h"
 
 #include "cinder/Cinder.h"
@@ -65,6 +66,12 @@ class Graph : public View {
 	int					mEventSlotPriority = 1;
 
 	std::vector<ci::signals::Connection>	mEventConnections;
+
+	// TODO NEXT: figure out how to build this sucker
+	// - first off, there will be one Layer at the root, this is always required
+	// - during addSubiew(), removeSubview(), and update() need to check if layer config is dirty
+	// - Layers then need a View list for drawing
+	std::list<Layer>	mLayers;
 };
 
 class GraphExc : public ci::Exception {
