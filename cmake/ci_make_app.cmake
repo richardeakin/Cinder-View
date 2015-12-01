@@ -28,7 +28,6 @@ function( ci_make_app )
 	set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE} )
 
 	include_directories( "${ARG_CINDER_PATH}/include" )
-	# include_directories( "${ARG_CINDER_PATH}/boost" SYSTEM )
 
 	if( APPLE )
 		# Find libcinder.a within cinder's lib folder for this build type
@@ -42,9 +41,9 @@ function( ci_make_app )
 		# link in libcinder.a and redistributed dependencies
 		list( APPEND CINDER_LINKED_LIBS
 			${CINDER_LIB}
-			${CINDER_PATH}/lib/macosx/libboost_filesystem.a
-			${CINDER_PATH}/lib/macosx/libboost_system.a
-			${CINDER_PATH}/lib/macosx/libz.a
+			${ARG_CINDER_PATH}/lib/macosx/libboost_filesystem.a
+			${ARG_CINDER_PATH}/lib/macosx/libboost_system.a
+			${ARG_CINDER_PATH}/lib/macosx/libz.a
 		)
 
 		# link in system frameworks
