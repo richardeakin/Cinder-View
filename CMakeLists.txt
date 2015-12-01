@@ -44,7 +44,6 @@ include( ${CMAKE_CURRENT_SOURCE_DIR}/cmake/libcinder-view.cmake )
 
 #export( TARGETS cinder-view FILE cinder-view-exports.cmake )
 
-# TODO: can't build with a target in CLion
-#if( CINDER_VIEW_TEST_ENABLE )
+if( CINDER_VIEW_TEST_ENABLE )
 	add_subdirectory( test )
-#endif()
+endif()
