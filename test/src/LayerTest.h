@@ -15,5 +15,5 @@ private:
 	ui::ViewRef				mContainerView;
 //	ui::StrokedRectViewRef	mBorderView;
 
-	ui::LabelRef				mLabel1, mLabel2, mLabel3;
+	ui::LabelRef mLabelA, mLabelB, mLabelC;
 };
