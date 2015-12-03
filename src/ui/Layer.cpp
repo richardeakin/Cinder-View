@@ -78,10 +78,12 @@ FrameBufferRef FrameBufferCache::getFrameBuffer( const ci::ivec2 &size )
 }
 
 Layer::Layer( View *view )
-	: mView( view )
+	: mRootView( view )
 {
+	CI_ASSERT( view );
+
 	// TODO: View is constructing Layer in it's constructor, but it doesn't yet have a graph yet so no renderer
-//	mRenderer = mView->getRenderer();
+//	mRenderer = mRootView->getRenderer();
 
 	CI_LOG_I( "view: " << view->getName() );
 }
@@ -92,42 +94,43 @@ Layer::~Layer()
 
 float Layer::getAlpha() const
 {
-	return mView->getAlpha();
+	return mRootView->getAlpha();
 }
 
 // TODO: this assumes its always called at the top-level of the Layer's view tree, but that won't be the case when things like alpha or clip change
 void Layer::configureViewList()
 {
-	CI_LOG_I( "mView: " << mView->getName() );
+	CI_LOG_I( "mRootView: " << mRootView->getName() );
 
 	function<void( View *view )> addViewToDrawList = [&] ( View *view ) {
-		if( view->getLayer() ) {
-			return;
-		}
-
 		CI_LOG_I( "adding view to draw list: '" << view->getName() << "'" );
 		mViews.push_back( view );
+		view->mLayer = shared_from_this();
 		for( const auto &subview : view->getSubviews() ) {
+			if( subview->getLayer() ) {
+				continue;
+			}
 			addViewToDrawList( subview.get() );
 		}
 	};
 
 	mViews.clear();
-	addViewToDrawList( mView );
+	addViewToDrawList( mRootView );
+	mNeedsLayout = false;
 
-	CI_LOG_I( "mViews.size(): " << mViews.size() ); // TODO NEXT: this is always zero
+	CI_LOG_I( "mViews.size(): " << mViews.size() );
 }
 
 void Layer::update()
 {
 	if( getAlpha() < 0.9999f && mRenderTransparencyToFrameBuffer ) {
 		if( ! mFrameBuffer ) {
-			CI_LOG_I( "aquiring FrameBuffer for view '" << mView->getName() << "', size: " << mView->getSize() );
-			mFrameBuffer = FrameBufferCache::getFrameBuffer( ivec2( mView->getSize() ) );
+			CI_LOG_I( "aquiring FrameBuffer for view '" << mRootView->getName() << "', size: " << mRootView->getSize() );
+			mFrameBuffer = FrameBufferCache::getFrameBuffer( ivec2( mRootView->getSize() ) );
 		}
 	}
 	else if( mFrameBuffer ) {
-		CI_LOG_I( "removing FrameBuffer for view '" << mView->getName() << "'" );
+		CI_LOG_I( "removing FrameBuffer for view '" << mRootView->getName() << "'" );
 		mFrameBuffer.reset();
 	}
 
@@ -135,16 +138,6 @@ void Layer::update()
 
 void Layer::draw()
 {
-	for( auto &view : mViews ) {
-		drawView( view );
-	}
-}
-
-void Layer::drawView( View *view )
-{
-	if( view->isHidden() )
-		return;
-
 	if( mFrameBuffer ) {
 		gl::context()->pushFramebuffer( mFrameBuffer->mFbo );
 		gl::pushViewport( mFrameBuffer->getSize() );
@@ -154,16 +147,21 @@ void Layer::drawView( View *view )
 		gl::clear();
 	}
 	else {
-		gl::pushModelMatrix();
-		gl::translate( mView->getPos() );
+//		gl::pushModelMatrix();
+//		gl::translate( mRootView->getPos() );
 	}
 
 	beginClip();
 
-	view->drawImpl();
+	for( auto &view : mViews ) {
+		CI_ASSERT( view );
+		
+		// TODO NEXT: this is now always happening for each View, whereas before it wasn't happening if there was a FrameBuffer.
+		gl::ScopedModelMatrix modelScope;
+		gl::translate( view->getPos() );
 
-	for( auto &view : mView->getSubviews() )
-		view->getLayer()->draw();
+		view->drawImpl();
+	}
 
 	endClip();
 
@@ -174,7 +172,7 @@ void Layer::drawView( View *view )
 
 		gl::ScopedColor colorScope( ColorA::gray( getAlpha() ) );
 
-		auto destRect = Rectf( 0, 0, mFrameBuffer->mFbo->getWidth(), mFrameBuffer->mFbo->getHeight() ) + mView->getPos();
+		auto destRect = Rectf( 0, 0, mFrameBuffer->mFbo->getWidth(), mFrameBuffer->mFbo->getHeight() ) + mRootView->getPos();
 		gl::draw( mFrameBuffer->mFbo->getColorTexture(), destRect );
 
 //		writeImage( "framebuffer.png", mFrameBuffer->mFbo->getColorTexture()->createSource() );
@@ -183,17 +181,17 @@ void Layer::drawView( View *view )
 //		gl::drawStrokedRect( destRect, 2 );
 	}
 	else {
-		gl::popModelMatrix();
+//		gl::popModelMatrix();
 	}
 }
 
 void Layer::beginClip()
 {
 	if( mClipEnabled ) {
-		auto window = mView->getGraph()->getWindow();
+		auto window = mRootView->getGraph()->getWindow();
 
 		// Search up the tree for a FrameBuffer
-		const View *viewWithFrameBuffer = mView;
+		const View *viewWithFrameBuffer = mRootView;
 		bool hasFrameBufferInParentTree = false;
 		while( viewWithFrameBuffer ) {
 			if( viewWithFrameBuffer->getLayer()->getFrameBuffer() ) {
@@ -204,7 +202,7 @@ void Layer::beginClip()
 			viewWithFrameBuffer = viewWithFrameBuffer->getParent();
 		}
 
-		Rectf viewWorldBounds = mView->getWorldBounds();
+		Rectf viewWorldBounds = mRootView->getWorldBounds();
 		vec2 lowerLeft = viewWorldBounds.getLowerLeft();
 		if( hasFrameBufferInParentTree ) {
 			// get bounds of view relative to framebuffer. // TODO: need a method like convertPointToView( view, point );
@@ -222,7 +220,7 @@ void Layer::beginClip()
 
 		auto ctx = gl::context();
 		ctx->pushBoolState( GL_SCISSOR_TEST, GL_TRUE );
-		ctx->pushScissor( std::pair<ivec2, ivec2>( lowerLeft, mView->getSize() ) );
+		ctx->pushScissor( std::pair<ivec2, ivec2>( lowerLeft, mRootView->getSize() ) );
 	}
 }
 

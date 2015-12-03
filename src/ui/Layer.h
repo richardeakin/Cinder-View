@@ -25,6 +25,7 @@
 
 #include "cinder/gl/Fbo.h"
 
+#include <memory>
 #include <unordered_map>
 
 namespace ui {
@@ -78,7 +79,7 @@ class FrameBufferCache {
 	std::unordered_map<FrameBuffer::Format, FrameBufferRef>	mCache;
 };
 
-class Layer {
+class Layer : public std::enable_shared_from_this<Layer> {
   public:
 	Layer( View *view );
 	virtual ~Layer();
@@ -96,6 +97,9 @@ class Layer {
 
 	FrameBufferRef  getFrameBuffer() const      { return mFrameBuffer; }
 
+	void setNeedsLayout()               { mNeedsLayout = true; }
+	bool getNeedsLayout() const         { return mNeedsLayout; }
+
 	void setClipEnabled( bool enable )	{ mClipEnabled = enable; }
 	bool isClipEnabled() const			{ return mClipEnabled; }
 
@@ -105,9 +109,10 @@ class Layer {
 	void beginClip();
 	void endClip();
 
-	View*			mView;
+	View*mRootView;
 	RendererRef		mRenderer;
 	FrameBufferRef	mFrameBuffer;
+	bool            mNeedsLayout = true;
 	bool			mRenderTransparencyToFrameBuffer = true;
 	bool			mClipEnabled = false;
 

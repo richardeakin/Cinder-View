@@ -33,7 +33,10 @@ Graph::Graph( const ci::app::WindowRef &window )
 	: mWindow( window )
 {
 	mGraph = this;
-	
+
+	mLayer = make_shared<Layer>( this );
+	mLayers.push_back( mLayer ); // TODO: other Layers need to be added to this in the proper draw order once they are constructed
+
 	if( ! mWindow ) {
 		auto app = app::AppBase::get();
 		if( ! app ) {
@@ -46,7 +49,6 @@ Graph::Graph( const ci::app::WindowRef &window )
 	}
 
 	mRenderer = make_shared<ui::Renderer>();
-	configureLayerTree();
 }
 
 Graph::~Graph()
@@ -58,13 +60,25 @@ Graph::~Graph()
 void Graph::propagateUpdate()
 {
 	View::propagateUpdate();
+
+	for( auto &layer : mLayers ) {
+		if( layer->getNeedsLayout() ) {
+			mLayer->configureViewList();
+		}
+
+		layer->update();
+	}
 }
 
 void Graph::propagateDraw()
 {
 	CI_ASSERT( getLayer() );
 
-	getLayer()->draw();
+//	getLayer()->draw();
+
+	for( auto &layer : mLayers ) {
+		layer->draw();
+	}
 }
 
 void Graph::connectTouchEvents( int priority )

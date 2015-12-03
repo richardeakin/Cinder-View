@@ -149,8 +149,6 @@ protected:
 	virtual bool touchesMoved( const ci::app::TouchEvent &event )	{ return false; }
 	virtual bool touchesEnded( const ci::app::TouchEvent &event )	{ return false; }
 
-	void configureLayerTree();
-
 private:
 	View( const View& )				= delete;
 	View& operator=( const View& )	= delete;

@@ -71,7 +71,7 @@ class Graph : public View {
 	// - first off, there will be one Layer at the root, this is always required
 	// - during addSubiew(), removeSubview(), and update() need to check if layer config is dirty
 	// - Layers then need a View list for drawing
-	std::list<Layer>	mLayers;
+	std::list<LayerRef>	    mLayers;
 };
 
 class GraphExc : public ci::Exception {

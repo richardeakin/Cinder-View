@@ -118,7 +118,8 @@ void View::addSubview( const ViewRef &view )
 	view->setParent( this );
 	mSubviews.push_back( view );
 
-	configureLayerTree();
+	setNeedsLayout();
+//	configureLayerTree();
 }
 
 void View::addSubviews( const vector<ViewRef> &views )
@@ -166,7 +167,8 @@ void View::removeFromParent()
 		return;
 
 	mParent->removeSubview( shared_from_this() );
-	configureLayerTree();
+//	configureLayerTree();
+	setNeedsLayout();
 }
 
 ViewRef& View::getSubview( size_t index )
@@ -227,6 +229,10 @@ void View::setWorldPosDirty()
 
 void View::propagateLayout()
 {
+	if( mLayer ) {
+		mLayer->setNeedsLayout();
+	}
+
 	mWorldPosDirty = true;
 	if( ! mGraph )
 		mGraph = getParent()->mGraph;
@@ -246,8 +252,6 @@ void View::propagateLayout()
 	mNeedsLayout = false;
 
 	for( auto &view : mSubviews ) {
-		if( ! view->mGraph )
-			view->mGraph = mGraph;
 		if( view->mNeedsLayout )
 			view->propagateLayout();
 	}
@@ -280,12 +284,6 @@ void View::propagateUpdate()
 	if( hasBackground )
 		mBackground->propagateUpdate();
 
-	// TODO: this should probably be moved to Graph::propagateUpdate()
-	// - that update needs to manage building the draw list anyway so it doesn't happen repeatedly
-	if( mLayer ) {
-		mLayer->update();
-	}
-
 	update();
 }
 
@@ -316,6 +314,9 @@ void View::propagateUpdate()
 
 void View::drawImpl()
 {
+	if( isHidden() )
+		return;
+
 	auto renderer = getRenderer();
 
 	renderer->pushBlendMode( mBlendMode ); // TEMPORARY: this will be handled by Layer
@@ -331,21 +332,6 @@ void View::drawImpl()
 	renderer->popColor();
 
 	renderer->popBlendMode();
-}
-
-// TODO: here I just want to mark something as needing Layer updates
-// - Layer will manage configuring itself and tree during its own update()
-// - for this reason, need to make sure there is always at least one Layer
-//    - although this could just as well be done from within Graph
-void View::configureLayerTree()
-{
-	if( ! getParent() ) {
-		mLayer = make_shared<Layer>( this );
-		mLayer->configureViewList();
-	}
-	else {
-		getGraph()->getLayer()->configureViewList();
-	}
 }
 
 bool View::hitTest( const vec2 &localPos ) const
