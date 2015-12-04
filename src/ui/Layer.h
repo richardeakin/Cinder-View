@@ -109,14 +109,14 @@ class Layer : public std::enable_shared_from_this<Layer> {
 	void beginClip();
 	void endClip();
 
-	View*mRootView;
+	View*           mRootView;
 	RendererRef		mRenderer;
 	FrameBufferRef	mFrameBuffer;
 	bool            mNeedsLayout = true;
 	bool			mRenderTransparencyToFrameBuffer = true;
 	bool			mClipEnabled = false;
 
-	std::vector<View *> mViews;
+//	std::vector<View *> mViews;
 };
 
 } // namespace ui

@@ -39,13 +39,15 @@ const float BOUNDS_EPSILON = 0.00001f;
 View::View( const ci::Rectf &bounds )
 	: mPos( bounds.getUpperLeft() ), mSize( vec2( bounds.x2 - bounds.x1, bounds.y2 - bounds.y1 ) )
 {
-//	mLayer = make_shared<Layer>( this );
 }
 
 View::~View()
 {
 	for( auto &subview : mSubviews )
 		subview->mParent = nullptr;
+
+	if( mLayer )
+		mLayer->setNeedsLayout();
 }
 
 void View::setPos( const vec2 &position )
@@ -102,12 +104,15 @@ bool View::isBoundsAnimating() const
 
 void View::setClipEnabled( bool enable )
 {
-	getLayer()->setClipEnabled( enable );
+	// TODO: need to mark layer tree dirty, then set a variable that declares we need a layer that can clip
+	mClipEnabled = enable;
+//	getLayer()->setClipEnabled( enable );
 }
 
 bool View::isClipEnabled() const
 {
-	return getLayer()->isClipEnabled();
+//	return getLayer()->isClipEnabled();
+	return mClipEnabled;
 }
 
 void View::addSubview( const ViewRef &view )
@@ -119,7 +124,6 @@ void View::addSubview( const ViewRef &view )
 	mSubviews.push_back( view );
 
 	setNeedsLayout();
-//	configureLayerTree();
 }
 
 void View::addSubviews( const vector<ViewRef> &views )
@@ -167,7 +171,6 @@ void View::removeFromParent()
 		return;
 
 	mParent->removeSubview( shared_from_this() );
-//	configureLayerTree();
 	setNeedsLayout();
 }
 
@@ -218,6 +221,10 @@ void View::setNeedsLayout()
 	mNeedsLayout = true;
 	for( const auto &subview : mSubviews )
 		subview->setNeedsLayout();
+
+	if( mLayer ) {
+		mLayer->setNeedsLayout();
+	}
 }
 
 void View::setWorldPosDirty()
@@ -229,10 +236,6 @@ void View::setWorldPosDirty()
 
 void View::propagateLayout()
 {
-	if( mLayer ) {
-		mLayer->setNeedsLayout();
-	}
-
 	mWorldPosDirty = true;
 	if( ! mGraph )
 		mGraph = getParent()->mGraph;

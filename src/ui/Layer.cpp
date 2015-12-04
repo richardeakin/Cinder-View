@@ -104,7 +104,7 @@ void Layer::configureViewList()
 
 	function<void( View *view )> addViewToDrawList = [&] ( View *view ) {
 		CI_LOG_I( "adding view to draw list: '" << view->getName() << "'" );
-		mViews.push_back( view );
+//		mViews.push_back( view );
 		view->mLayer = shared_from_this();
 		for( const auto &subview : view->getSubviews() ) {
 			if( subview->getLayer() ) {
@@ -114,11 +114,11 @@ void Layer::configureViewList()
 		}
 	};
 
-	mViews.clear();
+//	mViews.clear();
 	addViewToDrawList( mRootView );
 	mNeedsLayout = false;
 
-	CI_LOG_I( "mViews.size(): " << mViews.size() );
+//	CI_LOG_I( "mViews.size(): " << mViews.size() );
 }
 
 void Layer::update()
@@ -153,15 +153,17 @@ void Layer::draw()
 
 	beginClip();
 
-	for( auto &view : mViews ) {
-		CI_ASSERT( view );
-		
-		// TODO NEXT: this is now always happening for each View, whereas before it wasn't happening if there was a FrameBuffer.
-		gl::ScopedModelMatrix modelScope;
-		gl::translate( view->getPos() );
+//	for( auto &view : mViews ) {
+//		CI_ASSERT( view );
+//
+//		// TODO NEXT: fix these translations, the children of 'container' are not getting translated correctly
+//		gl::ScopedModelMatrix modelScope;
+//		gl::translate( view->getPos() );
+//
+//		view->drawImpl();
+//	}
 
-		view->drawImpl();
-	}
+	drawView( mRootView );
 
 	endClip();
 
@@ -182,6 +184,21 @@ void Layer::draw()
 	}
 	else {
 //		gl::popModelMatrix();
+	}
+}
+
+void Layer::drawView( View *view )
+{
+	gl::ScopedModelMatrix modelScope;
+	gl::translate( view->getPos() );
+
+	view->drawImpl();
+
+	auto thisRef = shared_from_this();
+	for( auto &subview : view->getSubviews() ) {
+		if( subview->getLayer() == thisRef ) {
+			drawView( subview.get() );
+		}
 	}
 }
 

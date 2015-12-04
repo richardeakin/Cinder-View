@@ -183,6 +183,7 @@ private:
 	std::string				mLabel;
 	bool					mFillParent = false; // TODO: replace this with proper layout system
 	BlendMode				mBlendMode = BlendMode::ALPHA;
+	bool                    mClipEnabled = false;
 
 	View*					mParent = nullptr;
 	Graph*                  mGraph = nullptr;
