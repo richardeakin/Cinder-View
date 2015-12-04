@@ -53,7 +53,6 @@ Suite::Suite()
 	mSelector->getBackground()->setColor( ColorA::gray( 0, 0.3f ) );
 
 	mSelector->getSignalValueChanged().connect( [this] {
-		CI_LOG_V( "selector changed, index: " << mSelector->getSelectedIndex() << ", label: " << mSelector->getSelectedLabel() );
 		selectTest( mSelector->getSelectedLabel() );
 	} );
 
