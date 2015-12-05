@@ -160,10 +160,6 @@ void Layer::draw()
 
 		gl::clear();
 	}
-	else {
-//		gl::pushModelMatrix();
-//		gl::translate( mRootView->getPos() );
-	}
 
 	beginClip();
 
@@ -176,25 +172,25 @@ void Layer::draw()
 		gl::popViewport();
 		gl::popMatrices();
 
-		gl::ScopedColor colorScope( ColorA::gray( getAlpha() ) );
+		mRootView->getRenderer()->pushColor( ColorA::gray( 1, getAlpha() ) );
 
 		auto destRect = Rectf( 0, 0, mFrameBuffer->mFbo->getWidth(), mFrameBuffer->mFbo->getHeight() ) + mRootView->getPos();
 		gl::draw( mFrameBuffer->mFbo->getColorTexture(), destRect );
+		mRootView->getRenderer()->popColor();
 
 //		writeImage( "framebuffer.png", mFrameBuffer->mFbo->getColorTexture()->createSource() );
 //
 //		gl::color( 0, 1, 0 );
 //		gl::drawStrokedRect( destRect, 2 );
 	}
-	else {
-//		gl::popModelMatrix();
-	}
 }
 
 void Layer::drawView( View *view )
 {
 	gl::ScopedModelMatrix modelScope;
-	gl::translate( view->getPos() );
+
+	if( view != mRootView )
+		gl::translate( view->getPos() );
 
 	view->drawImpl();
 
@@ -202,6 +198,9 @@ void Layer::drawView( View *view )
 	for( auto &subview : view->getSubviews() ) {
 		if( subview->getLayer() == thisRef ) {
 			drawView( subview.get() );
+		}
+		else {
+			subview->getLayer()->draw();
 		}
 	}
 }

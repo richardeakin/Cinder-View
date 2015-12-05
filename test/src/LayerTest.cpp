@@ -14,15 +14,11 @@ const float PADDING = 50;
 LayerTest::LayerTest()
 	: SuiteView()
 {
-	mContainerView = make_shared<View>();
-	mContainerView->getBackground()->setColor( Color::gray( 0.75f ) );
-	mContainerView->setLabel( "container" );
-
-	Rectf childBounds = Rectf( 30, 30, 300, 100 );
-
-//	mBorderView = make_shared<ui::StrokedRectView>();
-//	mBorderView->setColor( ColorA( "red", 1 ) );
-//	mContainerView->addSubview( mBorderView );
+	auto container = make_shared<ui::StrokedRectView>();
+	container->setColor( Color::white() );
+	container->setLineWidth( 6 );
+	container->setLabel( "container" );
+	mContainerView = container;
 
 	const vec2 labelSize = { 200, 200 };
 
@@ -33,7 +29,7 @@ LayerTest::LayerTest()
 	mLabelA->setFontSize( 56 );
 	mLabelA->setAlignment( ui::TextAlignment::CENTER );
 	mLabelA->setTextColor( Color::white() );
-	mLabelA->getBackground()->setColor( Color( 0.8f, 0, 0 ) );
+	mLabelA->getBackground()->setColor( Color( 0, 0, 0.8f ) );
 
 	mLabelB = make_shared<ui::Label>();
 	mLabelB->setText( "B" );
@@ -51,7 +47,7 @@ LayerTest::LayerTest()
 	mLabelC->setFontSize( 56 );
 	mLabelC->setAlignment( ui::TextAlignment::CENTER );
 	mLabelC->setTextColor( Color::white() );
-	mLabelC->getBackground()->setColor( Color( 0, 0, 0.8f ) );
+	mLabelC->getBackground()->setColor( Color( 0.8f, 0, 0 ) );
 	mLabelC->setAlpha( 0.5f );
 
 	mLabelD = make_shared<ui::Label>();

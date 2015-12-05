@@ -239,6 +239,7 @@ void View::setWorldPosDirty()
 		subview->setWorldPosDirty();
 }
 
+// TODO: consider moving layout propagation to Graph, at which point it will also configure layer tree
 void View::propagateLayout()
 {
 	mWorldPosDirty = true;
@@ -305,31 +306,6 @@ void View::propagateUpdate()
 
 	update();
 }
-
-//void View::propagateDraw()
-//{
-//#if 1
-//	mLayer->draw();
-//#else
-//	if( mHidden )
-//		return;
-//
-//	beginClip();
-//
-//	gl::ScopedModelMatrix modelScope1;
-//	gl::translate( mPos() );
-//
-//	if( mBackground )
-//		mBackground->draw();
-//
-//	draw();
-//
-//	for( auto &view : mSubviews )
-//		view->propagateDraw();
-//
-//	endClip();
-//#endif
-//}
 
 void View::drawImpl()
 {
