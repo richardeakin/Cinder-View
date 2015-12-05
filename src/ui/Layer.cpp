@@ -85,7 +85,7 @@ Layer::Layer( View *view )
 	// TODO: View is constructing Layer in it's constructor, but it doesn't yet have a graph yet so no renderer
 //	mRenderer = mRootView->getRenderer();
 
-	CI_LOG_I( "view: " << view->getName() );
+	CI_LOG_I( "root view: " << view->getName() );
 }
 
 Layer::~Layer()
@@ -97,43 +97,57 @@ float Layer::getAlpha() const
 	return mRootView->getAlpha();
 }
 
-// TODO: this assumes its always called at the top-level of the Layer's view tree, but that won't be the case when things like alpha or clip change
+void Layer::setNeedsLayout()
+{
+	mNeedsLayout = true;
+}
+
 void Layer::configureViewList()
 {
 	CI_LOG_I( "mRootView: " << mRootView->getName() );
 
-	function<void( View *view )> addViewToDrawList = [&] ( View *view ) {
-		CI_LOG_I( "adding view to draw list: '" << view->getName() << "'" );
-//		mViews.push_back( view );
-		view->mLayer = shared_from_this();
-		for( const auto &subview : view->getSubviews() ) {
-			if( subview->getLayer() ) {
-				continue;
-			}
-			addViewToDrawList( subview.get() );
-		}
-	};
-
-//	mViews.clear();
-	addViewToDrawList( mRootView );
+	configureView( mRootView );
 	mNeedsLayout = false;
 
-//	CI_LOG_I( "mViews.size(): " << mViews.size() );
+	CI_LOG_I( "complete (" << mRootView->getName() << ")" );
 }
 
-void Layer::update()
+void Layer::configureView( View *view )
 {
-	if( getAlpha() < 0.9999f && mRenderTransparencyToFrameBuffer ) {
-		if( ! mFrameBuffer ) {
-			CI_LOG_I( "aquiring FrameBuffer for view '" << mRootView->getName() << "', size: " << mRootView->getSize() );
-			mFrameBuffer = FrameBufferCache::getFrameBuffer( ivec2( mRootView->getSize() ) );
+	CI_LOG_I( "view: '" << view->getName() << "'" );
+	view->mLayer = shared_from_this();
+
+	if( view->isTransparent() ) {
+		if( mRootView != view ) {
+			// we need a new layer
+			auto layer = mGraph->makeLayer( view );
+			layer->configureViewList();
+		}
+		else {
+			if( ! mFrameBuffer ) {
+				CI_LOG_I( "aquiring FrameBuffer for view '" << mRootView->getName() << "', size: " << mRootView->getSize() );
+				CI_LOG_I( "\t- reason: alpha = " << mRootView->getAlpha() );
+				mFrameBuffer = FrameBufferCache::getFrameBuffer( ivec2( mRootView->getSize() ) );
+				mRootView->mRendersToFrameBuffer = true;
+			}
 		}
 	}
-	else if( mFrameBuffer ) {
-		CI_LOG_I( "removing FrameBuffer for view '" << mRootView->getName() << "'" );
-		mFrameBuffer.reset();
+	else {
+		if( mRootView == view && mFrameBuffer ) {
+			CI_LOG_I( "removing FrameBuffer for view '" << mRootView->getName() << "'" );
+			mFrameBuffer.reset();
+			mRootView->mRendersToFrameBuffer = false;
+
+			// TODO: remove no-longer needed compositing layer
+		}
 	}
 
+	for( const auto &subview : view->getSubviews() ) {
+		if( subview->getLayer() ) {
+			continue;
+		}
+		configureView( subview.get() );
+	}
 }
 
 void Layer::draw()
@@ -152,16 +166,6 @@ void Layer::draw()
 	}
 
 	beginClip();
-
-//	for( auto &view : mViews ) {
-//		CI_ASSERT( view );
-//
-//		// TODO NEXT: fix these translations, the children of 'container' are not getting translated correctly
-//		gl::ScopedModelMatrix modelScope;
-//		gl::translate( view->getPos() );
-//
-//		view->drawImpl();
-//	}
 
 	drawView( mRootView );
 

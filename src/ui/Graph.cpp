@@ -23,6 +23,7 @@
 #include "ui/View.h"
 
 #include "cinder/app/AppBase.h"
+#include "cinder/Log.h"
 
 using namespace ci;
 using namespace std;
@@ -34,8 +35,8 @@ Graph::Graph( const ci::app::WindowRef &window )
 {
 	mGraph = this;
 
-	mLayer = make_shared<Layer>( this );
-	mLayers.push_back( mLayer ); // TODO: other Layers need to be added to this in the proper draw order once they are constructed
+	// The Graph always gets a Layer because it is root.
+	mLayer = makeLayer( this );
 
 	if( ! mWindow ) {
 		auto app = app::AppBase::get();
@@ -57,24 +58,29 @@ Graph::~Graph()
 		disconnectEvents();
 }
 
+LayerRef Graph::makeLayer( View *rootView )
+{
+	auto result = make_shared<Layer>( rootView );
+	result->mGraph = this;
+	mLayers.push_back( result );
+
+	return result;
+}
+
 void Graph::propagateUpdate()
 {
-	View::propagateUpdate();
-
 	for( auto &layer : mLayers ) {
 		if( layer->getNeedsLayout() ) {
-			mLayer->configureViewList();
+			layer->configureViewList();
 		}
-
-		layer->update();
 	}
+
+	View::propagateUpdate();
 }
 
 void Graph::propagateDraw()
 {
 	CI_ASSERT( getLayer() );
-
-//	getLayer()->draw();
 
 	for( auto &layer : mLayers ) {
 		layer->draw();

@@ -51,6 +51,8 @@ class Graph : public View {
 
 	ci::app::WindowRef	getWindow() const	{ return mWindow; }
 
+	LayerRef makeLayer( View *rootView );
+
 	void propagateUpdate();
 	void propagateDraw();
 
@@ -60,6 +62,7 @@ class Graph : public View {
 	void disconnectEvents();
 
   private:
+
 	RendererRef         mRenderer;
 	ci::app::WindowRef  mWindow;
 	bool                mMultiTouchEnabled = false;

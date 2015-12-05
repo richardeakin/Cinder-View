@@ -28,6 +28,7 @@ LayerTest::LayerTest()
 
 	mLabelA = make_shared<ui::Label>();
 	mLabelA->setText( "A" );
+	mLabelA->setLabel( "Label A" );
 	mLabelA->setSize( labelSize );
 	mLabelA->setFontSize( 56 );
 	mLabelA->setAlignment( ui::TextAlignment::CENTER );
@@ -36,6 +37,7 @@ LayerTest::LayerTest()
 
 	mLabelB = make_shared<ui::Label>();
 	mLabelB->setText( "B" );
+	mLabelB->setLabel( "Label B" );
 	mLabelB->setSize( labelSize );
 	mLabelB->setFontSize( 56 );
 	mLabelB->setAlignment( ui::TextAlignment::CENTER );
@@ -44,12 +46,24 @@ LayerTest::LayerTest()
 
 	mLabelC = make_shared<ui::Label>();
 	mLabelC->setText( "C" );
+	mLabelC->setLabel( "Label C" );
 	mLabelC->setSize( labelSize );
 	mLabelC->setFontSize( 56 );
 	mLabelC->setAlignment( ui::TextAlignment::CENTER );
 	mLabelC->setTextColor( Color::white() );
 	mLabelC->getBackground()->setColor( Color( 0, 0, 0.8f ) );
+	mLabelC->setAlpha( 0.5f );
 
+	mLabelD = make_shared<ui::Label>();
+	mLabelD->setText( "D" );
+	mLabelD->setLabel( "Label D" );
+	mLabelD->setSize( vec2( 60, 60 ) );
+	mLabelD->setFontSize( 24 );
+	mLabelD->setAlignment( ui::TextAlignment::CENTER );
+	mLabelD->setTextColor( Color::black() );
+	mLabelD->getBackground()->setColor( Color( 0.8f, 0.8f, 0 ) );
+
+	mLabelC->addSubview( mLabelD );
 	mContainerView->addSubviews( { mLabelA, mLabelB, mLabelC } );
 	addSubview( mContainerView );
 
@@ -63,6 +77,8 @@ void LayerTest::layout()
 	mLabelA->setPos( { 200, 100 } );
 	mLabelB->setPos( { 450, 100 } );
 	mLabelC->setPos( { 325, 200 } );
+
+	mLabelD->setPos( { 12, 70 } );
 }
 
 void LayerTest::keyEvent( app::KeyEvent &event )
@@ -78,8 +94,8 @@ void LayerTest::keyEvent( app::KeyEvent &event )
 			break;
 		}
 		case app::KeyEvent::KEY_t: {
-			mContainerView->getLayer()->setRenderTransparencyToFrameBufferEnabled( ! mContainerView->getLayer()->isRenderTransparencyToFrameBufferEnabled() );
-			CI_LOG_I( "container view renders transparency to framebuffer: " << boolalpha << mContainerView->getLayer()->isRenderTransparencyToFrameBufferEnabled() << dec );
+			mContainerView->setRenderTransparencyToFrameBufferEnabled( ! mContainerView->isRenderTransparencyToFrameBufferEnabled() );
+			CI_LOG_I( "container view renders transparency to framebuffer: " << boolalpha << mContainerView->isRenderTransparencyToFrameBufferEnabled() << dec );
 			break;
 		}
 	}

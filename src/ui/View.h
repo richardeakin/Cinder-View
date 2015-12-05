@@ -121,6 +121,11 @@ class View : public std::enable_shared_from_this<View> {
 	bool	isInteractive() const					{ return mInteractive; }
 	bool	isUserInteracting() const				{ return ! mActiveTouches.empty(); }
 	bool	isBoundsAnimating() const;
+	bool    isTransparent() const;
+
+	// TODO: this needs to mark layer tree dirty, at least if there is compositing going on (should skip reconfigure otherwise)
+	void setRenderTransparencyToFrameBufferEnabled( bool enable )	{ mRenderTransparencyToFrameBuffer = enable; }
+	bool isRenderTransparencyToFrameBufferEnabled() const			{ return mRenderTransparencyToFrameBuffer; }
 
 	void	setClipEnabled( bool enable = true );
 	bool	isClipEnabled() const;
@@ -184,6 +189,8 @@ private:
 	bool					mFillParent = false; // TODO: replace this with proper layout system
 	BlendMode				mBlendMode = BlendMode::ALPHA;
 	bool                    mClipEnabled = false;
+	bool			        mRendersToFrameBuffer = false;
+	bool			        mRenderTransparencyToFrameBuffer = true;
 
 	View*					mParent = nullptr;
 	Graph*                  mGraph = nullptr;

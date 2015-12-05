@@ -200,10 +200,5 @@ void BasicViewTests::keyEvent( app::KeyEvent &event )
 			mImageView->setScaleMode( nextMode );
 			break;
 		}
-		case app::KeyEvent::KEY_t: {
-			mContainerView->getLayer()->setRenderTransparencyToFrameBufferEnabled( ! mContainerView->getLayer()->isRenderTransparencyToFrameBufferEnabled() );
-			CI_LOG_I( "container view renders transparency to framebuffer: " << boolalpha << mContainerView->getLayer()->isRenderTransparencyToFrameBufferEnabled() << dec );
-			break;
-		}
 	}
 }

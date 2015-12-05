@@ -30,6 +30,7 @@
 
 namespace ui {
 
+class Graph;
 class View;
 
 typedef std::shared_ptr<class FrameBuffer>	FrameBufferRef;
@@ -88,16 +89,11 @@ class Layer : public std::enable_shared_from_this<Layer> {
 
 	void configureViewList();
 
-	void update();
-
 	void draw();
-
-	void setRenderTransparencyToFrameBufferEnabled( bool enable )	{ mRenderTransparencyToFrameBuffer = enable; }
-	bool isRenderTransparencyToFrameBufferEnabled() const			{ return mRenderTransparencyToFrameBuffer; }
 
 	FrameBufferRef  getFrameBuffer() const      { return mFrameBuffer; }
 
-	void setNeedsLayout()               { mNeedsLayout = true; }
+	void setNeedsLayout();
 	bool getNeedsLayout() const         { return mNeedsLayout; }
 
 	void setClipEnabled( bool enable )	{ mClipEnabled = enable; }
@@ -105,18 +101,19 @@ class Layer : public std::enable_shared_from_this<Layer> {
 
   private:
 
+	void configureView( View *view );
 	void drawView( View *view );
 	void beginClip();
 	void endClip();
 
 	View*           mRootView;
+	Graph*          mGraph;
 	RendererRef		mRenderer;
 	FrameBufferRef	mFrameBuffer;
 	bool            mNeedsLayout = true;
-	bool			mRenderTransparencyToFrameBuffer = true;
 	bool			mClipEnabled = false;
 
-//	std::vector<View *> mViews;
+	friend class Graph;
 };
 
 } // namespace ui
