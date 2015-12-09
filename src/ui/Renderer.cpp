@@ -59,13 +59,10 @@ void Renderer::pushColor( const ci::ColorA &color )
 
 void Renderer::popColor()
 {
-	if( mColorStack.empty() ) {
-		CI_LOG_E( "Color stack underflow" );
-	}
-	else {
-		setColor( mColorStack.back() );
-		mColorStack.pop_back();
-	}
+	CI_ASSERT_MSG( ! mColorStack.empty(), "Color stack underflow" );
+
+	setColor( mColorStack.back() );
+	mColorStack.pop_back();
 }
 
 void Renderer::setBlendMode( BlendMode mode )
@@ -91,13 +88,10 @@ void Renderer::pushBlendMode( BlendMode mode )
 
 void Renderer::popBlendMode()
 {
-	if( mBlendModeStack.empty() ) {
-		CI_LOG_E( "BlendMode stack underflow" );
-	}
-	else {
-		setBlendMode( mBlendModeStack.back() );
-		mBlendModeStack.pop_back();
-	}
+	CI_ASSERT_MSG( ! mBlendModeStack.empty(), "BlendMode stack underflow" );
+
+	setBlendMode( mBlendModeStack.back() );
+	mBlendModeStack.pop_back();
 }
 
 void Renderer::drawSolidRect( const Rectf &rect )
