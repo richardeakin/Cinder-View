@@ -69,13 +69,13 @@ LayerRef Graph::makeLayer( View *rootView )
 
 void Graph::propagateUpdate()
 {
+	View::propagateUpdate();
+
 	for( auto &layer : mLayers ) {
 		if( layer->getNeedsLayout() ) {
 			layer->configureViewList();
 		}
 	}
-
-	View::propagateUpdate();
 }
 
 void Graph::propagateDraw()

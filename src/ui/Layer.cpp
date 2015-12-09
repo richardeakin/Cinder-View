@@ -108,8 +108,6 @@ void Layer::configureViewList()
 
 	configureView( mRootView );
 	mNeedsLayout = false;
-
-	CI_LOG_I( "complete (" << mRootView->getName() << ")" );
 }
 
 void Layer::configureView( View *view )
@@ -119,9 +117,10 @@ void Layer::configureView( View *view )
 
 	if( view->isTransparent() ) {
 		if( mRootView != view ) {
-			// we need a new layer
+			// we need a new layer, which will configure its subtree
 			auto layer = mGraph->makeLayer( view );
 			layer->configureViewList();
+			return;
 		}
 		else {
 			if( ! mFrameBuffer ) {
@@ -143,7 +142,7 @@ void Layer::configureView( View *view )
 	}
 
 	for( const auto &subview : view->getSubviews() ) {
-		if( subview->getLayer() ) {
+		if( subview->isLayerRoot() ) {
 			continue;
 		}
 		configureView( subview.get() );
@@ -172,11 +171,14 @@ void Layer::draw()
 		gl::popViewport();
 		gl::popMatrices();
 
-		mRootView->getRenderer()->pushColor( ColorA::gray( 1, getAlpha() ) );
+		auto ren = mRootView->getRenderer();
+		ren->pushBlendMode( BlendMode::PREMULT_ALPHA );
+		ren->pushColor( ColorA::gray( 1, getAlpha() ) );
 
 		auto destRect = Rectf( 0, 0, mFrameBuffer->mFbo->getWidth(), mFrameBuffer->mFbo->getHeight() ) + mRootView->getPos();
 		gl::draw( mFrameBuffer->mFbo->getColorTexture(), destRect );
-		mRootView->getRenderer()->popColor();
+		ren->popColor();
+		ren->popBlendMode();
 
 //		writeImage( "framebuffer.png", mFrameBuffer->mFbo->getColorTexture()->createSource() );
 //

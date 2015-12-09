@@ -99,6 +99,8 @@ class Layer : public std::enable_shared_from_this<Layer> {
 	void setClipEnabled( bool enable )	{ mClipEnabled = enable; }
 	bool isClipEnabled() const			{ return mClipEnabled; }
 
+	View*   getRootView() const         { return mRootView; }
+
   private:
 
 	void configureView( View *view );

@@ -1,5 +1,7 @@
 #include "LayerTest.h"
 
+#include "ui/Slider.h"
+
 #include "cinder/app/App.h"
 #include "cinder/Rand.h"
 #include "cinder/Timeline.h"
@@ -54,13 +56,21 @@ LayerTest::LayerTest()
 	mLabelD->setText( "D" );
 	mLabelD->setLabel( "Label D" );
 	mLabelD->setSize( vec2( 60, 60 ) );
-	mLabelD->setFontSize( 24 );
+	mLabelD->setFontSize( 30 );
 	mLabelD->setAlignment( ui::TextAlignment::CENTER );
 	mLabelD->setTextColor( Color::black() );
 	mLabelD->getBackground()->setColor( Color( 0.8f, 0.8f, 0 ) );
 
+	auto alphaSlider = make_shared<ui::HSlider>( Rectf( 10, 10, 110, 30 ) );
+	alphaSlider->setValue( mLabelC->getAlpha() );
+	alphaSlider->getBackground()->setColor( Color::gray( 0.15f ) );
+	auto alphaSliderPtr = alphaSlider.get(); // avoiding cyclical strong reference, slider is also owned by parent view
+	alphaSlider->getSignalValueChanged().connect( [this, alphaSliderPtr] {
+		mLabelC->setAlpha( alphaSliderPtr->getValue() );
+	} );
+
 	mLabelC->addSubview( mLabelD );
-	mContainerView->addSubviews( { mLabelA, mLabelB, mLabelC } );
+	mContainerView->addSubviews( { mLabelA, mLabelB, mLabelC, alphaSlider } );
 	addSubview( mContainerView );
 
 	connectKeyDown( signals::slot( this, &LayerTest::keyEvent ) );

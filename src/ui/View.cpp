@@ -107,6 +107,12 @@ bool View::isTransparent() const
 	return mAlpha < 0.9999f;
 }
 
+bool View::isLayerRoot() const
+{
+	auto layer = getLayer();
+	return ( layer && layer->getRootView() == this );
+}
+
 void View::setClipEnabled( bool enable )
 {
 	// TODO: need to mark layer tree dirty, then set a variable that declares we need a layer that can clip
@@ -287,7 +293,7 @@ void View::propagateUpdate()
 			mBackground->setSize( getSize() );
 	}
 
-	if( mRenderTransparencyToFrameBuffer ) {
+	if( mRenderTransparencyToFrameBuffer && mLayer ) {
 		if( isTransparent() ) {
 			if( ! mRendersToFrameBuffer ) {
 				mLayer->setNeedsLayout();

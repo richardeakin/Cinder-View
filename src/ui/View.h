@@ -95,6 +95,8 @@ class View : public std::enable_shared_from_this<View> {
 	RendererRef             getRenderer();
 	//!
 	LayerRef	            getLayer() const	{ return mLayer; }
+	//!
+	bool                    isLayerRoot() const;
 
 	//! Sets a label that can be used to identify this View
 	void				setLabel( const std::string &label )	{ mLabel = label; }
