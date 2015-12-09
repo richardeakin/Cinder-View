@@ -3,9 +3,9 @@
 #include "ui/Suite.h"
 #include "ui/Label.h"
 
-class LayerTest : public ui::SuiteView {
+class CompositingTest : public ui::SuiteView {
 public:
-	LayerTest();
+	CompositingTest();
 
 	void layout() override;
 

@@ -16,7 +16,7 @@ include( "${REPO_PATH}/cmake/ci_make_app.cmake" )
 set( APP_SOURCES
 	src/BasicViewTests.cpp
 	src/ControlsTest.cpp
-	src/LayerTest.cpp
+	src/CompositingTest.cpp
 	src/ScrollTests.cpp
 	src/ViewTestsApp.cpp
 )

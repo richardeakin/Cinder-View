@@ -1,4 +1,4 @@
-#include "LayerTest.h"
+#include "CompositingTest.h"
 
 #include "ui/Slider.h"
 
@@ -13,7 +13,7 @@ using namespace mason;
 
 const float PADDING = 50;
 
-LayerTest::LayerTest()
+CompositingTest::CompositingTest()
 	: SuiteView()
 {
 	auto container = make_shared<ui::StrokedRectView>();
@@ -73,10 +73,10 @@ LayerTest::LayerTest()
 	mContainerView->addSubviews( { mLabelA, mLabelB, mLabelC, alphaSlider } );
 	addSubview( mContainerView );
 
-	connectKeyDown( signals::slot( this, &LayerTest::keyEvent ) );
+	connectKeyDown( signals::slot( this, &CompositingTest::keyEvent ) );
 }
 
-void LayerTest::layout()
+void CompositingTest::layout()
 {
 	mContainerView->setBounds( Rectf( PADDING, PADDING, getWidth() - PADDING, getHeight() - PADDING ) );
 
@@ -87,7 +87,7 @@ void LayerTest::layout()
 	mLabelD->setPos( { 12, 70 } );
 }
 
-void LayerTest::keyEvent( app::KeyEvent &event )
+void CompositingTest::keyEvent( app::KeyEvent &event )
 {
 	switch( event.getCode() ) {
 		case app::KeyEvent::KEY_SPACE: {
