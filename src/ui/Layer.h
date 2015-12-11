@@ -101,6 +101,9 @@ class Layer : public std::enable_shared_from_this<Layer> {
 
 	View*   getRootView() const         { return mRootView; }
 
+	void markForRemoval()               { mShouldRemove = true; }
+	bool getShouldRemove()const         { return mShouldRemove; }
+
   private:
 
 	void configureView( View *view );
@@ -114,6 +117,7 @@ class Layer : public std::enable_shared_from_this<Layer> {
 	FrameBufferRef	mFrameBuffer;
 	bool            mNeedsLayout = true;
 	bool			mClipEnabled = false;
+	bool            mShouldRemove = false;
 
 	friend class Graph;
 };
