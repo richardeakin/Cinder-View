@@ -87,10 +87,10 @@ void Renderer::pushBlendMode( BlendMode mode )
 
 void Renderer::popBlendMode()
 {
+	mBlendModeStack.pop_back();
 	CI_ASSERT_MSG( ! mBlendModeStack.empty(), "BlendMode stack underflow" );
 
 	setBlendMode( mBlendModeStack.back() );
-	mBlendModeStack.pop_back();
 }
 
 void Renderer::drawSolidRect( const Rectf &rect )
