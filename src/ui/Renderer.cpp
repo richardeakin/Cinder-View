@@ -67,7 +67,6 @@ void Renderer::popColor()
 
 void Renderer::setBlendMode( BlendMode mode )
 {
-	auto ctx = gl::context();
 	switch( mode ) {
 		case BlendMode::ALPHA:
 			gl::enableAlphaBlending();
