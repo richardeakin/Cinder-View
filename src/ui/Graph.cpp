@@ -67,14 +67,34 @@ LayerRef Graph::makeLayer( View *rootView )
 	return result;
 }
 
+void Graph::removeLayer( const LayerRef &layer )
+{
+	auto rootView = layer->getRootView();
+	auto parentView = rootView->getParent();
+
+	layer->markForRemoval();
+	rootView->mLayer.reset();
+
+	if( parentView ) {
+		parentView->getLayer()->configureViewList();
+	}
+}
+
 void Graph::propagateUpdate()
 {
 	View::propagateUpdate();
 
-	for( auto &layer : mLayers ) {
+	for( auto layerIt = mLayers.begin(); layerIt != mLayers.end(); /* */ ) {
+		auto &layer = *layerIt;
 		if( layer->getNeedsLayout() ) {
 			layer->configureViewList();
+			if( layer->getShouldRemove() ) {
+				mLayers.erase( layerIt );
+				continue;
+			}
 		}
+
+		++layerIt;
 	}
 }
 

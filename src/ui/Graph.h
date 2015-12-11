@@ -52,6 +52,7 @@ class Graph : public View {
 	ci::app::WindowRef	getWindow() const	{ return mWindow; }
 
 	LayerRef makeLayer( View *rootView );
+	void    removeLayer( const LayerRef &layer );
 
 	void propagateUpdate();
 	void propagateDraw();
@@ -70,10 +71,6 @@ class Graph : public View {
 
 	std::vector<ci::signals::Connection>	mEventConnections;
 
-	// TODO NEXT: figure out how to build this sucker
-	// - first off, there will be one Layer at the root, this is always required
-	// - during addSubiew(), removeSubview(), and update() need to check if layer config is dirty
-	// - Layers then need a View list for drawing
 	std::list<LayerRef>	    mLayers;
 };
 

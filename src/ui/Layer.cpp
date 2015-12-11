@@ -134,10 +134,11 @@ void Layer::configureView( View *view )
 	else {
 		if( mRootView == view && mFrameBuffer ) {
 			CI_LOG_I( "removing FrameBuffer for view '" << mRootView->getName() << "'" );
+			CI_LOG_I( "\t- reason: alpha = " << mRootView->getAlpha() );
 			mFrameBuffer.reset();
 			mRootView->mRendersToFrameBuffer = false;
-
-			// TODO: remove no-longer needed compositing layer
+			mGraph->removeLayer( shared_from_this() );
+			return;
 		}
 	}
 
