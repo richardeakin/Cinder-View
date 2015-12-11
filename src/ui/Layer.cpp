@@ -39,6 +39,7 @@ FrameBuffer::FrameBuffer( const Format &format )
 	auto fboFormat = gl::Fbo::Format();
 	fboFormat.colorTexture(
 		gl::Texture2d::Format()
+			.internalFormat( GL_RGBA )
  			.minFilter( GL_LINEAR ).magFilter( GL_LINEAR )
 	);
 
