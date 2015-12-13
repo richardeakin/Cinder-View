@@ -61,16 +61,33 @@ CompositingTest::CompositingTest()
 	mLabelD->setTextColor( Color::black() );
 	mLabelD->getBackground()->setColor( Color( 0.8f, 0.8f, 0 ) );
 
-	auto alphaSlider = make_shared<ui::HSlider>( Rectf( 10, 10, 110, 30 ) );
-	alphaSlider->setValue( mLabelC->getAlpha() );
-	alphaSlider->getBackground()->setColor( Color::gray( 0.15f ) );
-	auto alphaSliderPtr = alphaSlider.get(); // avoiding cyclical strong reference, slider is also owned by parent view
-	alphaSlider->getSignalValueChanged().connect( [this, alphaSliderPtr] {
-		mLabelC->setAlpha( alphaSliderPtr->getValue() );
-	} );
+	{
+		auto alphaSlider = make_shared<ui::HSlider>( Rectf( 10, 10, 150, 40 ) );
+		alphaSlider->setTitle( "container alpha" );
+		alphaSlider->setValue( mContainerView->getAlpha() );
+		alphaSlider->getBackground()->setColor( Color::gray( 0.15f ) );
+		auto alphaSliderPtr = alphaSlider.get(); // avoiding cyclical strong reference, slider is also owned by parent view
+		alphaSlider->getSignalValueChanged().connect( [this, alphaSliderPtr] {
+			mContainerView->setAlpha( alphaSliderPtr->getValue() );
+		} );
+
+		mContainerView->addSubview( alphaSlider );
+	}
+	{
+		auto alphaSlider = make_shared<ui::HSlider>( Rectf( 10, 50, 150, 80 ) );
+		alphaSlider->setTitle( "C alpha" );
+		alphaSlider->setValue( mLabelC->getAlpha() );
+		alphaSlider->getBackground()->setColor( Color::gray( 0.15f ) );
+		auto alphaSliderPtr = alphaSlider.get(); // avoiding cyclical strong reference, slider is also owned by parent view
+		alphaSlider->getSignalValueChanged().connect( [this, alphaSliderPtr] {
+			mLabelC->setAlpha( alphaSliderPtr->getValue() );
+		} );
+
+		mContainerView->addSubview( alphaSlider );
+	}
 
 	mLabelC->addSubview( mLabelD );
-	mContainerView->addSubviews( { mLabelA, mLabelB, mLabelC, alphaSlider } );
+	mContainerView->addSubviews( { mLabelA, mLabelB, mLabelC } );
 	addSubview( mContainerView );
 
 	connectKeyDown( signals::slot( this, &CompositingTest::keyEvent ) );
