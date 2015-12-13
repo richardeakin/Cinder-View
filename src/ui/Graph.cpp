@@ -80,6 +80,13 @@ void Graph::removeLayer( const LayerRef &layer )
 	}
 }
 
+void Graph::layout()
+{
+	if( isFillParentEnabled() ) {
+		setSize( mWindow->getSize() );
+	}
+}
+
 void Graph::propagateUpdate()
 {
 	View::propagateUpdate();

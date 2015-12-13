@@ -47,6 +47,7 @@ Suite::Suite()
 {
 	mGraph = make_shared<ui::Graph>();
 	mGraph->setLabel( "Suite root" );
+	mGraph->setFillParentEnabled();
 	mGraph->connectTouchEvents();
 
 	mSelector = mGraph->makeSubview<ui::VSelector>();
@@ -61,9 +62,7 @@ Suite::Suite()
 
 void Suite::resize()
 {
-	mGraph->setSize( app::getWindowSize() );
-	if( mCurrentSuiteView )
-		mCurrentSuiteView->setSize( mGraph->getSize() ); // TODO: autoresize flags? - use fillParentw
+	mGraph->setNeedsLayout();
 
 	const float padding = 6;
 	const float width = 120; // TODO: calculate widest segment
@@ -87,7 +86,7 @@ void Suite::selectTest( const string &key )
 		return;
 	}
 
-	suiteView->setBounds( Rectf( 0, 0, mGraph->getWidth(), mGraph->getHeight() ) );
+	suiteView->setFillParentEnabled();
 	suiteView->setLabel( key );
 	mGraph->insertSubview( suiteView, 0 );
 	mCurrentSuiteView = suiteView;

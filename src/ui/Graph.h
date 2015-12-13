@@ -62,6 +62,9 @@ class Graph : public View {
 	//! Disconnects touches propagation methods.
 	void disconnectEvents();
 
+  protected:
+	void layout() override;
+
   private:
 
 	RendererRef         mRenderer;
