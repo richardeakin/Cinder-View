@@ -31,6 +31,9 @@
 
 #define ENABLE_FRAMEBUFFER_CACHING 1
 
+//#define LOG_LAYER( stream )	CI_LOG_I( stream )
+#define LOG_LAYER( stream )	    ( (void)( 0 ) )
+
 using namespace ci;
 using namespace std;
 
@@ -55,7 +58,7 @@ FrameBuffer::FrameBuffer( const Format &format )
 	);
 
 	mFbo = gl::Fbo::create( format.mSize.x, format.mSize.y, fboFormat );
-	CI_LOG_I( "created gl::Fbo of size: " << format.mSize );
+	LOG_LAYER( "created gl::Fbo of size: " << format.mSize );
 }
 
 bool FrameBuffer::Format::operator==(const Format &other) const
@@ -93,7 +96,7 @@ Layer::Layer( View *view )
 	: mRootView( view )
 {
 	CI_ASSERT_MSG( view, "null pointer to View" );
-	CI_LOG_I( "root view: " << view->getName() );
+	LOG_LAYER( "root view: " << view->getName() );
 }
 
 Layer::~Layer()
@@ -112,7 +115,7 @@ void Layer::setNeedsLayout()
 
 void Layer::configureViewList()
 {
-	CI_LOG_I( "mRootView: " << mRootView->getName() );
+	LOG_LAYER( "mRootView: " << mRootView->getName() );
 
 	configureView( mRootView );
 	mNeedsLayout = false;
@@ -120,7 +123,7 @@ void Layer::configureViewList()
 
 void Layer::configureView( View *view )
 {
-	CI_LOG_I( "view: '" << view->getName() << "'" );
+	LOG_LAYER( "view: '" << view->getName() << "'" );
 	view->mLayer = shared_from_this();
 
 	if( view->isTransparent() ) {
@@ -132,16 +135,16 @@ void Layer::configureView( View *view )
 		}
 		else {
 			if( ! mRootView->mRendersToFrameBuffer ) {
-				CI_LOG_I( "enabling FrameBuffer for view '" << mRootView->getName() << "', size: " << mRootView->getSize() );
-				CI_LOG_I( "\t- reason: alpha = " << mRootView->getAlpha() );
+				LOG_LAYER( "enabling FrameBuffer for view '" << mRootView->getName() << "', size: " << mRootView->getSize() );
+				LOG_LAYER( "\t- reason: alpha = " << mRootView->getAlpha() );
 				mRootView->mRendersToFrameBuffer = true;
 			}
 		}
 	}
 	else {
 		if( mRootView == view && mFrameBuffer ) {
-			CI_LOG_I( "removing FrameBuffer for view '" << mRootView->getName() << "'" );
-			CI_LOG_I( "\t- reason: alpha = " << mRootView->getAlpha() );
+			LOG_LAYER( "removing FrameBuffer for view '" << mRootView->getName() << "'" );
+			LOG_LAYER( "\t- reason: alpha = " << mRootView->getAlpha() );
 			mFrameBuffer.reset();
 			mRootView->mRendersToFrameBuffer = false;
 			mFrameBufferBounds = Rectf::zero();
@@ -154,7 +157,7 @@ void Layer::configureView( View *view )
 		Rectf frameBufferBounds = view->getBoundsForFrameBuffer();
 		if( mFrameBufferBounds.getWidth() < frameBufferBounds.getWidth() && mFrameBufferBounds.getHeight() < frameBufferBounds.getHeight() ) {
 			mFrameBufferBounds = ceil( frameBufferBounds );
-			CI_LOG_I( "mFrameBufferBounds: " << mFrameBufferBounds );
+			LOG_LAYER( "mFrameBufferBounds: " << mFrameBufferBounds );
 		}
 	}
 
@@ -171,7 +174,7 @@ void Layer::draw()
 	if( mRootView->mRendersToFrameBuffer ) {
 		ivec2 frameBufferSize = ivec2( mFrameBufferBounds.getSize() );
 		if( ! mFrameBuffer || mFrameBuffer->getSize().x < frameBufferSize.x || mFrameBuffer->getSize().y < frameBufferSize.y ) {
-			CI_LOG_I( "aquiring FrameBuffer for view '" << mRootView->getName() << "', size: " << mFrameBufferBounds.getSize() );
+			LOG_LAYER( "aquiring FrameBuffer for view '" << mRootView->getName() << "', size: " << mFrameBufferBounds.getSize() );
 			mFrameBuffer = FrameBufferCache::getFrameBuffer( frameBufferSize );
 		}
 
