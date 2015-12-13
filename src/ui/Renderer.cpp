@@ -24,12 +24,46 @@
 #include "cinder/gl/Context.h"
 #include "cinder/gl/wrapper.h"
 #include "cinder/gl/draw.h"
+#include "cinder/gl/Fbo.h"
 #include "cinder/Log.h"
+
+#define ENABLE_FRAMEBUFFER_CACHING 1
 
 using namespace ci;
 using namespace std;
 
 namespace ui {
+
+// ----------------------------------------------------------------------------------------------------
+// FrameBuffer
+// ----------------------------------------------------------------------------------------------------
+
+bool FrameBuffer::Format::operator==(const Format &other) const
+{
+	return mSize == other.mSize;
+}
+
+FrameBuffer::FrameBuffer( const Format &format )
+{
+	auto fboFormat = gl::Fbo::Format();
+	fboFormat.colorTexture(
+			gl::Texture2d::Format()
+					.internalFormat( GL_RGBA )
+					.minFilter( GL_LINEAR ).magFilter( GL_LINEAR )
+	);
+
+	mFbo = gl::Fbo::create( format.mSize.x, format.mSize.y, fboFormat );
+	CI_LOG_V( "created gl::Fbo of size: " << format.mSize );
+}
+
+ci::ivec2  FrameBuffer::getSize() const
+{
+	return mFbo->getSize();
+}
+
+// ----------------------------------------------------------------------------------------------------
+// Renderer
+// ----------------------------------------------------------------------------------------------------
 
 Renderer::Renderer()
 {
@@ -91,6 +125,24 @@ void Renderer::popBlendMode()
 	CI_ASSERT_MSG( ! mBlendModeStack.empty(), "BlendMode stack underflow" );
 
 	setBlendMode( mBlendModeStack.back() );
+}
+
+FrameBufferRef Renderer::getFrameBuffer( const ci::ivec2 &size )
+{
+	auto format = FrameBuffer::Format().size( size );
+#if ENABLE_FRAMEBUFFER_CACHING
+	auto it = mFrameBufferCache.find( format );
+	if( it != mFrameBufferCache.end() ) {
+		return it->second;
+	}
+	else {
+		auto result = make_shared<FrameBuffer>( format );
+		mFrameBufferCache.insert( make_pair( format, result ) );
+		return result;
+	}
+#else
+	return make_shared<FrameBuffer>( format );
+#endif
 }
 
 void Renderer::drawSolidRect( const Rectf &rect )

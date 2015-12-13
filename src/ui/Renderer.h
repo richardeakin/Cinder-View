@@ -25,14 +25,61 @@
 #include "cinder/Color.h"
 #include "cinder/Rect.h"
 
+#include <unordered_map>
+
+namespace cinder { namespace gl {
+
+typedef std::shared_ptr<class Fbo>     FboRef;
+
+} } // namespace cinder::gl
+
 namespace ui {
 
-typedef std::shared_ptr<class Renderer>     RendererRef;
+typedef std::shared_ptr<class Renderer> RendererRef;
+typedef std::shared_ptr<class FrameBuffer> FrameBufferRef;
 
 enum class BlendMode {
 	ALPHA,
 	PREMULT_ALPHA
 };
+
+class FrameBuffer {
+  public:
+	struct Format {
+		Format &size( const ci::ivec2 &size )
+		{
+			mSize = size;
+			return *this;
+		}
+
+		//! Allow Format to be used as a key in std::unordered_map
+		bool operator==( const Format &other ) const;
+
+		ci::ivec2 mSize;
+	};
+
+	FrameBuffer( const Format &format );
+
+	ci::ivec2 getSize() const;
+
+	cinder::gl::FboRef mFbo;
+};
+
+} // namespace ui
+
+namespace std {
+
+template <>
+struct hash<ui::FrameBuffer::Format> {
+	inline size_t operator()( const ui::FrameBuffer::Format &format ) const
+	{
+		return hash<int>()( format.mSize.x ) ^ hash<int>()( format.mSize.y );
+	}
+};
+
+} // namespace std
+
+namespace ui {
 
 class Renderer {
   public:
@@ -52,6 +99,8 @@ class Renderer {
 	void pushBlendMode( BlendMode mode );
 	//!
 	void popBlendMode();
+	//!
+	FrameBufferRef getFrameBuffer( const ci::ivec2 &size );
 	//! Draws a solid rectangle with dimensions \a rect.
 	void drawSolidRect( const ci::Rectf &rect );
 	//! Draws a stroked rectangle with dimensions \a rect.
@@ -62,6 +111,8 @@ class Renderer {
   private:
 	std::vector<ci::ColorA>		mColorStack;
 	std::vector<BlendMode>		mBlendModeStack;
+
+	std::unordered_map<FrameBuffer::Format, FrameBufferRef>	mFrameBufferCache;
 };
 
 } // namespace ui

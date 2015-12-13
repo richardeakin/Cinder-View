@@ -29,8 +29,6 @@
 
 #include <cmath>
 
-#define ENABLE_FRAMEBUFFER_CACHING 1
-
 //#define LOG_LAYER( stream )	CI_LOG_I( stream )
 #define LOG_LAYER( stream )	    ( (void)( 0 ) )
 
@@ -47,50 +45,6 @@ Rectf ceil( const Rectf &r )
 } // anonymous namesapce
 
 namespace ui {
-
-FrameBuffer::FrameBuffer( const Format &format )
-{
-	auto fboFormat = gl::Fbo::Format();
-	fboFormat.colorTexture(
-		gl::Texture2d::Format()
-			.internalFormat( GL_RGBA )
- 			.minFilter( GL_LINEAR ).magFilter( GL_LINEAR )
-	);
-
-	mFbo = gl::Fbo::create( format.mSize.x, format.mSize.y, fboFormat );
-	LOG_LAYER( "created gl::Fbo of size: " << format.mSize );
-}
-
-bool FrameBuffer::Format::operator==(const Format &other) const
-{
-	return mSize == other.mSize;
-}
-
-// static
-FrameBufferCache* FrameBufferCache::instance()
-{
-	static FrameBufferCache sInstance;
-	return &sInstance;
-}
-
-// static
-FrameBufferRef FrameBufferCache::getFrameBuffer( const ci::ivec2 &size )
-{
-	auto format = FrameBuffer::Format().size( size );
-#if ENABLE_FRAMEBUFFER_CACHING
-	auto it = instance()->mCache.find( format );
-	if( it != instance()->mCache.end() ) {
-		return it->second;
-	}
-	else {
-		auto result = make_shared<FrameBuffer>( format );
-		instance()->mCache.insert( make_pair( format, result ) );
-		return result;
-	}
-#else
-	return make_shared<FrameBuffer>( format );
-#endif
-}
 
 Layer::Layer( View *view )
 	: mRootView( view )
@@ -171,11 +125,13 @@ void Layer::configureView( View *view )
 
 void Layer::draw()
 {
+	auto ren = mRootView->getRenderer();
+
 	if( mRootView->mRendersToFrameBuffer ) {
 		ivec2 frameBufferSize = ivec2( mFrameBufferBounds.getSize() );
 		if( ! mFrameBuffer || mFrameBuffer->getSize().x < frameBufferSize.x || mFrameBuffer->getSize().y < frameBufferSize.y ) {
 			LOG_LAYER( "aquiring FrameBuffer for view '" << mRootView->getName() << "', size: " << mFrameBufferBounds.getSize() );
-			mFrameBuffer = FrameBufferCache::getFrameBuffer( frameBufferSize );
+			mFrameBuffer = ren->getFrameBuffer( frameBufferSize );
 		}
 
 		gl::context()->pushFramebuffer( mFrameBuffer->mFbo );
@@ -198,7 +154,6 @@ void Layer::draw()
 		gl::popViewport();
 		gl::popMatrices();
 
-		auto ren = mRootView->getRenderer();
 		ren->pushBlendMode( BlendMode::PREMULT_ALPHA );
 		ren->pushColor( ColorA::gray( 1, getAlpha() ) );
 

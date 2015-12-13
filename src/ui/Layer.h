@@ -23,62 +23,15 @@
 
 #include "ui/Renderer.h"
 
-#include "cinder/gl/Fbo.h"
-
 #include <memory>
-#include <unordered_map>
 
 namespace ui {
 
 class Graph;
 class View;
 
-typedef std::shared_ptr<class FrameBuffer>	FrameBufferRef;
 typedef std::shared_ptr<class Layer>		LayerRef;
-
-class FrameBuffer {
-  public:
-	struct Format {
-		Format& size( const ci::ivec2 &size )	{ mSize = size; return *this; }
-
-		//! Allow Format to be used as a key in std::unordered_map
-		bool operator==(const Format &other) const;
-
-		ci::ivec2 mSize;
-	};
-
-	FrameBuffer( const Format &format );
-
-	ci::ivec2    getSize() const     { return mFbo->getSize(); }
-
-	cinder::gl::FboRef mFbo;
-};
-
-} // namespace ui
-
-namespace std {
-
-template <>
-struct hash<ui::FrameBuffer::Format> {
-	inline size_t operator()( const ui::FrameBuffer::Format &format ) const
-	{
-		return hash<int>()( format.mSize.x ) ^ hash<int>()( format.mSize.y );
-	}
-};
-
-} // namespace std
-
-namespace ui {
-
-class FrameBufferCache {
-  public:
-	static FrameBufferCache* instance();
-
-	static FrameBufferRef getFrameBuffer( const ci::ivec2 &size );
-
-  private:
-	std::unordered_map<FrameBuffer::Format, FrameBufferRef>	mCache;
-};
+typedef std::shared_ptr<class FrameBuffer>	FrameBufferRef;
 
 class Layer : public std::enable_shared_from_this<Layer> {
   public:
@@ -104,8 +57,6 @@ class Layer : public std::enable_shared_from_this<Layer> {
 	void markForRemoval()               { mShouldRemove = true; }
 	bool getShouldRemove()const         { return mShouldRemove; }
 
-
-
   private:
 
 	void configureView( View *view );
@@ -115,7 +66,6 @@ class Layer : public std::enable_shared_from_this<Layer> {
 
 	View*           mRootView;
 	Graph*          mGraph;
-	RendererRef		mRenderer;
 	FrameBufferRef	mFrameBuffer;
 	ci::Rectf       mFrameBufferBounds = ci::Rectf::zero();
 	bool            mNeedsLayout = true;
