@@ -151,6 +151,9 @@ protected:
 	virtual void update()		{}
 	virtual void draw()			{}
 
+	//! Returns the bounds required for rendering this View to a FrameBuffer. \default is this View's local bounds. Override if this View needs a larger sized or FrameBuffer.
+	virtual ci::Rectf   getBoundsForFrameBuffer() const;
+
 	// Override to handle UI events. Return true if handled, false otherwise.
 	virtual bool touchesBegan( const ci::app::TouchEvent &event )	{ return false; }
 	virtual bool touchesMoved( const ci::app::TouchEvent &event )	{ return false; }
@@ -239,7 +242,9 @@ public:
 	ci::Anim<float>*	getLineWidthAnim()					{ return &mLineWidth; }
 
 protected:
-	void draw()		    override;
+	void update()	                            override;
+	void draw()		                            override;
+	ci::Rectf getBoundsForFrameBuffer() const   override;
 
 	ci::Anim<float>		mLineWidth = { 1 };
 };

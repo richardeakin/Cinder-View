@@ -27,10 +27,21 @@
 #include "cinder/gl/gl.h"
 #include "cinder/app/Window.h"
 
+#include <cmath>
+
 #define ENABLE_FRAMEBUFFER_CACHING 1
 
 using namespace ci;
 using namespace std;
+
+namespace {
+
+Rectf ceil( const Rectf &r )
+{
+	return Rectf( ceilf( r.x1 ), ceilf( r.y1 ), ceilf( r.x2 ), ceilf( r.y2 ) );
+}
+
+} // anonymous namesapce
 
 namespace ui {
 
@@ -81,11 +92,7 @@ FrameBufferRef FrameBufferCache::getFrameBuffer( const ci::ivec2 &size )
 Layer::Layer( View *view )
 	: mRootView( view )
 {
-	CI_ASSERT( view );
-
-	// TODO: View is constructing Layer in it's constructor, but it doesn't yet have a graph yet so no renderer
-//	mRenderer = mRootView->getRenderer();
-
+	CI_ASSERT_MSG( view, "null pointer to View" );
 	CI_LOG_I( "root view: " << view->getName() );
 }
 
@@ -124,10 +131,9 @@ void Layer::configureView( View *view )
 			return;
 		}
 		else {
-			if( ! mFrameBuffer ) {
-				CI_LOG_I( "aquiring FrameBuffer for view '" << mRootView->getName() << "', size: " << mRootView->getSize() );
+			if( ! mRootView->mRendersToFrameBuffer ) {
+				CI_LOG_I( "enabling FrameBuffer for view '" << mRootView->getName() << "', size: " << mRootView->getSize() );
 				CI_LOG_I( "\t- reason: alpha = " << mRootView->getAlpha() );
-				mFrameBuffer = FrameBufferCache::getFrameBuffer( ivec2( mRootView->getSize() ) );
 				mRootView->mRendersToFrameBuffer = true;
 			}
 		}
@@ -138,8 +144,17 @@ void Layer::configureView( View *view )
 			CI_LOG_I( "\t- reason: alpha = " << mRootView->getAlpha() );
 			mFrameBuffer.reset();
 			mRootView->mRendersToFrameBuffer = false;
+			mFrameBufferBounds = Rectf::zero();
 			mGraph->removeLayer( shared_from_this() );
 			return;
+		}
+	}
+
+	if( mRootView->mRendersToFrameBuffer ) {
+		Rectf frameBufferBounds = view->getBoundsForFrameBuffer();
+		if( mFrameBufferBounds.getWidth() < frameBufferBounds.getWidth() && mFrameBufferBounds.getHeight() < frameBufferBounds.getHeight() ) {
+			mFrameBufferBounds = ceil( frameBufferBounds );
+			CI_LOG_I( "mFrameBufferBounds: " << mFrameBufferBounds );
 		}
 	}
 
@@ -153,11 +168,18 @@ void Layer::configureView( View *view )
 
 void Layer::draw()
 {
-	if( mFrameBuffer ) {
+	if( mRootView->mRendersToFrameBuffer ) {
+		ivec2 frameBufferSize = ivec2( mFrameBufferBounds.getSize() );
+		if( ! mFrameBuffer || mFrameBuffer->getSize().x < frameBufferSize.x || mFrameBuffer->getSize().y < frameBufferSize.y ) {
+			CI_LOG_I( "aquiring FrameBuffer for view '" << mRootView->getName() << "', size: " << mFrameBufferBounds.getSize() );
+			mFrameBuffer = FrameBufferCache::getFrameBuffer( frameBufferSize );
+		}
+
 		gl::context()->pushFramebuffer( mFrameBuffer->mFbo );
-		gl::pushViewport( mFrameBuffer->getSize() );
+		gl::pushViewport( frameBufferSize );
 		gl::pushMatrices();
-		gl::setMatricesWindow( mFrameBuffer->getSize() );
+		gl::setMatricesWindow( frameBufferSize );
+		gl::translate( - mFrameBufferBounds.getUpperLeft() );
 
 		gl::clear();
 	}
@@ -168,7 +190,7 @@ void Layer::draw()
 
 	endClip();
 
-	if( mFrameBuffer ) {
+	if( mRootView->mRendersToFrameBuffer ) {
 		gl::context()->popFramebuffer();
 		gl::popViewport();
 		gl::popMatrices();
@@ -177,15 +199,17 @@ void Layer::draw()
 		ren->pushBlendMode( BlendMode::PREMULT_ALPHA );
 		ren->pushColor( ColorA::gray( 1, getAlpha() ) );
 
-		auto destRect = Rectf( 0, 0, mFrameBuffer->mFbo->getWidth(), mFrameBuffer->mFbo->getHeight() ) + mRootView->getPos();
+		auto destRect = mFrameBufferBounds + mRootView->getPos();
 		gl::draw( mFrameBuffer->mFbo->getColorTexture(), destRect );
 		ren->popColor();
 		ren->popBlendMode();
 
 //		writeImage( "framebuffer.png", mFrameBuffer->mFbo->getColorTexture()->createSource() );
-//
+
+		// TODO: draw this in test by iterating over Graph's Layers
+		// - need a way to get the Layer's position within View heirarchy
 //		gl::color( 0, 1, 0 );
-//		gl::drawStrokedRect( destRect, 2 );
+//		gl::drawStrokedRect( destRect );
 	}
 }
 

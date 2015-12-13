@@ -96,6 +96,7 @@ CompositingTest::CompositingTest()
 void CompositingTest::layout()
 {
 	mContainerView->setBounds( Rectf( PADDING, PADDING, getWidth() - PADDING, getHeight() - PADDING ) );
+	CI_LOG_I( "mContainerView bounds: " << mContainerView->getBounds() );
 
 	mLabelA->setPos( { 200, 100 } );
 	mLabelB->setPos( { 450, 100 } );

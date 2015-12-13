@@ -97,6 +97,11 @@ Rectf View::getBoundsLocal() const
 	return Rectf( vec2( 0 ), getSize() );
 }
 
+Rectf View::getBoundsForFrameBuffer() const
+{
+	return Rectf( vec2( 0 ), getSize() );
+}
+
 bool View::isBoundsAnimating() const
 {
 	return ( ! mPos.isComplete() || ! mSize.isComplete() );
@@ -533,11 +538,27 @@ void RectView::draw()
 	renderer->drawSolidRect( getBoundsLocal() );
 }
 
+// ----------------------------------------------------------------------------------------------------
+// MARK: - StrokedRectView
+// ----------------------------------------------------------------------------------------------------
+
 StrokedRectView::StrokedRectView( const ci::Rectf &bounds )
 	: RectView( bounds )
 {
 }
 
+Rectf StrokedRectView::getBoundsForFrameBuffer() const
+{
+	return Rectf( vec2( - mLineWidth / 2.0f ), getSize() + mLineWidth / 2.0f );
+}
+
+void StrokedRectView::update()
+{
+	if( ! mLineWidth.isComplete() ) {
+		// TODO: if compositing, make sure framebuffer size is large enough
+		// - want to avoid reconstructing layer tree each update frame
+	}
+}
 
 void StrokedRectView::draw()
 {

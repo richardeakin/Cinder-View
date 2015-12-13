@@ -41,7 +41,7 @@ class FrameBuffer {
 	struct Format {
 		Format& size( const ci::ivec2 &size )	{ mSize = size; return *this; }
 
-		//! Overloaded to allow Format to be used as a key in std::unordered_map
+		//! Allow Format to be used as a key in std::unordered_map
 		bool operator==(const Format &other) const;
 
 		ci::ivec2 mSize;
@@ -104,6 +104,8 @@ class Layer : public std::enable_shared_from_this<Layer> {
 	void markForRemoval()               { mShouldRemove = true; }
 	bool getShouldRemove()const         { return mShouldRemove; }
 
+
+
   private:
 
 	void configureView( View *view );
@@ -115,6 +117,7 @@ class Layer : public std::enable_shared_from_this<Layer> {
 	Graph*          mGraph;
 	RendererRef		mRenderer;
 	FrameBufferRef	mFrameBuffer;
+	ci::Rectf       mFrameBufferBounds = ci::Rectf::zero();
 	bool            mNeedsLayout = true;
 	bool			mClipEnabled = false;
 	bool            mShouldRemove = false;
