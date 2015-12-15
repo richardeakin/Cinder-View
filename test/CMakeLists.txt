@@ -8,9 +8,6 @@ set( CMAKE_VERBOSE_MAKEFILE ON )
 message( STATUS "REPO_PATH: ${REPO_PATH}" )
 message( STATUS "[test] CINDER_PATH_FULL: ${CINDER_PATH_FULL}" )
 
-get_property( inc_dirs DIRECTORY PROPERTY INCLUDE_DIRECTORIES )
-message( STATUS "[test] include dirs: ${inc_dirs}" )
-
 include( "${REPO_PATH}/cmake/ci_make_app.cmake" )
 
 set( APP_SOURCES

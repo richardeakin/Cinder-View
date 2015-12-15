@@ -25,7 +25,7 @@ function( ci_make_app )
 	endif()
 
 	# place the final app in a folder based on the build type.
-	set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE} )
+	set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE} )
 
 	include_directories( "${ARG_CINDER_PATH}/include" )
 
