@@ -30,13 +30,12 @@ function( ci_make_app )
 	include_directories( "${ARG_CINDER_PATH}/include" )
 
 	if( APPLE )
+		# TODO: need to decide how to navigate the various places that libcinder can live
+		# - probably best with the export + configure stuff
+		set( CINDER_LIB cinder ) # the one built in the new cmake configuration
+
 		# Find libcinder.a within cinder's lib folder for this build type
 		# set( CINDER_LIB "${ARG_CINDER_PATH}/lib/${CMAKE_BUILD_TYPE}/libcinder.a" )
-		if( ${CMAKE_BUILD_TYPE} STREQUAL "Debug" )
-			set( CINDER_LIB "${ARG_CINDER_PATH}/lib/libcinder_d.a" )
-		else()
-			set( CINDER_LIB "${ARG_CINDER_PATH}/lib/libcinder.a" )
-		endif()
 
 		# link in libcinder.a and redistributed dependencies
 		list( APPEND CINDER_LINKED_LIBS
@@ -92,9 +91,9 @@ function( ci_make_app )
 		message( FATAL_ERROR "unhandled platform: ${CMAKE_SYSTEM_NAME}" )
 	endif()
 
-	if( NOT EXISTS ${CINDER_LIB} )
-		message( FATAL_ERROR "cannot find libcinder at path: ${CINDER_LIB}" )
-	endif()
+#	if( NOT EXISTS ${CINDER_LIB} )
+#		message( FATAL_ERROR "cannot find libcinder at path: ${CINDER_LIB}" )
+#	endif()
 
 	set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14" PARENT_SCOPE )
 	# ??? should be set for CMakeCache.txt too? this is how to do it, though it overwrites everything else

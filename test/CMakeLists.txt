@@ -1,4 +1,4 @@
-cmake_minimum_required( VERSION 3.1 )
+cmake_minimum_required( VERSION 3.0 FATAL_ERROR )
 project( ViewTests )
 
 set( APP_TARGET "ViewTests" )
