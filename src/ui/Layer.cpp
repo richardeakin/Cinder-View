@@ -177,11 +177,6 @@ void Layer::draw()
 		ren->popBlendMode();
 
 //		writeImage( "framebuffer.png", mFrameBuffer->mFbo->getColorTexture()->createSource() );
-
-		// TODO: draw this in test by iterating over Graph's Layers
-		// - need a way to get the Layer's position within View heirarchy
-//		gl::color( 0, 1, 0 );
-//		gl::drawStrokedRect( destRect );
 	}
 }
 
@@ -251,6 +246,11 @@ void Layer::endClip()
 		ctx->popBoolState( GL_SCISSOR_TEST );
 		ctx->popScissor();
 	}
+}
+
+Rectf Layer::getBoundsWorld() const
+{
+	return mRootView->getWorldBounds();
 }
 
 } // namespace ui

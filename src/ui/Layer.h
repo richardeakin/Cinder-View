@@ -57,6 +57,8 @@ class Layer : public std::enable_shared_from_this<Layer> {
 	void markForRemoval()               { mShouldRemove = true; }
 	bool getShouldRemove()const         { return mShouldRemove; }
 
+	ci::Rectf   getBoundsWorld() const;
+
   private:
 
 	void configureView( View *view );

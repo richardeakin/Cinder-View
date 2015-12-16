@@ -21,7 +21,11 @@ class ViewTestsApp : public App {
 	void update() override;
 	void draw() override;
 
+	void drawLayerBorders();
+
 	ui::SuiteRef	mTestSuite;
+
+	bool    mDrawLayerBorders = false;
 };
 
 void ViewTestsApp::setup()
@@ -29,8 +33,8 @@ void ViewTestsApp::setup()
 	mTestSuite = make_shared<ui::Suite>();
 
 	mTestSuite->registerSuiteView<BasicViewTests>( "basic" );
-	mTestSuite->registerSuiteView<ControlsTest>( "controls" );
 	mTestSuite->registerSuiteView<CompositingTest>( "compositing" );
+	mTestSuite->registerSuiteView<ControlsTest>( "controls" );
 	mTestSuite->registerSuiteView<ScrollTests>( "scroll" );
 
 	// TODO: this doesn't cover the case of calling selectTest() directly - should probably add new signal that ties to both Selector and that
@@ -43,8 +47,13 @@ void ViewTestsApp::setup()
 
 void ViewTestsApp::keyDown( app::KeyEvent event )
 {
-	if( event.getChar() == 'p' ) {
-		mTestSuite->getGraph()->printHeirarchy( app::console() );
+	switch( event.getCode() ) {
+		case app::KeyEvent::KEY_p:
+			mTestSuite->getGraph()->printHeirarchy( app::console() );
+		break;
+		case app::KeyEvent::KEY_b:
+			mDrawLayerBorders = ! mDrawLayerBorders;
+		break;
 	}
 }
 
@@ -59,10 +68,36 @@ void ViewTestsApp::draw()
 
 	mTestSuite->draw();
 
+	if( mDrawLayerBorders )
+		drawLayerBorders();
+
 	CI_CHECK_GL();
 }
 
+void ViewTestsApp::drawLayerBorders()
+{
+	auto graph = mTestSuite->getGraph();
+	auto ren = graph->getRenderer();
+
+	// reset model transform, drawing in world coordinates
+//	gl::ScopedModelMatrix modelScope;
+//	gl::setModelMatrix( mat4( 1 ) );
+
+	ren->setColor( Color( 0.75f, 0.5f, 0 ) );
+	for( auto &layer : graph->getLayers() ) {
+		Rectf layerBorder = layer->getBoundsWorld();
+		ren->drawStrokedRect( layerBorder, 2);
+	}
+}
+
 CINDER_APP( ViewTestsApp, RendererGl( RendererGl::Options().msaa( 8 ) ), []( App::Settings *settings ) {
-	settings->setWindowPos( 0, 0 );
+//	settings->setWindowPos( 0, 0 );
 	settings->setWindowSize( 960, 565 );
+
+	// move app to macbook display
+	for( const auto &display : Display::getDisplays() ) {
+		if( display->getName() == "Color LCD" ) {
+			settings->setDisplay( display );
+		}
+	}
 } )

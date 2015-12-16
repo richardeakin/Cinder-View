@@ -9,7 +9,7 @@ public:
 
 	void layout() override;
 
-private:
+  private:
 	void keyEvent( ci::app::KeyEvent &event );
 
 	ui::ViewRef				mContainerView;

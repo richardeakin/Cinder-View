@@ -181,7 +181,7 @@ void BasicViewTests::keyEvent( app::KeyEvent &event )
 			}
 			break;
 		}
-		case app::KeyEvent::KEY_b: {
+		case app::KeyEvent::KEY_o: {
 			float nextBorderWidth = randFloat( 1, 30 );
 			app::timeline().apply( mBorderView->getLineWidthAnim(), nextBorderWidth, 0.6f, EaseOutExpo() );
 			break;

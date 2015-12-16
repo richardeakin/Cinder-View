@@ -54,6 +54,8 @@ class Graph : public View {
 	LayerRef makeLayer( View *rootView );
 	void    removeLayer( const LayerRef &layer );
 
+	const std::list<LayerRef>& getLayers() const   { return mLayers; }
+
 	void propagateUpdate();
 	void propagateDraw();
 
