@@ -107,6 +107,20 @@ void Layer::configureView( View *view )
 		}
 	}
 
+	// TODO: handle runtime updates and disabling clip after it has been enabled
+	if( view->isClipEnabled() ) {
+		if( mRootView != view ) {
+			// we need a new layer, which will configure its subtree
+			LOG_LAYER( "enabling Layer for view '" << view->getName() );
+			LOG_LAYER( "\t- reason: clip enabled" );
+			auto layer = mGraph->makeLayer( view );
+			layer->mClipEnabled = true;
+			layer->configureViewList();
+			return;
+		}
+
+	}
+
 	if( mRootView->mRendersToFrameBuffer ) {
 		Rectf frameBufferBounds = view->getBoundsForFrameBuffer();
 		if( mFrameBufferBounds.getWidth() < frameBufferBounds.getWidth() && mFrameBufferBounds.getHeight() < frameBufferBounds.getHeight() ) {
@@ -175,7 +189,7 @@ void Layer::drawView( View *view )
 {
 	gl::ScopedModelMatrix modelScope;
 
-	if( view != mRootView )
+	if( view != mRootView || ! mRootView->mRendersToFrameBuffer )
 		gl::translate( view->getPos() );
 
 	view->drawImpl();
@@ -233,7 +247,6 @@ void Layer::beginClip()
 void Layer::endClip()
 {
 	if( mClipEnabled ) {
-
 		auto ctx = gl::context();
 		ctx->popBoolState( GL_SCISSOR_TEST );
 		ctx->popScissor();
