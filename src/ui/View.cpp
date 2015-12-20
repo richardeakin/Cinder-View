@@ -46,8 +46,12 @@ View::~View()
 	for( auto &subview : mSubviews )
 		subview->mParent = nullptr;
 
-	if( mLayer )
-		mLayer->setNeedsLayout();
+	if( mLayer ) {
+		if( isLayerRoot() )
+			mLayer->markForRemoval();
+		else
+			mLayer->setNeedsLayout();
+	}
 }
 
 void View::setPos( const vec2 &position )
