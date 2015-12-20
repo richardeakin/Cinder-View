@@ -109,11 +109,7 @@ void Graph::propagateDraw()
 {
 	CI_ASSERT( getLayer() );
 
-//	for( auto &layer : mLayers ) {
-//		layer->draw();
-//	}
-
-	mLayer->draw();
+	mLayer->draw( mRenderer.get() );
 }
 
 void Graph::connectTouchEvents( int priority )

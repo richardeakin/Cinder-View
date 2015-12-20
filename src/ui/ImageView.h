@@ -51,7 +51,7 @@ class ImageView : public View {
 	ci::Rectf getDestRect() const;
 
   protected:
-	virtual void draw() override;
+	virtual void draw( Renderer *ren ) override;
 
   private:
 	ci::gl::TextureRef	mTexture;

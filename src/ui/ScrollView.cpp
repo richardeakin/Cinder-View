@@ -138,7 +138,7 @@ void ScrollView::update()
 	}
 }
 
-void ScrollView::draw()
+void ScrollView::draw( Renderer *ren )
 {
 }
 

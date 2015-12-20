@@ -56,11 +56,11 @@ protected:
 		return true;
 	}
 
-	void draw() override
+	void draw( ui::Renderer *ren ) override
 	{
-		RectView::draw();
+		RectView::draw( ren );
 
-		getRenderer()->setColor( mLocalTouchColor );
+		ren->setColor( mLocalTouchColor );
 		gl::drawSolidCircle( mLocalTouchPos, 10.0f );
 	}
 

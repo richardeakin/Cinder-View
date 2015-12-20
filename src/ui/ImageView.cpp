@@ -39,7 +39,7 @@ void ImageView::setTexture( const ci::gl::TextureRef &texture )
 	mTexture = texture;
 }
 
-void ImageView::draw()
+void ImageView::draw( Renderer *ren )
 {
 	if( ! mTexture )
 		return;

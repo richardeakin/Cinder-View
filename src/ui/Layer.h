@@ -42,7 +42,7 @@ class Layer : public std::enable_shared_from_this<Layer> {
 
 	void configureViewList();
 
-	void draw();
+	void draw( Renderer *ren );
 
 	FrameBufferRef  getFrameBuffer() const      { return mFrameBuffer; }
 
@@ -62,7 +62,7 @@ class Layer : public std::enable_shared_from_this<Layer> {
   private:
 
 	void configureView( View *view );
-	void drawView( View *view );
+	void drawView( View *view, Renderer *ren );
 	void beginClip();
 	void endClip();
 

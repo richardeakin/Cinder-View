@@ -65,17 +65,15 @@ const ColorA& Button::getTitleColorForState( State state ) const
 		return mColorTitleNormal;
 }
 
-void Button::draw()
+void Button::draw( Renderer *ren )
 {
-	auto renderer = getRenderer();
-
 	// draw background
-	renderer->setColor( getColor() );
-	renderer->drawSolidRect( getBoundsLocal() );
+	ren->setColor( getColor() );
+	ren->drawSolidRect( getBoundsLocal() );
 
 	// draw title
 	const float padding = 6;
-	renderer->setColor( getTitleColor() );
+	ren->setColor( getTitleColor() );
 	mTextTitle->drawString( getTitle(), vec2( padding, getCenter().y + mTextTitle->getDescent() ) );
 }
 

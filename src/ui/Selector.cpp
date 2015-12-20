@@ -36,36 +36,34 @@ SelectorBase::SelectorBase( const Rectf &bounds )
 	mTextLabel = TextManager::loadText( FontFace::NORMAL );
 }
 
-void SelectorBase::draw()
+void SelectorBase::draw( Renderer *ren )
 {
-	auto renderer = getRenderer();
-
 	const float padding = 10;
 
 	float sectionHeight = getHeight() / (float)mSegments.size();
 	Rectf section( 0, 0, getWidth(), sectionHeight );
 
-	renderer->setColor( mUnselectedColor );
+	ren->setColor( mUnselectedColor );
 	for( size_t i = 0; i < mSegments.size(); i++ ) {
 		if( i != mSelectedIndex ) {
-			renderer->drawStrokedRect( section );
+			ren->drawStrokedRect( section );
 			mTextLabel->drawString( mSegments[i], vec2( section.x1 + padding, section.getCenter().y + mTextLabel->getDescent() ) );
 		}
 		section += vec2( 0.0f, sectionHeight );
 	}
 
-	renderer->setColor( mSelectedColor );
+	ren->setColor( mSelectedColor );
 
 	section.y1 = mSelectedIndex * sectionHeight;
 	section.y2 = section.y1 + sectionHeight;
-	renderer->drawStrokedRect( section );
+	ren->drawStrokedRect( section );
 
 	if( ! mSegments.empty() ) {
 		mTextLabel->drawString( mSegments[mSelectedIndex], vec2( section.x1 + padding, section.getCenter().y + mTextLabel->getDescent() ) );
 	}
 
 	if( ! mTitle.empty() ) {
-		renderer->setColor( mTitleColor );
+		ren->setColor( mTitleColor );
 		mTextLabel->drawString( mTitle, vec2( padding, - mTextLabel->getDescent() ) );
 	}
 }

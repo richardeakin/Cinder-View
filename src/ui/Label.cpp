@@ -58,12 +58,12 @@ void Label::setText( const std::string &text )
 	mTextSize = mFont->measureString( text );
 }
 
-void Label::draw()
+void Label::draw( Renderer *ren )
 {
 	if( mText.empty() )
 		return;
 
-	getRenderer()->setColor( mTextColor );
+	ren->setColor( mTextColor );
 	mFont->drawString( mText, getBaseLine() );
 }
 

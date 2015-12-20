@@ -55,6 +55,7 @@ Layer::Layer( View *view )
 
 Layer::~Layer()
 {
+	LOG_LAYER( "bang" );
 }
 
 float Layer::getAlpha() const
@@ -137,10 +138,8 @@ void Layer::configureView( View *view )
 	}
 }
 
-void Layer::draw()
+void Layer::draw( Renderer *ren )
 {
-	auto ren = mRootView->getRenderer();
-
 	if( mRootView->mRendersToFrameBuffer ) {
 		ivec2 frameBufferSize = ivec2( mFrameBufferBounds.getSize() );
 		if( ! mFrameBuffer || mFrameBuffer->getSize().x < frameBufferSize.x || mFrameBuffer->getSize().y < frameBufferSize.y ) {
@@ -159,7 +158,7 @@ void Layer::draw()
 
 	beginClip();
 
-	drawView( mRootView );
+	drawView( mRootView, ren );
 
 	endClip();
 
@@ -180,22 +179,22 @@ void Layer::draw()
 	}
 }
 
-void Layer::drawView( View *view )
+void Layer::drawView( View *view, Renderer *ren )
 {
 	gl::ScopedModelMatrix modelScope;
 
 	if( view != mRootView || ! mRootView->mRendersToFrameBuffer )
 		gl::translate( view->getPos() );
 
-	view->drawImpl();
+	view->drawImpl( ren );
 
 	auto thisRef = shared_from_this();
 	for( auto &subview : view->getSubviews() ) {
 		if( subview->getLayer() == thisRef ) {
-			drawView( subview.get() );
+			drawView( subview.get(), ren );
 		}
 		else {
-			subview->getLayer()->draw();
+			subview->getLayer()->draw( ren );
 		}
 	}
 }

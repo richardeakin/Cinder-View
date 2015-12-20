@@ -67,17 +67,16 @@ void SliderBase::setValue( float value, bool emitChanged )
 		mSignalValueChanged.emit();
 }
 
-void SliderBase::draw()
+void SliderBase::draw( Renderer *ren )
 {
 	const float sliderRadius = mValueThickness / 2;
 	const Rectf valRect = getValueRect( mSliderPos, sliderRadius );
 	const float padding = 6;
 
-	auto renderer = getRenderer();
-	renderer->setColor( mValueColor );
-	renderer->drawSolidRect( valRect );
+	ren->setColor( mValueColor );
+	ren->drawSolidRect( valRect );
 
-	renderer->setColor( mTitleColor );
+	ren->setColor( mTitleColor );
 	mTextLabel->drawString( getTitleLabel(), vec2( padding, getCenter().y + mTextLabel->getDescent() ) );
 }
 

@@ -47,7 +47,7 @@ public:
 	void				setAlignment( TextAlignment alignment )	{ mAlignment = alignment; }
 
 protected:
-	void draw()	override;
+	void draw( Renderer *ren ) override;
 
 private:
 	ci::vec2	getBaseLine() const;

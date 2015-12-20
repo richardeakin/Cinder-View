@@ -38,7 +38,7 @@ class CoordinateAxisView : public View {
 
 protected:
 	void layout()	override;
-	void draw()	override;
+	void draw( Renderer *ren ) override;
 
 private:
 	ci::CameraPersp mCoordFrameCam;

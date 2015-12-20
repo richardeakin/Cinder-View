@@ -224,18 +224,6 @@ void View::setParent( View *parent )
 	mGraph = parent->getGraph();
 }
 
-RendererRef View::getRenderer() const
-{
-	CI_ASSERT( getGraph() != nullptr );
-	return getGraph()->getRenderer();
-}
-
-RendererRef View::getRenderer()
-{
-	CI_ASSERT( getGraph() != nullptr );
-	return getGraph()->getRenderer();
-}
-
 void View::setNeedsLayout()
 {
 	mNeedsLayout = true;
@@ -322,26 +310,24 @@ void View::propagateUpdate()
 	update();
 }
 
-void View::drawImpl()
+void View::drawImpl( Renderer *ren )
 {
 	if( isHidden() )
 		return;
 
-	auto renderer = getRenderer();
-
-	renderer->pushBlendMode( mBlendMode ); // TEMPORARY: this will be handled by Layer
+	ren->pushBlendMode( mBlendMode ); // TEMPORARY: this will be handled by Layer
 
 	if( mBackground ) {
-		renderer->pushColor();
-		mBackground->draw();
-		renderer->popColor();
+		ren->pushColor();
+		mBackground->draw( ren );
+		ren->popColor();
 	}
 
-	renderer->pushColor();
-	draw();
-	renderer->popColor();
+	ren->pushColor();
+	draw( ren );
+	ren->popColor();
 
-	renderer->popBlendMode();
+	ren->popBlendMode();
 }
 
 bool View::hitTest( const vec2 &localPos ) const
@@ -535,11 +521,10 @@ RectView::RectView( const ci::Rectf &bounds )
 	setBlendMode( BlendMode::PREMULT_ALPHA );
 }
 
-void RectView::draw()
+void RectView::draw( Renderer *ren )
 {
-	auto renderer = getRenderer();
-	renderer->setColor( getColor() );
-	renderer->drawSolidRect( getBoundsLocal() );
+	ren->setColor( getColor() );
+	ren->drawSolidRect( getBoundsLocal() );
 }
 
 // ----------------------------------------------------------------------------------------------------
@@ -564,15 +549,14 @@ void StrokedRectView::update()
 	}
 }
 
-void StrokedRectView::draw()
+void StrokedRectView::draw( Renderer *ren )
 {
-	auto renderer = getRenderer();
-	renderer->setColor( getColor() );
+	ren->setColor( getColor() );
 
 	if( mLineWidth == 1 )
-		renderer->drawStrokedRect( getBoundsLocal() );
+		ren->drawStrokedRect( getBoundsLocal() );
 	else
-		renderer->drawStrokedRect( getBoundsLocal(), mLineWidth );
+		ren->drawStrokedRect( getBoundsLocal(), mLineWidth );
 }
 
 } // namespace ui

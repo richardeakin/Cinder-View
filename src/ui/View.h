@@ -89,10 +89,6 @@ class View : public std::enable_shared_from_this<View> {
 	const Graph*            getGraph() const    { return mGraph; }
 	//!
 	Graph*                  getGraph()          { return mGraph; }
-	//! Returns the Renderer that is responsible for drawing
-	RendererRef             getRenderer() const;
-	//! Returns the Renderer that is responsible for drawing
-	RendererRef             getRenderer();
 	//!
 	LayerRef	            getLayer() const	{ return mLayer; }
 	//!
@@ -147,9 +143,9 @@ class View : public std::enable_shared_from_this<View> {
 	void printHeirarchy( std::ostream &os );
 
 protected:
-	virtual void layout()		{}
-	virtual void update()		{}
-	virtual void draw()			{}
+	virtual void layout()		        {}
+	virtual void update()		        {}
+	virtual void draw( Renderer *ren )  {}
 
 	//! Returns the bounds required for rendering this View to a FrameBuffer. \default is this View's local bounds. Override if this View needs a larger sized or FrameBuffer.
 	virtual ci::Rectf   getBoundsForFrameBuffer() const;
@@ -165,7 +161,7 @@ private:
 
 	void setParent( View *parent );
 	void calcWorldPos() const;
-	void drawImpl();
+	void drawImpl( Renderer *ren );
 
 	// TODO: consider moving propagation methods to Graph and passing View as argument
 	void propagateLayout();
@@ -226,7 +222,7 @@ public:
 	ci::Anim<ci::ColorA>*	getColorAnim()						{ return &mColor; }
 
 protected:
-	void draw()		override;
+	void draw( Renderer *ren ) override;
 
 	ci::Anim<ci::ColorA>	mColor = { ci::ColorA::black() };
 private:
@@ -243,7 +239,7 @@ public:
 
 protected:
 	void update()	                            override;
-	void draw()		                            override;
+	void draw( Renderer *ren ) override;
 	ci::Rectf getBoundsForFrameBuffer() const   override;
 
 	ci::Anim<float>		mLineWidth = { 1 };
