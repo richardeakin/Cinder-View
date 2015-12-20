@@ -79,15 +79,12 @@ void ViewTestsApp::drawLayerBorders()
 	auto graph = mTestSuite->getGraph();
 	auto ren = graph->getRenderer();
 
-	// reset model transform, drawing in world coordinates
-//	gl::ScopedModelMatrix modelScope;
-//	gl::setModelMatrix( mat4( 1 ) );
-
-	ren->setColor( Color( 0.75f, 0.5f, 0 ) );
+	ren->pushColor( Color( 0.75f, 0.5f, 0 ) );
 	for( auto &layer : graph->getLayers() ) {
 		Rectf layerBorder = layer->getBoundsWorld();
 		ren->drawStrokedRect( layerBorder, 2);
 	}
+	ren->popColor();
 }
 
 CINDER_APP( ViewTestsApp, RendererGl( RendererGl::Options().msaa( 8 ) ), []( App::Settings *settings ) {
