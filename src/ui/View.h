@@ -115,7 +115,7 @@ class View : public std::enable_shared_from_this<View> {
 	ci::Rectf			toWorld( const ci::Rectf &localRect ) const;
 	ci::Rectf			toLocal( const ci::Rectf &worldRect ) const;
 
-	bool				hitTest( const ci::vec2 &localPos ) const;
+	virtual bool				hitTest( const ci::vec2 &localPos ) const;
 
 	void	setHidden( bool hidden = true )			{ mHidden = hidden; }
 	bool	isHidden() const						{ return mHidden; }
