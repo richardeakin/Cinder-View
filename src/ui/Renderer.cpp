@@ -75,11 +75,11 @@ out vec4 oFragColor;
 
 void main()
 {
-//	oFragColor = texture( uTex0, vTexCoord.st ) * vColor;
+	oFragColor = texture( uTex0, vTexCoord.st ) * vColor;
 
-	vec4 col = texture( uTex0, vTexCoord.st ) * vColor;
-	col.rgb *= col.a;
-	oFragColor = col;
+//	vec4 col = texture( uTex0, vTexCoord.st ) * vColor;
+//	col.rgb *= col.a;
+//	oFragColor = col;
 }
 )";
 
