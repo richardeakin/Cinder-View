@@ -93,15 +93,19 @@ void Graph::propagateUpdate()
 
 	for( auto layerIt = mLayers.begin(); layerIt != mLayers.end(); /* */ ) {
 		auto &layer = *layerIt;
+
 		if( layer->getNeedsLayout() ) {
 			layer->configureViewList();
-			if( layer->getShouldRemove() ) {
-				mLayers.erase( layerIt );
-				continue;
-			}
 		}
 
-		++layerIt;
+		if( layer->getShouldRemove() ) {
+			CI_LOG_I( "removing layer" );
+			layerIt = mLayers.erase( layerIt );
+			continue;
+		}
+		else {
+			++layerIt;
+		}
 	}
 }
 

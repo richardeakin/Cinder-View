@@ -70,6 +70,10 @@ void Layer::setNeedsLayout()
 
 void Layer::configureViewList()
 {
+	if( mShouldRemove ) {
+		return;
+	}
+	
 	LOG_LAYER( "mRootView: " << mRootView->getName() );
 
 	configureView( mRootView );
