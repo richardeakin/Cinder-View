@@ -32,7 +32,7 @@ CompositingTest::CompositingTest()
 	mLabelA->setFontSize( fontSizeBig );
 	mLabelA->setAlignment( ui::TextAlignment::CENTER );
 	mLabelA->setTextColor( Color::white() );
-	mLabelA->getBackground()->setColor( Color( 0, 0, 0.8f ) );
+	mLabelA->getBackground()->setColor( Color( 0, 0, 1 ) );
 
 	mLabelB = make_shared<ui::Label>();
 	mLabelB->setText( "B" );
@@ -41,7 +41,7 @@ CompositingTest::CompositingTest()
 	mLabelB->setFontSize( fontSizeBig );
 	mLabelB->setAlignment( ui::TextAlignment::CENTER );
 	mLabelB->setTextColor( Color::white() );
-	mLabelB->getBackground()->setColor( Color( 0, 0.8f, 0 ) );
+	mLabelB->getBackground()->setColor( Color( 0, 1, 0 ) );
 
 	mLabelC = make_shared<ui::Label>();
 	mLabelC->setText( "C" );
@@ -50,7 +50,7 @@ CompositingTest::CompositingTest()
 	mLabelC->setFontSize( fontSizeBig );
 	mLabelC->setAlignment( ui::TextAlignment::CENTER );
 	mLabelC->setTextColor( Color::white() );
-	mLabelC->getBackground()->setColor( Color( 0.8f, 0, 0 ) );
+	mLabelC->getBackground()->setColor( Color( 1, 0, 0 ) );
 	mLabelC->setAlpha( 0.5f );
 
 	mLabelD = make_shared<ui::Label>();
@@ -60,7 +60,7 @@ CompositingTest::CompositingTest()
 	mLabelD->setFontSize( 30 );
 	mLabelD->setAlignment( ui::TextAlignment::CENTER );
 	mLabelD->setTextColor( Color::white() );
-	mLabelD->getBackground()->setColor( Color( 0.8f, 0.8f, 0 ) );
+	mLabelD->getBackground()->setColor( Color( 1, 1, 0 ) );
 
 	{
 		auto alphaSlider = make_shared<ui::HSlider>( Rectf( 10, 10, 150, 40 ) );
