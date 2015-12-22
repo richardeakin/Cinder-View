@@ -29,7 +29,8 @@
 
 namespace cinder { namespace gl {
 
-typedef std::shared_ptr<class Fbo>     FboRef;
+typedef std::shared_ptr<class Fbo>          FboRef;
+typedef std::shared_ptr<class GlslProg>     GlslProgRef;
 
 } } // namespace cinder::gl
 
@@ -101,6 +102,9 @@ class Renderer {
 	void popBlendMode();
 	//!
 	FrameBufferRef getFrameBuffer( const ci::ivec2 &size );
+	//!
+	void draw( const FrameBufferRef &frameBuffer, const ci::Rectf &destRect );
+
 	//! Draws a solid rectangle with dimensions \a rect.
 	void drawSolidRect( const ci::Rectf &rect );
 	//! Draws a stroked rectangle with dimensions \a rect.
@@ -113,6 +117,8 @@ class Renderer {
 	std::vector<BlendMode>		mBlendModeStack;
 
 	std::unordered_map<FrameBuffer::Format, FrameBufferRef>	mFrameBufferCache;
+
+	ci::gl::GlslProgRef         mGlslFrameBuffer;
 };
 
 } // namespace ui

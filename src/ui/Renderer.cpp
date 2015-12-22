@@ -19,6 +19,7 @@
  POSSIBILITY OF SUCH DAMAGE.
 */
 
+#include <cinder/gl/scoped.h>
 #include "ui/Renderer.h"
 
 #include "cinder/gl/Context.h"
@@ -33,6 +34,56 @@ using namespace ci;
 using namespace std;
 
 namespace ui {
+
+namespace {
+
+const string FRAMEBUFFER_VERT = R"(
+#version 400
+
+uniform mat4 ciModelViewProjection;
+
+uniform vec2 uPositionOffset, uPositionScale;
+uniform vec2 uTexCoordOffset, uTexCoordScale;
+
+in vec4 ciPosition;
+in vec2 ciTexCoord0;
+in vec4 ciColor;
+
+out highp vec2 vTexCoord;
+out lowp vec4 vColor;
+
+void main()
+{
+//	gl_Position = ciModelViewProjection * ( vec4( uPositionOffset, 0, 0 ) + vec4( uPositionScale, 1, 1 ) * ciPosition );
+//	vTexCoord = uTexCoordOffset + uTexCoordScale * ciTexCoord0;
+
+	gl_Position = ciModelViewProjection * ciPosition;
+	vTexCoord = ciTexCoord0;
+	vColor = ciColor;
+}
+)";
+
+const string FRAMEBUFFER_FRAG = R"(
+#version 400
+
+uniform sampler2D uTex0;
+
+in vec2	vTexCoord;
+in vec4 vColor;
+
+out vec4 oFragColor;
+
+void main()
+{
+//	oFragColor = texture( uTex0, vTexCoord.st ) * vColor;
+
+	vec4 col = texture( uTex0, vTexCoord.st ) * vColor;
+	col.rgb *= col.a;
+	oFragColor = col;
+}
+)";
+
+} // anonymous namespace
 
 // ----------------------------------------------------------------------------------------------------
 // FrameBuffer
@@ -143,6 +194,24 @@ FrameBufferRef Renderer::getFrameBuffer( const ci::ivec2 &size )
 #else
 	return make_shared<FrameBuffer>( format );
 #endif
+}
+
+void Renderer::draw( const FrameBufferRef &frameBuffer, const Rectf &destRect )
+{
+	if( ! mGlslFrameBuffer ) {
+		try {
+			mGlslFrameBuffer = gl::GlslProg::create( FRAMEBUFFER_VERT, FRAMEBUFFER_FRAG );
+			CI_LOG_I( "loaded mGlslFrameBuffer" );
+		}
+		catch( Exception &exc ) {
+			CI_LOG_EXCEPTION( "failed to load mGlslFrameBuffer", exc );
+		}
+	}
+
+	gl::ScopedGlslProg glslScope( mGlslFrameBuffer );
+	gl::ScopedTextureBind texScope( frameBuffer->mFbo->getColorTexture() );
+
+	gl::drawSolidRect( destRect );
 }
 
 void Renderer::drawSolidRect( const Rectf &rect )

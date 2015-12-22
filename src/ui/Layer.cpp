@@ -171,7 +171,7 @@ void Layer::draw( Renderer *ren )
 		ren->pushColor( ColorA::gray( 1, getAlpha() ) );
 
 		auto destRect = mFrameBufferBounds + mRootView->getPos();
-		gl::draw( mFrameBuffer->mFbo->getColorTexture(), destRect );
+		ren->draw( mFrameBuffer, destRect );
 		ren->popColor();
 		ren->popBlendMode();
 
