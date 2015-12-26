@@ -97,10 +97,9 @@ ScrollTests::ScrollTests()
 	fs::path imageFilePath = app::getAssetPath( "images/monkey_hitchhike.jpg" );
 	try {
 		CI_LOG_I( "loading image view.." );
-		auto image = loadImage( loadFile( imageFilePath ) );
-		auto tex = gl::Texture::create( image );
-		imageView->setTexture( tex );
-		imageView->setSize( tex->getSize() );
+		auto image = make_shared<ui::Image>( loadImage( loadFile( imageFilePath ) ) );
+		imageView->setImage( image );
+		imageView->setSize( image->getSize() );
 		CI_LOG_I( "complete" );
 	}
 	catch( std::exception &exc ) {

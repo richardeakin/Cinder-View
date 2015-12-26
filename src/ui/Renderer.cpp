@@ -214,6 +214,11 @@ void Renderer::draw( const FrameBufferRef &frameBuffer, const Rectf &destRect )
 	gl::drawSolidRect( destRect );
 }
 
+void Renderer::draw( const ImageRef &image, const ci::Rectf &destRect )
+{
+	gl::draw( image->mTexture, destRect );
+}
+
 void Renderer::drawSolidRect( const Rectf &rect )
 {
 	gl::drawSolidRect( rect );

@@ -20,8 +20,6 @@
 */
 
 #include "ImageView.h"
-#include "cinder/gl/wrapper.h"
-#include "cinder/gl/draw.h"
 
 using namespace ci;
 using namespace std;
@@ -34,26 +32,26 @@ ImageView::ImageView( const ci::Rectf &bounds )
 	setInteractive( false );
 }
 
-void ImageView::setTexture( const ci::gl::TextureRef &texture )
+void ImageView::setImage( const ImageRef &image )
 {
-	mTexture = texture;
+	mImage = image;
 }
 
 void ImageView::draw( Renderer *ren )
 {
-	if( ! mTexture )
+	if( ! mImage )
 		return;
 
-	gl::draw( mTexture, getDestRect() );
+	ren->draw( mImage, getDestRect() );
 }
 
 Rectf ImageView::getDestRect() const
 {
-	if( ! mTexture ) {
+	if( ! mImage ) {
 		return Rectf::zero();
 	}
 
-	Rectf texBounds = mTexture->getBounds();
+	Rectf texBounds = mImage->getBounds();
 	auto bounds = getBoundsLocal();
 
 	switch( mScaleMode ) {

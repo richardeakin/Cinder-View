@@ -122,9 +122,8 @@ BasicViewTests::BasicViewTests()
 	fs::path imageFilePath = app::getAssetPath( "images/monkey_hitchhike.jpg" );
 	try {
 		CI_LOG_I( "loading image view.." );
-		auto image = loadImage( loadFile( imageFilePath ) );
-		auto tex = gl::Texture::create( image );
-		mImageView->setTexture( tex );
+		auto image = make_shared<ui::Image>( loadImage( loadFile( imageFilePath ) ) );
+		mImageView->setImage( image );
 		CI_LOG_I( "complete" );
 	}
 	catch( std::exception &exc ) {

@@ -21,47 +21,35 @@
 
 #pragma once
 
-#include "ui/View.h"
-#include "ui/Image.h"
+#include "cinder/Cinder.h"
+#include "cinder/ImageIo.h"
+
+#include <memory>
+
+namespace cinder { namespace gl {
+
+//typedef std::shared_ptr<class Texture>  TextureRef; // TODO: fix this forward decl. in Texture.h
+typedef std::shared_ptr<class Texture2d>		Texture2dRef;
+typedef Texture2dRef							TextureRef;
+
+} } // namespace cinder::gl
 
 namespace ui {
 
-typedef std::shared_ptr<class ImageView>	ImageViewRef;
+typedef std::shared_ptr<class Image>	ImageRef;
 
-enum ImageScaleMode {
-	FIT,
-	FILL,
-	CENTER,
-	CENTER_HORIZONTAL,
-	NONE,
-	NUM_MODES
-};
-
-//! Draws an Image with various scale modes. Non-interactive by default.
-class ImageView : public View {
+class Image {
   public:
+	Image( const ci::ImageSourceRef &imageSource );
 
-	ImageView( const ci::Rectf &bounds = ci::Rectf::zero() );
-
-	void setImage( const ImageRef &image );
-
-	void setScaleMode( ImageScaleMode mode )	{ mScaleMode = mode; }
-	ImageScaleMode getScaleMode() const			{ return mScaleMode; }
-
-	ci::Rectf getDestRect() const;
-
-  protected:
-	virtual void draw( Renderer *ren ) override;
+	const ci::ivec2&    getSize() const     { return mSize; }
+	ci::Area            getBounds() const   { return ci::Area( 0, 0, mSize.x, mSize.y ); }
 
   private:
-	ImageRef	        mImage;
-	ImageScaleMode		mScaleMode = ImageScaleMode::FIT;
+	ci::gl::TextureRef	mTexture;
+	ci::ivec2           mSize;
+
+	friend class Renderer;
 };
-
-
-//! Returns scaleMode in string representation.
-std::string toString( const ImageScaleMode &scaleMode );
-//! Stream support for ScaleMode
-std::ostream& operator<<( std::ostream &os, const ImageScaleMode &rhs );
 
 } // namespace ui

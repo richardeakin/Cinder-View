@@ -25,6 +25,8 @@
 #include "cinder/Color.h"
 #include "cinder/Rect.h"
 
+#include "ui/Image.h"
+
 #include <unordered_map>
 
 namespace cinder { namespace gl {
@@ -104,6 +106,8 @@ class Renderer {
 	FrameBufferRef getFrameBuffer( const ci::ivec2 &size );
 	//!
 	void draw( const FrameBufferRef &frameBuffer, const ci::Rectf &destRect );
+	//!
+	void draw( const ImageRef &image, const ci::Rectf &destRect );
 
 	//! Draws a solid rectangle with dimensions \a rect.
 	void drawSolidRect( const ci::Rectf &rect );
