@@ -49,9 +49,6 @@ class Layer : public std::enable_shared_from_this<Layer> {
 	void setNeedsLayout();
 	bool getNeedsLayout() const         { return mNeedsLayout; }
 
-	void setClipEnabled( bool enable )	{ mClipEnabled = enable; }
-	bool isClipEnabled() const			{ return mClipEnabled; }
-
 	View*   getRootView() const         { return mRootView; }
 
 	void markForRemoval()               { mShouldRemove = true; }
@@ -63,7 +60,7 @@ class Layer : public std::enable_shared_from_this<Layer> {
 
 	void configureView( View *view );
 	void drawView( View *view, Renderer *ren );
-	void beginClip();
+	void beginClip( View *view, Renderer *ren );
 	void endClip();
 
 	View*           mRootView;
@@ -71,7 +68,6 @@ class Layer : public std::enable_shared_from_this<Layer> {
 	FrameBufferRef	mFrameBuffer;
 	ci::Rectf       mFrameBufferBounds = ci::Rectf::zero();
 	bool            mNeedsLayout = true;
-	bool			mClipEnabled = false;
 	bool            mShouldRemove = false;
 
 	friend class Graph;

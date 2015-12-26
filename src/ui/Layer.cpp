@@ -112,20 +112,6 @@ void Layer::configureView( View *view )
 		}
 	}
 
-	// TODO: handle runtime updates and disabling clip after it has been enabled
-	if( view->isClipEnabled() ) {
-		if( mRootView != view ) {
-			// we need a new layer, which will configure its subtree
-			LOG_LAYER( "enabling Layer for view '" << view->getName() );
-			LOG_LAYER( "\t- reason: clip enabled" );
-			auto layer = mGraph->makeLayer( view );
-			layer->mClipEnabled = true;
-			layer->configureViewList();
-			return;
-		}
-
-	}
-
 	if( mRootView->mRendersToFrameBuffer ) {
 		Rectf frameBufferBounds = view->getBoundsForFrameBuffer();
 		if( mFrameBufferBounds.getWidth() < frameBufferBounds.getWidth() && mFrameBufferBounds.getHeight() < frameBufferBounds.getHeight() ) {
@@ -160,11 +146,7 @@ void Layer::draw( Renderer *ren )
 		gl::clear();
 	}
 
-	beginClip();
-
 	drawView( mRootView, ren );
-
-	endClip();
 
 	if( mRootView->mRendersToFrameBuffer ) {
 		gl::context()->popFramebuffer();
@@ -185,6 +167,9 @@ void Layer::draw( Renderer *ren )
 
 void Layer::drawView( View *view, Renderer *ren )
 {
+	if( view->isClipEnabled() )
+		beginClip( view, ren );
+
 	gl::ScopedModelMatrix modelScope;
 
 	if( view != mRootView || ! mRootView->mRendersToFrameBuffer )
@@ -201,54 +186,41 @@ void Layer::drawView( View *view, Renderer *ren )
 			subview->getLayer()->draw( ren );
 		}
 	}
+
+	if( view->isClipEnabled() )
+		endClip();
 }
 
-void Layer::beginClip()
+void Layer::beginClip( View *view, Renderer *ren )
 {
-	if( mClipEnabled ) {
-		auto window = mRootView->getGraph()->getWindow();
+	auto window = mRootView->getGraph()->getWindow();
 
-		// Search up the tree for a FrameBuffer
-		const View *viewWithFrameBuffer = mRootView;
-		bool hasFrameBufferInParentTree = false;
-		while( viewWithFrameBuffer ) {
-			if( viewWithFrameBuffer->getLayer()->getFrameBuffer() ) {
-				hasFrameBufferInParentTree = true;
-				break;
-			}
+	Rectf viewWorldBounds = view->getWorldBounds();
+	vec2 lowerLeft = viewWorldBounds.getLowerLeft();
+	if( mRootView->mRendersToFrameBuffer ) {
+		// get bounds of view relative to framebuffer. // TODO: need a method like convertPointToView( view, point );
+		Rectf frameBufferWorldBounds = mRootView->getWorldBounds();
+		Rectf boundsInFrameBuffer = viewWorldBounds - frameBufferWorldBounds.getUpperLeft();
 
-			viewWithFrameBuffer = viewWithFrameBuffer->getParent();
-		}
-
-		Rectf viewWorldBounds = mRootView->getWorldBounds();
-		vec2 lowerLeft = viewWorldBounds.getLowerLeft();
-		if( hasFrameBufferInParentTree ) {
-			// get bounds of view relative to framebuffer. // TODO: need a method like convertPointToView( view, point );
-			Rectf frameBufferWorldBounds = viewWithFrameBuffer->getWorldBounds();
-			Rectf boundsInFrameBuffer = viewWorldBounds - frameBufferWorldBounds.getUpperLeft();
-
-			// Take lower left relative to FrameBuffer, still need to flip y
-			lowerLeft = boundsInFrameBuffer.getLowerLeft();
-			lowerLeft.y = frameBufferWorldBounds.getHeight() - lowerLeft.y;
-		}
-		else {
-			// x is already in windows coordinates, flip y relative to window's bottom left
-			lowerLeft.y = window->getHeight() - lowerLeft.y;
-		}
-
-		auto ctx = gl::context();
-		ctx->pushBoolState( GL_SCISSOR_TEST, GL_TRUE );
-		ctx->pushScissor( std::pair<ivec2, ivec2>( lowerLeft, mRootView->getSize() ) );
+		// Take lower left relative to FrameBuffer, still need to flip y
+		lowerLeft = boundsInFrameBuffer.getLowerLeft();
+		lowerLeft.y = frameBufferWorldBounds.getHeight() - lowerLeft.y;
 	}
+	else {
+		// x is already in windows coordinates, flip y relative to window's bottom left
+		lowerLeft.y = window->getHeight() - lowerLeft.y;
+	}
+
+	auto ctx = gl::context();
+	ctx->pushBoolState( GL_SCISSOR_TEST, GL_TRUE );
+	ctx->pushScissor( std::pair<ivec2, ivec2>( lowerLeft, view->getSize() ) );
 }
 
 void Layer::endClip()
 {
-	if( mClipEnabled ) {
-		auto ctx = gl::context();
-		ctx->popBoolState( GL_SCISSOR_TEST );
-		ctx->popScissor();
-	}
+	auto ctx = gl::context();
+	ctx->popBoolState( GL_SCISSOR_TEST );
+	ctx->popScissor();
 }
 
 Rectf Layer::getBoundsWorld() const

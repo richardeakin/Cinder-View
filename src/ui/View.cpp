@@ -124,14 +124,11 @@ bool View::isLayerRoot() const
 
 void View::setClipEnabled( bool enable )
 {
-	// TODO: need to mark layer tree dirty, then set a variable that declares we need a layer that can clip
 	mClipEnabled = enable;
-//	getLayer()->setClipEnabled( enable );
 }
 
 bool View::isClipEnabled() const
 {
-//	return getLayer()->isClipEnabled();
 	return mClipEnabled;
 }
 
