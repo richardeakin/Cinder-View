@@ -78,7 +78,6 @@ class Graph : public View {
 	std::vector<ci::signals::Connection>	mEventConnections;
 
 	std::list<LayerRef>	    mLayers;
-	std::list<View *>       mViewsNeedingLayer;
 };
 
 class GraphExc : public ci::Exception {

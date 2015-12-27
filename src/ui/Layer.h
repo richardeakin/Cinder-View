@@ -41,10 +41,6 @@ class Layer : public std::enable_shared_from_this<Layer> {
 
 	float	getAlpha() const;
 
-	void configureViewList();
-
-	void draw( Renderer *ren );
-
 	FrameBufferRef  getFrameBuffer() const      { return mFrameBuffer; }
 
 	View*   getRootView() const         { return mRootView; }
@@ -55,8 +51,13 @@ class Layer : public std::enable_shared_from_this<Layer> {
 
   private:
 
+	void update();
+	void draw( Renderer *ren );
+
 	void markForRemoval()               { mShouldRemove = true; }
+	void init();
 	void configureView( View *view );
+	void updateView( View *view );
 	void drawView( View *view, Renderer *ren );
 	void beginClip( View *view, Renderer *ren );
 	void endClip();

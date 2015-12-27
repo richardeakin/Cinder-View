@@ -60,17 +60,17 @@ Graph::~Graph()
 
 void Graph::setNeedsLayer( View *view )
 {
-	CI_ASSERT( find( mViewsNeedingLayer.begin(), mViewsNeedingLayer.end(), view ) == mViewsNeedingLayer.end() );
-
-	mViewsNeedingLayer.push_back( view );
+	makeLayer( view );
 }
 
 LayerRef Graph::makeLayer( View *rootView )
 {
 	auto result = make_shared<Layer>( rootView );
 	result->mGraph = this;
+	rootView->mLayer = result;
 	mLayers.push_back( result );
 
+	result->init();
 	return result;
 }
 
@@ -89,7 +89,7 @@ void Graph::layout()
 
 void Graph::propagateUpdate()
 {
-	View::propagateUpdate();
+	mLayer->update();
 
 	for( auto layerIt = mLayers.begin(); layerIt != mLayers.end(); /* */ ) {
 		auto &layer = *layerIt;
@@ -103,13 +103,6 @@ void Graph::propagateUpdate()
 			++layerIt;
 		}
 	}
-
-	for( auto &view : mViewsNeedingLayer ) {
-		auto layer = makeLayer( view );
-		layer->configureViewList();
-	}
-
-	mViewsNeedingLayer.clear();
 }
 
 void Graph::propagateDraw()

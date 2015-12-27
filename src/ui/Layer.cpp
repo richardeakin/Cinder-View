@@ -63,40 +63,23 @@ float Layer::getAlpha() const
 	return mRootView->getAlpha();
 }
 
-void Layer::configureViewList()
+void Layer::init()
 {
-	if( mShouldRemove ) {
-		return;
-	}
-	
+	CI_ASSERT( ! mShouldRemove ); // TODO: can probably remove this as things changed a bit
+	CI_ASSERT( mRootView->mLayer == shared_from_this() );
+
 	LOG_LAYER( "mRootView: " << mRootView->getName() );
 
-	configureView( mRootView );
-}
-
-void Layer::configureView( View *view )
-{
-	LOG_LAYER( "view: '" << view->getName() << "'" );
-	view->mLayer = shared_from_this();
-
-	if( view->isTransparent() ) {
-		if( mRootView != view ) {
-			CI_ASSERT_NOT_REACHABLE();
-			// we need a new layer, which will configure its subtree
-//			auto layer = mGraph->makeLayer( view );
-//			layer->configureViewList();
-//			return;
-		}
-		else {
-			if( ! mRootView->mRendersToFrameBuffer ) {
-				LOG_LAYER( "enabling FrameBuffer for view '" << mRootView->getName() << "', size: " << mRootView->getSize() );
-				LOG_LAYER( "\t- reason: alpha = " << mRootView->getAlpha() );
-				mRootView->mRendersToFrameBuffer = true;
-			}
+	if( mRootView->isTransparent() ) {
+		if( ! mRootView->mRendersToFrameBuffer ) {
+			LOG_LAYER( "enabling FrameBuffer for view '" << mRootView->getName() << "', size: " << mRootView->getSize() );
+			LOG_LAYER( "\t- reason: alpha = " << mRootView->getAlpha() );
+			mRootView->mRendersToFrameBuffer = true;
 		}
 	}
 	else {
-		if( mRootView == view && mFrameBuffer ) {
+		if( mFrameBuffer ) {
+			// TODO: Consider removing, this path currently isn't reached as the Layer will be removed when View calls Graph::removeLayer().
 			LOG_LAYER( "removing FrameBuffer for view '" << mRootView->getName() << "'" );
 			LOG_LAYER( "\t- reason: alpha = " << mRootView->getAlpha() );
 			mFrameBuffer.reset();
@@ -106,7 +89,29 @@ void Layer::configureView( View *view )
 			return;
 		}
 	}
+}
 
+void Layer::update()
+{
+	updateView( mRootView );
+}
+
+void Layer::updateView( View *view )
+{
+	for( auto &subview : view->getSubviews() ) {
+		if( ! subview->mGraph )
+			subview->mGraph = mGraph;
+
+		updateView( subview.get() );
+	}
+
+	view->updateImpl();
+
+	if( view->mLayer && view->mLayer.get() != this ) {
+		view->mLayer->update();
+	}
+
+	// make sure we have the right FrameBuffer size
 	if( mRootView->mRendersToFrameBuffer ) {
 		Rectf frameBufferBounds = view->getBoundsForFrameBuffer();
 		if( mFrameBufferBounds.getWidth() < frameBufferBounds.getWidth() && mFrameBufferBounds.getHeight() < frameBufferBounds.getHeight() ) {

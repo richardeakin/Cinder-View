@@ -258,15 +258,8 @@ void View::propagateLayout()
 	}
 }
 
-void View::propagateUpdate()
+void View::updateImpl()
 {
-	for( auto &view : mSubviews ) {
-		if( ! view->mGraph )
-			view->mGraph = mGraph;
-
-		view->propagateUpdate();
-	}
-
 	CI_ASSERT( mGraph );
 
 	// if bounds is animating, update background's position and size, propagate layout
@@ -303,7 +296,7 @@ void View::propagateUpdate()
 
 	if( hasBackground ) {
 		mBackground->mGraph = mGraph;
-		mBackground->propagateUpdate();
+		mBackground->updateImpl();
 	}
 
 	update();

@@ -161,11 +161,12 @@ private:
 
 	void setParent( View *parent );
 	void calcWorldPos() const;
+	void updateImpl();
 	void drawImpl( Renderer *ren );
 
 	// TODO: consider moving propagation methods to Graph and passing View as argument
 	void propagateLayout();
-	void propagateUpdate();
+//	void propagateUpdate();
 //	void propagateDraw();
 
 	void propagateTouchesBegan( ci::app::TouchEvent &event );
