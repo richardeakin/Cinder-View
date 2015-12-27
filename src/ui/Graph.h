@@ -51,7 +51,7 @@ class Graph : public View {
 
 	ci::app::WindowRef	getWindow() const	{ return mWindow; }
 
-	LayerRef makeLayer( View *rootView );
+	void setNeedsLayer( View *view );
 	void    removeLayer( const LayerRef &layer );
 
 	const std::list<LayerRef>& getLayers() const   { return mLayers; }
@@ -68,6 +68,7 @@ class Graph : public View {
 	void layout() override;
 
   private:
+	LayerRef makeLayer( View *rootView );
 
 	RendererRef         mRenderer;
 	ci::app::WindowRef  mWindow;
@@ -77,6 +78,7 @@ class Graph : public View {
 	std::vector<ci::signals::Connection>	mEventConnections;
 
 	std::list<LayerRef>	    mLayers;
+	std::list<View *>       mViewsNeedingLayer;
 };
 
 class GraphExc : public ci::Exception {

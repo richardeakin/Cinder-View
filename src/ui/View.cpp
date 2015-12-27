@@ -48,9 +48,7 @@ View::~View()
 
 	if( mLayer ) {
 		if( isLayerRoot() )
-			mLayer->markForRemoval();
-		else
-			mLayer->setNeedsLayout();
+			getGraph()->removeLayer( mLayer );
 	}
 }
 
@@ -226,10 +224,6 @@ void View::setNeedsLayout()
 	mNeedsLayout = true;
 	for( const auto &subview : mSubviews )
 		subview->setNeedsLayout();
-
-	if( mLayer ) {
-		mLayer->setNeedsLayout();
-	}
 }
 
 void View::setWorldPosDirty()
@@ -243,8 +237,6 @@ void View::setWorldPosDirty()
 void View::propagateLayout()
 {
 	mWorldPosDirty = true;
-	if( ! mGraph )
-		mGraph = getParent()->mGraph;
 
 	if( mBackground )
 		mBackground->propagateLayout();
@@ -268,8 +260,14 @@ void View::propagateLayout()
 
 void View::propagateUpdate()
 {
-	for( auto& view : mSubviews )
+	for( auto &view : mSubviews ) {
+		if( ! view->mGraph )
+			view->mGraph = mGraph;
+
 		view->propagateUpdate();
+	}
+
+	CI_ASSERT( mGraph );
 
 	// if bounds is animating, update background's position and size, propagate layout
 	bool needsLayout = mNeedsLayout;
@@ -287,22 +285,26 @@ void View::propagateUpdate()
 			mBackground->setSize( getSize() );
 	}
 
-	if( mRenderTransparencyToFrameBuffer && mLayer ) {
+	if( mRenderTransparencyToFrameBuffer ) {
 		if( isTransparent() ) {
 			if( ! mRendersToFrameBuffer ) {
-				mLayer->setNeedsLayout();
+				getGraph()->setNeedsLayer( this );
 			}
 		}
 		else if( mRendersToFrameBuffer ) {
-			mLayer->setNeedsLayout();
+			CI_ASSERT( mLayer );
+			getGraph()->removeLayer( mLayer );
+			mRendersToFrameBuffer = false;
 		}
 	}
 
 	if( needsLayout )
 		propagateLayout();
 
-	if( hasBackground )
+	if( hasBackground ) {
+		mBackground->mGraph = mGraph;
 		mBackground->propagateUpdate();
+	}
 
 	update();
 }

@@ -58,6 +58,13 @@ Graph::~Graph()
 		disconnectEvents();
 }
 
+void Graph::setNeedsLayer( View *view )
+{
+	CI_ASSERT( find( mViewsNeedingLayer.begin(), mViewsNeedingLayer.end(), view ) == mViewsNeedingLayer.end() );
+
+	mViewsNeedingLayer.push_back( view );
+}
+
 LayerRef Graph::makeLayer( View *rootView )
 {
 	auto result = make_shared<Layer>( rootView );
@@ -69,15 +76,8 @@ LayerRef Graph::makeLayer( View *rootView )
 
 void Graph::removeLayer( const LayerRef &layer )
 {
-	auto rootView = layer->getRootView();
-	auto parentView = rootView->getParent();
-
 	layer->markForRemoval();
-	rootView->mLayer.reset();
-
-	if( parentView ) {
-		parentView->getLayer()->configureViewList();
-	}
+	layer->getRootView()->mLayer = nullptr;
 }
 
 void Graph::layout()
@@ -94,10 +94,6 @@ void Graph::propagateUpdate()
 	for( auto layerIt = mLayers.begin(); layerIt != mLayers.end(); /* */ ) {
 		auto &layer = *layerIt;
 
-		if( layer->getNeedsLayout() ) {
-			layer->configureViewList();
-		}
-
 		if( layer->getShouldRemove() ) {
 			CI_LOG_I( "removing layer" );
 			layerIt = mLayers.erase( layerIt );
@@ -107,6 +103,13 @@ void Graph::propagateUpdate()
 			++layerIt;
 		}
 	}
+
+	for( auto &view : mViewsNeedingLayer ) {
+		auto layer = makeLayer( view );
+		layer->configureViewList();
+	}
+
+	mViewsNeedingLayer.clear();
 }
 
 void Graph::propagateDraw()

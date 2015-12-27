@@ -49,8 +49,8 @@ namespace ui {
 Layer::Layer( View *view )
 	: mRootView( view )
 {
-	CI_ASSERT_MSG( view, "null pointer to View" );
-	LOG_LAYER( "root view: " << view->getName() );
+	CI_ASSERT_MSG( mRootView, "null pointer for root View" );
+	LOG_LAYER( "root view: " << mRootView->getName() );
 }
 
 Layer::~Layer()
@@ -63,11 +63,6 @@ float Layer::getAlpha() const
 	return mRootView->getAlpha();
 }
 
-void Layer::setNeedsLayout()
-{
-	mNeedsLayout = true;
-}
-
 void Layer::configureViewList()
 {
 	if( mShouldRemove ) {
@@ -77,7 +72,6 @@ void Layer::configureViewList()
 	LOG_LAYER( "mRootView: " << mRootView->getName() );
 
 	configureView( mRootView );
-	mNeedsLayout = false;
 }
 
 void Layer::configureView( View *view )
@@ -87,10 +81,11 @@ void Layer::configureView( View *view )
 
 	if( view->isTransparent() ) {
 		if( mRootView != view ) {
+			CI_ASSERT_NOT_REACHABLE();
 			// we need a new layer, which will configure its subtree
-			auto layer = mGraph->makeLayer( view );
-			layer->configureViewList();
-			return;
+//			auto layer = mGraph->makeLayer( view );
+//			layer->configureViewList();
+//			return;
 		}
 		else {
 			if( ! mRootView->mRendersToFrameBuffer ) {
@@ -118,13 +113,6 @@ void Layer::configureView( View *view )
 			mFrameBufferBounds = ceil( frameBufferBounds );
 			LOG_LAYER( "mFrameBufferBounds: " << mFrameBufferBounds );
 		}
-	}
-
-	for( const auto &subview : view->getSubviews() ) {
-		if( subview->isLayerRoot() ) {
-			continue;
-		}
-		configureView( subview.get() );
 	}
 }
 
@@ -179,11 +167,12 @@ void Layer::drawView( View *view, Renderer *ren )
 
 	auto thisRef = shared_from_this();
 	for( auto &subview : view->getSubviews() ) {
-		if( subview->getLayer() == thisRef ) {
-			drawView( subview.get(), ren );
+		auto subviewLayer = subview->getLayer();
+		if( subviewLayer ) {
+			subviewLayer->draw( ren );
 		}
 		else {
-			subview->getLayer()->draw( ren );
+			drawView( subview.get(), ren );
 		}
 	}
 

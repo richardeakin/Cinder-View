@@ -33,6 +33,7 @@ class View;
 typedef std::shared_ptr<class Layer>		LayerRef;
 typedef std::shared_ptr<class FrameBuffer>	FrameBufferRef;
 
+//! A Layer controls specific rendering capabilities for Views, such as compositing with translucency.
 class Layer : public std::enable_shared_from_this<Layer> {
   public:
 	Layer( View *view );
@@ -46,18 +47,15 @@ class Layer : public std::enable_shared_from_this<Layer> {
 
 	FrameBufferRef  getFrameBuffer() const      { return mFrameBuffer; }
 
-	void setNeedsLayout();
-	bool getNeedsLayout() const         { return mNeedsLayout; }
-
 	View*   getRootView() const         { return mRootView; }
 
-	void markForRemoval()               { mShouldRemove = true; }
 	bool getShouldRemove()const         { return mShouldRemove; }
 
 	ci::Rectf   getBoundsWorld() const;
 
   private:
 
+	void markForRemoval()               { mShouldRemove = true; }
 	void configureView( View *view );
 	void drawView( View *view, Renderer *ren );
 	void beginClip( View *view, Renderer *ren );
@@ -67,7 +65,6 @@ class Layer : public std::enable_shared_from_this<Layer> {
 	Graph*          mGraph;
 	FrameBufferRef	mFrameBuffer;
 	ci::Rectf       mFrameBufferBounds = ci::Rectf::zero();
-	bool            mNeedsLayout = true;
 	bool            mShouldRemove = false;
 
 	friend class Graph;
