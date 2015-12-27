@@ -23,6 +23,7 @@
 
 #include "ui/View.h"
 #include "ui/Button.h"
+#include "ui/Label.h"
 #include "ui/Selector.h"
 #include "ui/Slider.h"
 #include "ui/Graph.h"
@@ -71,10 +72,12 @@ public:
 private:
 	void resize();
 	void selectTest( const std::string &key );
+	void updateUI();
 
 	ui::GraphRef		mGraph;
 	SuiteViewRef		mCurrentSuiteView;
 	ui::VSelectorRef	mSelector;
+	ui::LabelGridRef    mInfoLabel;
 	std::string			mCurrentTestKey;
 
 	mason::Factory<SuiteView>	mFactory;

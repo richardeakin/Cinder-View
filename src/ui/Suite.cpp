@@ -25,6 +25,8 @@
 #include "cinder/Log.h"
 #include "cinder/audio/Context.h"
 
+#include "cppformat/format.h"
+
 using namespace std;
 using namespace ci;
 
@@ -57,6 +59,10 @@ Suite::Suite()
 		selectTest( mSelector->getSelectedLabel() );
 	} );
 
+	mInfoLabel = mGraph->makeSubview<ui::LabelGrid>();
+	mInfoLabel->setTextColor( Color::white() );
+	mInfoLabel->getBackground()->setColor( ColorA( 0, 0, 0, 0.3f ) );
+
 	app::getWindow()->getSignalResize().connect( bind( &Suite::resize, this ) );
 }
 
@@ -68,6 +74,12 @@ void Suite::resize()
 	const float width = 120; // TODO: calculate widest segment
 	const float height = 22 * mSelector->getSegmentLabels().size();
 	mSelector->setBounds( Rectf( (float)mGraph->getWidth() - width - padding, padding, (float)mGraph->getWidth() - padding, height + padding ) );
+
+	// TODO: expose this so SuiteViews can place things in it as needed
+	const int numRows = 1;
+	vec2 windowSize = vec2( app::getWindow()->getSize() );
+	vec2 infoSize = { 200, 20 * numRows };
+	mInfoLabel->setBounds( { windowSize - infoSize - padding, windowSize - padding } ); // anchor bottom right
 }
 
 void Suite::selectTest( const string &key )
@@ -109,7 +121,14 @@ void Suite::update()
 	if( ! mCurrentSuiteView && ! mSelector->getSegmentLabels().empty() )
 		selectTest( mSelector->getSelectedLabel() );
 
+	updateUI();
+
 	mGraph->propagateUpdate();
+}
+
+void Suite::updateUI()
+{
+	mInfoLabel->setRow( 0, { "fps:",  fmt::format( "{}", app::App::get()->getAverageFps() ) } );
 }
 
 void Suite::draw()
