@@ -541,14 +541,6 @@ Rectf StrokedRectView::getBoundsForFrameBuffer() const
 	return Rectf( vec2( - mLineWidth / 2.0f ), getSize() + mLineWidth / 2.0f );
 }
 
-void StrokedRectView::update()
-{
-	if( ! mLineWidth.isComplete() ) {
-		// TODO: if compositing, make sure framebuffer size is large enough
-		// - want to avoid reconstructing layer tree each update frame
-	}
-}
-
 void StrokedRectView::draw( Renderer *ren )
 {
 	ren->setColor( getColor() );

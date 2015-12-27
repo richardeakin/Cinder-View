@@ -12,7 +12,7 @@ public:
   private:
 	void keyEvent( ci::app::KeyEvent &event );
 
-	ui::ViewRef				mContainerView;
+	ui::StrokedRectViewRef	    mContainerView;
 
 	ui::LabelRef mLabelA, mLabelB, mLabelC, mLabelD;
 };

@@ -238,7 +238,6 @@ public:
 	ci::Anim<float>*	getLineWidthAnim()					{ return &mLineWidth; }
 
 protected:
-	void update()	                            override;
 	void draw( Renderer *ren ) override;
 	ci::Rectf getBoundsForFrameBuffer() const   override;
 

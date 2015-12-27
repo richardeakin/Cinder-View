@@ -16,11 +16,10 @@ const float PADDING = 50;
 CompositingTest::CompositingTest()
 	: SuiteView()
 {
-	auto container = make_shared<ui::StrokedRectView>();
-	container->setColor( Color::white() );
-	container->setLineWidth( 6 );
-	container->setLabel( "container" );
-	mContainerView = container;
+	mContainerView = make_shared<ui::StrokedRectView>();
+	mContainerView->setColor( Color::white() );
+	mContainerView->setLineWidth( 6 );
+	mContainerView->setLabel( "container" );
 
 	const vec2 labelSize = { 200, 200 };
 	const float fontSizeBig = 64;
@@ -121,6 +120,11 @@ void CompositingTest::keyEvent( app::KeyEvent &event )
 		case app::KeyEvent::KEY_t: {
 			mContainerView->setRenderTransparencyToFrameBufferEnabled( ! mContainerView->isRenderTransparencyToFrameBufferEnabled() );
 			CI_LOG_I( "container view renders transparency to framebuffer: " << boolalpha << mContainerView->isRenderTransparencyToFrameBufferEnabled() << dec );
+			break;
+		}
+		case app::KeyEvent::KEY_o: {
+			float nextBorderWidth = randFloat( 1, 30 );
+			app::timeline().apply( mContainerView->getLineWidthAnim(), nextBorderWidth, 0.6f, EaseOutExpo() );
 			break;
 		}
 	}
