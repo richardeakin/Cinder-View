@@ -63,6 +63,9 @@ public:
 	void selectTest( size_t index );
 	size_t getCurrentTestIndex() const	{ return mSelector->getSelectedIndex(); }
 	ui::VSelectorRef	getSelector() const	{ return mSelector; }
+
+	ui::LabelGridRef    getInfoLabel() const    { return mInfoLabel; }
+
 	const std::string& getCurrentTestKey() const { return mCurrentTestKey; }
 
 	void reloadCurrentTest();

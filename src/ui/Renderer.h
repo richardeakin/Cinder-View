@@ -105,6 +105,8 @@ class Renderer {
 	//!
 	FrameBufferRef getFrameBuffer( const ci::ivec2 &size );
 	//!
+	size_t getNumFrameBuffersCached() const     { return mFrameBufferCache.size(); }
+	//!
 	void draw( const FrameBufferRef &frameBuffer, const ci::Rectf &destRect );
 	//!
 	void draw( const ImageRef &image, const ci::Rectf &destRect );

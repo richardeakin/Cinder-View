@@ -154,7 +154,6 @@ void BasicViewTests::layout()
 	vec2 imageViewPos = vec2( mLabelGrid->getPos().x, mLabelGrid->getBounds().y2 + PADDING );
 	mImageView->setPos( imageViewPos );
 	mImageView->setSize( vec2( 200, 200 ) );
-
 }
 
 void BasicViewTests::keyEvent( app::KeyEvent &event )

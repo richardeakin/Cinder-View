@@ -59,6 +59,9 @@ void ViewTestsApp::keyDown( app::KeyEvent event )
 
 void ViewTestsApp::update()
 {
+	size_t numFrameBuffers = mTestSuite->getGraph()->getRenderer()->getNumFrameBuffersCached();
+	mTestSuite->getInfoLabel()->setRow( 1, { "num FrameBuffers: ", to_string( numFrameBuffers ) } );
+
 	mTestSuite->update();
 }
 

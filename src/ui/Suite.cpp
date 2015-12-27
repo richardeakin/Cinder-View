@@ -73,10 +73,10 @@ void Suite::resize()
 	const float padding = 6;
 	const float width = 120; // TODO: calculate widest segment
 	const float height = 22 * mSelector->getSegmentLabels().size();
-	mSelector->setBounds( Rectf( (float)mGraph->getWidth() - width - padding, padding, (float)mGraph->getWidth() - padding, height + padding ) );
+	mSelector->setBounds( Rectf( mGraph->getWidth() - width - padding, padding, mGraph->getWidth() - padding, height + padding ) );
 
-	// TODO: expose this so SuiteViews can place things in it as needed
-	const int numRows = 1;
+	// TODO: grow / shrink LabelGrid from update when number of rows changes
+	const int numRows = 2;
 	vec2 windowSize = vec2( app::getWindow()->getSize() );
 	vec2 infoSize = { 200, 20 * numRows };
 	mInfoLabel->setBounds( { windowSize - infoSize - padding, windowSize - padding } ); // anchor bottom right
