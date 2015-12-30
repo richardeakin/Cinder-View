@@ -29,7 +29,11 @@
 
 #include <unordered_map>
 
-namespace cinder { namespace gl {
+namespace cinder {
+
+typedef std::shared_ptr<class ImageSource>		ImageSourceRef;
+
+namespace gl {
 
 typedef std::shared_ptr<class Fbo>          FboRef;
 typedef std::shared_ptr<class GlslProg>     GlslProgRef;
@@ -63,9 +67,19 @@ class FrameBuffer {
 
 	FrameBuffer( const Format &format );
 
-	ci::ivec2 getSize() const;
+	ci::ivec2   getSize() const;
+	int         getWidth() const { return getSize().x; }
+	int         getHeight() const { return getSize().y; }
+	bool        isBound() const { return mIsBound; }
 
-	cinder::gl::FboRef mFbo;
+	ci::ImageSourceRef  createImageSource() const;
+
+  private:
+
+	cinder::gl::FboRef  mFbo;
+	bool                mIsBound = false;
+
+	friend class Renderer;
 };
 
 } // namespace ui
@@ -107,7 +121,13 @@ class Renderer {
 	//!
 	size_t getNumFrameBuffersCached() const     { return mFrameBufferCache.size(); }
 	//!
+	void pushFrameBuffer( const FrameBufferRef &frameBuffer );
+	//!
+	void popFrameBuffer( const FrameBufferRef &frameBuffer );
+	//!
 	void draw( const FrameBufferRef &frameBuffer, const ci::Rectf &destRect );
+	//!
+	void draw( const FrameBufferRef &frameBuffer, const ci::Area &sourceArea, const ci::Rectf &destRect );
 	//!
 	void draw( const ImageRef &image, const ci::Rectf &destRect );
 

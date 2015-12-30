@@ -76,10 +76,6 @@ out vec4 oFragColor;
 void main()
 {
 	oFragColor = texture( uTex0, vTexCoord.st ) * vColor;
-
-//	vec4 col = texture( uTex0, vTexCoord.st ) * vColor;
-//	col.rgb *= col.a;
-//	oFragColor = col;
 }
 )";
 
@@ -107,9 +103,14 @@ FrameBuffer::FrameBuffer( const Format &format )
 	CI_LOG_V( "created gl::Fbo of size: " << format.mSize );
 }
 
-ci::ivec2  FrameBuffer::getSize() const
+ivec2 FrameBuffer::getSize() const
 {
 	return mFbo->getSize();
+}
+
+ImageSourceRef FrameBuffer::createImageSource() const
+{
+	return mFbo->getColorTexture()->createSource();
 }
 
 // ----------------------------------------------------------------------------------------------------
@@ -178,6 +179,7 @@ void Renderer::popBlendMode()
 	setBlendMode( mBlendModeStack.back() );
 }
 
+#if 0
 FrameBufferRef Renderer::getFrameBuffer( const ci::ivec2 &size )
 {
 	auto format = FrameBuffer::Format().size( size );
@@ -195,12 +197,44 @@ FrameBufferRef Renderer::getFrameBuffer( const ci::ivec2 &size )
 	return make_shared<FrameBuffer>( format );
 #endif
 }
+#else
+FrameBufferRef Renderer::getFrameBuffer( const ci::ivec2 &size )
+{
+	for( auto &fb : mFrameBufferCache ) {
+		auto &frameBuffer = fb.second;
+		if( ! frameBuffer->isBound() && frameBuffer->getSize().x >= size.x && frameBuffer->getSize().y >= size.y ) {
+			return frameBuffer;
+		}
+	}
+
+	// None available and large enough, make a new one.
+	// TODO: resize existing and available one
+	auto format = FrameBuffer::Format().size( size );
+	auto result = make_shared<FrameBuffer>( format );
+	mFrameBufferCache.insert( make_pair( format, result ) );
+	return result;
+}
+#endif
+
+void Renderer::pushFrameBuffer( const FrameBufferRef &frameBuffer )
+{
+	frameBuffer->mIsBound = true;
+	gl::context()->pushFramebuffer( frameBuffer->mFbo );
+}
+
+void Renderer::popFrameBuffer( const FrameBufferRef &frameBuffer )
+{
+	frameBuffer->mIsBound = false;
+	gl::context()->popFramebuffer();
+}
 
 void Renderer::draw( const FrameBufferRef &frameBuffer, const Rectf &destRect )
 {
 	if( ! mGlslFrameBuffer ) {
 		try {
-			mGlslFrameBuffer = gl::GlslProg::create( FRAMEBUFFER_VERT, FRAMEBUFFER_FRAG );
+			// TODO: add support for drawing partial textures
+//			mGlslFrameBuffer = gl::GlslProg::create( FRAMEBUFFER_VERT, FRAMEBUFFER_FRAG );
+			mGlslFrameBuffer = gl::getStockShader( gl::ShaderDef().texture().color() );
 			CI_LOG_I( "loaded mGlslFrameBuffer" );
 		}
 		catch( Exception &exc ) {
@@ -212,6 +246,11 @@ void Renderer::draw( const FrameBufferRef &frameBuffer, const Rectf &destRect )
 	gl::ScopedTextureBind texScope( frameBuffer->mFbo->getColorTexture() );
 
 	gl::drawSolidRect( destRect );
+}
+
+void Renderer::draw( const FrameBufferRef &frameBuffer, const ci::Area &sourceArea, const ci::Rectf &destRect )
+{
+	gl::draw( frameBuffer->mFbo->getColorTexture(), sourceArea, destRect );
 }
 
 void Renderer::draw( const ImageRef &image, const ci::Rectf &destRect )

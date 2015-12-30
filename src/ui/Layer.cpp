@@ -126,12 +126,13 @@ void Layer::draw( Renderer *ren )
 	if( mRootView->mRendersToFrameBuffer ) {
 		ivec2 frameBufferSize = ivec2( mFrameBufferBounds.getSize() );
 		if( ! mFrameBuffer || mFrameBuffer->getSize().x < frameBufferSize.x || mFrameBuffer->getSize().y < frameBufferSize.y ) {
-			LOG_LAYER( "aquiring FrameBuffer for view '" << mRootView->getName() << "', size: " << mFrameBufferBounds.getSize() );
 			mFrameBuffer = ren->getFrameBuffer( frameBufferSize );
+			LOG_LAYER( "aquiring FrameBuffer for view '" << mRootView->getName() << ", size: " << mFrameBuffer->getSize()
+			           << "', mFrameBufferBounds: " << mFrameBufferBounds << ", view bounds:" << mRootView->getBounds() );
 		}
 
-		gl::context()->pushFramebuffer( mFrameBuffer->mFbo );
-		gl::pushViewport( frameBufferSize );
+		ren->pushFrameBuffer( mFrameBuffer );
+		gl::pushViewport( 0, mFrameBuffer->getHeight() - frameBufferSize.y, frameBufferSize.x, frameBufferSize.y );
 		gl::pushMatrices();
 		gl::setMatricesWindow( frameBufferSize );
 		gl::translate( - mFrameBufferBounds.getUpperLeft() );
@@ -142,7 +143,7 @@ void Layer::draw( Renderer *ren )
 	drawView( mRootView, ren );
 
 	if( mRootView->mRendersToFrameBuffer ) {
-		gl::context()->popFramebuffer();
+		ren->popFrameBuffer( mFrameBuffer );
 		gl::popViewport();
 		gl::popMatrices();
 
@@ -150,11 +151,11 @@ void Layer::draw( Renderer *ren )
 		ren->pushColor( ColorA::gray( 1, getAlpha() ) );
 
 		auto destRect = mFrameBufferBounds + mRootView->getPos();
-		ren->draw( mFrameBuffer, destRect );
+		ren->draw( mFrameBuffer, Area( 0, 0, mFrameBufferBounds.getWidth(), mFrameBufferBounds.getHeight() ), destRect );
 		ren->popColor();
 		ren->popBlendMode();
 
-//		writeImage( "framebuffer.png", mFrameBuffer->mFbo->getColorTexture()->createSource() );
+//		writeImage( "framebuffer.png", mFrameBuffer->createImageSource() );
 	}
 }
 
@@ -170,7 +171,6 @@ void Layer::drawView( View *view, Renderer *ren )
 
 	view->drawImpl( ren );
 
-	auto thisRef = shared_from_this();
 	for( auto &subview : view->getSubviews() ) {
 		auto subviewLayer = subview->getLayer();
 		if( subviewLayer ) {
@@ -187,8 +187,6 @@ void Layer::drawView( View *view, Renderer *ren )
 
 void Layer::beginClip( View *view, Renderer *ren )
 {
-	auto window = mRootView->getGraph()->getWindow();
-
 	Rectf viewWorldBounds = view->getWorldBounds();
 	vec2 lowerLeft = viewWorldBounds.getLowerLeft();
 	if( mRootView->mRendersToFrameBuffer ) {
@@ -196,12 +194,13 @@ void Layer::beginClip( View *view, Renderer *ren )
 		Rectf frameBufferWorldBounds = mRootView->getWorldBounds();
 		Rectf boundsInFrameBuffer = viewWorldBounds - frameBufferWorldBounds.getUpperLeft();
 
-		// Take lower left relative to FrameBuffer, still need to flip y
+		// Take lower left relative to FrameBuffer, which might actually be larger than mFrameBufferBounds
 		lowerLeft = boundsInFrameBuffer.getLowerLeft();
-		lowerLeft.y = frameBufferWorldBounds.getHeight() - lowerLeft.y;
+		lowerLeft.y = mFrameBuffer->getHeight() - lowerLeft.y;
 	}
 	else {
-		// x is already in windows coordinates, flip y relative to window's bottom left
+		// rendering to window, flip y relative to window's bottom left
+		auto window = mRootView->getGraph()->getWindow();
 		lowerLeft.y = window->getHeight() - lowerLeft.y;
 	}
 
