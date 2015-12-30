@@ -42,7 +42,7 @@ void ViewTestsApp::setup()
 		CI_LOG_I( "selected test index: " << mTestSuite->getCurrentTestIndex() << ", key: " << mTestSuite->getCurrentTestKey() );
 	} );
 
-	mTestSuite->selectTest( 0 );
+	mTestSuite->selectTest( 2 );
 }
 
 void ViewTestsApp::keyDown( app::KeyEvent event )
@@ -93,6 +93,8 @@ void ViewTestsApp::drawLayerBorders()
 CINDER_APP( ViewTestsApp, RendererGl( RendererGl::Options().msaa( 8 ) ), []( App::Settings *settings ) {
 //	settings->setWindowPos( 0, 0 );
 	settings->setWindowSize( 960, 565 );
+
+	settings->setMultiTouchEnabled();
 
 	// move app to macbook display
 	for( const auto &display : Display::getDisplays() ) {

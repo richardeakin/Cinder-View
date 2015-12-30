@@ -1,9 +1,9 @@
 #include "ControlsTest.h"
 
 #include "cinder/app/App.h"
-#include "cinder/Rand.h"
-#include "cinder/Timeline.h"
+//#include "cinder/Rand.h"
 #include "cinder/Log.h"
+#include "cinder/gl/draw.h"
 
 using namespace std;
 using namespace ci;
@@ -29,16 +29,19 @@ ControlsTest::ControlsTest()
 	mHSlider = make_shared<ui::HSlider>();
 	mHSlider->getBackground()->setColor( ColorA( "green", 0.5f ) );
 	mHSlider->getSignalValueChanged().connect( [this] {
-		CI_LOG_V( "mHSlider value: " << mHSlider->getValue() );
+//		CI_LOG_V( "mHSlider value: " << mHSlider->getValue() );
 	} );
 
 	mVSlider = make_shared<ui::VSlider>();
 	mVSlider->getBackground()->setColor( ColorA( "green", 0.5f ) );
 	mVSlider->getSignalValueChanged().connect( [this] {
-		CI_LOG_V( "mVSlider value: " << mVSlider->getValue() );
+//		CI_LOG_V( "mVSlider value: " << mVSlider->getValue() );
 	} );
 
+	mTouchOverlay = make_shared<TouchOverlayView>();
+
 	addSubviews( { mButton, mToggle, mHSlider, mVSlider } );
+	addSubview( mTouchOverlay ); // Add last so it is always on top
 
 	connectKeyDown( signals::slot( this, &ControlsTest::keyEvent ) );
 }
@@ -62,4 +65,36 @@ void ControlsTest::layout()
 
 void ControlsTest::keyEvent( app::KeyEvent &event )
 {
+	switch( event.getChar() ) {
+		case 't':
+			mTouchOverlay->setHidden( ! mTouchOverlay->isHidden() );
+		break;
+	}
+}
+
+
+TouchOverlayView::TouchOverlayView()
+{
+	setFillParentEnabled();
+	mTextureFont = gl::TextureFont::create( Font( "Arial", 12 ) );
+}
+
+void TouchOverlayView::draw( ui::Renderer *ren )
+{
+	const float circleRadius = 14;
+
+
+	const auto &touches = app::App::get()->getActiveTouches();
+	for( size_t i = 0; i < touches.size(); i++ ) {
+		vec2 pos = touches[i].getPos();
+
+		ren->setColor( Color( 0, 1, 1 ) );
+		gl::drawStrokedCircle( pos, circleRadius, 2.0f );
+
+		// TODO: should these be in the same order from event to event?
+		// - drawing the index like below shows that the order of the touches is changing.
+//		ren->setColor( Color::white() );
+//		Rectf fitRect( pos.x - circleRadius, pos.y - circleRadius, pos.x + circleRadius, pos.y + circleRadius  );
+//		mTextureFont->drawString( to_string( i ), vec2( pos.x - 3, pos.y + 4 ) );
+	}
 }
