@@ -27,8 +27,6 @@
 
 #include "ui/Image.h"
 
-#include <unordered_map>
-
 namespace cinder {
 
 typedef std::shared_ptr<class ImageSource>		ImageSourceRef;
@@ -84,6 +82,7 @@ class FrameBuffer {
 
 } // namespace ui
 
+/*
 namespace std {
 
 template <>
@@ -95,6 +94,8 @@ struct hash<ui::FrameBuffer::Format> {
 };
 
 } // namespace std
+
+*/
 
 namespace ui {
 
@@ -142,7 +143,7 @@ class Renderer {
 	std::vector<ci::ColorA>		mColorStack;
 	std::vector<BlendMode>		mBlendModeStack;
 
-	std::unordered_map<FrameBuffer::Format, FrameBufferRef>	mFrameBufferCache;
+	std::vector<FrameBufferRef>	mFrameBufferCache;
 
 	ci::gl::GlslProgRef         mGlslFrameBuffer;
 };

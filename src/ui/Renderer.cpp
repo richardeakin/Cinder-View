@@ -179,42 +179,45 @@ void Renderer::popBlendMode()
 	setBlendMode( mBlendModeStack.back() );
 }
 
-#if 0
 FrameBufferRef Renderer::getFrameBuffer( const ci::ivec2 &size )
 {
-	auto format = FrameBuffer::Format().size( size );
-#if ENABLE_FRAMEBUFFER_CACHING
-	auto it = mFrameBufferCache.find( format );
-	if( it != mFrameBufferCache.end() ) {
-		return it->second;
-	}
-	else {
-		auto result = make_shared<FrameBuffer>( format );
-		mFrameBufferCache.insert( make_pair( format, result ) );
-		return result;
-	}
-#else
-	return make_shared<FrameBuffer>( format );
-#endif
-}
-#else
-FrameBufferRef Renderer::getFrameBuffer( const ci::ivec2 &size )
-{
-	for( auto &fb : mFrameBufferCache ) {
-		auto &frameBuffer = fb.second;
-		if( ! frameBuffer->isBound() && frameBuffer->getSize().x >= size.x && frameBuffer->getSize().y >= size.y ) {
+	auto availableFrameBufferIt = mFrameBufferCache.end();
+	for( auto frameBufferIt = mFrameBufferCache.begin(); frameBufferIt < mFrameBufferCache.end(); ++frameBufferIt ) {
+		auto &frameBuffer = *frameBufferIt;
+		if( frameBuffer->isBound() )
+			continue;
+
+		// Check for any unbound FrameBuffer large enough for the requested size
+		if( frameBuffer->getSize().x >= size.x && frameBuffer->getSize().y >= size.y ) {
 			return frameBuffer;
+		}
+
+		// store the largest unbound FrameBuffer, will replace this with one large enough if we don't find a suitable one in the cache
+		if( availableFrameBufferIt == mFrameBufferCache.end() ) {
+			availableFrameBufferIt = frameBufferIt;
+			continue;
+		}
+
+		int currLargestArea = (*availableFrameBufferIt)->getSize().x * (*availableFrameBufferIt)->getSize().y;
+		int area = frameBuffer->getSize().x * frameBuffer->getSize().y;
+		if( area > currLargestArea ) {
+			availableFrameBufferIt = frameBufferIt;
 		}
 	}
 
-	// None available and large enough, make a new one.
-	// TODO: resize existing and available one
+	// Make a new one.
 	auto format = FrameBuffer::Format().size( size );
 	auto result = make_shared<FrameBuffer>( format );
-	mFrameBufferCache.insert( make_pair( format, result ) );
+
+	// Replace the largest unbound FrameBuffer, or push another one if one wasn't available
+	if( availableFrameBufferIt != mFrameBufferCache.end()  ) {
+		*availableFrameBufferIt = result;
+	}
+	else {
+		mFrameBufferCache.push_back( result );
+	}
 	return result;
 }
-#endif
 
 void Renderer::pushFrameBuffer( const FrameBufferRef &frameBuffer )
 {
