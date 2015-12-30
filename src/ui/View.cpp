@@ -504,7 +504,7 @@ void View::propagateTouchesEnded( ci::app::TouchEvent &event )
 }
 
 // ----------------------------------------------------------------------------------------------------
-// MARK: - RectView
+// RectView
 // ----------------------------------------------------------------------------------------------------
 
 RectView::RectView( const ci::Rectf &bounds )
@@ -520,7 +520,7 @@ void RectView::draw( Renderer *ren )
 }
 
 // ----------------------------------------------------------------------------------------------------
-// MARK: - StrokedRectView
+// StrokedRectView
 // ----------------------------------------------------------------------------------------------------
 
 StrokedRectView::StrokedRectView( const ci::Rectf &bounds )

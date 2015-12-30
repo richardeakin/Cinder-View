@@ -231,7 +231,7 @@ void ScrollView::calcTouchVelocity()
 
 
 // ----------------------------------------------------------------------------------------------------
-// MARK: - Events
+// Events
 // ----------------------------------------------------------------------------------------------------
 
 bool ScrollView::touchesBegan( const app::TouchEvent &event )
@@ -277,7 +277,7 @@ bool ScrollView::touchesEnded( const ci::app::TouchEvent &event )
 }
 
 // ----------------------------------------------------------------------------------------------------
-// MARK: - ScrollView Other
+// ScrollView Other
 // ----------------------------------------------------------------------------------------------------
 
 const Rectf& ScrollView::getDeceleratingBoundaries() const
@@ -297,7 +297,7 @@ void ScrollView::storeTouchPos( const ci::vec2 &pos )
 }
 
 // ----------------------------------------------------------------------------------------------------
-// MARK: - PagingScrollView
+// PagingScrollView
 // ----------------------------------------------------------------------------------------------------
 
 PagingScrollView::PagingScrollView( const Rectf &bounds )
