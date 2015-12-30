@@ -7,6 +7,7 @@
 
 #include "BasicViewTests.h"
 #include "ControlsTest.h"
+#include "CompositingTest.h"
 #include "ScrollTests.h"
 
 using namespace ci;
@@ -20,7 +21,11 @@ class ViewTestsApp : public App {
 	void update() override;
 	void draw() override;
 
+	void drawLayerBorders();
+
 	ui::SuiteRef	mTestSuite;
+
+	bool    mDrawLayerBorders = false;
 };
 
 void ViewTestsApp::setup()
@@ -28,21 +33,35 @@ void ViewTestsApp::setup()
 	mTestSuite = make_shared<ui::Suite>();
 
 	mTestSuite->registerSuiteView<BasicViewTests>( "basic" );
+	mTestSuite->registerSuiteView<CompositingTest>( "compositing" );
 	mTestSuite->registerSuiteView<ControlsTest>( "controls" );
 	mTestSuite->registerSuiteView<ScrollTests>( "scroll" );
+
+	// TODO: this doesn't cover the case of calling selectTest() directly - should probably add new signal that ties to both Selector and that
+	mTestSuite->getSelector()->getSignalValueChanged().connect( [this] {
+		CI_LOG_I( "selected test index: " << mTestSuite->getCurrentTestIndex() << ", key: " << mTestSuite->getCurrentTestKey() );
+	} );
 
 	mTestSuite->selectTest( 0 );
 }
 
 void ViewTestsApp::keyDown( app::KeyEvent event )
 {
-	if( event.getChar() == 'p' ) {
-		mTestSuite->getRootView()->printHeirarchy( app::console() );
+	switch( event.getCode() ) {
+		case app::KeyEvent::KEY_p:
+			mTestSuite->getGraph()->printHeirarchy( app::console() );
+		break;
+		case app::KeyEvent::KEY_b:
+			mDrawLayerBorders = ! mDrawLayerBorders;
+		break;
 	}
 }
 
 void ViewTestsApp::update()
 {
+	size_t numFrameBuffers = mTestSuite->getGraph()->getRenderer()->getNumFrameBuffersCached();
+	mTestSuite->getInfoLabel()->setRow( 1, { "num FrameBuffers: ", to_string( numFrameBuffers ) } );
+
 	mTestSuite->update();
 }
 
@@ -52,10 +71,33 @@ void ViewTestsApp::draw()
 
 	mTestSuite->draw();
 
+	if( mDrawLayerBorders )
+		drawLayerBorders();
+
 	CI_CHECK_GL();
 }
 
+void ViewTestsApp::drawLayerBorders()
+{
+	auto graph = mTestSuite->getGraph();
+	auto ren = graph->getRenderer();
+
+	ren->pushColor( Color( 0.75f, 0.5f, 0 ) );
+	for( auto &layer : graph->getLayers() ) {
+		Rectf layerBorder = layer->getBoundsWorld();
+		ren->drawStrokedRect( layerBorder, 2);
+	}
+	ren->popColor();
+}
+
 CINDER_APP( ViewTestsApp, RendererGl( RendererGl::Options().msaa( 8 ) ), []( App::Settings *settings ) {
-	settings->setWindowPos( 0, 0 );
+//	settings->setWindowPos( 0, 0 );
 	settings->setWindowSize( 960, 565 );
+
+	// move app to macbook display
+	for( const auto &display : Display::getDisplays() ) {
+		if( display->getName() == "Color LCD" ) {
+			settings->setDisplay( display );
+		}
+	}
 } )

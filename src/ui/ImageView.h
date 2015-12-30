@@ -22,7 +22,7 @@
 #pragma once
 
 #include "ui/View.h"
-#include "cinder/gl/Texture.h"
+#include "ui/Image.h"
 
 namespace ui {
 
@@ -37,13 +37,13 @@ enum ImageScaleMode {
 	NUM_MODES
 };
 
-//! Draws an image (gl::Texture2d) with various scale modes. Non-interactive by default.
+//! Draws an Image with various scale modes. Non-interactive by default.
 class ImageView : public View {
   public:
 
 	ImageView( const ci::Rectf &bounds = ci::Rectf::zero() );
 
-	void setTexture( const ci::gl::TextureRef &texture );
+	void setImage( const ImageRef &image );
 
 	void setScaleMode( ImageScaleMode mode )	{ mScaleMode = mode; }
 	ImageScaleMode getScaleMode() const			{ return mScaleMode; }
@@ -51,10 +51,10 @@ class ImageView : public View {
 	ci::Rectf getDestRect() const;
 
   protected:
-	virtual void draw() override;
+	virtual void draw( Renderer *ren ) override;
 
   private:
-	ci::gl::TextureRef	mTexture;
+	ImageRef	        mImage;
 	ImageScaleMode		mScaleMode = ImageScaleMode::FIT;
 };
 

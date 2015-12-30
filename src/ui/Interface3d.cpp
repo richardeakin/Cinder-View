@@ -59,7 +59,7 @@ void CoordinateAxisView::layout()
 	}
 }
 
-void CoordinateAxisView::draw()
+void CoordinateAxisView::draw( Renderer *ren )
 {
 	Rectf worldBounds = getWorldBounds();
 	ivec2 pos = worldBounds.getLowerLeft();

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2015, Richard Eakin - All rights reserved.
+ Copyright (c) 2014, Richard Eakin - All rights reserved.
 
  Redistribution and use in source and binary forms, with or without modification, are permitted provided
  that the following conditions are met:
@@ -19,31 +19,18 @@
  POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "ui/Image.h"
 
-#include "ui/View.h"
+#include "cinder/gl/Texture.h"
 
-#include "cinder/Camera.h"
+using namespace ci;
 
 namespace ui {
 
-typedef std::shared_ptr<class CoordinateAxisView>		CoordinateAxisViewRef;
-
-//! Draws a 3d coordinate axis of a Camera's Orientation
-class CoordinateAxisView : public View {
-  public:
-	CoordinateAxisView( const ci::Rectf &bounds = ci::Rectf::zero() );
-
-	void	setOrientation( const ci::quat &orientation )	{ mOrientation = orientation; }
-
-protected:
-	void layout()	override;
-	void draw( Renderer *ren ) override;
-
-private:
-	ci::CameraPersp mCoordFrameCam;
-	ci::quat		mOrientation;
-	float			mArrowLength = 0;
-};
+Image::Image( const ImageSourceRef &imageSource )
+{
+	mTexture = gl::Texture::create( imageSource );
+	mSize = mTexture->getSize();
+}
 
 } // namespace ui

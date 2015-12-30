@@ -57,13 +57,11 @@ public:
 	ci::signals::Signal<void ()>&	getSignalReleased()	{ return mSignalReleased; }
 
 protected:
-	void draw()	override;
+	void draw( Renderer *ren )	override;
 
 	bool touchesBegan( const ci::app::TouchEvent &event )	override;
 	bool touchesMoved( const ci::app::TouchEvent &event )	override;
 	bool touchesEnded( const ci::app::TouchEvent &event )	override;
-
-	void drawTitle() const;
 
 	bool mEnabled = false;
 	bool mIsToggle = false;

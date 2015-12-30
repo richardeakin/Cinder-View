@@ -21,8 +21,6 @@
 
 #include "ui/Button.h"
 
-#include "cinder/gl/gl.h"
-
 using namespace ci;
 using namespace std;
 
@@ -67,31 +65,16 @@ const ColorA& Button::getTitleColorForState( State state ) const
 		return mColorTitleNormal;
 }
 
-void Button::draw()
+void Button::draw( Renderer *ren )
 {
-	float alpha = getAlphaCombined();
-	auto color = getColor();
-	color.a *= alpha;
+	// draw background
+	ren->setColor( getColor() );
+	ren->drawSolidRect( getBoundsLocal() );
 
-	gl::ScopedColor colorScope( color );
-	gl::drawSolidRect( getBoundsLocal() );
-
-	drawTitle();
-}
-
-void Button::drawTitle() const
-{
-	const string &title = getTitle();
-	ColorA color = getTitleColor();
-
-	float alpha = getAlphaCombined();
-	color.a *= alpha;
-
-	gl::ScopedColor colorScope( color );
-
+	// draw title
 	const float padding = 6;
-
-	mTextTitle->drawString( title, vec2( padding, getCenter().y + mTextTitle->getDescent() ) );
+	ren->setColor( getTitleColor() );
+	mTextTitle->drawString( getTitle(), vec2( padding, getCenter().y + mTextTitle->getDescent() ) );
 }
 
 void Button::setEnabled( bool enabled )

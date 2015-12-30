@@ -25,26 +25,24 @@ function( ci_make_app )
 	endif()
 
 	# place the final app in a folder based on the build type.
-	set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE} )
+	set( CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/build/${CMAKE_BUILD_TYPE} )
 
 	include_directories( "${ARG_CINDER_PATH}/include" )
-	# include_directories( "${ARG_CINDER_PATH}/boost" SYSTEM )
 
 	if( APPLE )
+		# TODO: need to decide how to navigate the various places that libcinder can live
+		# - probably best with the export + configure stuff
+		set( CINDER_LIB cinder ) # the one built in the new cmake configuration
+
 		# Find libcinder.a within cinder's lib folder for this build type
 		# set( CINDER_LIB "${ARG_CINDER_PATH}/lib/${CMAKE_BUILD_TYPE}/libcinder.a" )
-		if( ${CMAKE_BUILD_TYPE} STREQUAL "Debug" )
-			set( CINDER_LIB "${ARG_CINDER_PATH}/lib/libcinder_d.a" )
-		else()
-			set( CINDER_LIB "${ARG_CINDER_PATH}/lib/libcinder.a" )
-		endif()
 
 		# link in libcinder.a and redistributed dependencies
 		list( APPEND CINDER_LINKED_LIBS
 			${CINDER_LIB}
-			${CINDER_PATH}/lib/macosx/libboost_filesystem.a
-			${CINDER_PATH}/lib/macosx/libboost_system.a
-			${CINDER_PATH}/lib/macosx/libz.a
+			${ARG_CINDER_PATH}/lib/macosx/libboost_filesystem.a
+			${ARG_CINDER_PATH}/lib/macosx/libboost_system.a
+			${ARG_CINDER_PATH}/lib/macosx/libz.a
 		)
 
 		# link in system frameworks
@@ -93,9 +91,9 @@ function( ci_make_app )
 		message( FATAL_ERROR "unhandled platform: ${CMAKE_SYSTEM_NAME}" )
 	endif()
 
-	if( NOT EXISTS ${CINDER_LIB} )
-		message( FATAL_ERROR "cannot find libcinder at path: ${CINDER_LIB}" )
-	endif()
+#	if( NOT EXISTS ${CINDER_LIB} )
+#		message( FATAL_ERROR "cannot find libcinder at path: ${CINDER_LIB}" )
+#	endif()
 
 	set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14" PARENT_SCOPE )
 	# ??? should be set for CMakeCache.txt too? this is how to do it, though it overwrites everything else

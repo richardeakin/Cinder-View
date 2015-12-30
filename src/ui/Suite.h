@@ -23,8 +23,10 @@
 
 #include "ui/View.h"
 #include "ui/Button.h"
+#include "ui/Label.h"
 #include "ui/Selector.h"
 #include "ui/Slider.h"
+#include "ui/Graph.h"
 
 #include "mason/Factory.h"
 
@@ -60,19 +62,25 @@ public:
 
 	void selectTest( size_t index );
 	size_t getCurrentTestIndex() const	{ return mSelector->getSelectedIndex(); }
+	ui::VSelectorRef	getSelector() const	{ return mSelector; }
+
+	ui::LabelGridRef    getInfoLabel() const    { return mInfoLabel; }
+
 	const std::string& getCurrentTestKey() const { return mCurrentTestKey; }
 
 	void reloadCurrentTest();
 
-	ui::ViewRef	getRootView() const	{ return mRootView; }
+	ui::GraphRef	getGraph() const	{ return mGraph; }
 
 private:
 	void resize();
 	void selectTest( const std::string &key );
+	void updateUI();
 
-	ui::ViewRef		mRootView;
+	ui::GraphRef		mGraph;
 	SuiteViewRef		mCurrentSuiteView;
 	ui::VSelectorRef	mSelector;
+	ui::LabelGridRef    mInfoLabel;
 	std::string			mCurrentTestKey;
 
 	mason::Factory<SuiteView>	mFactory;

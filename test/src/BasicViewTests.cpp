@@ -59,7 +59,6 @@ BasicViewTests::BasicViewTests()
 {
 	mContainerView = make_shared<View>();
 	mContainerView->getBackground()->setColor( Color::gray( 0.75f ) );
-	mContainerView->connectTouchEvents();
 	mContainerView->setLabel( "container" );
 
 	Rectf childBounds = Rectf( 30, 30, 300, 100 );
@@ -123,9 +122,8 @@ BasicViewTests::BasicViewTests()
 	fs::path imageFilePath = app::getAssetPath( "images/monkey_hitchhike.jpg" );
 	try {
 		CI_LOG_I( "loading image view.." );
-		auto image = loadImage( loadFile( imageFilePath ) );
-		auto tex = gl::Texture::create( image );
-		mImageView->setTexture( tex );
+		auto image = make_shared<ui::Image>( loadImage( loadFile( imageFilePath ) ) );
+		mImageView->setImage( image );
 		CI_LOG_I( "complete" );
 	}
 	catch( std::exception &exc ) {
@@ -140,7 +138,7 @@ BasicViewTests::BasicViewTests()
 
 void BasicViewTests::layout()
 {
-	CI_LOG_I( "bang" );
+//	CI_LOG_I( "bounds: " << getBounds() );
 
 	mContainerView->setBounds( Rectf( PADDING, PADDING, getWidth() - PADDING, getHeight() - PADDING ) );
 	mBorderView->setSize( mContainerView->getSize() );
@@ -156,7 +154,6 @@ void BasicViewTests::layout()
 	vec2 imageViewPos = vec2( mLabelGrid->getPos().x, mLabelGrid->getBounds().y2 + PADDING );
 	mImageView->setPos( imageViewPos );
 	mImageView->setSize( vec2( 200, 200 ) );
-
 }
 
 void BasicViewTests::keyEvent( app::KeyEvent &event )
@@ -171,8 +168,8 @@ void BasicViewTests::keyEvent( app::KeyEvent &event )
 			break;
 		}
 		case app::KeyEvent::KEY_a: {
-			float nextAlpha = mContainerView->getAlpha() > 0.01f ? 0.0f : 1.0f;
-			app::timeline().apply( mContainerView->animAlpha(), nextAlpha, 0.6f, EaseInOutExpo() );
+			float nextAlpha = mContainerView->getAlpha() > 0.4f ? 0.4f : 1.0f;
+			app::timeline().apply( mContainerView->animAlpha(), nextAlpha, 2.0f, EaseInOutExpo() );
 			break;
 		}
 		case app::KeyEvent::KEY_r: {
@@ -182,7 +179,7 @@ void BasicViewTests::keyEvent( app::KeyEvent &event )
 			}
 			break;
 		}
-		case app::KeyEvent::KEY_b: {
+		case app::KeyEvent::KEY_o: {
 			float nextBorderWidth = randFloat( 1, 30 );
 			app::timeline().apply( mBorderView->getLineWidthAnim(), nextBorderWidth, 0.6f, EaseOutExpo() );
 			break;

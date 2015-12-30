@@ -21,29 +21,54 @@
 
 #pragma once
 
-#include "ui/View.h"
+#include "ui/Renderer.h"
 
-#include "cinder/Camera.h"
+#include <memory>
 
 namespace ui {
 
-typedef std::shared_ptr<class CoordinateAxisView>		CoordinateAxisViewRef;
+class Graph;
+class View;
 
-//! Draws a 3d coordinate axis of a Camera's Orientation
-class CoordinateAxisView : public View {
+typedef std::shared_ptr<class Layer>		LayerRef;
+typedef std::shared_ptr<class FrameBuffer>	FrameBufferRef;
+
+//! A Layer controls specific rendering capabilities for Views, such as compositing with translucency.
+class Layer : public std::enable_shared_from_this<Layer> {
   public:
-	CoordinateAxisView( const ci::Rectf &bounds = ci::Rectf::zero() );
+	Layer( View *view );
+	virtual ~Layer();
 
-	void	setOrientation( const ci::quat &orientation )	{ mOrientation = orientation; }
+	float	getAlpha() const;
 
-protected:
-	void layout()	override;
-	void draw( Renderer *ren ) override;
+	FrameBufferRef  getFrameBuffer() const      { return mFrameBuffer; }
 
-private:
-	ci::CameraPersp mCoordFrameCam;
-	ci::quat		mOrientation;
-	float			mArrowLength = 0;
+	View*   getRootView() const         { return mRootView; }
+
+	bool getShouldRemove()const         { return mShouldRemove; }
+
+	ci::Rectf   getBoundsWorld() const;
+
+  private:
+
+	void update();
+	void draw( Renderer *ren );
+
+	void markForRemoval()               { mShouldRemove = true; }
+	void init();
+	void configureView( View *view );
+	void updateView( View *view );
+	void drawView( View *view, Renderer *ren );
+	void beginClip( View *view, Renderer *ren );
+	void endClip();
+
+	View*           mRootView;
+	Graph*          mGraph;
+	FrameBufferRef	mFrameBuffer;
+	ci::Rectf       mFrameBufferBounds = ci::Rectf::zero();
+	bool            mShouldRemove = false;
+
+	friend class Graph;
 };
 
 } // namespace ui

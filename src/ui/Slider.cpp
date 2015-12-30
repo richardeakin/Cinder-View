@@ -21,8 +21,6 @@
 
 #include "ui/Slider.h"
 
-#include "cinder/gl/gl.h"
-
 #include "cppformat/format.h"
 
 using namespace std;
@@ -69,23 +67,16 @@ void SliderBase::setValue( float value, bool emitChanged )
 		mSignalValueChanged.emit();
 }
 
-void SliderBase::draw()
+void SliderBase::draw( Renderer *ren )
 {
-	float alpha = getAlphaCombined();
-	if( alpha < 0.000001f )
-		return;
-
 	const float sliderRadius = mValueThickness / 2;
 	const Rectf valRect = getValueRect( mSliderPos, sliderRadius );
-
-	// TODO it probably isn't correct to multiply all channels by alpha here because we're not in premulled alpha land,
-	// but it looks better given alpha isn't yet handled with layers
-	gl::ScopedColor colorScope( mValueColor * alpha );
-	gl::drawSolidRect( valRect );
-
 	const float padding = 6;
 
-	gl::color( mTitleColor * alpha );
+	ren->setColor( mValueColor );
+	ren->drawSolidRect( valRect );
+
+	ren->setColor( mTitleColor );
 	mTextLabel->drawString( getTitleLabel(), vec2( padding, getCenter().y + mTextLabel->getDescent() ) );
 }
 

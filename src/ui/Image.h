@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2015, Richard Eakin - All rights reserved.
+ Copyright (c) 2014, Richard Eakin - All rights reserved.
 
  Redistribution and use in source and binary forms, with or without modification, are permitted provided
  that the following conditions are met:
@@ -21,29 +21,35 @@
 
 #pragma once
 
-#include "ui/View.h"
+#include "cinder/Cinder.h"
+#include "cinder/ImageIo.h"
 
-#include "cinder/Camera.h"
+#include <memory>
+
+namespace cinder { namespace gl {
+
+//typedef std::shared_ptr<class Texture>  TextureRef; // TODO: fix this forward decl. in Texture.h
+typedef std::shared_ptr<class Texture2d>		Texture2dRef;
+typedef Texture2dRef							TextureRef;
+
+} } // namespace cinder::gl
 
 namespace ui {
 
-typedef std::shared_ptr<class CoordinateAxisView>		CoordinateAxisViewRef;
+typedef std::shared_ptr<class Image>	ImageRef;
 
-//! Draws a 3d coordinate axis of a Camera's Orientation
-class CoordinateAxisView : public View {
+class Image {
   public:
-	CoordinateAxisView( const ci::Rectf &bounds = ci::Rectf::zero() );
+	Image( const ci::ImageSourceRef &imageSource );
 
-	void	setOrientation( const ci::quat &orientation )	{ mOrientation = orientation; }
+	const ci::ivec2&    getSize() const     { return mSize; }
+	ci::Area            getBounds() const   { return ci::Area( 0, 0, mSize.x, mSize.y ); }
 
-protected:
-	void layout()	override;
-	void draw( Renderer *ren ) override;
+  private:
+	ci::gl::TextureRef	mTexture;
+	ci::ivec2           mSize;
 
-private:
-	ci::CameraPersp mCoordFrameCam;
-	ci::quat		mOrientation;
-	float			mArrowLength = 0;
+	friend class Renderer;
 };
 
 } // namespace ui

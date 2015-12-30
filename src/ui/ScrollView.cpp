@@ -21,10 +21,7 @@
 
 #include "ui/ScrollView.h"
 
-#include "cinder/gl/scoped.h"
-#include "cinder/gl/wrapper.h"
-
-#include "cinder/app/App.h" // TODO: remove me. currently used for app::getElapsedSeconds()
+#include "cinder/app/App.h" // TODO: remove me. currently used for app::getElapsedSeconds(), but will get this from Graph instead
 
 using namespace ci;
 using namespace std;
@@ -141,7 +138,7 @@ void ScrollView::update()
 	}
 }
 
-void ScrollView::draw()
+void ScrollView::draw( Renderer *ren )
 {
 }
 

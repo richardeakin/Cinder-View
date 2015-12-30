@@ -20,9 +20,12 @@
 */
 
 #include "ui/Suite.h"
+
 #include "cinder/app/App.h"
 #include "cinder/Log.h"
 #include "cinder/audio/Context.h"
+
+#include "cppformat/format.h"
 
 using namespace std;
 using namespace ci;
@@ -44,38 +47,44 @@ void SuiteView::connectKeyDown( const std::function<void( ci::app::KeyEvent& )> 
 
 Suite::Suite()
 {
-	mRootView = make_shared<ui::View>( app::getWindowBounds() );
-	mRootView->setLabel( "Suite root" );
-	mRootView->connectTouchEvents();
+	mGraph = make_shared<ui::Graph>();
+	mGraph->setLabel( "Suite root" );
+	mGraph->setFillParentEnabled();
+	mGraph->connectTouchEvents();
 
-	mSelector = make_shared<ui::VSelector>(); // bounds is set in resize()
+	mSelector = mGraph->makeSubview<ui::VSelector>();
 	mSelector->getBackground()->setColor( ColorA::gray( 0, 0.3f ) );
 
 	mSelector->getSignalValueChanged().connect( [this] {
-		CI_LOG_V( "selector changed, index: " << mSelector->getSelectedIndex() << ", label: " << mSelector->getSelectedLabel() );
 		selectTest( mSelector->getSelectedLabel() );
 	} );
 
-	mRootView->addSubview( mSelector );
+	mInfoLabel = mGraph->makeSubview<ui::LabelGrid>();
+	mInfoLabel->setTextColor( Color::white() );
+	mInfoLabel->getBackground()->setColor( ColorA( 0, 0, 0, 0.3f ) );
 
 	app::getWindow()->getSignalResize().connect( bind( &Suite::resize, this ) );
 }
 
 void Suite::resize()
 {
-	mRootView->setSize( app::getWindowSize() );
-	if( mCurrentSuiteView )
-		mCurrentSuiteView->setSize( mRootView->getSize() ); // TODO: autoresize flags?
+	mGraph->setNeedsLayout();
 
 	const float padding = 6;
 	const float width = 120; // TODO: calculate widest segment
 	const float height = 22 * mSelector->getSegmentLabels().size();
-	mSelector->setBounds( Rectf( (float)mRootView->getWidth() - width - padding, padding, (float)mRootView->getWidth() - padding, height + padding ) );
+	mSelector->setBounds( Rectf( mGraph->getWidth() - width - padding, padding, mGraph->getWidth() - padding, height + padding ) );
+
+	// TODO: grow / shrink LabelGrid from update when number of rows changes
+	const int numRows = 2;
+	vec2 windowSize = vec2( app::getWindow()->getSize() );
+	vec2 infoSize = { 200, 20 * numRows };
+	mInfoLabel->setBounds( { windowSize - infoSize - padding, windowSize - padding } ); // anchor bottom right
 }
 
 void Suite::selectTest( const string &key )
 {
-	CI_LOG_V( "selecting test: " << key );
+	CI_LOG_V( "selecting test: " << key ); // TODO: register signal instead, move log to test
 
 	// first remove and destroy the current test
 	if( mCurrentSuiteView ) {
@@ -89,9 +98,9 @@ void Suite::selectTest( const string &key )
 		return;
 	}
 
-	suiteView->setBounds( Rectf( 0, 0, mRootView->getWidth(), mRootView->getHeight() ) );
+	suiteView->setFillParentEnabled();
 	suiteView->setLabel( key );
-	mRootView->insertSubview( suiteView, 0 );
+	mGraph->insertSubview( suiteView, 0 );
 	mCurrentSuiteView = suiteView;
 	mCurrentTestKey = key;
 }
@@ -112,12 +121,19 @@ void Suite::update()
 	if( ! mCurrentSuiteView && ! mSelector->getSegmentLabels().empty() )
 		selectTest( mSelector->getSelectedLabel() );
 
-	mRootView->propagateUpdate();
+	updateUI();
+
+	mGraph->propagateUpdate();
+}
+
+void Suite::updateUI()
+{
+	mInfoLabel->setRow( 0, { "fps:",  fmt::format( "{}", app::App::get()->getAverageFps() ) } );
 }
 
 void Suite::draw()
 {
-	mRootView->propagateDraw();
+	mGraph->propagateDraw();
 }
 
 } // namespace ui

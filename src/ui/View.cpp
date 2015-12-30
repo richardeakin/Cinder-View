@@ -20,12 +20,12 @@
 */
 
 #include "ui/View.h"
+#include "ui/Graph.h"
 
 #include "glm/gtc/epsilon.hpp"
 
 #include "cinder/CinderAssert.h"
 #include "cinder/gl/gl.h"
-#include "cinder/app/App.h"
 #include "cinder/Log.h"
 #include "cinder/System.h"
 
@@ -43,11 +43,13 @@ View::View( const ci::Rectf &bounds )
 
 View::~View()
 {
-	if( ! mEventConnections.empty() )
-		disconnectEvents();
-
 	for( auto &subview : mSubviews )
 		subview->mParent = nullptr;
+
+	if( mLayer ) {
+		if( isLayerRoot() )
+			getGraph()->removeLayer( mLayer );
+	}
 }
 
 void View::setPos( const vec2 &position )
@@ -97,9 +99,35 @@ Rectf View::getBoundsLocal() const
 	return Rectf( vec2( 0 ), getSize() );
 }
 
+Rectf View::getBoundsForFrameBuffer() const
+{
+	return Rectf( vec2( 0 ), getSize() );
+}
+
 bool View::isBoundsAnimating() const
 {
 	return ( ! mPos.isComplete() || ! mSize.isComplete() );
+}
+
+bool View::isTransparent() const
+{
+	return mAlpha < 0.9999f;
+}
+
+bool View::isLayerRoot() const
+{
+	auto layer = getLayer();
+	return ( layer && layer->getRootView() == this );
+}
+
+void View::setClipEnabled( bool enable )
+{
+	mClipEnabled = enable;
+}
+
+bool View::isClipEnabled() const
+{
+	return mClipEnabled;
 }
 
 void View::addSubview( const ViewRef &view )
@@ -109,6 +137,8 @@ void View::addSubview( const ViewRef &view )
 	// first set the parent to be us, which will remove it from any existing parent (including this view).
 	view->setParent( this );
 	mSubviews.push_back( view );
+
+	setNeedsLayout();
 }
 
 void View::addSubviews( const vector<ViewRef> &views )
@@ -156,6 +186,7 @@ void View::removeFromParent()
 		return;
 
 	mParent->removeSubview( shared_from_this() );
+	setNeedsLayout();
 }
 
 ViewRef& View::getSubview( size_t index )
@@ -185,6 +216,7 @@ void View::setParent( View *parent )
 {
 	removeFromParent();
 	mParent = parent;
+	mGraph = parent->getGraph();
 }
 
 void View::setNeedsLayout()
@@ -201,6 +233,7 @@ void View::setWorldPosDirty()
 		subview->setWorldPosDirty();
 }
 
+// TODO: consider moving layout propagation to Graph, at which point it will also configure layer tree
 void View::propagateLayout()
 {
 	mWorldPosDirty = true;
@@ -225,10 +258,9 @@ void View::propagateLayout()
 	}
 }
 
-void View::propagateUpdate()
+void View::updateImpl()
 {
-	for( auto& view : mSubviews )
-		view->propagateUpdate();
+	CI_ASSERT( mGraph );
 
 	// if bounds is animating, update background's position and size, propagate layout
 	bool needsLayout = mNeedsLayout;
@@ -246,34 +278,48 @@ void View::propagateUpdate()
 			mBackground->setSize( getSize() );
 	}
 
+	if( mRenderTransparencyToFrameBuffer ) {
+		if( isTransparent() ) {
+			if( ! mRendersToFrameBuffer ) {
+				getGraph()->setNeedsLayer( this );
+			}
+		}
+		else if( mRendersToFrameBuffer ) {
+			CI_ASSERT( mLayer );
+			getGraph()->removeLayer( mLayer );
+			mRendersToFrameBuffer = false;
+		}
+	}
+
 	if( needsLayout )
 		propagateLayout();
 
-	if( hasBackground )
-		mBackground->propagateUpdate();
+	if( hasBackground ) {
+		mBackground->mGraph = mGraph;
+		mBackground->updateImpl();
+	}
 
 	update();
 }
 
-void View::propagateDraw()
+void View::drawImpl( Renderer *ren )
 {
-	if( mHidden )
+	if( isHidden() )
 		return;
 
-	beginClip();
+	ren->pushBlendMode( mBlendMode ); // TEMPORARY: this will be handled by Layer
 
-	gl::ScopedModelMatrix modelScope1;
-	gl::translate( mPos() );
+	if( mBackground ) {
+		ren->pushColor();
+		mBackground->draw( ren );
+		ren->popColor();
+	}
 
-	if( mBackground )
-		mBackground->draw();
+	ren->pushColor();
+	draw( ren );
+	ren->popColor();
 
-	draw();
-
-	for( auto &view : mSubviews )
-		view->propagateDraw();
-
-	endClip();
+	ren->popBlendMode();
 }
 
 bool View::hitTest( const vec2 &localPos ) const
@@ -344,6 +390,7 @@ const RectViewRef& View::getBackground()
 
 float View::getAlphaCombined() const
 {
+	// TODO: Get this value from Renderer, which knows current alpha based on layer
 	float alpha = mAlpha;
 	if( mParent )
 		alpha *= mParent->getAlphaCombined();
@@ -386,47 +433,6 @@ void printRecursive( ostream &os, const ViewRef &view, size_t depth )
 void View::printHeirarchy( ostream &os )
 {
 	printRecursive( os, shared_from_this(), 0 );
-}
-
-void View::connectTouchEvents( int priority )
-{
-	mEventSlotPriority = priority;
-
-	if( ! mEventConnections.empty() )
-		disconnectEvents();
-
-	auto window = app::getWindow();
-
-	if( app::App::get()->isMultiTouchEnabled() ) {
-		mEventConnections.push_back( window->getSignalTouchesBegan().connect( mEventSlotPriority,	bind( &View::propagateTouchesBegan, this, placeholders::_1 ) ) );
-		mEventConnections.push_back( window->getSignalTouchesMoved().connect( mEventSlotPriority,	bind( &View::propagateTouchesMoved, this, placeholders::_1 ) ) );
-		mEventConnections.push_back( window->getSignalTouchesEnded().connect( mEventSlotPriority,	bind( &View::propagateTouchesEnded, this, placeholders::_1 ) ) );
-	}
-	else {
-		mEventConnections.push_back( window->getSignalMouseDown().connect( mEventSlotPriority, [&]( app::MouseEvent &event ) {
-			app::TouchEvent touchEvent( event.getWindow(), vector<app::TouchEvent::Touch>( 1, app::TouchEvent::Touch( event.getPos(), vec2( 0 ), 0, 0, &event ) ) );
-			propagateTouchesBegan( touchEvent );
-			event.setHandled( touchEvent.isHandled() );
-		} ) );
-		mEventConnections.push_back( window->getSignalMouseDrag().connect( mEventSlotPriority, [&]( app::MouseEvent &event ) {
-			app::TouchEvent touchEvent( event.getWindow(), vector<app::TouchEvent::Touch>( 1, app::TouchEvent::Touch( event.getPos(), vec2( 0 ), 0, 0, &event ) ) );
-			propagateTouchesMoved( touchEvent );
-			event.setHandled( touchEvent.isHandled() );
-		} ) );
-		mEventConnections.push_back( window->getSignalMouseUp().connect( mEventSlotPriority, [&]( app::MouseEvent &event ) {
-			app::TouchEvent touchEvent( event.getWindow(), vector<app::TouchEvent::Touch>( 1, app::TouchEvent::Touch( event.getPos(), vec2( 0 ), 0, 0, &event ) ) );
-			propagateTouchesEnded( touchEvent );
-			event.setHandled( touchEvent.isHandled() );
-		} ) );
-	}
-}
-
-void View::disconnectEvents()
-{
-	for( auto &connection : mEventConnections )
-		connection.disconnect();
-
-	mEventConnections.clear();
 }
 
 void View::propagateTouchesBegan( ci::app::TouchEvent &event )
@@ -497,54 +503,44 @@ void View::propagateTouchesEnded( ci::app::TouchEvent &event )
 	event.setHandled( handled );
 }
 
-void View::beginClip()
-{
-	if( mClipEnabled ) {
-		Rectf worldBounds = getWorldBounds();
-		ivec2 pos = worldBounds.getLowerLeft();
-		pos.y = app::getWindowHeight() - pos.y; // flip y relative to window's bottom left
-
-		auto ctx = gl::context();
-		ctx->pushBoolState( GL_SCISSOR_TEST, GL_TRUE );
-		ctx->pushScissor( std::pair<ivec2, ivec2>( pos, getSize() ) );
-	}
-}
-
-void View::endClip()
-{
-	if( mClipEnabled ) {
-		auto ctx = gl::context();
-		ctx->popBoolState( GL_SCISSOR_TEST );
-		ctx->popScissor();
-	}
-}
-
 // ----------------------------------------------------------------------------------------------------
 // MARK: - RectView
 // ----------------------------------------------------------------------------------------------------
 
-void RectView::draw()
+RectView::RectView( const ci::Rectf &bounds )
+	: View( bounds )
 {
-	ColorA color = mColor;
-	color.a *= getAlphaCombined();
-
-	if( color.a > 0.000001f ) {
-		gl::ScopedColor colorScope( color );
-		drawRect();
-	}
+	setBlendMode( BlendMode::PREMULT_ALPHA );
 }
 
-void RectView::drawRect()
+void RectView::draw( Renderer *ren )
 {
-	gl::drawSolidRect( getBoundsLocal() );
+	ren->setColor( getColor() );
+	ren->drawSolidRect( getBoundsLocal() );
 }
 
-void StrokedRectView::drawRect()
+// ----------------------------------------------------------------------------------------------------
+// MARK: - StrokedRectView
+// ----------------------------------------------------------------------------------------------------
+
+StrokedRectView::StrokedRectView( const ci::Rectf &bounds )
+	: RectView( bounds )
 {
+}
+
+Rectf StrokedRectView::getBoundsForFrameBuffer() const
+{
+	return Rectf( vec2( - mLineWidth / 2.0f ), getSize() + mLineWidth / 2.0f );
+}
+
+void StrokedRectView::draw( Renderer *ren )
+{
+	ren->setColor( getColor() );
+
 	if( mLineWidth == 1 )
-		gl::drawStrokedRect( getBoundsLocal() );
+		ren->drawStrokedRect( getBoundsLocal() );
 	else
-		gl::drawStrokedRect( getBoundsLocal(), mLineWidth );
-}	
+		ren->drawStrokedRect( getBoundsLocal(), mLineWidth );
+}
 
 } // namespace ui

@@ -56,11 +56,11 @@ protected:
 		return true;
 	}
 
-	void draw() override
+	void draw( ui::Renderer *ren ) override
 	{
-		RectView::draw();
+		RectView::draw( ren );
 
-		gl::ScopedColor colorScope( mLocalTouchColor );
+		ren->setColor( mLocalTouchColor );
 		gl::drawSolidCircle( mLocalTouchPos, 10.0f );
 	}
 
@@ -97,10 +97,9 @@ ScrollTests::ScrollTests()
 	fs::path imageFilePath = app::getAssetPath( "images/monkey_hitchhike.jpg" );
 	try {
 		CI_LOG_I( "loading image view.." );
-		auto image = loadImage( loadFile( imageFilePath ) );
-		auto tex = gl::Texture::create( image );
-		imageView->setTexture( tex );
-		imageView->setSize( tex->getSize() );
+		auto image = make_shared<ui::Image>( loadImage( loadFile( imageFilePath ) ) );
+		imageView->setImage( image );
+		imageView->setSize( image->getSize() );
 		CI_LOG_I( "complete" );
 	}
 	catch( std::exception &exc ) {

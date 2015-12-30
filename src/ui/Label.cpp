@@ -22,7 +22,6 @@
 
 #include "ui/Label.h"
 
-#include "cinder/gl/gl.h"
 #include "cinder/Log.h"
 #include "cinder/CinderAssert.h"
 
@@ -42,6 +41,7 @@ Label::Label( const Rectf &bounds )
 {
 	setFont( -1, FontFace::NORMAL );
 	setInteractive( false );
+	setBlendMode( BlendMode::PREMULT_ALPHA );
 }
 
 void Label::setFont( float fontSize, FontFace fontFace )
@@ -58,19 +58,13 @@ void Label::setText( const std::string &text )
 	mTextSize = mFont->measureString( text );
 }
 
-void Label::draw()
+void Label::draw( Renderer *ren )
 {
 	if( mText.empty() )
 		return;
 
-	float alpha = getAlphaCombined();
-	if( alpha < 0.000001f )
-		return;
-
-	gl::ScopedColor colorScope( mTextColor * alpha );
-
-	auto baseline = getBaseLine();
-	mFont->drawString( mText, baseline );
+	ren->setColor( mTextColor );
+	mFont->drawString( mText, getBaseLine() );
 }
 
 vec2 Label::getBaseLine() const

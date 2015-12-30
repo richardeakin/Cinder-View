@@ -21,9 +21,11 @@
 
 #pragma once
 
+#include "ui/Layer.h"
+#include "ui/Renderer.h"
+
 #include "cinder/app/TouchEvent.h"
 #include "cinder/app/MouseEvent.h"
-#include "cinder/Signals.h"
 #include "cinder/Tween.h"
 #include "cinder/Rect.h"
 #include "cinder/Color.h"
@@ -37,10 +39,10 @@ namespace ui {
 typedef std::shared_ptr<class View>				ViewRef;
 typedef std::shared_ptr<class RectView>			RectViewRef;
 typedef std::shared_ptr<class StrokedRectView>	StrokedRectViewRef;
+class Graph;
 
 class View : public std::enable_shared_from_this<View> {
   public:
-
 	View( const ci::Rectf &bounds = ci::Rectf::zero() );
 	virtual ~View();
 
@@ -51,6 +53,9 @@ class View : public std::enable_shared_from_this<View> {
 	virtual void removeAllSubviews();
 	virtual void removeFromParent();
 	virtual bool containsSubview( const ViewRef &view );
+
+	template<typename ViewT, typename... Args>
+	std::shared_ptr<ViewT> makeSubview( Args&&... args );
 
 	void	setBounds( const ci::Rectf &bounds );
 	void	setPos( const ci::vec2 &position );
@@ -80,6 +85,15 @@ class View : public std::enable_shared_from_this<View> {
 	const ViewRef&			getSubview( size_t index ) const;
 	const View*				getParent() const	{ return mParent; }
 
+	//!
+	const Graph*            getGraph() const    { return mGraph; }
+	//!
+	Graph*                  getGraph()          { return mGraph; }
+	//!
+	LayerRef	            getLayer() const	{ return mLayer; }
+	//!
+	bool                    isLayerRoot() const;
+
 	//! Sets a label that can be used to identify this View
 	void				setLabel( const std::string &label )	{ mLabel = label; }
 	const std::string&	getLabel() const						{ return mLabel; }
@@ -97,7 +111,7 @@ class View : public std::enable_shared_from_this<View> {
 	ci::Rectf			toWorld( const ci::Rectf &localRect ) const;
 	ci::Rectf			toLocal( const ci::Rectf &worldRect ) const;
 
-	bool				hitTest( const ci::vec2 &localPos ) const;
+	virtual bool				hitTest( const ci::vec2 &localPos ) const;
 
 	void	setHidden( bool hidden = true )			{ mHidden = hidden; }
 	bool	isHidden() const						{ return mHidden; }
@@ -105,45 +119,36 @@ class View : public std::enable_shared_from_this<View> {
 	bool	isInteractive() const					{ return mInteractive; }
 	bool	isUserInteracting() const				{ return ! mActiveTouches.empty(); }
 	bool	isBoundsAnimating() const;
+	bool    isTransparent() const;
 
-	void	setClipEnabled( bool b = true )			{ mClipEnabled = b; }
-	bool	isClipEnabled() const					{ return mClipEnabled; }
+	// TODO: this needs to mark layer tree dirty, at least if there is compositing going on (should skip reconfigure otherwise)
+	void setRenderTransparencyToFrameBufferEnabled( bool enable )	{ mRenderTransparencyToFrameBuffer = enable; }
+	bool isRenderTransparencyToFrameBufferEnabled() const			{ return mRenderTransparencyToFrameBuffer; }
+
+	void	setClipEnabled( bool enable = true );
+	bool	isClipEnabled() const;
+
+	void	setBlendMode( BlendMode mode )				{ mBlendMode = mode; }
+	BlendMode	getBlendMode() const					{ return mBlendMode; }
 
 	void	setFillParentEnabled( bool enable = true )	{ mFillParent = enable; }
 	bool	isFillParentEnabled() const					{ return mFillParent; }
-
-	void propagateLayout();
-	void propagateUpdate();
-	void propagateDraw();
-
-	void propagateTouchesBegan( ci::app::TouchEvent &event );
-	void propagateTouchesMoved( ci::app::TouchEvent &event );
-	void propagateTouchesEnded( ci::app::TouchEvent &event );
 
 	//! Informs layout propagation that this View and its subviews need layout() to be called.
 	void setNeedsLayout();
 	//! This is done when the world position should be recalculated but calling layout isn't necessary (ex. when ScrollView offset moves)
 	void setWorldPosDirty();
 
-	//! Connects this View's touches propagation methods to the App's touch event signals
-	void connectTouchEvents( int prioririty = 1 );
-	void disconnectEvents();
-
 	friend std::ostream& operator<<( std::ostream &os, const ViewRef &rhs );
 	void printHeirarchy( std::ostream &os );
 
 protected:
-	View( const View& )				= delete;
-	View& operator=( const View& )	= delete;
+	virtual void layout()		        {}
+	virtual void update()		        {}
+	virtual void draw( Renderer *ren )  {}
 
-	virtual void layout()		{}
-	virtual void update()		{}
-	virtual void draw()			{}
-
-	void beginClip();
-	void endClip();
-
-	void setParent( View *parent );
+	//! Returns the bounds required for rendering this View to a FrameBuffer. \default is this View's local bounds. Override if this View needs a larger sized or FrameBuffer.
+	virtual ci::Rectf   getBoundsForFrameBuffer() const;
 
 	// Override to handle UI events. Return true if handled, false otherwise.
 	virtual bool touchesBegan( const ci::app::TouchEvent &event )	{ return false; }
@@ -151,15 +156,27 @@ protected:
 	virtual bool touchesEnded( const ci::app::TouchEvent &event )	{ return false; }
 
 private:
+	View( const View& )				= delete;
+	View& operator=( const View& )	= delete;
+
+	void setParent( View *parent );
 	void calcWorldPos() const;
+	void updateImpl();
+	void drawImpl( Renderer *ren );
+
+	// TODO: consider moving propagation methods to Graph and passing View as argument
+	void propagateLayout();
+//	void propagateUpdate();
+//	void propagateDraw();
+
+	void propagateTouchesBegan( ci::app::TouchEvent &event );
+	void propagateTouchesMoved( ci::app::TouchEvent &event );
+	void propagateTouchesEnded( ci::app::TouchEvent &event );
 
 	typedef std::map<uint32_t, ci::app::TouchEvent::Touch> TouchMapT;
 
-	TouchMapT								mActiveTouches;
-	int										mEventSlotPriority = 1;
-	std::vector<ci::signals::Connection>	mEventConnections;
+	TouchMapT				mActiveTouches;
 
-	bool					mClipEnabled = false;
 	bool					mInteractive = true;
 	bool					mHidden = false;
 	bool					mNeedsLayout = false;
@@ -172,44 +189,60 @@ private:
 	ci::Anim<ci::vec2>		mSize;
 	std::string				mLabel;
 	bool					mFillParent = false; // TODO: replace this with proper layout system
+	BlendMode				mBlendMode = BlendMode::ALPHA;
+	bool                    mClipEnabled = false;
+	bool			        mRendersToFrameBuffer = false;
+	bool			        mRenderTransparencyToFrameBuffer = true;
 
 	View*					mParent = nullptr;
+	Graph*                  mGraph = nullptr;
 	std::list<ViewRef>		mSubviews; // TODO: using list so iterators aren't invalidated during add / remove operations. A more efficient solution could be deferring the add remove until after iteration loops
 	RectViewRef				mBackground;
+	LayerRef				mLayer;
+
+	friend class Layer;
+	friend class Graph;
 };
+
+template<typename ViewT, typename... Args>
+std::shared_ptr<ViewT> View::makeSubview( Args&&... args )
+{
+	static_assert( std::is_base_of<View, ViewT>::value, "ViewT must inherit from ui::View" );
+
+	std::shared_ptr<ViewT> result( new ViewT( std::forward<Args>( args )... ) );
+	addSubview( result );
+	return result;
+}
 
 class RectView : public View {
 public:
-	RectView( const ci::Rectf &bounds = ci::Rectf::zero() )	: View( bounds ), mColor( ci::ColorA::black() )
-	{}
+	RectView( const ci::Rectf &bounds = ci::Rectf::zero() );
 
 	void					setColor( const ci::ColorA &color )	{ mColor = color; }
 	const ci::ColorA&		getColor() const					{ return mColor; }
 	ci::Anim<ci::ColorA>*	getColorAnim()						{ return &mColor; }
 
 protected:
-	virtual void draw()		override;
-	virtual void drawRect();
+	void draw( Renderer *ren ) override;
 
-	ci::Anim<ci::ColorA>	mColor;
+	ci::Anim<ci::ColorA>	mColor = { ci::ColorA::black() };
 private:
 	friend class View;
 };
 
 class StrokedRectView : public RectView {
 public:
-	StrokedRectView( const ci::Rectf &bounds = ci::Rectf::zero() )	: RectView( bounds ), mLineWidth( 1 )
-	{}
+	StrokedRectView( const ci::Rectf &bounds = ci::Rectf::zero() );
 
 	void				setLineWidth( float lineWidth )		{ mLineWidth = lineWidth; }
 	float				getLineWidth() const				{ return mLineWidth; }
 	ci::Anim<float>*	getLineWidthAnim()					{ return &mLineWidth; }
 
-
 protected:
-	virtual void drawRect()		override;
+	void draw( Renderer *ren ) override;
+	ci::Rectf getBoundsForFrameBuffer() const   override;
 
-	ci::Anim<float>		mLineWidth;
+	ci::Anim<float>		mLineWidth = { 1 };
 };
 
 } // namespace ui

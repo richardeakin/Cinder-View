@@ -29,11 +29,13 @@
 
 namespace cinder {
 
+class Font;
+
 namespace gl {
 	typedef std::shared_ptr<class TextureFont>	TextureFontRef;
-}
-	
-}
+} // namespace cinder::gl
+
+} // namespace cinder
 
 namespace ui {
 
@@ -62,8 +64,8 @@ public:
 	void		drawString( const std::string &str, const ci::vec2 &baseline );
 
 private:
-	Text() : mIsReady( false )		{}
-	Text( const ci::gl::TextureFontRef &texFont, FontFace face ) : mTextureFont( texFont ), mFace( face ), mIsReady( true )		{}
+	Text();
+	Text( const ci::Font &font, FontFace face );
 
 	ci::gl::TextureFontRef	mTextureFont;
 	FontFace				mFace;

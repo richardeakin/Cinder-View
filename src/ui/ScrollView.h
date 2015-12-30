@@ -85,7 +85,7 @@ class ScrollView : public View {
   protected:
 	void layout()	override;
 	void update()	override;
-	void draw()		override;
+	void draw( Renderer *ren ) override;
 
 	bool touchesBegan( const ci::app::TouchEvent &event )	override;
 	bool touchesMoved( const ci::app::TouchEvent &event )	override;
