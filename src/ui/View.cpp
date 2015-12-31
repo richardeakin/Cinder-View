@@ -69,9 +69,9 @@ void View::setSize( const vec2 &size )
 	if( glm::all( glm::epsilonEqual( getSize(), size, BOUNDS_EPSILON ) ) )
 		return;
 
-	mSize = size;
+	mSize = glm::max( vec2( 0 ), size );
 	if( mBackground )
-		mBackground->setSize( getSize() );
+		mBackground->setSize( mSize );
 
 	setNeedsLayout();
 }
