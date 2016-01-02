@@ -87,9 +87,9 @@ class ScrollView : public View {
 	void update()	override;
 	void draw( Renderer *ren ) override;
 
-	bool touchesBegan( const ci::app::TouchEvent &event )	override;
-	bool touchesMoved( const ci::app::TouchEvent &event )	override;
-	bool touchesEnded( const ci::app::TouchEvent &event )	override;
+	bool touchesBegan( cinder::app::TouchEvent &event )	override;
+	bool touchesMoved( ci::app::TouchEvent &event )	override;
+	bool touchesEnded( ci::app::TouchEvent &event )	override;
 
 	virtual const ci::Rectf&	getDeceleratingBoundaries() const;
 
@@ -190,7 +190,7 @@ class PagingScrollView : public ScrollView {
   protected:
 
 	void layout()		override;
-	bool touchesEnded( const ci::app::TouchEvent &event )	override;
+	bool touchesEnded( ci::app::TouchEvent &event )	override;
 
 	const ci::Rectf&	getDeceleratingBoundaries() const	override;
 

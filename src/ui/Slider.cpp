@@ -23,6 +23,7 @@
 
 #include "ui/Slider.h"
 
+#include "cinder/Log.h"
 #include "cppformat/format.h"
 
 using namespace std;
@@ -93,16 +94,26 @@ std::string	SliderBase::getTitleLabel() const
 }
 
 
-bool SliderBase::touchesBegan( const app::TouchEvent &event )
+bool SliderBase::touchesBegan( app::TouchEvent &event )
 {
-	setTouchCanceled( false );
-	vec2 pos = toLocal( event.getTouches().front().getPos() );
+	for( auto &touch : event.getTouches() ) {
+		vec2 pos = toLocal( touch.getPos() );
+		if( hitTest( pos ) ) {
+			setTouchCanceled( false );
 
-	updateValue( pos );
-	return true;
+			CI_LOG_V( "[" << getName() << "] pos: " << pos << ", num touches: " << event.getTouches().front() );
+
+			updateValue( pos );
+			touch.setHandled();
+			return true;
+		}
+
+	}
+
+	return false;
 }
 
-bool SliderBase::touchesMoved( const ci::app::TouchEvent &event )
+bool SliderBase::touchesMoved( app::TouchEvent &event )
 {
 	if( isTouchCanceled() )
 		return false;
@@ -113,11 +124,13 @@ bool SliderBase::touchesMoved( const ci::app::TouchEvent &event )
 		return false;
 	}
 
+	CI_LOG_V( "[" << getName() << "] pos: " << pos << ", num touches: " << event.getTouches().front() );
+
 	updateValue( pos );
 	return true;
 }
 
-bool SliderBase::touchesEnded( const ci::app::TouchEvent &event )
+bool SliderBase::touchesEnded( app::TouchEvent &event )
 {
 	if( isTouchCanceled() )
 		return false;
@@ -127,6 +140,8 @@ bool SliderBase::touchesEnded( const ci::app::TouchEvent &event )
 		setTouchCanceled( true );
 		return false;
 	}
+
+	CI_LOG_V( "[" << getName() << "] pos: " << pos << ", num touches: " << event.getTouches().front() );
 
 	updateValue( pos );
 	return true;

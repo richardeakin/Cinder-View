@@ -443,32 +443,29 @@ void View::propagateTouchesBegan( ci::app::TouchEvent &event )
 	size_t numTouches = touches.size();
 	size_t numTouchesHandled = 0;
 
-	for( auto touchIt = touches.begin(); touchIt != touches.end(); ++touchIt ) {
-		auto &touch = *touchIt;
-		if( ! hitTest( toLocal( touch.getPos() ) ) )
+
+	for( auto rIt = mSubviews.rbegin(); rIt != mSubviews.rend(); ++rIt ) {
+		(*rIt)->propagateTouchesBegan( event );
+		if( event.isHandled() )
 			return;
-
-		for( auto rIt = mSubviews.rbegin(); rIt != mSubviews.rend(); ++rIt ) {
-			(*rIt)->propagateTouchesBegan( event );
-			if( event.isHandled() )
-				return;
-		}
-
-		bool handled = touchesBegan( event );
-		if( handled ) {
-			// Only allow this View to handle this touch in other UI events.
-			mActiveTouches[touch.getId()] = touch;
-			numTouchesHandled++;
-		}
 	}
 
-	// Remove active touches. Note: I'm having to do this outside of the above loop because I can't invalidate the vector::iterator
-	for( auto &tp : mActiveTouches ) {
+	if( touchesBegan( event ) ) {
+		// Only allow this View to handle this touch in other UI events.
+		for( auto &touch : event.getTouches() ) {
+			if( touch.isHandled() ) {
+				mActiveTouches[touch.getId()] = touch;
+				numTouchesHandled++;
+			}
+		}
+
+		// Remove active touches. Note: I'm having to do this outside of the above loop because I can't invalidate the vector::iterator
 		touches.erase( remove_if( touches.begin(), touches.end(),
-		                          [&tp]( auto &touch ){
-			                          return tp.first == touch.getId();
+		                          []( auto &touch ) {
+			                          return touch.isHandled();
 		                          } ),
-		           touches.end() );
+		               touches.end() );
+
 	}
 
 	if( numTouchesHandled == numTouches ) {

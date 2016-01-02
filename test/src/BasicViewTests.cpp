@@ -17,7 +17,7 @@ public:
 	ChildView( const Rectf &bounds ) : RectView( bounds )	{}
 
 protected:
-	bool touchesBegan( const app::TouchEvent &event )	override
+	bool touchesBegan( app::TouchEvent &event )	override
 	{
 		vec2 pos = event.getTouches().front().getPos();
 		vec2 localPos = toLocal( pos );
@@ -28,7 +28,7 @@ protected:
 		return true;
 	}
 
-	bool touchesMoved( const app::TouchEvent &event )		override
+	bool touchesMoved( app::TouchEvent &event )		override
 	{
 		vec2 pos = event.getTouches().front().getPos();
 		vec2 localPos = toLocal( pos );
@@ -37,7 +37,7 @@ protected:
 		return true;
 	}
 
-	bool touchesEnded( const app::TouchEvent &event )		override
+	bool touchesEnded( app::TouchEvent &event )		override
 	{
 		vec2 pos = event.getTouches().front().getPos();
 		vec2 localPos = toLocal( pos );

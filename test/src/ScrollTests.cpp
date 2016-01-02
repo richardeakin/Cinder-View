@@ -23,7 +23,7 @@ public:
 	}
 
 protected:
-	bool touchesBegan( const app::TouchEvent &event )	override
+	bool touchesBegan( app::TouchEvent &event )	override
 	{
 		mLocalTouchColor = Color( 0.7f, 0.0f, 0.0f );
 
@@ -34,7 +34,7 @@ protected:
 		return true;
 	}
 
-	bool touchesMoved( const app::TouchEvent &event )		override
+	bool touchesMoved( app::TouchEvent &event )		override
 	{
 		mLocalTouchColor = Color( 0.7f, 0.3f, 0.0f );
 
@@ -45,7 +45,7 @@ protected:
 		return true;
 	}
 
-	bool touchesEnded( const app::TouchEvent &event )		override
+	bool touchesEnded( app::TouchEvent &event )		override
 	{
 		mLocalTouchColor = Color::gray( 0.3f );
 

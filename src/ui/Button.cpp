@@ -111,7 +111,7 @@ void Button::setColor( const ci::ColorA &color, State state )
 	}
 }
 
-bool Button::touchesBegan( const app::TouchEvent &event )
+bool Button::touchesBegan( app::TouchEvent &event )
 {
 	mState = State::PRESSED;
 	setTouchCanceled( false );
@@ -121,7 +121,7 @@ bool Button::touchesBegan( const app::TouchEvent &event )
 	return true;
 }
 
-bool Button::touchesMoved( const ci::app::TouchEvent &event )
+bool Button::touchesMoved( app::TouchEvent &event )
 {
 	if( isTouchCanceled() )
 		return false;
@@ -135,7 +135,7 @@ bool Button::touchesMoved( const ci::app::TouchEvent &event )
 	return true;
 }
 
-bool Button::touchesEnded( const ci::app::TouchEvent &event )
+bool Button::touchesEnded( app::TouchEvent &event )
 {
 	if( isTouchCanceled() )
 		return false;
