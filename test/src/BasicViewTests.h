@@ -1,11 +1,6 @@
 #pragma once
 
-#include "ui/Suite.h"
-
-#include "ui/Slider.h"
-#include "ui/Button.h"
-#include "ui/Label.h"
-#include "ui/ImageView.h"
+#include "ui/ui.h"
 
 class BasicViewTests : public ui::SuiteView {
 public:
