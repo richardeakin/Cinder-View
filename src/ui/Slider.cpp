@@ -96,21 +96,15 @@ std::string	SliderBase::getTitleLabel() const
 
 bool SliderBase::touchesBegan( app::TouchEvent &event )
 {
-	for( auto &touch : event.getTouches() ) {
-		vec2 pos = toLocal( touch.getPos() );
-		if( hitTest( pos ) ) {
-			setTouchCanceled( false );
+	setTouchCanceled( false );
+	auto &firstTouch = event.getTouches().front();
+	vec2 pos = toLocal( firstTouch.getPos() );
 
-			CI_LOG_V( "[" << getName() << "] pos: " << pos << ", num touches: " << event.getTouches().front() );
+	CI_LOG_V( "[" << getName() << "] pos: " << pos << ", num touches: " << event.getTouches().size() );
 
-			updateValue( pos );
-			touch.setHandled();
-			return true;
-		}
-
-	}
-
-	return false;
+	updateValue( pos );
+	firstTouch.setHandled();
+	return true;
 }
 
 bool SliderBase::touchesMoved( app::TouchEvent &event )
@@ -118,15 +112,17 @@ bool SliderBase::touchesMoved( app::TouchEvent &event )
 	if( isTouchCanceled() )
 		return false;
 
-	vec2 pos = toLocal( event.getTouches().front().getPos() );
+	auto &firstTouch = event.getTouches().front();
+	vec2 pos = toLocal( firstTouch.getPos() );
 	if( ! hitTestInsideCancelPadding( pos ) ) {
 		setTouchCanceled( true );
 		return false;
 	}
 
-	CI_LOG_V( "[" << getName() << "] pos: " << pos << ", num touches: " << event.getTouches().front() );
+	CI_LOG_V( "[" << getName() << "] pos: " << pos << ", num touches: " << event.getTouches().size() );
 
 	updateValue( pos );
+	firstTouch.setHandled();
 	return true;
 }
 
@@ -135,15 +131,17 @@ bool SliderBase::touchesEnded( app::TouchEvent &event )
 	if( isTouchCanceled() )
 		return false;
 
-	vec2 pos = toLocal( event.getTouches().front().getPos() );
+	auto &firstTouch = event.getTouches().front();
+	vec2 pos = toLocal( firstTouch.getPos() );
 	if( ! hitTestInsideCancelPadding( pos ) ) {
 		setTouchCanceled( true );
 		return false;
 	}
 
-	CI_LOG_V( "[" << getName() << "] pos: " << pos << ", num touches: " << event.getTouches().front() );
+	CI_LOG_V( "[" << getName() << "] pos: " << pos << ", num touches: " << event.getTouches().size() );
 
 	updateValue( pos );
+	firstTouch.setHandled();
 	return true;
 }
 

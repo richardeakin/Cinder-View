@@ -172,9 +172,9 @@ private:
 //	void propagateUpdate();
 //	void propagateDraw();
 
-	void propagateTouchesBegan( ci::app::TouchEvent &event );
-	void propagateTouchesMoved( ci::app::TouchEvent &event );
-	void propagateTouchesEnded( ci::app::TouchEvent &event );
+//	void propagateTouchesBegan( ci::app::TouchEvent &event );
+//	void propagateTouchesMoved( ci::app::TouchEvent &event );
+//	void propagateTouchesEnded( ci::app::TouchEvent &event );
 
 	typedef std::map<uint32_t, ci::app::TouchEvent::Touch> TouchMapT;
 

@@ -18,6 +18,7 @@
 		114F64B11BE09841000CE3EE /* ScrollTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64AC1BE09841000CE3EE /* ScrollTests.cpp */; };
 		114F64B21BE09841000CE3EE /* BasicViewTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64AE1BE09841000CE3EE /* BasicViewTests.cpp */; };
 		114F65311BE0B1D4000CE3EE /* ControlsTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F652F1BE0B1D4000CE3EE /* ControlsTest.cpp */; };
+		11533B8E1C39096800933145 /* MultiTouchTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11533B8C1C39096800933145 /* MultiTouchTest.cpp */; };
 		119C4EB81B2391DE006563C5 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 119C4EB71B2391DE006563C5 /* IOKit.framework */; };
 		11A00A6C1C09108200DCA5A7 /* CompositingTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11A00A6A1C09108200DCA5A7 /* CompositingTest.cpp */; };
 		5323E6B20EAFCA74003A9687 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5323E6B10EAFCA74003A9687 /* CoreVideo.framework */; };
@@ -66,6 +67,8 @@
 		114F64B31BE09A4E000CE3EE /* cinder-view.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "cinder-view.xcodeproj"; path = "../../xcode/cinder-view.xcodeproj"; sourceTree = "<group>"; };
 		114F652F1BE0B1D4000CE3EE /* ControlsTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ControlsTest.cpp; path = ../src/ControlsTest.cpp; sourceTree = "<group>"; };
 		114F65301BE0B1D4000CE3EE /* ControlsTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ControlsTest.h; path = ../src/ControlsTest.h; sourceTree = "<group>"; };
+		11533B8C1C39096800933145 /* MultiTouchTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MultiTouchTest.cpp; path = ../src/MultiTouchTest.cpp; sourceTree = "<group>"; };
+		11533B8D1C39096800933145 /* MultiTouchTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MultiTouchTest.h; path = ../src/MultiTouchTest.h; sourceTree = "<group>"; };
 		11576ABF1970AD9100BE66B3 /* Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Prefix.pch; sourceTree = "<group>"; };
 		119C4EB71B2391DE006563C5 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		11A00A6A1C09108200DCA5A7 /* CompositingTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CompositingTest.cpp; path = ../src/CompositingTest.cpp; sourceTree = "<group>"; };
@@ -112,10 +115,12 @@
 			children = (
 				114F64AE1BE09841000CE3EE /* BasicViewTests.cpp */,
 				114F64AF1BE09841000CE3EE /* BasicViewTests.h */,
-				114F652F1BE0B1D4000CE3EE /* ControlsTest.cpp */,
-				114F65301BE0B1D4000CE3EE /* ControlsTest.h */,
 				11A00A6A1C09108200DCA5A7 /* CompositingTest.cpp */,
 				11A00A6B1C09108200DCA5A7 /* CompositingTest.h */,
+				114F652F1BE0B1D4000CE3EE /* ControlsTest.cpp */,
+				114F65301BE0B1D4000CE3EE /* ControlsTest.h */,
+				11533B8C1C39096800933145 /* MultiTouchTest.cpp */,
+				11533B8D1C39096800933145 /* MultiTouchTest.h */,
 				114F64AC1BE09841000CE3EE /* ScrollTests.cpp */,
 				114F64AD1BE09841000CE3EE /* ScrollTests.h */,
 				114F64AB1BE09841000CE3EE /* ViewTestsApp.cpp */,
@@ -299,6 +304,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				114F64B01BE09841000CE3EE /* ViewTestsApp.cpp in Sources */,
+				11533B8E1C39096800933145 /* MultiTouchTest.cpp in Sources */,
 				114F65311BE0B1D4000CE3EE /* ControlsTest.cpp in Sources */,
 				114F64B11BE09841000CE3EE /* ScrollTests.cpp in Sources */,
 				114F64B21BE09841000CE3EE /* BasicViewTests.cpp in Sources */,

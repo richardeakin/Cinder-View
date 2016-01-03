@@ -1,7 +1,5 @@
 #include "MultiTouchTest.h"
 
-#include "cinder/app/App.h"
-//#include "cinder/Rand.h"
 #include "cinder/Log.h"
 #include "cinder/gl/draw.h"
 
@@ -25,17 +23,19 @@ MultiTouchTest::MultiTouchTest()
 	mToggle->getSignalPressed().connect( [] { CI_LOG_V( "toggle pressed" ); } );
 	mToggle->getSignalReleased().connect( [] { CI_LOG_V( "toggle released" ); } );
 
-	// temp - adding constrols to this test
-	mVSlider2 = make_shared<ui::VSlider>();
-	mVSlider2->getBackground()->setColor( ColorA( "green", 0.5f ) );
-	mVSlider2->getSignalValueChanged().connect( [this] {
-//		CI_LOG_V( "mHSlider value: " << mHSlider->getValue() );
-	} );
-
 	mVSlider1 = make_shared<ui::VSlider>();
+	mVSlider1->setLabel( "slider1" );
 	mVSlider1->getBackground()->setColor( ColorA( "green", 0.5f ) );
 	mVSlider1->getSignalValueChanged().connect( [this] {
 //		CI_LOG_V( "mVSlider value: " << mVSlider->getValue() );
+	} );
+
+	// temp - adding constrols to this test
+	mVSlider2 = make_shared<ui::VSlider>();
+	mVSlider2->setLabel( "slider2" );
+	mVSlider2->getBackground()->setColor( ColorA( "green", 0.5f ) );
+	mVSlider2->getSignalValueChanged().connect( [this] {
+//		CI_LOG_V( "mHSlider value: " << mHSlider->getValue() );
 	} );
 
 	mTouchOverlay = make_shared<TouchOverlayView>();
@@ -59,8 +59,13 @@ void MultiTouchTest::layout()
 	Rectf sliderBounds = Rectf( padding, buttonBounds.y2 + padding, padding + 80, buttonBounds.y2 + 300 + padding );
 	mVSlider1->setBounds( sliderBounds );
 
+	CI_LOG_I( "slider1 bounds: " << sliderBounds );
+
 	sliderBounds += vec2( sliderBounds.getWidth() + padding, 0 );
 	mVSlider2->setBounds( sliderBounds );
+
+	CI_LOG_I( "slider2 bounds: " << sliderBounds );
+	injectTouches();
 }
 
 void MultiTouchTest::keyEvent( app::KeyEvent &event )
@@ -70,6 +75,21 @@ void MultiTouchTest::keyEvent( app::KeyEvent &event )
 			mTouchOverlay->setHidden( ! mTouchOverlay->isHidden() );
 			break;
 	}
+}
+
+void MultiTouchTest::injectTouches()
+{
+	vec2 pos = mVSlider2->getCenter();
+
+	CI_LOG_I( "injecting touchesBegan at: " << pos );
+
+	auto graph = getGraph();
+	app::TouchEvent touchEvent( graph->getWindow(), vector<app::TouchEvent::Touch>( 1, app::TouchEvent::Touch( pos, vec2( 0 ), 0, 0, nullptr ) ) );
+	graph->propagateTouchesBegan( touchEvent );
+
+	pos += vec2( 0, 60 );
+	touchEvent.getTouches().front().setPos( pos );
+	graph->propagateTouchesMoved( touchEvent );
 }
 
 
@@ -83,18 +103,15 @@ void TouchOverlayView::draw( ui::Renderer *ren )
 {
 	const float circleRadius = 14;
 
-
-	const auto &touches = app::App::get()->getActiveTouches();
-	for( size_t i = 0; i < touches.size(); i++ ) {
-		vec2 pos = touches[i].getPos();
+	const auto &touches = getGraph()->getAllTouchesInWindow();
+	for( const auto &touch : touches ) {
+		vec2 pos = touch.getPos();
 
 		ren->setColor( Color( 0, 1, 1 ) );
 		gl::drawStrokedCircle( pos, circleRadius, 2.0f );
 
-		// TODO: should these be in the same order from event to event?
-		// - drawing the index like below shows that the order of the touches is changing.
-//		ren->setColor( Color::white() );
-//		Rectf fitRect( pos.x - circleRadius, pos.y - circleRadius, pos.x + circleRadius, pos.y + circleRadius  );
-//		mTextureFont->drawString( to_string( i ), vec2( pos.x - 3, pos.y + 4 ) );
+		ren->setColor( Color::white() );
+		Rectf fitRect( pos.x - circleRadius, pos.y - circleRadius, pos.x + circleRadius, pos.y + circleRadius  );
+		mTextureFont->drawString( to_string( touch.getId() ), vec2( pos.x - 3, pos.y + 4 ) );
 	}
 }
