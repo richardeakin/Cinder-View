@@ -14,6 +14,7 @@ set( APP_SOURCES
 	src/BasicViewTests.cpp
 	src/ControlsTest.cpp
 	src/CompositingTest.cpp
+	src/MultiTouchTest.cpp
 	src/ScrollTests.cpp
 	src/ViewTestsApp.cpp
 )
