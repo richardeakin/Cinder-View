@@ -149,7 +149,7 @@ void BasicViewTests::layout()
 	labelBounds += vec2( 0, labelBounds.getHeight() + 6 );
 	mLabelClipped->setBounds( labelBounds );
 
-	mLabelGrid->setBounds( Rectf( getCenter().x - 40, PADDING, getCenter().x + 200, PADDING + 60 ) );
+	mLabelGrid->setBounds( Rectf( getCenterLocal().x - 40, PADDING, getCenterLocal().x + 200, PADDING + 60 ) );
 
 	vec2 imageViewPos = vec2( mLabelGrid->getPos().x, mLabelGrid->getBounds().y2 + PADDING );
 	mImageView->setPos( imageViewPos );

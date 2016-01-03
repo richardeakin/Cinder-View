@@ -74,7 +74,7 @@ void Button::draw( Renderer *ren )
 	// draw title
 	const float padding = 6;
 	ren->setColor( getTitleColor() );
-	mTextTitle->drawString( getTitle(), vec2( padding, getCenter().y + mTextTitle->getDescent() ) );
+	mTextTitle->drawString( getTitle(), vec2( padding, getCenterLocal().y + mTextTitle->getDescent() ) );
 }
 
 void Button::setEnabled( bool enabled )

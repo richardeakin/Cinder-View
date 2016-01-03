@@ -72,7 +72,8 @@ class View : public std::enable_shared_from_this<View> {
 	ci::Rectf				getBoundsLocal() const;
 	const ci::vec2&			getPos() const			{ return mPos; }
 	const ci::vec2&			getSize() const			{ return mSize; }
-	ci::vec2				getCenter() const		{ return mSize() / 2.0f; }
+	ci::vec2				getCenter() const		{ return mPos() + mSize() / 2.0f; }
+	ci::vec2				getCenterLocal() const	{ return mSize() / 2.0f; }
 	float					getPosX() const			{ return mPos().x; }
 	float					getPosY() const			{ return mPos().y; }
 	float					getWidth() const		{ return mSize().x; }

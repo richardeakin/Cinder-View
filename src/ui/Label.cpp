@@ -85,7 +85,7 @@ vec2 Label::getBaseLine() const
 		default: CI_ASSERT_NOT_REACHABLE();
 	}
 
-	vec2 result( x, getCenter().y + mFont->getDescent() );
+	vec2 result( x, getCenterLocal().y + mFont->getDescent() );
 	return result;
 }
 

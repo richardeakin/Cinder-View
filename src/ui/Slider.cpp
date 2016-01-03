@@ -79,7 +79,7 @@ void SliderBase::draw( Renderer *ren )
 	ren->drawSolidRect( valRect );
 
 	ren->setColor( mTitleColor );
-	mTextLabel->drawString( getTitleLabel(), vec2( padding, getCenter().y + mTextLabel->getDescent() ) );
+	mTextLabel->drawString( getTitleLabel(), vec2( padding, getCenterLocal().y + mTextLabel->getDescent() ) );
 }
 
 std::string	SliderBase::getTitleLabel() const
