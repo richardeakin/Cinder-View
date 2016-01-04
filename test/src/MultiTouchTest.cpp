@@ -56,7 +56,7 @@ void MultiTouchTest::layout()
 	buttonBounds += vec2( 0, buttonBounds.getHeight() + 10 );
 	mToggle->setBounds( buttonBounds );
 
-	Rectf sliderBounds = Rectf( padding, buttonBounds.y2 + padding, padding + 80, buttonBounds.y2 + 300 + padding );
+	Rectf sliderBounds = Rectf( padding, buttonBounds.y2 + padding, padding + 120, buttonBounds.y2 + 300 + padding );
 	mVSlider1->setBounds( sliderBounds );
 
 	CI_LOG_I( "slider1 bounds: " << sliderBounds );

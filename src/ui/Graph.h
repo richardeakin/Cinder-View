@@ -90,6 +90,7 @@ class Graph : public View {
 	std::vector<ci::signals::Connection>	mEventConnections;
 
 	std::list<LayerRef>	    mLayers;
+	std::list<ViewRef>	    mViewsWithTouches;
 };
 
 class GraphExc : public ci::Exception {
