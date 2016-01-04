@@ -26,6 +26,9 @@
 #include "cinder/Log.h"
 #include "cppformat/format.h"
 
+//#define LOG_TOUCHES( stream )	CI_LOG_I( stream )
+#define LOG_TOUCHES( stream )	( (void)( 0 ) )
+
 using namespace std;
 using namespace ci;
 
@@ -100,7 +103,7 @@ bool SliderBase::touchesBegan( app::TouchEvent &event )
 	auto &firstTouch = event.getTouches().front();
 	vec2 pos = toLocal( firstTouch.getPos() );
 
-	CI_LOG_V( "[" << getName() << "] pos: " << pos << ", num touches: " << event.getTouches().size() );
+	LOG_TOUCHES( "[" << getName() << "] pos: " << pos << ", num touches: " << event.getTouches().size() );
 
 	updateValue( pos );
 	firstTouch.setHandled();
@@ -115,11 +118,12 @@ bool SliderBase::touchesMoved( app::TouchEvent &event )
 	auto &firstTouch = event.getTouches().front();
 	vec2 pos = toLocal( firstTouch.getPos() );
 	if( ! hitTestInsideCancelPadding( pos ) ) {
+		LOG_TOUCHES( "[" << getName() << "] CANCELED| pos: " << pos << ", num touches: " << event.getTouches().size() );
 		setTouchCanceled( true );
 		return false;
 	}
 
-	CI_LOG_V( "[" << getName() << "] pos: " << pos << ", num touches: " << event.getTouches().size() );
+	LOG_TOUCHES( "[" << getName() << "] pos: " << pos << ", num touches: " << event.getTouches().size() );
 
 	updateValue( pos );
 	firstTouch.setHandled();
@@ -134,11 +138,12 @@ bool SliderBase::touchesEnded( app::TouchEvent &event )
 	auto &firstTouch = event.getTouches().front();
 	vec2 pos = toLocal( firstTouch.getPos() );
 	if( ! hitTestInsideCancelPadding( pos ) ) {
+		LOG_TOUCHES( "[" << getName() << "] CANCELED| pos: " << pos << ", num touches: " << event.getTouches().size() );
 		setTouchCanceled( true );
 		return false;
 	}
 
-	CI_LOG_V( "[" << getName() << "] pos: " << pos << ", num touches: " << event.getTouches().size() );
+	LOG_TOUCHES( "[" << getName() << "] pos: " << pos << ", num touches: " << event.getTouches().size() );
 
 	updateValue( pos );
 	firstTouch.setHandled();

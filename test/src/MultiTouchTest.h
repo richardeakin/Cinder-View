@@ -15,6 +15,8 @@ class MultiTouchTest : public ui::SuiteView {
 
 	void layout() override;
 
+	void update() override;
+
   private:
 	void keyEvent( ci::app::KeyEvent &event );
 

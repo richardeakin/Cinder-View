@@ -65,7 +65,6 @@ void MultiTouchTest::layout()
 	mVSlider2->setBounds( sliderBounds );
 
 	CI_LOG_I( "slider2 bounds: " << sliderBounds );
-	injectTouches();
 }
 
 void MultiTouchTest::keyEvent( app::KeyEvent &event )
@@ -79,19 +78,53 @@ void MultiTouchTest::keyEvent( app::KeyEvent &event )
 
 void MultiTouchTest::injectTouches()
 {
-	vec2 pos = mVSlider2->getCenter();
-
-	CI_LOG_I( "injecting touchesBegan at: " << pos );
+	vec2 pos1 = mVSlider1->getCenter();
+	vec2 pos2 = mVSlider2->getCenter();
 
 	auto graph = getGraph();
-	app::TouchEvent touchEvent( graph->getWindow(), vector<app::TouchEvent::Touch>( 1, app::TouchEvent::Touch( pos, vec2( 0 ), 0, 0, nullptr ) ) );
-	graph->propagateTouchesBegan( touchEvent );
+	{
+		vector<app::TouchEvent::Touch> touches = {
+			app::TouchEvent::Touch( pos1, vec2( 0 ), 1, 0, nullptr ),
+			app::TouchEvent::Touch( pos2, vec2( 0 ), 2, 0, nullptr )
+		};
+		app::TouchEvent touchEvent( graph->getWindow(), touches );
+		graph->propagateTouchesBegan( touchEvent );
+	}
 
-	pos += vec2( 0, 60 );
-	touchEvent.getTouches().front().setPos( pos );
-	graph->propagateTouchesMoved( touchEvent );
+	{
+		pos1 += vec2( 0, 60 );
+		pos2 += vec2( 0, 60 );
+		vector<app::TouchEvent::Touch> touches = {
+			app::TouchEvent::Touch( pos1, vec2( 0 ), 1, 0, nullptr ),
+			app::TouchEvent::Touch( pos2, vec2( 0 ), 2, 0, nullptr )
+		};
+		app::TouchEvent touchEvent( graph->getWindow(), touches );
+		graph->propagateTouchesMoved( touchEvent );
+	}
+
+	for( int i = 0; i < 10; i++ ) {
+		pos1 += vec2( 0, 2 );
+		pos2 += vec2( 0, 2 );
+		vector<app::TouchEvent::Touch> touches = {
+				app::TouchEvent::Touch( pos1, vec2( 0 ), 1, 0, nullptr ),
+				app::TouchEvent::Touch( pos2, vec2( 0 ), 2, 0, nullptr )
+		};
+		app::TouchEvent touchEvent( graph->getWindow(), touches );
+		graph->propagateTouchesMoved( touchEvent );
+	}
+
 }
 
+void MultiTouchTest::update()
+{
+	// TODO: make this work from layout
+	static bool sFirstTime = true;
+	if( sFirstTime ) {
+		sFirstTime = false;
+		injectTouches();
+	}
+
+}
 
 TouchOverlayView::TouchOverlayView()
 {

@@ -27,8 +27,8 @@
 #include "cinder/app/AppBase.h"
 #include "cinder/Log.h"
 
-#define LOG_TOUCHES( stream )	CI_LOG_I( stream )
-//#define LOG_TOUCHES( stream )	( (void)( 0 ) )
+//#define LOG_TOUCHES( stream )	CI_LOG_I( stream )
+#define LOG_TOUCHES( stream )	( (void)( 0 ) )
 
 using namespace ci;
 using namespace std;
@@ -170,25 +170,32 @@ void Graph::propagateTouchesBegan( app::TouchEvent &event )
 {
 	mCurrentTouchEvent = event;
 	auto thisRef = shared_from_this();
-	propagateTouchesBegan( thisRef, event, 0 );
+	size_t numTouchesHandled = 0;
+	propagateTouchesBegan( thisRef, event, numTouchesHandled );
 }
 
 void Graph::propagateTouchesMoved( app::TouchEvent &event )
 {
 	mCurrentTouchEvent = event;
 	auto thisRef = shared_from_this();
-	propagateTouchesMoved( thisRef, event, 0 );
+	size_t numTouchesHandled = 0;
+	propagateTouchesMoved( thisRef, event, numTouchesHandled );
 }
 
 void Graph::propagateTouchesEnded( app::TouchEvent &event )
 {
 	mCurrentTouchEvent = event;
 	auto thisRef = shared_from_this();
-	propagateTouchesEnded( thisRef, event, 0 );
+	size_t numTouchesHandled = 0;
+	propagateTouchesEnded( thisRef, event, numTouchesHandled );
 }
 
-void Graph::propagateTouchesBegan( ViewRef &view, app::TouchEvent &event, size_t numTouchesHandled )
+void Graph::propagateTouchesBegan( ViewRef &view, app::TouchEvent &event, size_t &numTouchesHandled )
 {
+	if( view->mActiveTouches.size() > 1 ) {
+		int blarg = 2; // FIXME: this is firing after cancelled
+	}
+
 	if( view->isHidden() || ! view->isInteractive() )
 		return;
 
@@ -209,13 +216,14 @@ void Graph::propagateTouchesBegan( ViewRef &view, app::TouchEvent &event, size_t
 	if( touchesInside.empty() )
 		return;
 
-	event.getTouches() = touchesInside;
-
 	for( auto rIt = view->mSubviews.rbegin(); rIt != view->mSubviews.rend(); ++rIt ) {
+		event.getTouches() = touchesInside; // TODO: find a way to avoid making this copy per subview
 		propagateTouchesBegan( *rIt, event, numTouchesHandled );
 		if( event.isHandled() )
 			return;
 	}
+
+	event.getTouches() = touchesInside; // TODO: same as above
 
 	if( view->touchesBegan( event ) ) {
 		// Only allow this View to handle this touch in other UI events.
@@ -225,9 +233,9 @@ void Graph::propagateTouchesBegan( ViewRef &view, app::TouchEvent &event, size_t
 				view->mActiveTouches[touch.getId()] = touch;
 				numTouchesHandled++;
 			}
-
-			LOG_TOUCHES( view->getName() << " | numTouchesHandled: " << numTouchesHandled );
 		}
+
+		LOG_TOUCHES( view->getName() << " | numTouchesHandled: " << numTouchesHandled );
 
 		// Remove active touches. Note: I'm having to do this outside of the above loop because I can't invalidate the vector::iterator
 		touches.erase( remove_if( touches.begin(), touches.end(),
@@ -250,15 +258,84 @@ void Graph::propagateTouchesBegan( ViewRef &view, app::TouchEvent &event, size_t
 	}
 }
 
-void Graph::propagateTouchesMoved( ViewRef &view, ci::app::TouchEvent &event, size_t numTouchesHandled )
+void Graph::propagateTouchesMoved( ViewRef &view, ci::app::TouchEvent &event, size_t &numTouchesHandled )
+{
+	if( view->mActiveTouches.size() > 1 ) {
+		int blarg = 2;
+	}
+
+	if( view->isHidden() || ! view->isInteractive() )
+		return;
+
+	if( view->getName() == "slider1" ) {
+		int blarg = 0;
+	}
+
+	LOG_TOUCHES( view->getName() << " | num touches A: " << event.getTouches().size() );
+
+	for( auto rIt = view->mSubviews.rbegin(); rIt != view->mSubviews.rend(); ++rIt ) {
+		event.getTouches() = mCurrentTouchEvent.getTouches();
+		propagateTouchesMoved( *rIt, event, numTouchesHandled );
+		if(	event.isHandled() )
+			return;
+	}
+
+	event.getTouches() = mCurrentTouchEvent.getTouches(); // TODO: needed?
+
+	// Filter touches to just those that are in mActiveTouches list
+	if( ! view->mActiveTouches.empty() ) {
+		vector<app::TouchEvent::Touch> touchesContinued;
+		touchesContinued.reserve( view->mActiveTouches.size() );
+
+		for( const auto &touch : event.getTouches() ) {
+			vec2 pos = view->toLocal( touch.getPos() );
+			if( view->mActiveTouches.count( touch.getId() ) != 0 ) {
+				touchesContinued.push_back( touch );
+			}
+
+			if( touchesContinued.size() > 1 ) {
+				int blarg = 1;
+			}
+		}
+
+		LOG_TOUCHES( view->getName() << " | num touchesContinued: " << touchesContinued.size() );
+
+		if( touchesContinued.empty() )
+			return;
+
+		event.getTouches() = touchesContinued;
+	}
+
+	view->touchesMoved( event );
+	for( auto &touch : event.getTouches() ) {
+		if( touch.isHandled() ) {
+			numTouchesHandled++;
+			view->mActiveTouches.at( touch.getId() ) = touch;
+		}
+	}
+
+	if( numTouchesHandled == mCurrentTouchEvent.getTouches().size() ) {
+		event.setHandled();
+	}
+
+	LOG_TOUCHES( "handled: " << event.isHandled() );
+}
+
+void Graph::propagateTouchesEnded( ViewRef &view, ci::app::TouchEvent &event, size_t &numTouchesHandled )
 {
 	if( view->isHidden() || ! view->isInteractive() )
 		return;
 
-	// TODO NEXT: use mActiveTouches to avoid doing Touch copies for Views that don't have any active touches
-	// - this is different to touchesBegan() since a parent view could not have any active touches, but it's child does
-
 	LOG_TOUCHES( view->getName() << " | num touches A: " << event.getTouches().size() );
+
+	for( auto rIt = view->mSubviews.rbegin(); rIt != view->mSubviews.rend(); ++rIt ) {
+		event.getTouches() = mCurrentTouchEvent.getTouches();
+		propagateTouchesEnded( *rIt, event, numTouchesHandled );
+		if(	event.isHandled() )
+			return;
+	}
+
+	event.getTouches() = mCurrentTouchEvent.getTouches(); // TODO: needed?
 
 	// Filter touches to just those that are in mActiveTouches list
 	if( ! view->mActiveTouches.empty() ) {
@@ -280,66 +357,19 @@ void Graph::propagateTouchesMoved( ViewRef &view, ci::app::TouchEvent &event, si
 		event.getTouches() = touchesContinued;
 	}
 
-	for( auto rIt = view->mSubviews.rbegin(); rIt != view->mSubviews.rend(); ++rIt ) {
-		propagateTouchesMoved( *rIt, event, numTouchesHandled );
-		if(	event.isHandled() )
-			return;
-	}
-
-	// Remove active touches. Note: I'm having to do this outside of the above loop because I can't invalidate the vector::iterator
-	// TODO: do I need this? touchesContinued should already be correctly filtered
-//	auto &touches = event.getTouches();
-//	touches.erase( remove_if( touches.begin(), touches.end(),
-//	                          [&view]( auto &touch ) {
-//		                          view->mActiveTouches[touch.getId()] = touch;
-//		                          return touch.isHandled();
-//	                          } ),
-//	               touches.end() );
-
-	if( touchesMoved( event ) ) {
-		for( auto &touch : event.getTouches() ) {
-			if( touch.isHandled() )
-				numTouchesHandled++;
+	view->touchesEnded( event );
+	for( auto &touch : event.getTouches() ) {
+		if( touch.isHandled() ) {
+			numTouchesHandled++;
+			view->mActiveTouches.erase( touch.getId() );
 		}
-
-		if( numTouchesHandled == mCurrentTouchEvent.getTouches().size() ) {
-			event.setHandled();
-		}
-
-		LOG_TOUCHES( "handled: " << event.isHandled() );
-	}
-}
-
-void Graph::propagateTouchesEnded( ViewRef &view, ci::app::TouchEvent &event, size_t numTouchesHandled )
-{
-	if( mHidden || ! mInteractive )
-		return;
-
-	auto &touches = event.getTouches();
-	touches.erase( remove_if( touches.begin(), touches.end(),
-	                          [&view]( auto &touch ) {
-		                          return view->mActiveTouches.find( touch.getId() ) != view->mActiveTouches.end();
-	                          } ),
-	               touches.end() );
-
-	if( touches.empty() )
-		return;
-
-	for( auto rIt = view->mSubviews.rbegin(); rIt != view->mSubviews.rend(); ++rIt ) {
-		propagateTouchesEnded( *rIt, event, numTouchesHandled );
-		if(	event.isHandled() )
-			return;
 	}
 
-	touches.erase( remove_if( touches.begin(), touches.end(),
-	                          [&view]( auto &touch ) {
-		                          view->mActiveTouches[touch.getId()] = touch;
-		                          return touch.isHandled();
-	                          } ),
-	               touches.end() );
+	if( numTouchesHandled == mCurrentTouchEvent.getTouches().size() ) {
+		event.setHandled();
+	}
 
-	bool handled = touchesEnded( event );
-	event.setHandled( handled );
+	LOG_TOUCHES( "handled: " << event.isHandled() );
 }
 
 } // namespace ui
