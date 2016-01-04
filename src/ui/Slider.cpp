@@ -96,7 +96,6 @@ std::string	SliderBase::getTitleLabel() const
 	return result;
 }
 
-
 bool SliderBase::touchesBegan( app::TouchEvent &event )
 {
 	setTouchCanceled( false );

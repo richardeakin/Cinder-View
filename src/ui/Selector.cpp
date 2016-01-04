@@ -72,9 +72,10 @@ void SelectorBase::draw( Renderer *ren )
 bool SelectorBase::touchesBegan( app::TouchEvent &event )
 {
 	setTouchCanceled( false );
-	vec2 pos = toLocal( event.getTouches().front().getPos() );
-
+	auto &firstTouch = event.getTouches().front();
+	vec2 pos = toLocal( firstTouch.getPos() );
 	updateSelection( pos );
+	firstTouch.setHandled();
 	return true;
 }
 

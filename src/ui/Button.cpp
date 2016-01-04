@@ -117,7 +117,7 @@ bool Button::touchesBegan( app::TouchEvent &event )
 	setTouchCanceled( false );
 	
 	mSignalPressed.emit();
-	
+	event.getTouches().front().setHandled();
 	return true;
 }
 
