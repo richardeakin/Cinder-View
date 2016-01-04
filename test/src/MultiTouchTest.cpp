@@ -33,6 +33,7 @@ MultiTouchTest::MultiTouchTest()
 	// temp - adding constrols to this test
 	mVSlider2 = make_shared<ui::VSlider>();
 	mVSlider2->setLabel( "slider2" );
+//	mVSlider2->setCancelPadding( Rectf( 40, 40, 200, 40 ) );
 	mVSlider2->getBackground()->setColor( ColorA( "green", 0.5f ) );
 	mVSlider2->getSignalValueChanged().connect( [this] {
 //		CI_LOG_V( "mHSlider value: " << mHSlider->getValue() );
