@@ -66,6 +66,8 @@ void MultiTouchTest::layout()
 	mVSlider2->setBounds( sliderBounds );
 
 	CI_LOG_I( "slider2 bounds: " << sliderBounds );
+
+//	injectTouches();
 }
 
 void MultiTouchTest::keyEvent( app::KeyEvent &event )
@@ -73,6 +75,9 @@ void MultiTouchTest::keyEvent( app::KeyEvent &event )
 	switch( event.getChar() ) {
 		case 't':
 			mTouchOverlay->setHidden( ! mTouchOverlay->isHidden() );
+			break;
+		case 'v':
+			CI_LOG_I( "num views with touches: " << getGraph()->getViewsWithTouches().size() );
 			break;
 	}
 }
@@ -82,12 +87,13 @@ void MultiTouchTest::injectTouches()
 	vec2 pos1 = mVSlider1->getCenter();
 	vec2 pos2 = mVSlider2->getCenter();
 
-	auto graph = getGraph();
-	{
-		vector<app::TouchEvent::Touch> touches = {
+	vector<app::TouchEvent::Touch> touches = {
 			app::TouchEvent::Touch( pos1, vec2( 0 ), 1, 0, nullptr ),
 			app::TouchEvent::Touch( pos2, vec2( 0 ), 2, 0, nullptr )
-		};
+	};
+
+	auto graph = getGraph();
+	{
 		app::TouchEvent touchEvent( graph->getWindow(), touches );
 		graph->propagateTouchesBegan( touchEvent );
 	}
@@ -95,36 +101,20 @@ void MultiTouchTest::injectTouches()
 	{
 		pos1 += vec2( 0, 60 );
 		pos2 += vec2( 0, 60 );
-		vector<app::TouchEvent::Touch> touches = {
-			app::TouchEvent::Touch( pos1, vec2( 0 ), 1, 0, nullptr ),
-			app::TouchEvent::Touch( pos2, vec2( 0 ), 2, 0, nullptr )
-		};
+		touches.at( 0 ).setPos( pos1 );
+		touches.at( 1 ).setPos( pos2 );
 		app::TouchEvent touchEvent( graph->getWindow(), touches );
 		graph->propagateTouchesMoved( touchEvent );
 	}
 
-	for( int i = 0; i < 10; i++ ) {
-		pos1 += vec2( 0, 2 );
-		pos2 += vec2( 0, 2 );
-		vector<app::TouchEvent::Touch> touches = {
-				app::TouchEvent::Touch( pos1, vec2( 0 ), 1, 0, nullptr ),
-				app::TouchEvent::Touch( pos2, vec2( 0 ), 2, 0, nullptr )
-		};
+	{
 		app::TouchEvent touchEvent( graph->getWindow(), touches );
-		graph->propagateTouchesMoved( touchEvent );
+		graph->propagateTouchesEnded( touchEvent );
 	}
-
 }
 
 void MultiTouchTest::update()
 {
-	// TODO: make this work from layout
-	static bool sFirstTime = true;
-	if( sFirstTime ) {
-		sFirstTime = false;
-		injectTouches();
-	}
-
 }
 
 TouchOverlayView::TouchOverlayView()

@@ -71,6 +71,7 @@ class Graph : public View {
 	std::vector<ci::app::TouchEvent::Touch>&        getAllTouchesInWindow()         { return mCurrentTouchEvent.getTouches(); }
 	const std::vector<ci::app::TouchEvent::Touch>&  getAllTouchesInWindow() const   { return mCurrentTouchEvent.getTouches(); }
 
+	const std::list<ViewRef>&	    getViewsWithTouches() const { return mViewsWithTouches; }
   protected:
 	void layout() override;
 

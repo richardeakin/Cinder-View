@@ -211,10 +211,12 @@ void Graph::propagateTouchesBegan( ViewRef &view, app::TouchEvent &event, size_t
 	if( view->touchesBegan( event ) ) {
 		// Only allow this View to handle this touch in other UI events.
 		auto &touches = event.getTouches();
+		size_t numTouchesHandledThisView = 0;
 		for( auto &touch : touches ) {
 			if( touch.isHandled() ) {
 				view->mActiveTouches[touch.getId()] = touch;
 				numTouchesHandled++;
+				numTouchesHandledThisView++;
 			}
 		}
 
@@ -232,8 +234,8 @@ void Graph::propagateTouchesBegan( ViewRef &view, app::TouchEvent &event, size_t
 		               touches.end() );
 
 		LOG_TOUCHES( view->getName() << " | num touches C: " << event.getTouches().size() );
-
-		if( find( mViewsWithTouches.begin(), mViewsWithTouches.end(), view ) == mViewsWithTouches.end() ) {
+		
+		if( numTouchesHandledThisView != 0 && find( mViewsWithTouches.begin(), mViewsWithTouches.end(), view ) == mViewsWithTouches.end() ) {
 			mViewsWithTouches.push_back( view );
 		}
 
@@ -330,6 +332,8 @@ void Graph::propagateTouchesEnded( app::TouchEvent &event )
 			++viewIt;
 		}
 	}
+
+	mCurrentTouchEvent.getTouches().clear();
 }
 
 } // namespace ui

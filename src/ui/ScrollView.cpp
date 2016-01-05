@@ -236,13 +236,13 @@ void ScrollView::calcTouchVelocity()
 
 bool ScrollView::touchesBegan( app::TouchEvent &event )
 {
-	const auto &firstTouch = event.getTouches().front();
+	auto &firstTouch = event.getTouches().front();
 	vec2 pos = toLocal( firstTouch.getPos() );
 	mStoredTouches.clear();
 	storeTouchPos( pos );
 
 	mFirstTouch = mStoredTouches.front();
-
+	firstTouch.setHandled();
 	return true;
 }
 

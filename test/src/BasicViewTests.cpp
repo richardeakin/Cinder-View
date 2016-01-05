@@ -20,6 +20,7 @@ protected:
 	bool touchesBegan( app::TouchEvent &event )	override
 	{
 		vec2 pos = event.getTouches().front().getPos();
+		event.getTouches().front().setHandled();
 		vec2 localPos = toLocal( pos );
 
 		CI_LOG_V( getLabel() << " local pos: " << localPos << ", world pos: " << getWorldPos() << ", event pos: " << pos );
