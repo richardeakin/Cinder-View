@@ -306,9 +306,6 @@ void View::updateImpl()
 
 void View::drawImpl( Renderer *ren )
 {
-	if( isHidden() )
-		return;
-
 	ren->pushBlendMode( mBlendMode ); // TEMPORARY: this will be handled by Layer
 
 	if( mBackground ) {

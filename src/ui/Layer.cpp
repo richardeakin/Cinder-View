@@ -161,6 +161,9 @@ void Layer::draw( Renderer *ren )
 
 void Layer::drawView( View *view, Renderer *ren )
 {
+	if( view->isHidden() )
+		return;
+
 	if( view->isClipEnabled() )
 		beginClip( view, ren );
 
