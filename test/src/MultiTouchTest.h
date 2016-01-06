@@ -6,7 +6,7 @@
 #include "ui/Slider.h"
 #include "ui/Button.h"
 
-#include "cinder/gl/TextureFont.h"
+#include "cinder/gl/gl.h"
 
 typedef std::shared_ptr<class TouchOverlayView> TouchOverlayViewRef;
 
@@ -53,5 +53,6 @@ class TouchOverlayView : public ui::View {
 
   private:
 	ci::gl::TextureFontRef  mTextureFont;
+	ci::gl::BatchRef		mBatchCircle;
 };
 

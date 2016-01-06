@@ -221,7 +221,7 @@ void MultiTouchTest::injectTouches()
 
 void MultiTouchTest::injectContinuousTouches()
 {
-	const size_t numTouches = 4;
+	const size_t numTouches = 32;
 	const float maxDragDistance = 100;
 	const vec2 dragDurationRange = { 0.5f, 2.0f };
 	const vec2 containerSize = mDraggablesContainer->getSize();
@@ -295,6 +295,7 @@ TouchOverlayView::TouchOverlayView()
 {
 	setFillParentEnabled();
 	mTextureFont = gl::TextureFont::create( Font( "Arial", 12 ) );
+	mBatchCircle = gl::Batch::create( geom::WireCircle().radius( 14 ).subdivisions( 40 ), gl::getStockShader( gl::ShaderDef().color() ) );
 }
 
 void TouchOverlayView::draw( ui::Renderer *ren )
@@ -304,12 +305,16 @@ void TouchOverlayView::draw( ui::Renderer *ren )
 	const auto &touches = getGraph()->getAllTouchesInWindow();
 	for( const auto &touch : touches ) {
 		vec2 pos = touch.getPos();
-
-		ren->setColor( Color( 0, 1, 1 ) );
-		gl::drawStrokedCircle( pos, circleRadius, 2.0f );
-
-		ren->setColor( Color::white() );
-		Rectf fitRect( pos.x - circleRadius, pos.y - circleRadius, pos.x + circleRadius, pos.y + circleRadius  );
-		mTextureFont->drawString( to_string( touch.getId() ), vec2( pos.x - 3, pos.y + 4 ) );
+		{
+			ren->setColor( Color( 0, 1, 1 ) );
+			gl::ScopedModelMatrix modelScope;
+			gl::translate( pos );
+			mBatchCircle->draw();
+		}
+		{
+			ren->setColor( Color::white() );
+			Rectf fitRect( pos.x - circleRadius, pos.y - circleRadius, pos.x + circleRadius, pos.y + circleRadius  );
+			mTextureFont->drawString( to_string( touch.getId() ), vec2( pos.x - 3, pos.y + 4 ) );
+		}
 	}
 }
