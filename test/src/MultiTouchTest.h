@@ -1,7 +1,8 @@
 #pragma once
 
-#include "ui/Suite.h"
+#include "cinder/Tween.h"
 
+#include "ui/Suite.h"
 #include "ui/Slider.h"
 #include "ui/Button.h"
 
@@ -25,11 +26,23 @@ class MultiTouchTest : public ui::SuiteView {
 	void layoutControls();
 	void layoutDraggables();
 	void injectTouches();
+	void injectContinuousTouches();
 
 	ui::VSliderRef			mVSlider1, mVSlider2;
 	ui::ButtonRef			mButton, mToggle;
 	ui::ViewRef             mControlsContainer, mDraggablesContainer;
 	TouchOverlayViewRef     mTouchOverlay;
+
+	bool mEnableContinuousInjection = false;
+
+	struct TestTouch {
+		enum class Phase { BEGAN, MOVED, ENDED };
+
+		ci::Anim<ci::vec2> mPos;
+		Phase mPhase;
+	};
+
+	std::vector<TestTouch> mTestTouches;
 };
 
 class TouchOverlayView : public ui::View {

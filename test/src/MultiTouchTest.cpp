@@ -3,10 +3,14 @@
 #include "cinder/Log.h"
 #include "cinder/gl/draw.h"
 #include "cinder/Rand.h"
+#include "cinder/Timeline.h"
+#include "cinder/app/App.h"
 
 using namespace std;
 using namespace ci;
 using namespace mason;
+
+const float PADDING = 40.0f;
 
 class DraggableView : public ui::RectView {
   public:
@@ -68,7 +72,7 @@ MultiTouchTest::MultiTouchTest()
 	setupControls();
 	setupDraggables();
 
-	mDraggablesContainer->setHidden();
+	mControlsContainer->setHidden();
 
 	mTouchOverlay = make_shared<TouchOverlayView>();
 
@@ -129,18 +133,16 @@ void MultiTouchTest::setupDraggables()
 
 void MultiTouchTest::layoutControls()
 {
-	const float padding = 40.0f;
-
-	Rectf buttonBounds( padding, padding, padding + 120, padding + 60 );
+	Rectf buttonBounds( PADDING, PADDING, PADDING + 120, PADDING + 60 );
 	mButton->setBounds( buttonBounds );
 
 	buttonBounds += vec2( 0, buttonBounds.getHeight() + 10 );
 	mToggle->setBounds( buttonBounds );
 
-	Rectf sliderBounds = Rectf( padding, buttonBounds.y2 + padding, padding + 120, buttonBounds.y2 + 300 + padding );
+	Rectf sliderBounds = Rectf( PADDING, buttonBounds.y2 + PADDING, PADDING + 120, buttonBounds.y2 + 300 + PADDING );
 	mVSlider1->setBounds( sliderBounds );
 
-	sliderBounds += vec2( sliderBounds.getWidth() + padding, 0 );
+	sliderBounds += vec2( sliderBounds.getWidth() + PADDING, 0 );
 	mVSlider2->setBounds( sliderBounds );
 }
 
@@ -151,7 +153,7 @@ void MultiTouchTest::layoutDraggables()
 //	auto containerSize = mDraggablesContainer->getSize();
 	auto containerSize = getSize();
 	for( auto &draggable : mDraggablesContainer->getSubviews() ) {
-		draggable->setPos( vec2( randFloat( 0, containerSize.x ), randFloat( 0, containerSize.y ) ) );
+		draggable->setPos( vec2( randFloat( PADDING, containerSize.x - PADDING ), randFloat( PADDING, containerSize.y - PADDING ) ) );
 	}
 }
 
@@ -180,6 +182,9 @@ void MultiTouchTest::keyEvent( app::KeyEvent &event )
 			mControlsContainer->setHidden( true );
 			mDraggablesContainer->setHidden( false );
 			break;
+		case 'c':
+			mEnableContinuousInjection = ! mEnableContinuousInjection;
+			CI_LOG_I( "mEnableContinuousInjection: " << mEnableContinuousInjection );
 	}
 }
 
@@ -214,8 +219,76 @@ void MultiTouchTest::injectTouches()
 	}
 }
 
+void MultiTouchTest::injectContinuousTouches()
+{
+	const size_t numTouches = 4;
+	const float maxDragDistance = 100;
+	const vec2 dragDurationRange = { 0.5f, 2.0f };
+	const vec2 containerSize = mDraggablesContainer->getSize();
+
+	if( mTestTouches.size() < numTouches ) {
+		mTestTouches.resize( numTouches );
+	}
+
+	for( size_t i = 0; i < mTestTouches.size(); i++ ) {
+		auto &posAnim = mTestTouches[i].mPos;
+		if( posAnim.isComplete() ) {
+			vec2 startPos( randFloat( PADDING, containerSize.x - PADDING ), randFloat( PADDING, containerSize.y - PADDING ) );
+			vec2 endPos( randFloat( startPos.x - maxDragDistance, startPos.x + maxDragDistance ), randFloat( startPos.y - maxDragDistance, startPos.y + maxDragDistance ) );
+			endPos = min( endPos, containerSize - vec2( PADDING ) );
+
+			float duration = randFloat( dragDurationRange[0], dragDurationRange[1] );
+
+			//CI_LOG_I( "cueing test touch " << i << ", startPos: " << startPos << ", endPos: " << endPos << ", duration: " << duration );
+
+			mTestTouches[i].mPhase = TestTouch::Phase::BEGAN;
+
+			app::timeline().apply( &posAnim, startPos, endPos, duration )
+					.easeFn( EaseInOutQuad() )
+					.updateFn( [this, i] {
+						mTestTouches[i].mPhase = TestTouch::Phase::MOVED;
+					} )
+					.finishFn( [this, i] {
+						mTestTouches[i].mPhase = TestTouch::Phase::ENDED;
+					} );
+		}
+	}
+
+	// send off all touches at once
+	auto graph = getGraph();
+	vector<app::TouchEvent::Touch> touchesBegan;
+	vector<app::TouchEvent::Touch> touchesMoved;
+	vector<app::TouchEvent::Touch> touchesEnded;
+
+	for( size_t i = 0; i < mTestTouches.size(); i++ ) {
+		const auto &t = mTestTouches[i];
+		if( t.mPhase == TestTouch::Phase::BEGAN )
+			touchesBegan.emplace_back( t.mPos, vec2( 0 ), i, 0, nullptr );
+		else if( t.mPhase == TestTouch::Phase::MOVED )
+			touchesMoved.emplace_back( t.mPos, vec2( 0 ), i, 0, nullptr );
+		else if( t.mPhase == TestTouch::Phase::ENDED )
+			touchesEnded.emplace_back( t.mPos, vec2( 0 ), i, 0, nullptr );
+	}
+
+	if( ! touchesBegan.empty() ) {
+		app::TouchEvent touchEvent( graph->getWindow(), touchesBegan );
+		graph->propagateTouchesBegan( touchEvent );
+	}
+	if( ! touchesMoved.empty() ) {
+		app::TouchEvent touchEvent( graph->getWindow(), touchesMoved );
+		graph->propagateTouchesMoved( touchEvent );
+	}
+	if( ! touchesEnded.empty() ) {
+		app::TouchEvent touchEvent( graph->getWindow(), touchesEnded );
+		graph->propagateTouchesEnded( touchEvent );
+	}
+}
+
 void MultiTouchTest::update()
 {
+	if( mEnableContinuousInjection && ! mDraggablesContainer->isHidden() ) {
+		injectContinuousTouches();
+	}
 }
 
 TouchOverlayView::TouchOverlayView()
