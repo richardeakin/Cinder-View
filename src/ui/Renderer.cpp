@@ -22,6 +22,7 @@
 #include <cinder/gl/scoped.h>
 #include "ui/Renderer.h"
 
+#include "cinder/gl/Batch.h"
 #include "cinder/gl/Context.h"
 #include "cinder/gl/wrapper.h"
 #include "cinder/gl/draw.h"
@@ -263,7 +264,14 @@ void Renderer::draw( const ImageRef &image, const ci::Rectf &destRect )
 
 void Renderer::drawSolidRect( const Rectf &rect )
 {
-	gl::drawSolidRect( rect );
+	if( ! mBatchSolidRect ) {
+		mBatchSolidRect = gl::Batch::create( geom::Rect( Rectf( 0, 0, 1, 1 ) ), gl::getStockShader( gl::ShaderDef().color() ) );
+	}
+
+	gl::ScopedModelMatrix modelScope;
+	gl::translate( rect.getUpperLeft() );
+	gl::scale( rect.getSize() );
+	mBatchSolidRect->draw();
 }
 
 void Renderer::drawStrokedRect( const Rectf &rect )

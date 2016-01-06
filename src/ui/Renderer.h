@@ -33,6 +33,7 @@ typedef std::shared_ptr<class ImageSource>		ImageSourceRef;
 
 namespace gl {
 
+typedef std::shared_ptr<class Batch>		BatchRef;
 typedef std::shared_ptr<class Fbo>          FboRef;
 typedef std::shared_ptr<class GlslProg>     GlslProgRef;
 
@@ -146,6 +147,7 @@ class Renderer {
 	std::vector<FrameBufferRef>	mFrameBufferCache;
 
 	ci::gl::GlslProgRef         mGlslFrameBuffer;
+	ci::gl::BatchRef			mBatchSolidRect;
 };
 
 } // namespace ui
