@@ -20,10 +20,15 @@ class MultiTouchTest : public ui::SuiteView {
   private:
 	void keyEvent( ci::app::KeyEvent &event );
 
+	void setupControls();
+	void setupDraggables();
+	void layoutControls();
+	void layoutDraggables();
 	void injectTouches();
 
 	ui::VSliderRef			mVSlider1, mVSlider2;
 	ui::ButtonRef			mButton, mToggle;
+	ui::ViewRef             mControlsContainer, mDraggablesContainer;
 	TouchOverlayViewRef     mTouchOverlay;
 };
 
