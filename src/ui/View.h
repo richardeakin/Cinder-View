@@ -134,7 +134,7 @@ class View : public std::enable_shared_from_this<View> {
 	void	setBlendMode( BlendMode mode )				{ mBlendMode = mode; }
 	BlendMode	getBlendMode() const					{ return mBlendMode; }
 
-	void	setFillParentEnabled( bool enable = true )	{ mFillParent = enable; }
+	void	setFillParentEnabled( bool enable = true );
 	bool	isFillParentEnabled() const					{ return mFillParent; }
 
 	//! Informs layout propagation that this View and its subviews need layout() to be called.
