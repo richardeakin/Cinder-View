@@ -27,6 +27,7 @@ class MultiTouchTest : public ui::SuiteView {
 	void layoutDraggables();
 	void injectTouches();
 	void injectContinuousTouches();
+	void endCountinuousTouches();
 
 	ui::VSliderRef			mVSlider1, mVSlider2;
 	ui::ButtonRef			mButton, mToggle;
@@ -36,10 +37,10 @@ class MultiTouchTest : public ui::SuiteView {
 	bool mEnableContinuousInjection = false;
 
 	struct TestTouch {
-		enum class Phase { BEGAN, MOVED, ENDED };
+		enum class Phase { UNUSED, BEGAN, MOVED, ENDED };
 
 		ci::Anim<ci::vec2> mPos;
-		Phase mPhase;
+		Phase mPhase = Phase::UNUSED;
 	};
 
 	std::vector<TestTouch> mTestTouches;
