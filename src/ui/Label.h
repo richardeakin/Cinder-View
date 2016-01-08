@@ -70,10 +70,13 @@ public:
 
 	void setRow( size_t yloc, const std::vector<std::string> &textColumns );
 
-	void setCellHeight( float height )	{ mCellHeight = height; }
-
+	void setCellHeight( float height )	            { mCellHeight = height; }
 	//! Sets the default color for all cells
 	void setTextColor( const ci::ColorA &color )	{ mTextColor = color; }
+	//! Returns the number of rows currently set.
+	int getNumRows() const;
+	//! Removes all cells.
+	void clearCells();
 	
 protected:
 	void layout() override;
@@ -86,7 +89,7 @@ private:
 	LabelRef	makeOrFindCell( const ci::ivec2 &location );
 
 	std::vector<Cell>	mCells;
-	ci::ivec2			mGridExtents = { 1, 1 }; // TODO: use uvec2 once it is added to cinder/Vector.h
+	ci::ivec2			mGridExtents = { 0, 0 }; // TODO: use uvec2 once it is added to cinder/Vector.h
 	float				mCellHeight = 20;
 	ci::ColorA			mTextColor = ci::ColorA::black();
 };

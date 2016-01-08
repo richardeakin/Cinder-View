@@ -120,9 +120,6 @@ LabelRef LabelGrid::makeOrFindCell( const ci::ivec2 &location )
 			return cell.mLabel;
 	}
 
-	// mark that we need layout() called
-	setNeedsLayout();
-
 	mCells.push_back( Cell() );
 
 	Cell &cell= mCells.back();
@@ -145,6 +142,21 @@ LabelRef LabelGrid::makeOrFindCell( const ci::ivec2 &location )
 		mGridExtents.y = location.y;
 
 	return cell.mLabel;
+}
+
+int LabelGrid::getNumRows() const
+{
+	if( mCells.empty() )
+		return 0;
+
+	return mGridExtents.y + 1;
+}
+
+void LabelGrid::clearCells()
+{
+	mCells.clear();
+	removeAllSubviews();
+	mGridExtents = { 0, 0 };
 }
 
 void LabelGrid::layout()
