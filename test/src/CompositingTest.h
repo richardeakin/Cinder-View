@@ -8,7 +8,7 @@ public:
 	CompositingTest();
 
 	void layout() override;
-
+	void update() override;
   private:
 	void keyEvent( ci::app::KeyEvent &event );
 

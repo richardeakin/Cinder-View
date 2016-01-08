@@ -37,12 +37,19 @@ namespace ui {
 typedef std::shared_ptr<class Suite>		SuiteRef;
 typedef std::shared_ptr<class SuiteView>	SuiteViewRef;
 
+class Suite;
+
 class SuiteView : public ui::View {
 public:
 	void connectKeyDown( const std::function<void ( ci::app::KeyEvent& )> &callback );
 
+	Suite*  getSuite() const   { return mSuite; }
+
 private:
 	ci::signals::ScopedConnection	mKeyDownConn;
+	Suite*  mSuite;
+
+	friend class Suite;
 };
 
 class Suite {
@@ -74,6 +81,7 @@ public:
 
 private:
 	void resize();
+	void resizeInfoLabel();
 	void selectTest( const std::string &key );
 	void updateUI();
 
