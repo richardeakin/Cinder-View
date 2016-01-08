@@ -12,11 +12,14 @@ using namespace mason;
 
 const float PADDING = 40.0f;
 
-const size_t NUM_DRAGGABLES = 1000;
-const size_t NUM_TOUCHES = 16;
-
 //const size_t NUM_DRAGGABLES = 100;
 //const size_t NUM_TOUCHES = 1;
+
+const size_t NUM_DRAGGABLES = 1000;
+const size_t NUM_TOUCHES = 32;
+
+//const size_t NUM_DRAGGABLES = 5000;
+//const size_t NUM_TOUCHES = 64;
 
 class DraggableView : public ui::RectView {
   public:
@@ -191,11 +194,16 @@ void MultiTouchTest::keyEvent( app::KeyEvent &event )
 			mControlsContainer->setHidden( true );
 			mDraggablesContainer->setHidden( false );
 			break;
-		case 'c':
+		case 'c': {
 			mEnableContinuousInjection = ! mEnableContinuousInjection;
+			CI_LOG_I( "mEnableContinuousInjection: " << mEnableContinuousInjection );
 			if( ! mEnableContinuousInjection )
 				endCountinuousTouches();
-			CI_LOG_I( "mEnableContinuousInjection: " << mEnableContinuousInjection );
+
+			// avoid hitting the test selector and inadvertently changing tests
+			auto testSelector = getSuite()->getSelector();
+			testSelector->setInteractive( ! mEnableContinuousInjection );
+			}
 			break;
 	}
 }
