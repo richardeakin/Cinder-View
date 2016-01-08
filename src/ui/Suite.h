@@ -37,43 +37,56 @@ namespace ui {
 typedef std::shared_ptr<class Suite>		SuiteRef;
 typedef std::shared_ptr<class SuiteView>	SuiteViewRef;
 
+class Suite;
+
+//! View type that can be registered with and managed by Suite.
 class SuiteView : public ui::View {
-public:
+  public:
 	void connectKeyDown( const std::function<void ( ci::app::KeyEvent& )> &callback );
 
-private:
+	Suite*  getSuite() const   { return mSuite; }
+
+  private:
 	ci::signals::ScopedConnection	mKeyDownConn;
+	Suite*  mSuite;
+
+	friend class Suite;
 };
 
+//! Class for managing a selection of Views with some basic Controls and automatic layout. Useful for test or sample sets.
 class Suite {
-public:
+  public:
 	Suite();
 
-	void update();
-	void draw();
-
+	//! Registers a subclass of SuiteView with an associated \a key that will be displayed in a VSelector on screen.
 	template<typename Y>
-	void registerSuiteView( const std::string &key )
-	{
-		mFactory.registerBuilder<Y>( key );
-		mSelector->getSegmentLabels().push_back( key );
-		resize();
-	}
+	void registerSuiteView( const std::string &key );
 
-	void selectTest( size_t index );
-	size_t getCurrentTestIndex() const	{ return mSelector->getSelectedIndex(); }
-	ui::VSelectorRef	getSelector() const	{ return mSelector; }
+	//! Selects a registered SuiteView by index
+	void                select( size_t index );
+	//! Returns the index of the currently selected SuiteView
+	size_t              getCurrentIndex() const	    { return mSelector->getSelectedIndex(); }
+	//! Returns the key associated with the currently selected SuiteView
 
-	ui::LabelGridRef    getInfoLabel() const    { return mInfoLabel; }
+	const std::string&  getCurrentKey() const   { return mCurrentTestKey; }
+	//! Returns the Control used for selecting a SuiteView
+	ui::VSelectorRef	getSelector() const	        { return mSelector; }
+	//! Returns a LabelGrid that SuiteViews can use to display information
+	ui::LabelGridRef    getInfoLabel() const        { return mInfoLabel; }
 
-	const std::string& getCurrentTestKey() const { return mCurrentTestKey; }
+	//! Reloads the current SuiteView
+	void reload();
 
-	void reloadCurrentTest();
-
+	//! Causes the Graph to be updated
+	void update();
+	//! Causes the Graph to be drawn
+	void draw();
+	//! Returns the Graph owned by this Suite
 	ui::GraphRef	getGraph() const	{ return mGraph; }
 
-private:
+  private:
 	void resize();
+	void resizeInfoLabel();
 	void selectTest( const std::string &key );
 	void updateUI();
 
@@ -85,5 +98,12 @@ private:
 
 	mason::Factory<SuiteView>	mFactory;
 };
+
+template<typename Y>
+void Suite::registerSuiteView( const std::string &key )
+{
+	mFactory.registerBuilder<Y>( key );
+	mSelector->getSegmentLabels().push_back( key );
+}
 
 } // namespace ui

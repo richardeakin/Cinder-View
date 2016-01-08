@@ -26,11 +26,15 @@
 #include "cinder/audio/Context.h"
 
 #include "cppformat/format.h"
+#include "glm/gtc/epsilon.hpp"
 
 using namespace std;
 using namespace ci;
 
 namespace ui {
+
+const vec2 INFO_ROW_SIZE    = vec2( 200, 20 );
+const float PADDING         = 6;
 
 // ----------------------------------------------------------------------------------------------------
 // SuiteView
@@ -52,16 +56,17 @@ Suite::Suite()
 	mGraph->setFillParentEnabled();
 	mGraph->connectTouchEvents();
 
-	mSelector = mGraph->makeSubview<ui::VSelector>();
+	mSelector = make_shared<ui::VSelector>();
 	mSelector->getBackground()->setColor( ColorA::gray( 0, 0.3f ) );
-
 	mSelector->getSignalValueChanged().connect( [this] {
 		selectTest( mSelector->getSelectedLabel() );
 	} );
 
-	mInfoLabel = mGraph->makeSubview<ui::LabelGrid>();
+	mInfoLabel = make_shared<ui::LabelGrid>();
 	mInfoLabel->setTextColor( Color::white() );
-	mInfoLabel->getBackground()->setColor( ColorA( 0, 0, 0, 0.3f ) );
+	mInfoLabel->getBackground()->setColor( ColorA::gray( 0, 0.3f ) );
+
+	mGraph->addSubviews( { mSelector, mInfoLabel } );
 
 	app::getWindow()->getSignalResize().connect( bind( &Suite::resize, this ) );
 }
@@ -70,16 +75,19 @@ void Suite::resize()
 {
 	mGraph->setNeedsLayout();
 
-	const float padding = 6;
 	const float width = 120; // TODO: calculate widest segment
 	const float height = 22 * mSelector->getSegmentLabels().size();
-	mSelector->setBounds( Rectf( mGraph->getWidth() - width - padding, padding, mGraph->getWidth() - padding, height + padding ) );
+	mSelector->setBounds( Rectf( mGraph->getWidth() - width - PADDING, PADDING, mGraph->getWidth() - PADDING, height + PADDING ) );
 
-	// TODO: grow / shrink LabelGrid from update when number of rows changes
-	const int numRows = 2;
+	resizeInfoLabel();
+}
+
+void Suite::resizeInfoLabel()
+{
+	const int numRows = mInfoLabel->getNumRows();
 	vec2 windowSize = vec2( app::getWindow()->getSize() );
-	vec2 infoSize = { 200, 20 * numRows };
-	mInfoLabel->setBounds( { windowSize - infoSize - padding, windowSize - padding } ); // anchor bottom right
+	vec2 labelSize = { INFO_ROW_SIZE.x, INFO_ROW_SIZE.y * numRows };
+	mInfoLabel->setBounds( { windowSize - labelSize - PADDING, windowSize - PADDING } ); // anchor bottom right
 }
 
 void Suite::selectTest( const string &key )
@@ -89,8 +97,10 @@ void Suite::selectTest( const string &key )
 	// first remove and destroy the current test
 	if( mCurrentSuiteView ) {
 		mCurrentSuiteView->removeFromParent();
-		mCurrentSuiteView.reset();		
+		mCurrentSuiteView.reset();
 	}
+
+	mInfoLabel->clearCells();
 
 	auto suiteView = mFactory.build( key );
 	if( ! suiteView ) {
@@ -98,6 +108,7 @@ void Suite::selectTest( const string &key )
 		return;
 	}
 
+	suiteView->mSuite = this;
 	suiteView->setFillParentEnabled();
 	suiteView->setLabel( key );
 	mGraph->insertSubview( suiteView, 0 );
@@ -105,12 +116,12 @@ void Suite::selectTest( const string &key )
 	mCurrentTestKey = key;
 }
 
-void Suite::selectTest( size_t index )
+void Suite::select( size_t index )
 {
 	mSelector->select( index );
 }
 
-void Suite::reloadCurrentTest()
+void Suite::reload()
 {
 	selectTest( mSelector->getSelectedLabel() );
 }
@@ -129,6 +140,9 @@ void Suite::update()
 void Suite::updateUI()
 {
 	mInfoLabel->setRow( 0, { "fps:",  fmt::format( "{}", app::App::get()->getAverageFps() ) } );
+
+	if( ! glm::epsilonEqual( INFO_ROW_SIZE.y * mInfoLabel->getNumRows(), mInfoLabel->getHeight(), 0.01f ) )
+		resizeInfoLabel();
 }
 
 void Suite::draw()

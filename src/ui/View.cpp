@@ -221,6 +221,15 @@ void View::setParent( View *parent )
 	mGraph = parent->getGraph();
 }
 
+void View::setFillParentEnabled( bool enable )
+{
+	if( mFillParent == enable )
+		return;
+
+	mFillParent = enable;
+	setNeedsLayout();
+}
+
 void View::setNeedsLayout()
 {
 	mNeedsLayout = true;

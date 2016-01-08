@@ -39,12 +39,12 @@ void ViewTestsApp::setup()
 	mTestSuite->registerSuiteView<MultiTouchTest>( "multitouch" );
 	mTestSuite->registerSuiteView<ScrollTests>( "scroll" );
 
-	// TODO: this doesn't cover the case of calling selectTest() directly - should probably add new signal that ties to both Selector and that
+	// TODO: this doesn't cover the case of calling Suite::select() directly - should probably add new signal that ties to both Selector and that
 	mTestSuite->getSelector()->getSignalValueChanged().connect( [this] {
-		CI_LOG_I( "selected test index: " << mTestSuite->getCurrentTestIndex() << ", key: " << mTestSuite->getCurrentTestKey() );
+		CI_LOG_I( "selected test index: " << mTestSuite->getCurrentIndex() << ", key: " << mTestSuite->getCurrentKey() );
 	} );
 
-	mTestSuite->selectTest( 3 );
+	mTestSuite->select( 3 );
 }
 
 void ViewTestsApp::keyDown( app::KeyEvent event )
@@ -61,9 +61,6 @@ void ViewTestsApp::keyDown( app::KeyEvent event )
 
 void ViewTestsApp::update()
 {
-	size_t numFrameBuffers = mTestSuite->getGraph()->getRenderer()->getNumFrameBuffersCached();
-	mTestSuite->getInfoLabel()->setRow( 1, { "num FrameBuffers: ", to_string( numFrameBuffers ) } );
-
 	mTestSuite->update();
 }
 
