@@ -175,10 +175,6 @@ void Graph::propagateTouchesBegan( app::TouchEvent &event )
 
 void Graph::propagateTouchesBegan( ViewRef &view, app::TouchEvent &event, size_t &numTouchesHandled )
 {
-	if( view->mActiveTouches.size() > 1 ) {
-		int blarg = 2; // FIXME: this is firing after cancelled
-	}
-
 	if( view->isHidden() || ! view->isInteractive() )
 		return;
 
