@@ -116,12 +116,12 @@ void Suite::selectTest( const string &key )
 	mCurrentTestKey = key;
 }
 
-void Suite::selectTest( size_t index )
+void Suite::select( size_t index )
 {
 	mSelector->select( index );
 }
 
-void Suite::reloadCurrentTest()
+void Suite::reload()
 {
 	selectTest( mSelector->getSelectedLabel() );
 }
