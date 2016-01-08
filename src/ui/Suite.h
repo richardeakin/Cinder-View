@@ -60,12 +60,7 @@ public:
 	void draw();
 
 	template<typename Y>
-	void registerSuiteView( const std::string &key )
-	{
-		mFactory.registerBuilder<Y>( key );
-		mSelector->getSegmentLabels().push_back( key );
-		resize();
-	}
+	void registerSuiteView( const std::string &key );
 
 	void selectTest( size_t index );
 	size_t getCurrentTestIndex() const	{ return mSelector->getSelectedIndex(); }
@@ -93,5 +88,12 @@ private:
 
 	mason::Factory<SuiteView>	mFactory;
 };
+
+template<typename Y>
+void Suite::registerSuiteView( const std::string &key )
+{
+	mFactory.registerBuilder<Y>( key );
+	mSelector->getSegmentLabels().push_back( key );
+}
 
 } // namespace ui
