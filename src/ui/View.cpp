@@ -167,7 +167,11 @@ void View::removeSubview( const ViewRef &view )
 	for( auto it = mSubviews.begin(); it != mSubviews.end(); ++it ) {
 		if( view == *it ) {
 			view->mParent = nullptr;
-			mSubviews.erase( it );
+			if( mIsIteratingSubviews )
+				mSubviewsToRemove.push_back( view );
+			else
+				mSubviews.erase( it );
+
 			return;
 		}
 	}
@@ -179,7 +183,10 @@ void View::removeAllSubviews()
 		view->mParent = nullptr;
 	}
 
-	mSubviews.clear();
+	if( mIsIteratingSubviews )
+		mSubviewsToRemove.insert( mSubviewsToRemove.end(), mSubviews.begin(), mSubviews.end() );
+	else
+		mSubviews.clear();
 }
 
 void View::removeFromParent()

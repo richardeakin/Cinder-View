@@ -83,7 +83,7 @@ class View : public std::enable_shared_from_this<View> {
 	ci::Anim<ci::vec2>*		animPos()			{ return &mPos; }
 	ci::Anim<ci::vec2>*		animSize()			{ return &mPos; }
 
-	std::list<ViewRef>&		getSubviews()		{ return mSubviews; }
+	std::vector<ViewRef>&	getSubviews()		{ return mSubviews; }
 	ViewRef&				getSubview( size_t index );
 	const ViewRef&			getSubview( size_t index ) const;
 	const View*				getParent() const	{ return mParent; }
@@ -196,10 +196,12 @@ private:
 	bool                    mClipEnabled = false;
 	bool			        mRendersToFrameBuffer = false;
 	bool			        mRenderTransparencyToFrameBuffer = true;
+	bool                    mIsIteratingSubviews = false;
 
 	View*					mParent = nullptr;
 	Graph*                  mGraph = nullptr;
-	std::list<ViewRef>		mSubviews; // TODO: using list so iterators aren't invalidated during add / remove operations. A more efficient solution could be deferring the add remove until after iteration loops
+	std::vector<ViewRef>	mSubviews;
+	std::vector<ViewRef>	mSubviewsToRemove;
 	RectViewRef				mBackground;
 	LayerRef				mLayer;
 

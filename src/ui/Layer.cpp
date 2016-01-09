@@ -98,6 +98,8 @@ void Layer::update()
 
 void Layer::updateView( View *view )
 {
+	view->mIsIteratingSubviews = true;
+
 	for( auto &subview : view->getSubviews() ) {
 		if( ! subview->mGraph )
 			subview->mGraph = mGraph;
@@ -108,6 +110,7 @@ void Layer::updateView( View *view )
 	view->updateImpl();
 
 	if( view->mLayer && view->mLayer.get() != this ) {
+		// TODO: don't need to do this if the View will be removed
 		view->mLayer->update();
 	}
 
@@ -119,6 +122,23 @@ void Layer::updateView( View *view )
 			LOG_LAYER( "mFrameBufferBounds: " << mFrameBufferBounds );
 		}
 	}
+
+	view->mIsIteratingSubviews = false;
+
+	// TODO NEXT: figure out why andrew added the mNeedsUpdate thing
+
+
+	// remove any subviews which were marked for removal during the iteration
+	// TODO: don't really need the second vector here, could just mark a flag on the View that it needs to be removed
+	// - but there is more logic going on with the foundViewsNeedingUpdate thing, need to wait until after that is sorted
+	for( auto viewIt = view->mSubviewsToRemove.begin(); viewIt != view->mSubviewsToRemove.end(); ++viewIt ) {
+		auto existingIt = std::find( view->mSubviews.begin(), view->mSubviews.end(), *viewIt );
+		if( existingIt != view->mSubviews.end() )
+			view->mSubviews.erase( existingIt );
+		else
+			CI_LOG_W( "Unable to find View for removal: " << *viewIt );
+	}
+	view->mSubviewsToRemove.clear();
 }
 
 void Layer::draw( Renderer *ren )
