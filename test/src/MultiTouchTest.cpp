@@ -85,7 +85,7 @@ MultiTouchTest::MultiTouchTest()
 	setupControls();
 	setupDraggables();
 
-	mControlsContainer->setHidden();
+	mDraggablesContainer->setHidden();
 
 	mTouchOverlay = make_shared<TouchOverlayView>();
 
@@ -179,32 +179,42 @@ void MultiTouchTest::layout()
 
 void MultiTouchTest::keyEvent( app::KeyEvent &event )
 {
+	CI_LOG_I( "us: " << getName() );
+
 	switch( event.getChar() ) {
 		case 't':
 			mTouchOverlay->setHidden( ! mTouchOverlay->isHidden() );
-			break;
+		break;
 		case 'v':
 			CI_LOG_I( "num views with touches: " << getGraph()->getViewsWithTouches().size() );
-			break;
+		break;
+		case 'a': {
+			const auto &allTouches = getGraph()->getAllTouchesInWindow();
+			CI_LOG_I( "num touches in window: " << allTouches.size() );
+		}
+		break;
 		case '1':
 			mControlsContainer->setHidden( false );
 			mDraggablesContainer->setHidden( true );
-			break;
+		break;
 		case '2':
 			mControlsContainer->setHidden( true );
 			mDraggablesContainer->setHidden( false );
-			break;
+		break;
 		case 'c': {
+			CI_LOG_I( "this: " << hex << this << dec );
+
 			mEnableContinuousInjection = ! mEnableContinuousInjection;
 			CI_LOG_I( "mEnableContinuousInjection: " << mEnableContinuousInjection );
 			if( ! mEnableContinuousInjection )
 				endCountinuousTouches();
 
 			// avoid hitting the test selector and inadvertently changing tests
+			// - comment this out to test deleting Views while iterating over them
 			auto testSelector = getSuite()->getSelector();
 			testSelector->setInteractive( ! mEnableContinuousInjection );
-			}
-			break;
+		}
+		break;
 	}
 }
 
@@ -334,7 +344,7 @@ void TouchOverlayView::draw( ui::Renderer *ren )
 
 	const auto &touches = getGraph()->getAllTouchesInWindow();
 	for( const auto &touch : touches ) {
-		vec2 pos = touch.getPos();
+		vec2 pos = touch.second.getPos();
 		{
 			ren->setColor( Color( 0, 1, 1 ) );
 			gl::ScopedModelMatrix modelScope;
@@ -343,8 +353,7 @@ void TouchOverlayView::draw( ui::Renderer *ren )
 		}
 		{
 			ren->setColor( Color::white() );
-			Rectf fitRect( pos.x - circleRadius, pos.y - circleRadius, pos.x + circleRadius, pos.y + circleRadius  );
-			mTextureFont->drawString( to_string( touch.getId() ), vec2( pos.x - 3, pos.y + 4 ) );
+			mTextureFont->drawString( to_string( touch.first ), vec2( pos.x - 3, pos.y + 4 ) );
 		}
 	}
 }

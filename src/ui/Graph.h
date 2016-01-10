@@ -68,9 +68,11 @@ class Graph : public View {
 	//! Disconnects touches propagation methods.
 	void disconnectEvents();
 
-	std::vector<ci::app::TouchEvent::Touch>&        getAllTouchesInWindow()         { return mCurrentTouchEvent.getTouches(); }
-	const std::vector<ci::app::TouchEvent::Touch>&  getAllTouchesInWindow() const   { return mCurrentTouchEvent.getTouches(); }
-
+	//! Returns a map of all current touches in the window (key = touch id).
+	const std::map<uint32_t, ci::app::TouchEvent::Touch>&  getAllTouchesInWindow() const   { return mActiveTouches; }
+	//! Returns the current TouchEvent, if one is currently being processed.
+	const ci::app::TouchEvent&  getCurrentTouchEvent() const    { return mCurrentTouchEvent; }
+	//! Returns all Views that currently have active touches.
 	const std::list<ViewRef>&	    getViewsWithTouches() const { return mViewsWithTouches; }
   protected:
 	void layout() override;

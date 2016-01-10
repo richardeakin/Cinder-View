@@ -176,6 +176,9 @@ void Graph::disconnectEvents()
 void Graph::propagateTouchesBegan( app::TouchEvent &event )
 {
 	mCurrentTouchEvent = event;
+	for( const auto &touch : event.getTouches() )
+		mActiveTouches[touch.getId()] = touch;
+
 	auto thisRef = shared_from_this();
 	size_t numTouchesHandled = 0;
 	propagateTouchesBegan( thisRef, event, numTouchesHandled );
@@ -255,6 +258,9 @@ void Graph::propagateTouchesBegan( ViewRef &view, app::TouchEvent &event, size_t
 void Graph::propagateTouchesMoved( app::TouchEvent &event )
 {
 	mCurrentTouchEvent = event;
+	for( const auto &touch : event.getTouches() )
+		mActiveTouches[touch.getId()] = touch;
+
 //	size_t numTouchesHandled = 0;
 
 	for( auto &view : mViewsWithTouches ) {
@@ -336,6 +342,11 @@ void Graph::propagateTouchesEnded( app::TouchEvent &event )
 		else {
 			++viewIt;
 		}
+	}
+
+	for( const auto &touch : mCurrentTouchEvent.getTouches() ) {
+		size_t numRemoved = mActiveTouches.erase( touch.getId() );
+		CI_VERIFY( numRemoved != 0 );
 	}
 
 	mCurrentTouchEvent.getTouches().clear();
