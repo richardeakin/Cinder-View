@@ -166,6 +166,7 @@ private:
 	void calcWorldPos() const;
 	void updateImpl();
 	void drawImpl( Renderer *ren );
+	void clearViewsMarkedForRemoval();
 
 	// TODO: consider moving propagation methods to Graph and passing View as argument
 	void propagateLayout();
@@ -197,11 +198,11 @@ private:
 	bool			        mRendersToFrameBuffer = false;
 	bool			        mRenderTransparencyToFrameBuffer = true;
 	bool                    mIsIteratingSubviews = false;
+	bool                    mMarkedForRemoval = false;
 
 	View*					mParent = nullptr;
 	Graph*                  mGraph = nullptr;
 	std::vector<ViewRef>	mSubviews;
-	std::vector<ViewRef>	mSubviewsToRemove;
 	RectViewRef				mBackground;
 	LayerRef				mLayer;
 

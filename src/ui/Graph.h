@@ -77,7 +77,6 @@ class Graph : public View {
 
   private:
 	LayerRef makeLayer( View *rootView );
-	void    notifyViewWasRemoved( const ViewRef &view );
 
 	void propagateTouchesBegan( ViewRef &view, ci::app::TouchEvent &event, size_t &numTouchesHandled );
 	void propagateTouchesMoved( ViewRef &view, ci::app::TouchEvent &event, size_t &numTouchesHandled );

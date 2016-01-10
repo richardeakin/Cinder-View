@@ -84,16 +84,6 @@ void Graph::removeLayer( const LayerRef &layer )
 	layer->getRootView()->mLayer = nullptr;
 }
 
-void Graph::notifyViewWasRemoved( const ViewRef &view )
-{
-	auto it = find( mViewsWithTouches.begin(), mViewsWithTouches.end(), view );
-	if( it != mViewsWithTouches.end() ) {
-		// TODO: should emit a touchesEnded() event to this View before erasing?
-		// - this likely happened because the View is being deleted
-		mViewsWithTouches.erase( it );
-	}
-}
-
 void Graph::layout()
 {
 	if( isFillParentEnabled() ) {
@@ -117,6 +107,14 @@ void Graph::propagateUpdate()
 			++layerIt;
 		}
 	}
+
+	// clear any Views that were marked for removal
+	mViewsWithTouches.erase(
+			remove_if( mViewsWithTouches.begin(), mViewsWithTouches.end(),
+			           []( auto &view ) {
+				           return view->mMarkedForRemoval;
+			           } ),
+			mViewsWithTouches.end() );
 }
 
 void Graph::propagateDraw()
@@ -229,15 +227,16 @@ void Graph::propagateTouchesBegan( ViewRef &view, app::TouchEvent &event, size_t
 		LOG_TOUCHES( view->getName() << " | numTouchesHandled: " << numTouchesHandled );
 
 		// Remove active touches. Note: I'm having to do this outside of the above loop because I can't invalidate the vector::iterator
-		touches.erase( remove_if( touches.begin(), touches.end(),
-		                          [&view]( auto &touch ) {
-			                          if( touch.isHandled() ) {
-				                          LOG_TOUCHES( view->getName() << " | handled touch: " << touch.getId() );
-				                          int blarg = 2;
-			                          }
-			                          return touch.isHandled();
-		                          } ),
-		               touches.end() );
+		touches.erase(
+				remove_if( touches.begin(), touches.end(),
+				           [&view]( auto &touch ) {
+					           if( touch.isHandled() ) {
+						           LOG_TOUCHES( view->getName() << " | handled touch: " << touch.getId() );
+						           int blarg = 2;
+					           }
+					           return touch.isHandled();
+				           } ),
+				touches.end() );
 
 		LOG_TOUCHES( view->getName() << " | num touches C: " << event.getTouches().size() );
 		

@@ -168,7 +168,7 @@ void View::removeSubview( const ViewRef &view )
 		if( view == *it ) {
 			view->mParent = nullptr;
 			if( mIsIteratingSubviews )
-				mSubviewsToRemove.push_back( view );
+				view->mMarkedForRemoval = true;
 			else
 				mSubviews.erase( it );
 
@@ -179,14 +179,18 @@ void View::removeSubview( const ViewRef &view )
 
 void View::removeAllSubviews()
 {
-	for( auto &view : mSubviews ) {
-		view->mParent = nullptr;
+	if( mIsIteratingSubviews ) {
+		for( auto &view : mSubviews ) {
+			view->mParent = nullptr;
+			view->mMarkedForRemoval = true;
+		}
 	}
-
-	if( mIsIteratingSubviews )
-		mSubviewsToRemove.insert( mSubviewsToRemove.end(), mSubviews.begin(), mSubviews.end() );
-	else
+	else {
+		for( auto &view : mSubviews ) {
+			view->mParent = nullptr;
+		}
 		mSubviews.clear();
+	}
 }
 
 void View::removeFromParent()
@@ -335,6 +339,16 @@ void View::drawImpl( Renderer *ren )
 	ren->popColor();
 
 	ren->popBlendMode();
+}
+
+void View::clearViewsMarkedForRemoval()
+{
+	mSubviews.erase(
+			remove_if( mSubviews.begin(), mSubviews.end(),
+			           []( auto &view ) {
+				           return view->mMarkedForRemoval;
+			           } ),
+			mSubviews.end() );
 }
 
 bool View::hitTest( const vec2 &localPos ) const
