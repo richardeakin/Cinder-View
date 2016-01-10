@@ -168,14 +168,8 @@ private:
 	void drawImpl( Renderer *ren );
 	void clearViewsMarkedForRemoval();
 
-	// TODO: consider moving propagation methods to Graph and passing View as argument
+	// TODO: consider moving to Graph, as all other propagation methods are there.
 	void propagateLayout();
-//	void propagateUpdate();
-//	void propagateDraw();
-
-//	void propagateTouchesBegan( ci::app::TouchEvent &event );
-//	void propagateTouchesMoved( ci::app::TouchEvent &event );
-//	void propagateTouchesEnded( ci::app::TouchEvent &event );
 
 	typedef std::map<uint32_t, ci::app::TouchEvent::Touch> TouchMapT;
 
