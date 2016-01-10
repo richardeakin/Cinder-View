@@ -84,6 +84,16 @@ void Graph::removeLayer( const LayerRef &layer )
 	layer->getRootView()->mLayer = nullptr;
 }
 
+void Graph::notifyViewWasRemoved( const ViewRef &view )
+{
+	auto it = find( mViewsWithTouches.begin(), mViewsWithTouches.end(), view );
+	if( it != mViewsWithTouches.end() ) {
+		// TODO: should emit a touchesEnded() event to this View before erasing?
+		// - this likely happened because the View is being deleted
+		mViewsWithTouches.erase( it );
+	}
+}
+
 void Graph::layout()
 {
 	if( isFillParentEnabled() ) {
