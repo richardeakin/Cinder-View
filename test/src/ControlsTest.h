@@ -5,6 +5,8 @@
 #include "ui/Slider.h"
 #include "ui/Button.h"
 
+#include "cinder/gl/TextureFont.h"
+
 class ControlsTest : public ui::SuiteView {
 public:
 	ControlsTest();
@@ -16,5 +18,5 @@ private:
 
 	ui::HSliderRef			mHSlider;
 	ui::VSliderRef			mVSlider;
-	ui::ButtonRef				mButton, mToggle;
+	ui::ButtonRef			mButton, mToggle;
 };

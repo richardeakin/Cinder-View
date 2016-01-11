@@ -98,7 +98,12 @@ void Layer::update()
 
 void Layer::updateView( View *view )
 {
+	view->mIsIteratingSubviews = true;
+
 	for( auto &subview : view->getSubviews() ) {
+		if( subview->mMarkedForRemoval )
+			continue;
+
 		if( ! subview->mGraph )
 			subview->mGraph = mGraph;
 
@@ -107,7 +112,7 @@ void Layer::updateView( View *view )
 
 	view->updateImpl();
 
-	if( view->mLayer && view->mLayer.get() != this ) {
+	if( view->mLayer && view->mLayer.get() != this && ! view->mMarkedForRemoval ) {
 		view->mLayer->update();
 	}
 
@@ -119,6 +124,9 @@ void Layer::updateView( View *view )
 			LOG_LAYER( "mFrameBufferBounds: " << mFrameBufferBounds );
 		}
 	}
+
+	view->mIsIteratingSubviews = false;
+	view->clearViewsMarkedForRemoval();
 }
 
 void Layer::draw( Renderer *ren )

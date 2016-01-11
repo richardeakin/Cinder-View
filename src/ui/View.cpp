@@ -167,7 +167,11 @@ void View::removeSubview( const ViewRef &view )
 	for( auto it = mSubviews.begin(); it != mSubviews.end(); ++it ) {
 		if( view == *it ) {
 			view->mParent = nullptr;
-			mSubviews.erase( it );
+			if( mIsIteratingSubviews )
+				view->mMarkedForRemoval = true;
+			else
+				mSubviews.erase( it );
+
 			return;
 		}
 	}
@@ -175,11 +179,18 @@ void View::removeSubview( const ViewRef &view )
 
 void View::removeAllSubviews()
 {
-	for( auto &view : mSubviews ) {
-		view->mParent = nullptr;
+	if( mIsIteratingSubviews ) {
+		for( auto &view : mSubviews ) {
+			view->mParent = nullptr;
+			view->mMarkedForRemoval = true;
+		}
 	}
-
-	mSubviews.clear();
+	else {
+		for( auto &view : mSubviews ) {
+			view->mParent = nullptr;
+		}
+		mSubviews.clear();
+	}
 }
 
 void View::removeFromParent()
@@ -330,6 +341,16 @@ void View::drawImpl( Renderer *ren )
 	ren->popBlendMode();
 }
 
+void View::clearViewsMarkedForRemoval()
+{
+	mSubviews.erase(
+			remove_if( mSubviews.begin(), mSubviews.end(),
+			           []( auto &view ) {
+				           return view->mMarkedForRemoval;
+			           } ),
+			mSubviews.end() );
+}
+
 bool View::hitTest( const vec2 &localPos ) const
 {
 	return ( localPos.x >= 0 ) && ( localPos.x <= getWidth() ) && ( localPos.y >= 0 ) && ( localPos.y <= getHeight() );
@@ -441,74 +462,6 @@ void printRecursive( ostream &os, const ViewRef &view, size_t depth )
 void View::printHeirarchy( ostream &os )
 {
 	printRecursive( os, shared_from_this(), 0 );
-}
-
-void View::propagateTouchesBegan( ci::app::TouchEvent &event )
-{
-	if( mHidden || ! mInteractive )
-		return;
-
-	const auto &touch = event.getTouches().front();
-
-	if( ! hitTest( toLocal( touch.getPos() ) ) )
-		return;
-
-	for( auto rIt = mSubviews.rbegin(); rIt != mSubviews.rend(); ++rIt ) {
-		(*rIt)->propagateTouchesBegan( event );
-		if( event.isHandled() )
-			return;
-	}
-
-	bool handled = touchesBegan( event );
-	if( handled ) {
-		// Only allow this View to handle this touch in other UI events.
-		mActiveTouches[touch.getId()] = touch;
-		event.setHandled();
-	}
-}
-
-void View::propagateTouchesMoved( ci::app::TouchEvent &event )
-{
-	if( mHidden || ! mInteractive )
-		return;
-
-	const auto &touch = event.getTouches().front();
-	for( auto rIt = mSubviews.rbegin(); rIt != mSubviews.rend(); ++rIt ) {
-		(*rIt)->propagateTouchesMoved( event );
-		if(	event.isHandled() )
-			return;
-
-	}
-
-	auto touchIt = mActiveTouches.find( touch.getId() );
-	if( touchIt == mActiveTouches.end() )
-		return;
-
-	mActiveTouches[touch.getId()] = touch;
-	bool handled = touchesMoved( event );
-	event.setHandled( handled );
-}
-
-void View::propagateTouchesEnded( ci::app::TouchEvent &event )
-{
-	if( mHidden || ! mInteractive )
-		return;
-
-	const auto &touch = event.getTouches().front();
-
-	for( auto rIt = mSubviews.rbegin(); rIt != mSubviews.rend(); ++rIt ) {
-		(*rIt)->propagateTouchesEnded( event );
-		if( event.isHandled() )
-			return;
-	}
-
-	auto touchIt = mActiveTouches.find( touch.getId() );
-	if( touchIt == mActiveTouches.end() )
-		return;
-
-	mActiveTouches.erase( touchIt );
-	bool handled = touchesEnded( event );
-	event.setHandled( handled );
 }
 
 // ----------------------------------------------------------------------------------------------------

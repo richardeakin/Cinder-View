@@ -34,6 +34,9 @@ public:
 	void setTouchCanceled( bool cancel )	{ mTouchCanceled = cancel; }
 	bool isTouchCanceled() const			{ return mTouchCanceled; }
 
+	void setCancelPadding( const ci::Rectf &padding )   { mCancelPadding = padding; }
+	const ci::Rectf& getCancelPadding() const           { return mCancelPadding; }
+
 protected:
 	bool hitTestInsideCancelPadding( const ci::vec2 &localPos ) const;
 

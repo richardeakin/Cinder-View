@@ -62,9 +62,9 @@ public:
 protected:
 	void draw( Renderer *ren )	override;
 
-	bool touchesBegan( const ci::app::TouchEvent &event )	override;
-	bool touchesMoved( const ci::app::TouchEvent &event )	override;
-	bool touchesEnded( const ci::app::TouchEvent &event )	override;
+	bool touchesBegan( ci::app::TouchEvent &event )	override;
+	bool touchesMoved( ci::app::TouchEvent &event )	override;
+	bool touchesEnded( ci::app::TouchEvent &event )	override;
 
 	void updateSelection( const ci::vec2 &pos );
 

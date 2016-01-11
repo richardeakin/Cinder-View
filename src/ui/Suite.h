@@ -48,7 +48,7 @@ class SuiteView : public ui::View {
 
   private:
 	ci::signals::ScopedConnection	mKeyDownConn;
-	Suite*  mSuite;
+	Suite*  mSuite = nullptr;
 
 	friend class Suite;
 };

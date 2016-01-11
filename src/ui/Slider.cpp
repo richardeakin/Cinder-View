@@ -23,7 +23,11 @@
 
 #include "ui/Slider.h"
 
+#include "cinder/Log.h"
 #include "cppformat/format.h"
+
+//#define LOG_TOUCHES( stream )	CI_LOG_I( stream )
+#define LOG_TOUCHES( stream )	( (void)( 0 ) )
 
 using namespace std;
 using namespace ci;
@@ -92,43 +96,56 @@ std::string	SliderBase::getTitleLabel() const
 	return result;
 }
 
-
-bool SliderBase::touchesBegan( const app::TouchEvent &event )
+bool SliderBase::touchesBegan( app::TouchEvent &event )
 {
 	setTouchCanceled( false );
-	vec2 pos = toLocal( event.getTouches().front().getPos() );
+	auto &firstTouch = event.getTouches().front();
+	vec2 pos = toLocal( firstTouch.getPos() );
+
+	LOG_TOUCHES( "[" << getName() << "] pos: " << pos << ", num touches: " << event.getTouches().size() );
 
 	updateValue( pos );
+	firstTouch.setHandled();
 	return true;
 }
 
-bool SliderBase::touchesMoved( const ci::app::TouchEvent &event )
+bool SliderBase::touchesMoved( app::TouchEvent &event )
 {
 	if( isTouchCanceled() )
 		return false;
 
-	vec2 pos = toLocal( event.getTouches().front().getPos() );
+	auto &firstTouch = event.getTouches().front();
+	vec2 pos = toLocal( firstTouch.getPos() );
 	if( ! hitTestInsideCancelPadding( pos ) ) {
+		LOG_TOUCHES( "[" << getName() << "] CANCELED| pos: " << pos << ", num touches: " << event.getTouches().size() );
 		setTouchCanceled( true );
 		return false;
 	}
 
+	LOG_TOUCHES( "[" << getName() << "] pos: " << pos << ", num touches: " << event.getTouches().size() );
+
 	updateValue( pos );
+	firstTouch.setHandled();
 	return true;
 }
 
-bool SliderBase::touchesEnded( const ci::app::TouchEvent &event )
+bool SliderBase::touchesEnded( app::TouchEvent &event )
 {
 	if( isTouchCanceled() )
 		return false;
 
-	vec2 pos = toLocal( event.getTouches().front().getPos() );
+	auto &firstTouch = event.getTouches().front();
+	vec2 pos = toLocal( firstTouch.getPos() );
 	if( ! hitTestInsideCancelPadding( pos ) ) {
+		LOG_TOUCHES( "[" << getName() << "] CANCELED| pos: " << pos << ", num touches: " << event.getTouches().size() );
 		setTouchCanceled( true );
 		return false;
 	}
 
+	LOG_TOUCHES( "[" << getName() << "] pos: " << pos << ", num touches: " << event.getTouches().size() );
+
 	updateValue( pos );
+	firstTouch.setHandled();
 	return true;
 }
 

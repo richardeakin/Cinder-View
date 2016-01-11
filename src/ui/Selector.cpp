@@ -69,16 +69,17 @@ void SelectorBase::draw( Renderer *ren )
 }
 
 
-bool SelectorBase::touchesBegan( const app::TouchEvent &event )
+bool SelectorBase::touchesBegan( app::TouchEvent &event )
 {
 	setTouchCanceled( false );
-	vec2 pos = toLocal( event.getTouches().front().getPos() );
-
+	auto &firstTouch = event.getTouches().front();
+	vec2 pos = toLocal( firstTouch.getPos() );
 	updateSelection( pos );
+	firstTouch.setHandled();
 	return true;
 }
 
-bool SelectorBase::touchesMoved( const ci::app::TouchEvent &event )
+bool SelectorBase::touchesMoved( app::TouchEvent &event )
 {
 	if( isTouchCanceled() )
 		return false;
@@ -93,7 +94,7 @@ bool SelectorBase::touchesMoved( const ci::app::TouchEvent &event )
 	return true;
 }
 
-bool SelectorBase::touchesEnded( const ci::app::TouchEvent &event )
+bool SelectorBase::touchesEnded( app::TouchEvent &event )
 {
 	if( isTouchCanceled() )
 		return false;

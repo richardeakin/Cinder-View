@@ -8,6 +8,7 @@
 #include "BasicViewTests.h"
 #include "ControlsTest.h"
 #include "CompositingTest.h"
+#include "MultiTouchTest.h"
 #include "ScrollTests.h"
 
 using namespace ci;
@@ -35,6 +36,7 @@ void ViewTestsApp::setup()
 	mTestSuite->registerSuiteView<BasicViewTests>( "basic" );
 	mTestSuite->registerSuiteView<CompositingTest>( "compositing" );
 	mTestSuite->registerSuiteView<ControlsTest>( "controls" );
+	mTestSuite->registerSuiteView<MultiTouchTest>( "multitouch" );
 	mTestSuite->registerSuiteView<ScrollTests>( "scroll" );
 
 	// TODO: this doesn't cover the case of calling Suite::select() directly - should probably add new signal that ties to both Selector and that
@@ -42,7 +44,7 @@ void ViewTestsApp::setup()
 		CI_LOG_I( "selected test index: " << mTestSuite->getCurrentIndex() << ", key: " << mTestSuite->getCurrentKey() );
 	} );
 
-	mTestSuite->select( 0 );
+	mTestSuite->select( 3 );
 }
 
 void ViewTestsApp::keyDown( app::KeyEvent event )
@@ -90,6 +92,8 @@ void ViewTestsApp::drawLayerBorders()
 CINDER_APP( ViewTestsApp, RendererGl( RendererGl::Options().msaa( 8 ) ), []( App::Settings *settings ) {
 //	settings->setWindowPos( 0, 0 );
 	settings->setWindowSize( 960, 565 );
+
+	settings->setMultiTouchEnabled();
 
 	// move app to macbook display
 	for( const auto &display : Display::getDisplays() ) {

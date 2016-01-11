@@ -51,7 +51,7 @@ class Graph : public View {
 
 	ci::app::WindowRef	getWindow() const	{ return mWindow; }
 
-	void setNeedsLayer( View *view );
+	void    setNeedsLayer( View *view );
 	void    removeLayer( const LayerRef &layer );
 
 	const std::list<LayerRef>& getLayers() const   { return mLayers; }
@@ -59,25 +59,43 @@ class Graph : public View {
 	void propagateUpdate();
 	void propagateDraw();
 
+	void propagateTouchesBegan( ci::app::TouchEvent &event );
+	void propagateTouchesMoved( ci::app::TouchEvent &event );
+	void propagateTouchesEnded( ci::app::TouchEvent &event );
+
 	//! Connects this View's touches propagation methods to the Window's touch event signals
 	void connectTouchEvents( int prioririty = 1 );
 	//! Disconnects touches propagation methods.
 	void disconnectEvents();
 
+	//! Returns a map of all current touches in the window (key = touch id).
+	const std::map<uint32_t, ci::app::TouchEvent::Touch>&  getAllTouchesInWindow() const   { return mActiveTouches; }
+	//! Returns the current TouchEvent, if one is currently being processed.
+	const ci::app::TouchEvent&  getCurrentTouchEvent() const    { return mCurrentTouchEvent; }
+	//! Returns all Views that currently have active touches.
+	const std::list<ViewRef>&	    getViewsWithTouches() const { return mViewsWithTouches; }
   protected:
 	void layout() override;
 
   private:
 	LayerRef makeLayer( View *rootView );
 
+	void propagateTouchesBegan( ViewRef &view, ci::app::TouchEvent &event, size_t &numTouchesHandled );
+	void propagateTouchesMoved( ViewRef &view, ci::app::TouchEvent &event, size_t &numTouchesHandled );
+	void propagateTouchesEnded( ViewRef &view, ci::app::TouchEvent &event, size_t &numTouchesHandled );
+
 	RendererRef         mRenderer;
 	ci::app::WindowRef  mWindow;
 	bool                mMultiTouchEnabled = false;
+	ci::app::TouchEvent mCurrentTouchEvent;
 	int					mEventSlotPriority = 1;
 
 	std::vector<ci::signals::Connection>	mEventConnections;
 
 	std::list<LayerRef>	    mLayers;
+	std::list<ViewRef>	    mViewsWithTouches;
+
+	friend class Layer;
 };
 
 class GraphExc : public ci::Exception {

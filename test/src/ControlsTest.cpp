@@ -1,9 +1,9 @@
 #include "ControlsTest.h"
 
 #include "cinder/app/App.h"
-#include "cinder/Rand.h"
-#include "cinder/Timeline.h"
+//#include "cinder/Rand.h"
 #include "cinder/Log.h"
+#include "cinder/gl/draw.h"
 
 using namespace std;
 using namespace ci;
@@ -29,13 +29,13 @@ ControlsTest::ControlsTest()
 	mHSlider = make_shared<ui::HSlider>();
 	mHSlider->getBackground()->setColor( ColorA( "green", 0.5f ) );
 	mHSlider->getSignalValueChanged().connect( [this] {
-		CI_LOG_V( "mHSlider value: " << mHSlider->getValue() );
+//		CI_LOG_V( "mHSlider value: " << mHSlider->getValue() );
 	} );
 
 	mVSlider = make_shared<ui::VSlider>();
 	mVSlider->getBackground()->setColor( ColorA( "green", 0.5f ) );
 	mVSlider->getSignalValueChanged().connect( [this] {
-		CI_LOG_V( "mVSlider value: " << mVSlider->getValue() );
+//		CI_LOG_V( "mVSlider value: " << mVSlider->getValue() );
 	} );
 
 	addSubviews( { mButton, mToggle, mHSlider, mVSlider } );
@@ -62,4 +62,6 @@ void ControlsTest::layout()
 
 void ControlsTest::keyEvent( app::KeyEvent &event )
 {
+//	switch( event.getChar() ) {
+//	}
 }

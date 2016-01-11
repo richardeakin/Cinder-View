@@ -234,19 +234,19 @@ void ScrollView::calcTouchVelocity()
 // Events
 // ----------------------------------------------------------------------------------------------------
 
-bool ScrollView::touchesBegan( const app::TouchEvent &event )
+bool ScrollView::touchesBegan( app::TouchEvent &event )
 {
-	const auto &firstTouch = event.getTouches().front();
+	auto &firstTouch = event.getTouches().front();
 	vec2 pos = toLocal( firstTouch.getPos() );
 	mStoredTouches.clear();
 	storeTouchPos( pos );
 
 	mFirstTouch = mStoredTouches.front();
-
+	firstTouch.setHandled();
 	return true;
 }
 
-bool ScrollView::touchesMoved( const ci::app::TouchEvent &event )
+bool ScrollView::touchesMoved( app::TouchEvent &event )
 {
 	vec2 pos = toLocal( event.getTouches().front().getPos() );
 	vec2 lastPos = mStoredTouches.back().position;
@@ -259,7 +259,7 @@ bool ScrollView::touchesMoved( const ci::app::TouchEvent &event )
 	return true;
 }
 
-bool ScrollView::touchesEnded( const ci::app::TouchEvent &event )
+bool ScrollView::touchesEnded( app::TouchEvent &event )
 {
 	vec2 pos = toLocal( event.getTouches().front().getPos() );
 	vec2 lastPos = mStoredTouches.back().position;
@@ -403,7 +403,7 @@ void PagingScrollView::layout()
 	ScrollView::layout();
 }
 
-bool PagingScrollView::touchesEnded( const app::TouchEvent &event )
+bool PagingScrollView::touchesEnded( app::TouchEvent &event )
 {
 	bool wasDecelerating = isDecelerating();
 	bool handled = ScrollView::touchesEnded( event );

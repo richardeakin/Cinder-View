@@ -83,7 +83,7 @@ class View : public std::enable_shared_from_this<View> {
 	ci::Anim<ci::vec2>*		animPos()			{ return &mPos; }
 	ci::Anim<ci::vec2>*		animSize()			{ return &mPos; }
 
-	std::list<ViewRef>&		getSubviews()		{ return mSubviews; }
+	std::vector<ViewRef>&	getSubviews()		{ return mSubviews; }
 	ViewRef&				getSubview( size_t index );
 	const ViewRef&			getSubview( size_t index ) const;
 	const View*				getParent() const	{ return mParent; }
@@ -153,10 +153,10 @@ protected:
 	//! Returns the bounds required for rendering this View to a FrameBuffer. \default is this View's local bounds. Override if this View needs a larger sized or FrameBuffer.
 	virtual ci::Rectf   getBoundsForFrameBuffer() const;
 
-	// Override to handle UI events. Return true if handled, false otherwise.
-	virtual bool touchesBegan( const ci::app::TouchEvent &event )	{ return false; }
-	virtual bool touchesMoved( const ci::app::TouchEvent &event )	{ return false; }
-	virtual bool touchesEnded( const ci::app::TouchEvent &event )	{ return false; }
+	// Override to handle UI events. Return true if any touch was handled, false otherwise.
+	virtual bool touchesBegan( ci::app::TouchEvent &event )	{ return false; }
+	virtual bool touchesMoved( ci::app::TouchEvent &event )	{ return false; }
+	virtual bool touchesEnded( ci::app::TouchEvent &event )	{ return false; }
 
 private:
 	View( const View& )				= delete;
@@ -166,15 +166,10 @@ private:
 	void calcWorldPos() const;
 	void updateImpl();
 	void drawImpl( Renderer *ren );
+	void clearViewsMarkedForRemoval();
 
-	// TODO: consider moving propagation methods to Graph and passing View as argument
+	// TODO: consider moving to Graph, as all other propagation methods are there.
 	void propagateLayout();
-//	void propagateUpdate();
-//	void propagateDraw();
-
-	void propagateTouchesBegan( ci::app::TouchEvent &event );
-	void propagateTouchesMoved( ci::app::TouchEvent &event );
-	void propagateTouchesEnded( ci::app::TouchEvent &event );
 
 	typedef std::map<uint32_t, ci::app::TouchEvent::Touch> TouchMapT;
 
@@ -196,10 +191,12 @@ private:
 	bool                    mClipEnabled = false;
 	bool			        mRendersToFrameBuffer = false;
 	bool			        mRenderTransparencyToFrameBuffer = true;
+	bool                    mIsIteratingSubviews = false;
+	bool                    mMarkedForRemoval = false;
 
 	View*					mParent = nullptr;
 	Graph*                  mGraph = nullptr;
-	std::list<ViewRef>		mSubviews; // TODO: using list so iterators aren't invalidated during add / remove operations. A more efficient solution could be deferring the add remove until after iteration loops
+	std::vector<ViewRef>	mSubviews;
 	RectViewRef				mBackground;
 	LayerRef				mLayer;
 
