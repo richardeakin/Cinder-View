@@ -264,7 +264,7 @@ void Graph::propagateTouchesMoved( app::TouchEvent &event )
 //	size_t numTouchesHandled = 0;
 
 	for( auto &view : mViewsWithTouches ) {
-		LOG_TOUCHES( view->getName() << " | num touches A: " << event.getTouches().size() );
+//		LOG_TOUCHES( view->getName() << " | num touches A: " << event.getTouches().size() );
 
 		CI_ASSERT( ! view->mActiveTouches.empty() );
 		// Update active touches
@@ -278,26 +278,25 @@ void Graph::propagateTouchesMoved( app::TouchEvent &event )
 			touchesContinued.push_back( touch );
 		}
 
-		LOG_TOUCHES( view->getName() << " | num touchesContinued: " << touchesContinued.size() );
+//		LOG_TOUCHES( view->getName() << " | num touchesContinued: " << touchesContinued.size() );
 
-		if( touchesContinued.empty() )
-			return;
+		if( ! touchesContinued.empty() ) {
+			event.getTouches() = touchesContinued;
+			view->touchesMoved( event );
 
-		event.getTouches() = touchesContinued;
-
-		view->touchesMoved( event );
-//		for( auto &touch : event.getTouches() ) {
-//			if( touch.isHandled() ) {
-//				numTouchesHandled++;
-//				view->mActiveTouches.at( touch.getId() ) = touch;
+			// for now always updating the active touch in touch map
+//			for( auto &touch : event.getTouches() ) {
+//				if( touch.isHandled() ) {
+//					numTouchesHandled++;
+//					view->mActiveTouches.at( touch.getId() ) = touch;
+//				}
 //			}
-//		}
+		}
 	}
 
 //	if( numTouchesHandled == mCurrentTouchEvent.getTouches().size() ) {
 //		event.setHandled();
 //	}
-//
 //	LOG_TOUCHES( "handled: " << event.isHandled() );
 }
 
@@ -324,15 +323,13 @@ void Graph::propagateTouchesEnded( app::TouchEvent &event )
 
 		LOG_TOUCHES( view->getName() << " | num touchesEnded: " << touchesEnded.size() );
 
-		if( touchesEnded.empty() )
-			return;
+		if( ! touchesEnded.empty() ) {
+			event.getTouches() = touchesEnded;
+			view->touchesEnded( event );
 
-		event.getTouches() = touchesEnded;
-
-		view->touchesEnded( event );
-
-		for( const auto &touch : touchesEnded ) {
-			view->mActiveTouches.erase( touch.getId() );
+			for( const auto &touch : touchesEnded ) {
+				view->mActiveTouches.erase( touch.getId() );
+			}
 		}
 
 		// remove View from container once all its active touches have ended
@@ -347,6 +344,7 @@ void Graph::propagateTouchesEnded( app::TouchEvent &event )
 	for( const auto &touch : mCurrentTouchEvent.getTouches() ) {
 		size_t numRemoved = mActiveTouches.erase( touch.getId() );
 		CI_VERIFY( numRemoved != 0 );
+		LOG_TOUCHES( "touch: " << touch.getId() << ", num removed: " << numRemoved );
 	}
 
 	mCurrentTouchEvent.getTouches().clear();
