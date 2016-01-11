@@ -93,7 +93,7 @@ CINDER_APP( ViewTestsApp, RendererGl( RendererGl::Options().msaa( 8 ) ), []( App
 //	settings->setWindowPos( 0, 0 );
 	settings->setWindowSize( 960, 565 );
 
-	settings->setMultiTouchEnabled();
+//	settings->setMultiTouchEnabled();
 
 	// move app to macbook display
 	for( const auto &display : Display::getDisplays() ) {

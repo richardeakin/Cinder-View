@@ -28,6 +28,7 @@ protected:
 		mLocalTouchColor = Color( 0.7f, 0.0f, 0.0f );
 
 		vec2 pos = event.getTouches().front().getPos();
+		event.getTouches().front().setHandled();
 		mLocalTouchPos = toLocal( pos );
 //		CI_LOG_V( getLabel() << " local pos: " << mLocalTouchPos << ", world pos: " << getWorldPos() << ", event pos: " << pos );
 
