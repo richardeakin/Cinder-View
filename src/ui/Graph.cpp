@@ -135,14 +135,15 @@ void Graph::connectTouchEvents( int priority )
 	if( ! mEventConnections.empty() )
 		disconnectEvents();
 
+	// touch events
 	if( mMultiTouchEnabled ) {
-		mEventConnections.push_back( mWindow->getSignalTouchesBegan().connect( mEventSlotPriority,	[&]( app::TouchEvent &event ) {
+		mEventConnections.push_back( mWindow->getSignalTouchesBegan().connect( mEventSlotPriority, [&]( app::TouchEvent &event ) {
 			propagateTouchesBegan( event );
 		} ) );
-		mEventConnections.push_back( mWindow->getSignalTouchesMoved().connect( mEventSlotPriority,	[&]( app::TouchEvent &event ) {
+		mEventConnections.push_back( mWindow->getSignalTouchesMoved().connect( mEventSlotPriority, [&]( app::TouchEvent &event ) {
 			propagateTouchesMoved( event );
 		} ) );
-		mEventConnections.push_back( mWindow->getSignalTouchesEnded().connect( mEventSlotPriority,	[&]( app::TouchEvent &event ) {
+		mEventConnections.push_back( mWindow->getSignalTouchesEnded().connect( mEventSlotPriority, [&]( app::TouchEvent &event ) {
 			propagateTouchesEnded( event );
 		} ) );
 	}
@@ -163,6 +164,14 @@ void Graph::connectTouchEvents( int priority )
 			event.setHandled( touchEvent.isHandled() );
 		} ) );
 	}
+
+	// key events
+	mEventConnections.push_back( mWindow->getSignalKeyDown().connect( mEventSlotPriority, [&]( app::KeyEvent &event ) {
+		propagateKeyDown( event );
+	} ) );
+	mEventConnections.push_back( mWindow->getSignalKeyUp().connect( mEventSlotPriority, [&]( app::KeyEvent &event ) {
+		propagateKeyUp( event );
+	} ) );
 }
 
 void Graph::disconnectEvents()
@@ -235,7 +244,6 @@ void Graph::propagateTouchesBegan( ViewRef &view, app::TouchEvent &event, size_t
 				           [&view]( auto &touch ) {
 					           if( touch.isHandled() ) {
 						           LOG_TOUCHES( view->getName() << " | handled touch: " << touch.getId() );
-						           int blarg = 2;
 					           }
 					           return touch.isHandled();
 				           } ),
@@ -348,6 +356,50 @@ void Graph::propagateTouchesEnded( app::TouchEvent &event )
 	}
 
 	mCurrentTouchEvent.getTouches().clear();
+}
+
+void Graph::propagateKeyDown( ci::app::KeyEvent &event )
+{
+	auto thisRef = shared_from_this();
+	propagateKeyDown( thisRef, event );
+}
+
+void Graph::propagateKeyUp( ci::app::KeyEvent &event )
+{
+	auto thisRef = shared_from_this();
+	propagateKeyUp( thisRef, event );
+}
+
+void Graph::propagateKeyDown( ViewRef &view, ci::app::KeyEvent &event )
+{
+	if( view->isHidden() || ! view->isInteractive() )
+		return;
+
+	for( auto rIt = view->mSubviews.rbegin(); rIt != view->mSubviews.rend(); ++rIt ) {
+		propagateKeyDown( *rIt, event );
+		if( event.isHandled() )
+			return;
+	}
+
+	if( view->keyDown( event ) ) {
+		event.setHandled();
+	}
+}
+
+void Graph::propagateKeyUp( ViewRef &view, ci::app::KeyEvent &event )
+{
+	if( view->isHidden() || ! view->isInteractive() )
+		return;
+
+	for( auto rIt = view->mSubviews.rbegin(); rIt != view->mSubviews.rend(); ++rIt ) {
+		propagateKeyUp( *rIt, event );
+		if( event.isHandled() )
+			return;
+	}
+
+	if( view->keyUp( event ) ) {
+		event.setHandled();
+	}
 }
 
 } // namespace ui

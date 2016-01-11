@@ -30,8 +30,6 @@
 
 #include "mason/Factory.h"
 
-#include "cinder/app/KeyEvent.h"
-
 namespace ui {
 
 typedef std::shared_ptr<class Suite>		SuiteRef;
@@ -42,12 +40,9 @@ class Suite;
 //! View type that can be registered with and managed by Suite.
 class SuiteView : public ui::View {
   public:
-	void connectKeyDown( const std::function<void ( ci::app::KeyEvent& )> &callback );
-
 	Suite*  getSuite() const   { return mSuite; }
 
   private:
-	ci::signals::ScopedConnection	mKeyDownConn;
 	Suite*  mSuite = nullptr;
 
 	friend class Suite;

@@ -27,6 +27,7 @@
 #include "ui/Renderer.h"
 
 #include "cinder/app/TouchEvent.h"
+#include "cinder/app/KeyEvent.h"
 #include "cinder/app/MouseEvent.h"
 #include "cinder/Tween.h"
 #include "cinder/Rect.h"
@@ -157,6 +158,9 @@ protected:
 	virtual bool touchesBegan( ci::app::TouchEvent &event )	{ return false; }
 	virtual bool touchesMoved( ci::app::TouchEvent &event )	{ return false; }
 	virtual bool touchesEnded( ci::app::TouchEvent &event )	{ return false; }
+
+	virtual bool keyDown( ci::app::KeyEvent &event )	{ return false; }
+	virtual bool keyUp( ci::app::KeyEvent &event )		{ return false; }
 
 private:
 	View( const View& )				= delete;
