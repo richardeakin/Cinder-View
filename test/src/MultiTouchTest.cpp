@@ -179,8 +179,6 @@ void MultiTouchTest::layout()
 
 void MultiTouchTest::keyEvent( app::KeyEvent &event )
 {
-	CI_LOG_I( "us: " << getName() );
-
 	switch( event.getChar() ) {
 		case 't':
 			mTouchOverlay->setHidden( ! mTouchOverlay->isHidden() );
@@ -316,7 +314,12 @@ void MultiTouchTest::endCountinuousTouches()
 	vector<app::TouchEvent::Touch> touchesEnded;
 	for( size_t i = 0; i < mTestTouches.size(); i++ ) {
 		auto &t = mTestTouches[i];
+		if( t.mPhase == TestTouch::Phase::UNUSED )
+			continue;
+
 		touchesEnded.emplace_back( t.mPos, vec2( 0 ), i, 0, nullptr );
+		t.mPhase = TestTouch::Phase::UNUSED;
+		t.mPos.stop();
 	}
 
 	auto graph = getGraph();
