@@ -15,6 +15,7 @@ build/
 *.ncb
 *.sdf
 *.opensdf
+*.VC.opendb
 Debug/
 Release/
 ipch/
