@@ -111,7 +111,7 @@ void Graph::propagateUpdate()
 	// clear any Views that were marked for removal
 	mViewsWithTouches.erase(
 			remove_if( mViewsWithTouches.begin(), mViewsWithTouches.end(),
-			           []( auto &view ) {
+			           []( const ViewRef &view ) {
 				           return view->mMarkedForRemoval;
 			           } ),
 			mViewsWithTouches.end() );
@@ -232,7 +232,7 @@ void Graph::propagateTouchesBegan( ViewRef &view, app::TouchEvent &event, size_t
 		// Remove active touches. Note: I'm having to do this outside of the above loop because I can't invalidate the vector::iterator
 		touches.erase(
 				remove_if( touches.begin(), touches.end(),
-				           [&view]( auto &touch ) {
+				           [&view]( const app::TouchEvent::Touch &touch ) {
 					           if( touch.isHandled() ) {
 						           LOG_TOUCHES( view->getName() << " | handled touch: " << touch.getId() );
 						           int blarg = 2;

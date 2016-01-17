@@ -345,7 +345,7 @@ void View::clearViewsMarkedForRemoval()
 {
 	mSubviews.erase(
 			remove_if( mSubviews.begin(), mSubviews.end(),
-			           []( auto &view ) {
+			           []( const ViewRef &view ) {
 				           return view->mMarkedForRemoval;
 			           } ),
 			mSubviews.end() );
