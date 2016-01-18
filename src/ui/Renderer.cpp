@@ -19,13 +19,13 @@
  POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include <cinder/gl/scoped.h>
 #include "ui/Renderer.h"
 
 #include "cinder/gl/Batch.h"
 #include "cinder/gl/Context.h"
 #include "cinder/gl/wrapper.h"
 #include "cinder/gl/draw.h"
+#include "cinder/gl/scoped.h"
 #include "cinder/gl/Fbo.h"
 #include "cinder/Log.h"
 
