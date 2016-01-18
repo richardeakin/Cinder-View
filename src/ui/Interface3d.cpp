@@ -20,10 +20,10 @@
 */
 
 #include "ui/Interface3d.h"
+#include "ui/Graph.h"
 
 #include "cinder/gl/gl.h"
 #include "cinder/Log.h"
-#include "cinder/app/App.h"
 
 using namespace ci;
 using namespace std;
@@ -63,8 +63,9 @@ void CoordinateAxisView::draw( Renderer *ren )
 {
 	Rectf worldBounds = getWorldBounds();
 	ivec2 pos = worldBounds.getLowerLeft();
-	float windowHeight = app::getWindowHeight();
-	pos.y = app::getWindowHeight() - pos.y; // flip y relative to window's bottom left
+
+	// TODO: using clipping size here because it works, but sort of indicates the method is misnamed
+	pos.y = getGraph()->getClippingSize().y - pos.y; // flip y relative to window's bottom left
 	ivec2 size = getSize();
 	if( size.x == 0 || size.y == 0 )
 		return;
