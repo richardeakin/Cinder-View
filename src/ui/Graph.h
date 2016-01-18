@@ -63,6 +63,9 @@ class Graph : public View {
 	void propagateTouchesMoved( ci::app::TouchEvent &event );
 	void propagateTouchesEnded( ci::app::TouchEvent &event );
 
+	void propagateKeyDown( ci::app::KeyEvent &event );
+	void propagateKeyUp( ci::app::KeyEvent &event );
+
 	//! Connects this View's touches propagation methods to the Window's touch event signals
 	void connectTouchEvents( int prioririty = 1 );
 	//! Disconnects touches propagation methods.
@@ -81,8 +84,9 @@ class Graph : public View {
 	LayerRef makeLayer( View *rootView );
 
 	void propagateTouchesBegan( ViewRef &view, ci::app::TouchEvent &event, size_t &numTouchesHandled );
-	void propagateTouchesMoved( ViewRef &view, ci::app::TouchEvent &event, size_t &numTouchesHandled );
-	void propagateTouchesEnded( ViewRef &view, ci::app::TouchEvent &event, size_t &numTouchesHandled );
+
+	void propagateKeyDown( ViewRef &view, ci::app::KeyEvent &event );
+	void propagateKeyUp( ViewRef &view, ci::app::KeyEvent &event );
 
 	RendererRef         mRenderer;
 	ci::app::WindowRef  mWindow;
