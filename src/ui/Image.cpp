@@ -30,8 +30,13 @@ using namespace ci;
 namespace ui {
 
 Image::Image( const ImageSourceRef &imageSource )
+	: Image( gl::Texture::create( imageSource ) )
 {
-	mTexture = gl::Texture::create( imageSource );
+}
+
+Image::Image( const ci::gl::TextureRef &texture )
+	: mTexture( texture )
+{
 	mSize = mTexture->getSize();
 }
 

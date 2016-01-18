@@ -43,6 +43,8 @@ typedef std::shared_ptr<class Image>	ImageRef;
 class Image {
   public:
 	Image( const ci::ImageSourceRef &imageSource );
+	//! \note this is public although in the long run, we will want a way to load textures without being tied to gl, so this will likely change.
+	Image( const ci::gl::TextureRef &texture );
 
 	const ci::ivec2&    getSize() const     { return mSize; }
 	ci::Area            getBounds() const   { return ci::Area( 0, 0, mSize.x, mSize.y ); }
