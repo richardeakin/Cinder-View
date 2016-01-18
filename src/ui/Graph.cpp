@@ -351,7 +351,10 @@ void Graph::propagateTouchesEnded( app::TouchEvent &event )
 
 	for( const auto &touch : mCurrentTouchEvent.getTouches() ) {
 		size_t numRemoved = mActiveTouches.erase( touch.getId() );
-		CI_VERIFY( numRemoved != 0 );
+		//CI_VERIFY( numRemoved != 0 );
+		if( numRemoved == 0 ) {
+			CI_LOG_W( "stray touch attempted to be removed" );
+		}
 		LOG_TOUCHES( "touch: " << touch.getId() << ", num removed: " << numRemoved );
 	}
 
