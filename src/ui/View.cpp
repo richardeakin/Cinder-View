@@ -491,7 +491,18 @@ StrokedRectView::StrokedRectView( const ci::Rectf &bounds )
 
 Rectf StrokedRectView::getBoundsForFrameBuffer() const
 {
-	return Rectf( vec2( - mLineWidth / 2.0f ), getSize() + mLineWidth / 2.0f );
+	switch( mPlacement ) {
+		case Placement::CENTERED:
+			return Rectf( vec2( - mLineWidth / 2.0f ), getSize() + mLineWidth / 2.0f );
+		case Placement::INSIDE:
+			return getBoundsLocal();
+		case Placement::OUTSIDE:
+			return Rectf( vec2( - mLineWidth ), getSize() + vec2( mLineWidth ) );
+		default:
+			CI_ASSERT_NOT_REACHABLE();
+	}
+
+	return Rectf::zero();
 }
 
 void StrokedRectView::draw( Renderer *ren )
@@ -500,8 +511,23 @@ void StrokedRectView::draw( Renderer *ren )
 
 	if( mLineWidth == 1 )
 		ren->drawStrokedRect( getBoundsLocal() );
-	else
-		ren->drawStrokedRect( getBoundsLocal(), mLineWidth );
+	else {
+		Rectf rect = getBoundsLocal();
+		switch( mPlacement ) {
+			case Placement::CENTERED:
+			break;
+			case Placement::INSIDE:
+				rect.inflate( vec2( 1.0f - mLineWidth / 2.0f ) );
+			break;
+			case Placement::OUTSIDE:
+				rect.inflate( vec2( 1.0f + mLineWidth / 2.0f ) );
+			break;
+			default:
+				CI_ASSERT_NOT_REACHABLE();
+		}
+
+		ren->drawStrokedRect( rect, mLineWidth );
+	}
 }
 
 } // namespace ui

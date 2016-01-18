@@ -235,18 +235,26 @@ private:
 };
 
 class StrokedRectView : public RectView {
-public:
+  public:
+	enum class Placement { CENTERED, INSIDE, OUTSIDE };
+
 	StrokedRectView( const ci::Rectf &bounds = ci::Rectf::zero() );
 
 	void				setLineWidth( float lineWidth )		{ mLineWidth = lineWidth; }
 	float				getLineWidth() const				{ return mLineWidth; }
 	ci::Anim<float>*	getLineWidthAnim()					{ return &mLineWidth; }
 
-protected:
+	void                setPlacement( Placement placement )	{ mPlacement = placement; };
+	Placement           getPlacement() const                { return mPlacement; }
+
+  protected:
 	void draw( Renderer *ren ) override;
 	ci::Rectf getBoundsForFrameBuffer() const   override;
 
+  private:
+
 	ci::Anim<float>		mLineWidth = { 1 };
+	Placement mPlacement = Placement::CENTERED;
 };
 
 } // namespace ui
