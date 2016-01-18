@@ -145,7 +145,7 @@ void Layer::draw( Renderer *ren )
 		gl::setMatricesWindow( frameBufferSize );
 		gl::translate( - mFrameBufferBounds.getUpperLeft() );
 
-		gl::clear();
+		gl::clear( ColorA::zero() );
 	}
 
 	drawView( mRootView, ren );
