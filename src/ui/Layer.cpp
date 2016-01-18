@@ -210,9 +210,9 @@ void Layer::beginClip( View *view, Renderer *ren )
 		lowerLeft.y = mFrameBuffer->getHeight() - lowerLeft.y;
 	}
 	else {
-		// rendering to window, flip y relative to window's bottom left
-		auto window = mRootView->getGraph()->getWindow();
-		lowerLeft.y = window->getHeight() - lowerLeft.y;
+		// rendering to window, flip y relative to Graph's bottom left using its clipping size
+		ivec2 clippingSize = mRootView->getGraph()->getClippingSize();
+		lowerLeft.y = clippingSize.y - lowerLeft.y;
 	}
 
 	auto ctx = gl::context();

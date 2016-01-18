@@ -84,6 +84,18 @@ void Graph::removeLayer( const LayerRef &layer )
 	layer->getRootView()->mLayer = nullptr;
 }
 
+void Graph::setClippingSize( const ci::ivec2 &size )
+{
+	mClippingSize = size;
+	mClippingSizeSet = true;
+}
+
+//! Returns the size used for clipping operations in pixel coordinates. Defaults to the size of the window
+ci::ivec2 Graph::getClippingSize() const
+{
+	return ( mClippingSizeSet ? mClippingSize : mWindow->getSize() );
+}
+
 void Graph::layout()
 {
 	if( isFillParentEnabled() ) {

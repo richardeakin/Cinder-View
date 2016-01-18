@@ -77,6 +77,12 @@ class Graph : public View {
 	const ci::app::TouchEvent&  getCurrentTouchEvent() const    { return mCurrentTouchEvent; }
 	//! Returns all Views that currently have active touches.
 	const std::list<ViewRef>&	    getViewsWithTouches() const { return mViewsWithTouches; }
+
+	//! Sets the size used for clipping operations.
+	void setClippingSize( const ci::ivec2 &size );
+	//! Returns the size used for clipping operations. Defaults to the size of the window
+	ci::ivec2 getClippingSize() const;
+
   protected:
 	void layout() override;
 
@@ -93,6 +99,8 @@ class Graph : public View {
 	bool                mMultiTouchEnabled = false;
 	ci::app::TouchEvent mCurrentTouchEvent;
 	int					mEventSlotPriority = 1;
+	ci::ivec2			mClippingSize;
+	bool				mClippingSizeSet = false;
 
 	std::vector<ci::signals::Connection>	mEventConnections;
 
