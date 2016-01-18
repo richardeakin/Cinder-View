@@ -139,8 +139,6 @@ ScrollTests::ScrollTests()
 	}
 
 	addSubviews( { mScrollView, mHorizontalPager, mVerticalPager } );
-
-	connectKeyDown( signals::slot( this, &ScrollTests::keyEvent ) );
 }
 
 void ScrollTests::layout()
@@ -156,8 +154,9 @@ void ScrollTests::layout()
 }
 
 
-void ScrollTests::keyEvent( app::KeyEvent &event )
+bool ScrollTests::keyDown( app::KeyEvent &event )
 {
+	bool handled = true;
 	switch( event.getCode() ) {
 		case app::KeyEvent::KEY_c: {
 			mScrollView->setClipEnabled( ! mScrollView->isClipEnabled() );
@@ -171,5 +170,9 @@ void ScrollTests::keyEvent( app::KeyEvent &event )
 			mScrollView->setVerticalScrollingEnabled( ! mScrollView->isVerticalScrollingEnabled() );
 			break;
 		}
+		default:
+			handled = false;
 	}
+
+	return handled;
 }

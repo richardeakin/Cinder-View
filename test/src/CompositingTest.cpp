@@ -89,8 +89,6 @@ CompositingTest::CompositingTest()
 	mLabelC->addSubview( mLabelD );
 	mContainerView->addSubviews( { mLabelA, mLabelB, mLabelC } );
 	addSubview( mContainerView );
-
-	connectKeyDown( signals::slot( this, &CompositingTest::keyEvent ) );
 }
 
 void CompositingTest::layout()
@@ -111,8 +109,10 @@ void CompositingTest::update()
 	getSuite()->getInfoLabel()->setRow( 1, { "num FrameBuffers: ", to_string( numFrameBuffers ) } );
 }
 
-void CompositingTest::keyEvent( app::KeyEvent &event )
+bool CompositingTest::keyDown( app::KeyEvent &event )
 {
+	bool handled = true;
+
 	switch( event.getCode() ) {
 		case app::KeyEvent::KEY_SPACE: {
 			app::timeline().apply( mContainerView->animPos(), vec2( randFloat( -PADDING, PADDING ), randFloat( -PADDING, PADDING ) ), 1.0f, EaseOutExpo() );
@@ -133,5 +133,9 @@ void CompositingTest::keyEvent( app::KeyEvent &event )
 			app::timeline().apply( mContainerView->getLineWidthAnim(), nextBorderWidth, 0.6f, EaseOutExpo() );
 			break;
 		}
+		default:
+			handled = false;
 	}
+
+	return handled;
 }

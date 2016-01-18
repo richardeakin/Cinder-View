@@ -90,8 +90,6 @@ MultiTouchTest::MultiTouchTest()
 	mTouchOverlay = make_shared<TouchOverlayView>();
 
 	addSubview( mTouchOverlay ); // Add last so it is always on top
-
-	connectKeyDown( signals::slot( this, &MultiTouchTest::keyEvent ) );
 }
 
 void MultiTouchTest::setupControls()
@@ -177,8 +175,9 @@ void MultiTouchTest::layout()
 //	injectTouches();
 }
 
-void MultiTouchTest::keyEvent( app::KeyEvent &event )
+bool MultiTouchTest::keyDown( app::KeyEvent &event )
 {
+	bool handled = true;
 	switch( event.getChar() ) {
 		case 't':
 			mTouchOverlay->setHidden( ! mTouchOverlay->isHidden() );
@@ -213,7 +212,11 @@ void MultiTouchTest::keyEvent( app::KeyEvent &event )
 			testSelector->setInteractive( ! mEnableContinuousInjection );
 		}
 		break;
+		default:
+			handled = false;
 	}
+
+	return handled;
 }
 
 void MultiTouchTest::injectTouches()

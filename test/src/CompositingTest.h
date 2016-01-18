@@ -10,7 +10,8 @@ public:
 	void layout() override;
 	void update() override;
   private:
-	void keyEvent( ci::app::KeyEvent &event );
+	bool keyDown( ci::app::KeyEvent &event ) override;
+
 
 	ui::StrokedRectViewRef	    mContainerView;
 

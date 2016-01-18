@@ -133,8 +133,6 @@ BasicViewTests::BasicViewTests()
 
 	mContainerView->addSubviews( { mLabel, mLabelClipped, mLabelGrid, mImageView } );
 	addSubview( mContainerView );
-
-	connectKeyDown( signals::slot( this, &BasicViewTests::keyEvent ) );
 }
 
 void BasicViewTests::layout()
@@ -157,8 +155,9 @@ void BasicViewTests::layout()
 	mImageView->setSize( vec2( 200, 200 ) );
 }
 
-void BasicViewTests::keyEvent( app::KeyEvent &event )
+bool BasicViewTests::keyDown( app::KeyEvent &event )
 {
+	bool handled = true;
 	switch( event.getCode() ) {
 		case app::KeyEvent::KEY_c: {
 			app::timeline().apply( mContainerView->getBackground()->getColorAnim(), ColorA( randFloat(), randFloat(), randFloat(), 1.0f ), ANIM_TIME, EaseInOutExpo() );
@@ -199,5 +198,9 @@ void BasicViewTests::keyEvent( app::KeyEvent &event )
 			mImageView->setScaleMode( nextMode );
 			break;
 		}
+		default:
+			handled = false;
 	}
+
+	return handled;
 }

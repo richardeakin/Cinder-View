@@ -9,7 +9,7 @@ public:
 	void layout() override;
 
 private:
-	void keyEvent( ci::app::KeyEvent &event );
+	bool keyDown( ci::app::KeyEvent &event ) override;
 
 	ui::ViewRef				mContainerView;
 	ui::StrokedRectViewRef	mBorderView;

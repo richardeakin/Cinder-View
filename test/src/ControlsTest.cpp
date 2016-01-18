@@ -39,8 +39,6 @@ ControlsTest::ControlsTest()
 	} );
 
 	addSubviews( { mButton, mToggle, mHSlider, mVSlider } );
-
-	connectKeyDown( signals::slot( this, &ControlsTest::keyEvent ) );
 }
 
 void ControlsTest::layout()
@@ -60,8 +58,10 @@ void ControlsTest::layout()
 	mVSlider->setBounds( sliderVBounds );
 }
 
-void ControlsTest::keyEvent( app::KeyEvent &event )
+bool ControlsTest::keyDown( app::KeyEvent &event )
 {
 //	switch( event.getChar() ) {
 //	}
+
+	return false;
 }

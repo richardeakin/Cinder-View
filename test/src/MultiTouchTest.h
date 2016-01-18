@@ -19,7 +19,7 @@ class MultiTouchTest : public ui::SuiteView {
 	void update() override;
 
   private:
-	void keyEvent( ci::app::KeyEvent &event );
+	bool keyDown( ci::app::KeyEvent &event ) override;
 
 	void setupControls();
 	void setupDraggables();
