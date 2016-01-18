@@ -146,7 +146,7 @@ class View : public std::enable_shared_from_this<View> {
 	friend std::ostream& operator<<( std::ostream &os, const ViewRef &rhs );
 	void printHeirarchy( std::ostream &os );
 
-protected:
+  protected:
 	virtual void layout()		        {}
 	virtual void update()		        {}
 	virtual void draw( Renderer *ren )  {}
@@ -162,7 +162,7 @@ protected:
 	virtual bool keyDown( ci::app::KeyEvent &event )	{ return false; }
 	virtual bool keyUp( ci::app::KeyEvent &event )		{ return false; }
 
-private:
+  private:
 	View( const View& )				= delete;
 	View& operator=( const View& )	= delete;
 
@@ -219,18 +219,18 @@ std::shared_ptr<ViewT> View::makeSubview( Args&&... args )
 }
 
 class RectView : public View {
-public:
+  public:
 	RectView( const ci::Rectf &bounds = ci::Rectf::zero() );
 
 	void					setColor( const ci::ColorA &color )	{ mColor = color; }
 	const ci::ColorA&		getColor() const					{ return mColor; }
 	ci::Anim<ci::ColorA>*	getColorAnim()						{ return &mColor; }
 
-protected:
+  protected:
 	void draw( Renderer *ren ) override;
 
 	ci::Anim<ci::ColorA>	mColor = { ci::ColorA::black() };
-private:
+  private:
 	friend class View;
 };
 
