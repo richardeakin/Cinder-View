@@ -5,8 +5,8 @@ set( APP_TARGET "ViewTests" )
 set( REPO_PATH "${PROJECT_SOURCE_DIR}/.." )
 set( CMAKE_VERBOSE_MAKEFILE ON )
 
-message( STATUS "REPO_PATH: ${REPO_PATH}" )
-message( STATUS "[test] CINDER_PATH_FULL: ${CINDER_PATH_FULL}" )
+message( STATUS "[CinderView tests] REPO_PATH: ${REPO_PATH}" )
+message( STATUS "[CinderView tests] CINDER_PATH_FULL: ${CINDER_PATH_FULL}" )
 
 include( "${REPO_PATH}/cmake/ci_make_app.cmake" )
 

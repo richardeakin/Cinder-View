@@ -12,7 +12,7 @@ set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14" )
 get_filename_component( CINDER_PATH_FULL "${CMAKE_CURRENT_SOURCE_DIR}/../cinder" ABSOLUTE )
 get_filename_component( VIEW_SOURCE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/src" ABSOLUTE )
 
-message( STATUS "cinder path: ${CINDER_PATH_FULL}" )
+message( STATUS "[cinder-view] cinder path: ${CINDER_PATH_FULL}" )
 
 if( NOT CMAKE_BUILD_TYPE )
 	set( CMAKE_BUILD_TYPE Debug CACHE STRING
