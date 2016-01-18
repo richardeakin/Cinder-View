@@ -66,7 +66,7 @@ void ViewTestsApp::update()
 
 void ViewTestsApp::draw()
 {
-	gl::clear();
+	gl::clear( Color( 0, 0.1f, 0.15f ) );
 
 	mTestSuite->draw();
 
