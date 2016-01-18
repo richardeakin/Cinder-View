@@ -97,13 +97,13 @@ BasicViewTests::BasicViewTests()
 	mLabel->setText( "a label" );
 	mLabel->setAlignment( ui::TextAlignment::CENTER );
 	mLabel->setTextColor( Color::white() );
-	mLabel->getBackground()->setColor( Color( 0, 0, 0.4 ) );
+	mLabel->getBackground()->setColor( Color( 0, 0, 0.4f ) );
 
 	mLabelClipped = make_shared<ui::Label>();
 	mLabelClipped->setText( "blah blah blah blah blah" );
 	mLabelClipped->setClipEnabled();
 	mLabelClipped->setTextColor( Color::white() );
-	mLabelClipped->getBackground()->setColor( Color( 0, 0, 0.4 ) );
+	mLabelClipped->getBackground()->setColor( Color( 0, 0, 0.4f ) );
 
 	mLabelGrid = make_shared<ui::LabelGrid>();
 	mLabelGrid->getBackground()->setColor( ColorA( "yellow", 0.5f ) );
