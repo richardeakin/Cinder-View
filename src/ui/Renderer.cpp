@@ -31,6 +31,9 @@
 
 #define ENABLE_FRAMEBUFFER_CACHING 1
 
+//#define LOG_FRAMEBUFFER( stream )	CI_LOG_I( stream )
+#define LOG_FRAMEBUFFER( stream )	    ( (void)( 0 ) )
+
 using namespace ci;
 using namespace std;
 
@@ -101,7 +104,7 @@ FrameBuffer::FrameBuffer( const Format &format )
 	);
 
 	mFbo = gl::Fbo::create( format.mSize.x, format.mSize.y, fboFormat );
-	CI_LOG_V( "created gl::Fbo of size: " << format.mSize );
+	LOG_FRAMEBUFFER( "created FrameBuffer of size: " << format.mSize );
 }
 
 ivec2 FrameBuffer::getSize() const
@@ -218,6 +221,7 @@ FrameBufferRef Renderer::getFrameBuffer( const ci::ivec2 &size )
 	// Replace the largest unbound FrameBuffer, or push another one if one wasn't available
 	if( availableFrameBufferIt != mFrameBufferCache.end()  ) {
 		auto old = *availableFrameBufferIt;
+		LOG_FRAMEBUFFER( "discarding FrameBuffer of size: " << old->getSize() );
 		old->mDiscarded = true;
 		*availableFrameBufferIt = result;
 	}
