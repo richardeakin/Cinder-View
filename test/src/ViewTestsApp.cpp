@@ -44,7 +44,7 @@ void ViewTestsApp::setup()
 		CI_LOG_I( "selected test index: " << mTestSuite->getCurrentIndex() << ", key: " << mTestSuite->getCurrentKey() );
 	} );
 
-	mTestSuite->select( 3 );
+	mTestSuite->select( 1 );
 }
 
 void ViewTestsApp::keyDown( app::KeyEvent event )
@@ -97,8 +97,14 @@ CINDER_APP( ViewTestsApp, RendererGl( RendererGl::Options().msaa( 8 ) ), []( App
 
 	// move app to macbook display
 	for( const auto &display : Display::getDisplays() ) {
+		CI_LOG_I( "display name: " << display->getName() );
 		if( display->getName() == "Color LCD" ) {
 			settings->setDisplay( display );
+		}
+		else if( display->getName() == "Generic PnP Monitor" ) {
+			// gechic 1303i 13"touch display
+			settings->setDisplay( display );
+			//settings->setFullScreen( true );
 		}
 	}
 } )
