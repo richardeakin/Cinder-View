@@ -60,10 +60,10 @@ class View : public std::enable_shared_from_this<View> {
 	template<typename ViewT, typename... Args>
 	std::shared_ptr<ViewT> makeSubview( Args&&... args );
 
-	void	setBounds( const ci::Rectf &bounds );
-	void	setPos( const ci::vec2 &position );
-	void	setSize( const ci::vec2 &size );
-	void	setAlpha( float alpha )							{ mAlpha = alpha; }
+	void			setBounds( const ci::Rectf &bounds );
+	virtual void	setPos( const ci::vec2 &position );
+	virtual void	setSize( const ci::vec2 &size );
+	virtual void	setAlpha( float alpha )							{ mAlpha = alpha; }
 
 	float					getAlpha()	const		{ return mAlpha; }
 	float					getAlphaCombined() const;
