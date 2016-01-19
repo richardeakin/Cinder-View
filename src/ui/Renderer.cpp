@@ -109,6 +109,11 @@ ivec2 FrameBuffer::getSize() const
 	return mFbo->getSize();
 }
 
+bool FrameBuffer::isUsable() const
+{
+	return ! mDiscarded && ! mIsBound;
+}
+
 ImageSourceRef FrameBuffer::createImageSource() const
 {
 	return mFbo->getColorTexture()->createSource();
@@ -212,6 +217,8 @@ FrameBufferRef Renderer::getFrameBuffer( const ci::ivec2 &size )
 
 	// Replace the largest unbound FrameBuffer, or push another one if one wasn't available
 	if( availableFrameBufferIt != mFrameBufferCache.end()  ) {
+		auto old = *availableFrameBufferIt;
+		old->mDiscarded = true;
 		*availableFrameBufferIt = result;
 	}
 	else {

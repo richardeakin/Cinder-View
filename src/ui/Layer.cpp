@@ -133,9 +133,9 @@ void Layer::draw( Renderer *ren )
 {
 	if( mRootView->mRendersToFrameBuffer ) {
 		ivec2 frameBufferSize = ivec2( mFrameBufferBounds.getSize() );
-		if( ! mFrameBuffer || mFrameBuffer->getSize().x < frameBufferSize.x || mFrameBuffer->getSize().y < frameBufferSize.y ) {
+		if( ! mFrameBuffer || ! mFrameBuffer->isUsable() || mFrameBuffer->getSize().x < frameBufferSize.x || mFrameBuffer->getSize().y < frameBufferSize.y ) {
 			mFrameBuffer = ren->getFrameBuffer( frameBufferSize );
-			LOG_LAYER( "aquiring FrameBuffer for view '" << mRootView->getName() << ", size: " << mFrameBuffer->getSize()
+			LOG_LAYER( "acquiring FrameBuffer for view '" << mRootView->getName() << ", size: " << mFrameBuffer->getSize()
 			           << "', mFrameBufferBounds: " << mFrameBufferBounds << ", view bounds:" << mRootView->getBounds() );
 		}
 

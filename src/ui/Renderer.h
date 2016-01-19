@@ -70,6 +70,7 @@ class FrameBuffer {
 	int         getWidth() const { return getSize().x; }
 	int         getHeight() const { return getSize().y; }
 	bool        isBound() const { return mIsBound; }
+	bool		isUsable() const;
 
 	ci::ImageSourceRef  createImageSource() const;
 
@@ -77,6 +78,7 @@ class FrameBuffer {
 
 	cinder::gl::FboRef  mFbo;
 	bool                mIsBound = false;
+	bool				mDiscarded = false;
 
 	friend class Renderer;
 };
