@@ -22,6 +22,7 @@
 #pragma once
 
 #include "ui/Control.h"
+#include "ui/Image.h"
 #include "ui/TextManager.h"
 
 namespace ui {
@@ -45,6 +46,10 @@ public:
 	void setTitleColor( const ci::ColorA &color, State state = State::NORMAL );
 	void setColor( const ci::ColorA &color, State state = State::NORMAL );
 
+	//! Sets an Image to represent the Button. If added then title won't be used.
+	//! TODO: only State::Normal is supported right now, add enabled and pressed too
+	void setImage( const ui::ImageRef &image, State state = State::NORMAL );
+
 	const ci::ColorA&	getColorForState( State state ) const;
 	const std::string&	getTitleForState( State state ) const;
 	const ci::ColorA&	getTitleColorForState( State state ) const;
@@ -63,9 +68,10 @@ protected:
 	bool touchesMoved( ci::app::TouchEvent &event )	override;
 	bool touchesEnded( ci::app::TouchEvent &event )	override;
 
-	bool mEnabled = false;
-	bool mIsToggle = false;
-	State mState = State::NORMAL;
+	bool        mEnabled = false;
+	bool        mIsToggle = false;
+	bool        mHasBackgroundColor = false;
+	State       mState = State::NORMAL;
 
 	ci::ColorA	mColorNormal = ci::ColorA::gray( 0.5f );
 	ci::ColorA	mColorEnabled = ci::ColorA::gray( 0.38f );
@@ -76,6 +82,8 @@ protected:
 
 	TextRef			mTextTitle;
 	std::string		mTitleNormal, mTitleEnabled;
+
+	ImageRef   mImageNormal;
 
 	ci::signals::Signal<void ()>	mSignalPressed, mSignalReleased; // TODO: look at other frameworks (like html5, dart) and see what they name these, and how they organize the events
 };
