@@ -162,8 +162,6 @@ void Layer::draw( Renderer *ren )
 		ren->draw( mFrameBuffer, Area( 0, 0, mFrameBufferBounds.getWidth(), mFrameBufferBounds.getHeight() ), destRect );
 		ren->popColor();
 		ren->popBlendMode();
-
-//		writeImage( "framebuffer.png", mFrameBuffer->createImageSource() );
 	}
 }
 

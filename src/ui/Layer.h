@@ -56,7 +56,6 @@ class Layer : public std::enable_shared_from_this<Layer> {
 
 	void markForRemoval()               { mShouldRemove = true; }
 	void init();
-	void configureView( View *view );
 	void updateView( View *view );
 	void drawView( View *view, Renderer *ren );
 	void beginClip( View *view, Renderer *ren );
