@@ -8,6 +8,7 @@
 #include "BasicViewTests.h"
 #include "ControlsTest.h"
 #include "CompositingTest.h"
+#include "FilterTest.h"
 #include "MultiTouchTest.h"
 #include "ScrollTests.h"
 
@@ -38,13 +39,14 @@ void ViewTestsApp::setup()
 	mTestSuite->registerSuiteView<ControlsTest>( "controls" );
 	mTestSuite->registerSuiteView<MultiTouchTest>( "multitouch" );
 	mTestSuite->registerSuiteView<ScrollTests>( "scroll" );
+	mTestSuite->registerSuiteView<FilterTest>( "filters" );
 
 	// TODO: this doesn't cover the case of calling Suite::select() directly - should probably add new signal that ties to both Selector and that
 	mTestSuite->getSelector()->getSignalValueChanged().connect( [this] {
 		CI_LOG_I( "selected test index: " << mTestSuite->getCurrentIndex() << ", key: " << mTestSuite->getCurrentKey() );
 	} );
 
-	mTestSuite->select( 1 );
+	mTestSuite->select( 5 );
 }
 
 void ViewTestsApp::keyDown( app::KeyEvent event )
