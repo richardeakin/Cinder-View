@@ -255,6 +255,18 @@ void View::setWorldPosDirty()
 		subview->setWorldPosDirty();
 }
 
+void View::addFilter( const FilterRef &filter )
+{
+	auto layer = getLayer();
+	if( ! layer ) {
+		// TODO: this might as well be a function along the lines of makeLayer()
+		getGraph()->setNeedsLayer( this );
+		layer = getLayer();
+	}
+
+	layer->addFilter( filter );
+}
+
 // TODO: consider moving layout propagation to Graph, at which point it will also configure layer tree
 void View::propagateLayout()
 {

@@ -22,6 +22,7 @@
 #pragma once
 
 #include "ui/Renderer.h"
+#include "ui/Filter.h"
 
 #include <memory>
 
@@ -49,6 +50,8 @@ class Layer : public std::enable_shared_from_this<Layer> {
 
 	ci::Rectf   getBoundsWorld() const;
 
+	void    addFilter( const FilterRef &filter );
+
   private:
 
 	void update();
@@ -65,6 +68,9 @@ class Layer : public std::enable_shared_from_this<Layer> {
 	Graph*          mGraph;
 	FrameBufferRef	mFrameBuffer;
 	ci::Rectf       mFrameBufferBounds = ci::Rectf::zero();
+
+	std::vector<FilterRef>  mFilters;
+
 	bool            mShouldRemove = false;
 
 	friend class Graph;

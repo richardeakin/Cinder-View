@@ -134,8 +134,10 @@ class View : public std::enable_shared_from_this<View> {
 	void	setClipEnabled( bool enable = true );
 	bool	isClipEnabled() const;
 
-	void	setBlendMode( BlendMode mode )				{ mBlendMode = mode; }
+	void	    setBlendMode( BlendMode mode )			{ mBlendMode = mode; }
 	BlendMode	getBlendMode() const					{ return mBlendMode; }
+
+	void    addFilter( const FilterRef &filter );
 
 	void	setFillParentEnabled( bool enable = true );
 	bool	isFillParentEnabled() const					{ return mFillParent; }

@@ -6,6 +6,14 @@
 using namespace std;
 using namespace ci;
 
+class FilterBlur : public ui::Filter {
+  public:
+	void process( const ui::FrameBufferRef &frameBuffer ) override
+	{
+		// TODO NEXT: blur this guy
+	}
+};
+
 FilterTest::FilterTest()
 {
 	mContainerView = make_shared<View>();
@@ -43,8 +51,8 @@ void FilterTest::layout()
 
 	vec2 center = containerBounds.getCenter();
 
-
 	Rectf imageRect = { center.x - imageViewSize.x / 2, center.y - imageViewSize.y / 2, center.x + imageViewSize.x / 2, center.y + imageViewSize.y / 2 };
+	imageRect -= vec2( padding ); // TODO: why is this needed? shouldn't matter as mImageView lives inside mContainerView
 	mImageView->setBounds( imageRect );
 }
 

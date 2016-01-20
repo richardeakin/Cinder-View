@@ -91,6 +91,13 @@ void Layer::init()
 	}
 }
 
+void Layer::addFilter( const FilterRef &filter )
+{
+	// for now, there is only one filter
+	mFilters.clear();
+	mFilters.push_back( filter );
+}
+
 void Layer::update()
 {
 	updateView( mRootView );
@@ -154,6 +161,11 @@ void Layer::draw( Renderer *ren )
 		ren->popFrameBuffer( mFrameBuffer );
 		gl::popViewport();
 		gl::popMatrices();
+
+		// process all Filters before drawing FrameBuffer
+		for( auto &filter : mFilters ) {
+			filter->process( mFrameBuffer );
+		}
 
 		ren->pushBlendMode( BlendMode::PREMULT_ALPHA );
 		ren->pushColor( ColorA::gray( 1, getAlpha() ) );
