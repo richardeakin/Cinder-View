@@ -2,7 +2,7 @@ cmake_minimum_required( VERSION 3.0 FATAL_ERROR )
 project( cinder-view )
 
 # Cache options
-set( CINDER_PATH "../cinder" CACHE STRING "Path to Cinder directory" )
+set( CINDER_PATH "../../cinder" CACHE STRING "Path to Cinder directory" )
 option( CINDER_VIEW_TEST_ENABLE "ViewTests" ON )
 
 
