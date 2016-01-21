@@ -111,7 +111,6 @@ void Graph::propagateUpdate()
 		auto &layer = *layerIt;
 
 		if( layer->getShouldRemove() ) {
-			CI_LOG_I( "removing layer" );
 			layerIt = mLayers.erase( layerIt );
 			continue;
 		}
