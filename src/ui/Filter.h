@@ -10,7 +10,7 @@ typedef std::shared_ptr<class Filter>   FilterRef;
 
 class Filter {
   public:
-	virtual void process( const FrameBufferRef &frameBuffer ) = 0;
+	virtual void process( Renderer *ren, const FrameBufferRef &frameBuffer ) = 0;
 };
 
 } // namespace ui

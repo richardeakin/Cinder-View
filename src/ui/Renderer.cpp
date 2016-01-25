@@ -122,6 +122,11 @@ ImageSourceRef FrameBuffer::createImageSource() const
 	return mFbo->getColorTexture()->createSource();
 }
 
+ci::gl::TextureRef FrameBuffer::getColorTexture() const
+{
+	return mFbo->getColorTexture();
+}
+
 // ----------------------------------------------------------------------------------------------------
 // Renderer
 // ----------------------------------------------------------------------------------------------------

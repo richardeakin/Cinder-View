@@ -164,7 +164,7 @@ void Layer::draw( Renderer *ren )
 
 		// process all Filters before drawing FrameBuffer
 		for( auto &filter : mFilters ) {
-			filter->process( mFrameBuffer );
+			filter->process( ren, mFrameBuffer );
 		}
 
 		ren->pushBlendMode( BlendMode::PREMULT_ALPHA );

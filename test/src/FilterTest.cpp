@@ -2,17 +2,92 @@
 
 #include "cinder/app/App.h"
 #include "cinder/Log.h"
+#include "cinder/gl/gl.h"
+
+#include "../../blocks/Cinder-FileWatcher/src/mason/FileWatcher.cpp" // TEMP
 
 using namespace std;
 using namespace ci;
 
-class FilterBlur : public ui::Filter {
-  public:
-	void process( const ui::FrameBufferRef &frameBuffer ) override
-	{
-		// TODO NEXT: blur this guy
+FilterBlur::FilterBlur()
+{
+	vector<fs::path> glslPaths = {
+		"glsl/blur.vert",
+		"glsl/blur.frag"
+	};
+
+	try {
+		mWatchGlsl = mason::FileWatcher::load( glslPaths, [this]( const std::vector<fs::path> &fullPaths ) {
+			auto format = gl::GlslProg::Format()
+				.vertex( loadFile( fullPaths.at( 0 ) ) )
+				.fragment( loadFile( fullPaths.at( 1 ) ) )
+			;
+
+			try {
+				mGlslBlur = gl::GlslProg::create( format );
+
+				CI_LOG_I( "blur glsl loaded." );
+			}
+			catch( std::exception &exc ) {
+				CI_LOG_EXCEPTION( "failed to compile GlslProg at: " << format.getVertexPath(), exc );
+			}
+		} );
 	}
-};
+	catch( std::exception &exc ) {
+		CI_LOG_EXCEPTION( "failed to load blur glsl", exc );
+	}
+}
+
+void FilterBlur::process( ui::Renderer *ren, const ui::FrameBufferRef &frameBuffer)
+{
+	gl::ScopedGlslProg glslScope( mGlslBlur );
+
+	//float attenuation = 1.0f;
+	//mGlslBlur->uniform( "uAttenuation", attenuation );
+
+	// blur horizontally and the size of 1 pixel
+	mGlslBlur->uniform( "uSampleOffset", vec2( 1.0f / frameBuffer->getWidth(), 0.0f ) );
+
+	// copy a horizontally blurred version of our scene into the first blur Fbo
+	auto frameBufferBlur1 = ren->getFrameBuffer( frameBuffer->getSize() );
+	{
+
+		ren->pushFrameBuffer( frameBufferBlur1 );
+
+		// TODO: is this needed? famebuffer is same size
+		gl::ScopedViewport viewport( 0, 0, frameBuffer->getWidth(), frameBuffer->getHeight() );
+
+		gl::ScopedTextureBind tex0( frameBufferBlur1->getColorTexture(), 0 );
+
+		//gl::ScopedMatrices matScope;
+		//gl::setMatricesWindow( mFboBlur1->getWidth(), mFboBlur1->getHeight() );
+		//gl::clear();
+
+		gl::drawSolidRect( Rectf( vec2( 0 ), frameBufferBlur1->getSize() ) );
+
+		ren->popFrameBuffer( frameBufferBlur1 );
+	}
+
+	frameBufferBlur1->mFbo->blitTo( frameBuffer->mFbo, frameBufferBlur1->mFbo->getBounds(), frameBuffer->mFbo->getBounds() );
+	CI_CHECK_GL();
+
+	// blur vertically and the size of 1 pixel
+	//mGlslBlur->uniform( "uSampleOffset", vec2( 0.0f, 1.0f / mFboBlur2->getHeight() ) );
+
+	//// copy a vertically blurred version of our blurred scene into the second blur Fbo
+	//{
+	//	gl::ScopedFramebuffer fboScope( mFboBlur2 );
+	//	gl::ScopedViewport viewportScope( 0, 0, mFboBlur2->getWidth(), mFboBlur2->getHeight() );
+
+	//	gl::ScopedTextureBind tex0( mFboBlur1->getColorTexture(), 0 );
+
+	//	gl::ScopedMatrices matScope;
+	//	gl::setMatricesWindow( mFboBlur2->getWidth(), mFboBlur2->getHeight() );
+	//	gl::clear();
+
+	//	gl::drawSolidRect( mFboBlur2->getBounds() );
+	//}
+}
 
 FilterTest::FilterTest()
 {
@@ -33,6 +108,9 @@ FilterTest::FilterTest()
 	catch( std::exception &exc ) {
 		CI_LOG_EXCEPTION( "failed to load image at path: " << imageFilePath, exc );
 	}
+
+	mFilterBlur = make_shared<FilterBlur>();
+	mImageView->addFilter( mFilterBlur );
 
 	mContainerView->addSubview( mImageView );
 	addSubview( mContainerView );

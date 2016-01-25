@@ -74,9 +74,12 @@ class FrameBuffer {
 
 	ci::ImageSourceRef  createImageSource() const;
 
-  private:
+	// TODO: don't expose gl, but as Renderer doesn't support passing in shaders for drawing this is the only way to custom draw a FrameBuffer's contents
+	ci::gl::TextureRef	getColorTexture() const;
 
-	cinder::gl::FboRef  mFbo;
+	ci::gl::FboRef		mFbo; // TODO: make private
+
+private:
 	bool                mIsBound = false;
 	bool				mDiscarded = false;
 
