@@ -96,6 +96,7 @@ FilterTest::FilterTest()
 	mContainerView->setLabel( "container" );
 
 	mImageView = make_shared<ui::ImageView>();
+	mImageView->setLabel( "ImageView with filter" );
 
 	fs::path imageFilePath = app::getAssetPath( "images/monkey_hitchhike.jpg" );
 	try {

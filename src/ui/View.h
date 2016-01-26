@@ -207,6 +207,7 @@ class View : public std::enable_shared_from_this<View> {
 	std::vector<ViewRef>	mSubviews;
 	RectViewRef				mBackground;
 	LayerRef				mLayer;
+	std::vector<FilterRef>  mFilters;
 
 	friend class Layer;
 	friend class Graph;

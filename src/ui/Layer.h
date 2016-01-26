@@ -46,11 +46,9 @@ class Layer : public std::enable_shared_from_this<Layer> {
 
 	View*   getRootView() const         { return mRootView; }
 
-	bool getShouldRemove()const         { return mShouldRemove; }
+	bool getShouldRemove() const         { return mShouldRemove; }
 
 	ci::Rectf   getBoundsWorld() const;
-
-	void    addFilter( const FilterRef &filter );
 
   private:
 
@@ -68,8 +66,6 @@ class Layer : public std::enable_shared_from_this<Layer> {
 	Graph*          mGraph;
 	FrameBufferRef	mFrameBuffer;
 	ci::Rectf       mFrameBufferBounds = ci::Rectf::zero();
-
-	std::vector<FilterRef>  mFilters;
 
 	bool            mShouldRemove = false;
 

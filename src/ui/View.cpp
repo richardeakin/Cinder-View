@@ -257,14 +257,7 @@ void View::setWorldPosDirty()
 
 void View::addFilter( const FilterRef &filter )
 {
-	auto layer = getLayer();
-	if( ! layer ) {
-		// TODO: this might as well be a function along the lines of makeLayer()
-		getGraph()->setNeedsLayer( this );
-		layer = getLayer();
-	}
-
-	layer->addFilter( filter );
+	mFilters.push_back( filter );
 }
 
 // TODO: consider moving layout propagation to Graph, at which point it will also configure layer tree
@@ -299,6 +292,7 @@ void View::updateImpl()
 	// if bounds is animating, update background's position and size, propagate layout
 	bool needsLayout = mNeedsLayout;
 	bool hasBackground = (bool)mBackground;
+	bool needsLayer = false;
 
 	if( ! mPos.isComplete() ) {
 		if( hasBackground )
@@ -312,17 +306,29 @@ void View::updateImpl()
 			mBackground->setSize( getSize() );
 	}
 
+	// handle transparency that needs a Layer for compositing
 	if( mRenderTransparencyToFrameBuffer ) {
 		if( isTransparent() ) {
 			if( ! mRendersToFrameBuffer ) {
-				getGraph()->setNeedsLayer( this );
+				needsLayer = true;
 			}
 		}
-		else if( mRendersToFrameBuffer ) {
-			CI_ASSERT( mLayer );
-			getGraph()->removeLayer( mLayer );
-			mRendersToFrameBuffer = false;
+	}
+
+	// handle Filters as they need a Layer and FrameBuffer to render with
+	if( ! mFilters.empty() ) {
+		needsLayer = true;
+	}
+
+	if( needsLayer ) {
+		if( ! mLayer ) {
+			getGraph()->setNeedsLayer( this );
 		}
+	}
+	else {
+		// TODO: a bit hacky that Graph is always getting handled here, and that its Layer could potentially be removed when it always needs one
+		if( mLayer && getGraph() != this )
+			getGraph()->removeLayer( mLayer );
 	}
 
 	if( needsLayout )

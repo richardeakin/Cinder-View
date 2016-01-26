@@ -77,6 +77,11 @@ void Layer::init()
 			mRootView->mRendersToFrameBuffer = true;
 		}
 	}
+	else if( ! mRootView->mFilters.empty() ) {
+		LOG_LAYER( "enabling FrameBuffer for view '" << mRootView->getName() << "', size: " << mRootView->getSize() );
+		LOG_LAYER( "\t- reason: num filters = " << mRootView->mFilters.size() );
+		mRootView->mRendersToFrameBuffer = true;
+	}
 	else {
 		if( mFrameBuffer ) {
 			// TODO: Consider removing, this path currently isn't reached as the Layer will be removed when View calls Graph::removeLayer().
@@ -89,13 +94,6 @@ void Layer::init()
 			return;
 		}
 	}
-}
-
-void Layer::addFilter( const FilterRef &filter )
-{
-	// for now, there is only one filter
-	mFilters.clear();
-	mFilters.push_back( filter );
 }
 
 void Layer::update()
@@ -124,6 +122,7 @@ void Layer::updateView( View *view )
 	}
 
 	// make sure we have the right FrameBuffer size
+	// TODO NEXT: bounds is (0,0) for Layer that sould draw for filters, find out why
 	if( mRootView->mRendersToFrameBuffer ) {
 		Rectf frameBufferBounds = view->getBoundsForFrameBuffer();
 		if( mFrameBufferBounds.getWidth() < frameBufferBounds.getWidth() && mFrameBufferBounds.getHeight() < frameBufferBounds.getHeight() ) {
@@ -163,7 +162,7 @@ void Layer::draw( Renderer *ren )
 		gl::popMatrices();
 
 		// process all Filters before drawing FrameBuffer
-		for( auto &filter : mFilters ) {
+		for( auto &filter : mRootView->mFilters ) {
 			filter->process( ren, mFrameBuffer );
 		}
 
