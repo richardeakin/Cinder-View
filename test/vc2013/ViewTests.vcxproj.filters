@@ -32,9 +32,6 @@
     <ClCompile Include="..\src\ScrollTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\FilterTest.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\BasicViewTests.h">
@@ -50,9 +47,6 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\ScrollTests.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\src\FilterTest.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
