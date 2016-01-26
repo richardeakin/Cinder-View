@@ -83,7 +83,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\src;$(CINDER_PATH)\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\src;$(CINDER_PATH)\include;..\..\..\Cinder-FileWatcher\src</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_WIN32_WINNT=0x0601;_WINDOWS;NOMINMAX;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -110,7 +110,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\src;$(CINDER_PATH)\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\src;$(CINDER_PATH)\include;..\..\..\Cinder-FileWatcher\src</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_WIN32_WINNT=0x0601;_WINDOWS;NOMINMAX;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -135,7 +135,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\..\src;$(CINDER_PATH)\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\src;$(CINDER_PATH)\include;..\..\..\Cinder-FileWatcher\src</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_WIN32_WINNT=0x0601;_WINDOWS;NOMINMAX;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeader />
@@ -164,7 +164,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\..\src;$(CINDER_PATH)\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\src;$(CINDER_PATH)\include;..\..\..\Cinder-FileWatcher\src</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_WIN32_WINNT=0x0601;_WINDOWS;NOMINMAX;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeader />
@@ -197,6 +197,7 @@
     <ClInclude Include="..\src\BasicViewTests.h" />
     <ClInclude Include="..\src\CompositingTest.h" />
     <ClInclude Include="..\src\ControlsTest.h" />
+    <ClInclude Include="..\src\FilterTest.h" />
     <ClInclude Include="..\src\MultiTouchTest.h" />
     <ClInclude Include="..\src\ScrollTests.h" />
   </ItemGroup>
@@ -205,6 +206,7 @@
     <ClCompile Include="..\src\BasicViewTests.cpp" />
     <ClCompile Include="..\src\CompositingTest.cpp" />
     <ClCompile Include="..\src\ControlsTest.cpp" />
+    <ClCompile Include="..\src\FilterTest.cpp" />
     <ClCompile Include="..\src\MultiTouchTest.cpp" />
     <ClCompile Include="..\src\ScrollTests.cpp" />
     <ClCompile Include="..\src\ViewTestsApp.cpp" />
