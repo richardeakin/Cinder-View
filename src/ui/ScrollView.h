@@ -36,9 +36,19 @@ class ScrollView : public View {
 	virtual void addContentView( const ViewRef &view, bool updateContentLayout = true );
 	void addContentViews( const std::vector<ViewRef> &views );
 
+	ViewRef getContentView( size_t pageIndex ) const;
+
+	// TODO: why is this returning the container? return the content views added with addContentView
+	// - can get those with getContentView()->getSubviews() but these names are confusing
+	// - can rename this to mContainerView and getContainerView()
 	View*	getContentView();
 	const View*	getContentView() const;
 	size_t	getNumContentViews() const;
+
+
+	// TODO: make this more generic and virtual so all Views can be used to convert between coord systems
+	// - I think this conversion will just work in a more generic case since mContentView's position is just offset
+	ci::vec2    convertPointToParent( const ViewRef &contentView ) const;
 
 	void					setContentOffset( const ci::vec2 &offset );
 	const ci::vec2&			getContentOffset() const	{ return mContentOffset; }

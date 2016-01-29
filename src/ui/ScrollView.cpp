@@ -81,9 +81,25 @@ const View* ScrollView::getContentView() const
 	return mContentView.get();
 }
 
+ViewRef ScrollView::getContentView( size_t index ) const
+{
+	if( index >= mContentView->getSubviews().size() ) {
+		return nullptr;
+	}
+
+	return mContentView->getSubview( index );
+}
+
 size_t ScrollView::getNumContentViews() const
 {
 	return mContentView->getSubviews().size();
+}
+
+ci::vec2 ScrollView::convertPointToParent( const ViewRef &contentView ) const
+{
+	vec2 offset = mContentView->getPos();
+
+	return contentView->getPos() + offset;
 }
 
 void ScrollView::setContentOffset( const ci::vec2 &offset )
