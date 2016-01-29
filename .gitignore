@@ -17,5 +17,6 @@ build/
 *.opensdf
 *.VC.opendb
 Debug/
+RelWithDebInfo/
 Release/
 ipch/
