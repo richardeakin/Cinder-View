@@ -154,10 +154,6 @@ void ScrollView::update()
 	}
 }
 
-void ScrollView::draw( Renderer *ren )
-{
-}
-
 void ScrollView::updateOffset( const ci::vec2 &currentPos, const ci::vec2 &previousPos )
 {
 	vec2 diff = currentPos - previousPos;

@@ -95,7 +95,6 @@ class ScrollView : public View {
   protected:
 	void layout()	override;
 	void update()	override;
-	void draw( Renderer *ren ) override;
 
 	bool touchesBegan( cinder::app::TouchEvent &event )	override;
 	bool touchesMoved( ci::app::TouchEvent &event )	override;
