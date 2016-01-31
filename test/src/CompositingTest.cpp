@@ -21,13 +21,11 @@ CompositingTest::CompositingTest()
 	mContainerView->setLineWidth( 6 );
 	mContainerView->setLabel( "container" );
 
-	const vec2 labelSize = { 200, 200 };
 	const float fontSizeBig = 64;
 
 	mLabelA = make_shared<ui::Label>();
 	mLabelA->setText( "A" );
 	mLabelA->setLabel( "Label A" );
-	mLabelA->setSize( labelSize );
 	mLabelA->setFontSize( fontSizeBig );
 	mLabelA->setAlignment( ui::TextAlignment::CENTER );
 	mLabelA->setTextColor( Color::white() );
@@ -36,7 +34,6 @@ CompositingTest::CompositingTest()
 	mLabelB = make_shared<ui::Label>();
 	mLabelB->setText( "B" );
 	mLabelB->setLabel( "Label B" );
-	mLabelB->setSize( labelSize );
 	mLabelB->setFontSize( fontSizeBig );
 	mLabelB->setAlignment( ui::TextAlignment::CENTER );
 	mLabelB->setTextColor( Color::white() );
@@ -45,7 +42,6 @@ CompositingTest::CompositingTest()
 	mLabelC = make_shared<ui::Label>();
 	mLabelC->setText( "C" );
 	mLabelC->setLabel( "Label C" );
-	mLabelC->setSize( labelSize );
 	mLabelC->setFontSize( fontSizeBig );
 	mLabelC->setAlignment( ui::TextAlignment::CENTER );
 	mLabelC->setTextColor( Color::white() );
@@ -55,7 +51,6 @@ CompositingTest::CompositingTest()
 	mLabelD = make_shared<ui::Label>();
 	mLabelD->setText( "D" );
 	mLabelD->setLabel( "Label D" );
-	mLabelD->setSize( vec2( 60, 60 ) );
 	mLabelD->setFontSize( 30 );
 	mLabelD->setAlignment( ui::TextAlignment::CENTER );
 	mLabelD->setTextColor( Color::white() );
@@ -96,11 +91,18 @@ void CompositingTest::layout()
 	mContainerView->setBounds( Rectf( PADDING, PADDING, getWidth() - PADDING, getHeight() - PADDING ) );
 	CI_LOG_I( "mContainerView bounds: " << mContainerView->getBounds() );
 
+	const vec2 labelSize = { 200, 200 };
+
 	mLabelA->setPos( { 200, 100 } );
 	mLabelB->setPos( { 450, 100 } );
 	mLabelC->setPos( { 325, 200 } );
 
+	mLabelA->setSize( labelSize );
+	mLabelB->setSize( labelSize );
+	mLabelC->setSize( labelSize );
+
 	mLabelD->setPos( { 12, 70 } );
+	mLabelD->setSize( vec2( 60, 60 ) );
 }
 
 void CompositingTest::update()
