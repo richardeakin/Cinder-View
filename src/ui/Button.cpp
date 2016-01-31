@@ -35,18 +35,25 @@ Button::Button( const Rectf &bounds )
 const ColorA& Button::getColorForState( Button::State state ) const
 {
 	switch( state ) {
-		case State::NORMAL:
-			return mColorNormal;
-			break;
-		case State::ENABLED:
-			return mColorEnabled;
-			break;
-		case State::PRESSED:
-			return mColorPressed;
-			break;
+		case State::NORMAL:		return mColorNormal;
+		case State::ENABLED:	return mColorEnabled;
+		case State::PRESSED:	return mColorPressed;
+		default:				break;
 	}
 
 	return mColorNormal;
+}
+
+ImageRef Button::getImageForState( State state ) const
+{
+	switch( state ) {
+		case State::NORMAL:		return mImageNormal;
+		case State::ENABLED:	return mImageEnabled;
+		case State::PRESSED:	return mImagePressed;
+		default:				break;
+	}
+
+	return mImageNormal;
 }
 
 const string& Button::getTitleForState( State state ) const
@@ -67,9 +74,10 @@ const ColorA& Button::getTitleColorForState( State state ) const
 
 void Button::draw( Renderer *ren )
 {
-	if( mImageNormal ) {
+	auto image = getImage();
+	if( image ) {
 		// draw image
-		ren->draw( mImageNormal, getBoundsLocal() );
+		ren->draw( image, getBoundsLocal() );
 	}
 	else {
 		// draw background solid color
@@ -110,16 +118,43 @@ void Button::setTitleColor( const ci::ColorA &color, State state )
 void Button::setColor( const ci::ColorA &color, State state )
 {
 	switch( state ) {
-		case State::NORMAL: mColorNormal = color; return;
-		case State::ENABLED: mColorEnabled = color; return;
-		case State::PRESSED: mColorPressed = color; return;
+		case State::NORMAL:		mColorNormal = color; return;
+		case State::ENABLED:	mColorEnabled = color; return;
+		case State::PRESSED:	mColorPressed = color; return;
 		default: CI_ASSERT_NOT_REACHABLE();
 	}
 }
 
 void Button::setImage( const ui::ImageRef &image, State state )
 {
-	mImageNormal = image;
+	switch( state ) {
+		case State::NORMAL:		mImageNormal = image; return;
+		case State::ENABLED:	mImageEnabled = image; return;
+		case State::PRESSED:	mImagePressed = image; return;
+		default: CI_ASSERT_NOT_REACHABLE();
+	}
+}
+
+ImageRef Button::getImage() const
+{
+	switch( getState() ) {
+		case State::NORMAL:
+			return mImageNormal;
+		case State::ENABLED: {
+			if( mImageEnabled )
+				return mImageEnabled;
+		}
+		break;
+		case State::PRESSED: {
+			if( mImagePressed )
+				return mImagePressed;
+		}
+		break;
+		default:
+		break;
+	}
+
+	return mImageNormal;
 }
 
 bool Button::touchesBegan( app::TouchEvent &event )

@@ -53,10 +53,13 @@ public:
 	const ci::ColorA&	getColorForState( State state ) const;
 	const std::string&	getTitleForState( State state ) const;
 	const ci::ColorA&	getTitleColorForState( State state ) const;
+	ImageRef			getImageForState( State state ) const;
 
 	const ci::ColorA&	getColor() const		{ return getColorForState( getState() ); }
 	const std::string&	getTitle() const		{ return getTitleForState( getState() ); }
 	const ci::ColorA&	getTitleColor() const	{ return getTitleColorForState( getState() ); }
+	//! Returns the image that will be used to draw for the current state, if any. If there is an image for State::Normal but not the current button state, then it will be used.
+	ImageRef			getImage() const;
 
 	ci::signals::Signal<void ()>&	getSignalPressed()	{ return mSignalPressed; }
 	ci::signals::Signal<void ()>&	getSignalReleased()	{ return mSignalReleased; }
@@ -82,7 +85,7 @@ protected:
 	TextRef			mTextTitle;
 	std::string		mTitleNormal, mTitleEnabled;
 
-	ImageRef   mImageNormal;
+	ImageRef   mImageNormal, mImageEnabled, mImagePressed;
 
 	ci::signals::Signal<void ()>	mSignalPressed, mSignalReleased; // TODO: look at other frameworks (like html5, dart) and see what they name these, and how they organize the events
 };
