@@ -13,9 +13,27 @@ ControlsTest::ControlsTest()
 	: SuiteView()
 {
 	mButton = make_shared<ui::Button>();
-	mButton->setTitle( "Moe" );
+	mButton->setTitle( "color button" );
 	mButton->getSignalPressed().connect( [] { CI_LOG_V( "Bob pressed" ); } );
 	mButton->getSignalReleased().connect( [] { CI_LOG_V( "Bob released" ); } );
+
+	mImageButton = make_shared<ui::Button>();
+	mImageButton->setLabel( "image button" );
+	try {
+		auto imageNormal = make_shared<ui::Image>( loadImage( app::loadAsset( "images/button_normal.png" ) ) );
+		auto imagePressed = make_shared<ui::Image>( loadImage( app::loadAsset( "images/button_pressed.png" ) ) );
+		auto imageEnabled = make_shared<ui::Image>( loadImage( app::loadAsset( "images/button_enabled.png" ) ) );
+
+		mImageButton->setImage( imageNormal, ui::Button::State::NORMAL );
+		mImageButton->setImage( imagePressed, ui::Button::State::PRESSED );
+		mImageButton->setImage( imageEnabled, ui::Button::State::ENABLED );
+
+		mImageButton->setSize( imageNormal->getSize() );
+		mImageButton->setAsToggle();
+	}
+	catch( exception &exc ) {
+		CI_LOG_EXCEPTION( "failed to load images for button", exc );
+	}
 
 	mToggle = make_shared<ui::Button>();
 	mToggle->setAsToggle();
@@ -38,7 +56,7 @@ ControlsTest::ControlsTest()
 //		CI_LOG_V( "mVSlider value: " << mVSlider->getValue() );
 	} );
 
-	addSubviews( { mButton, mToggle, mHSlider, mVSlider } );
+	addSubviews( { mButton, mImageButton, mToggle, mHSlider, mVSlider } );
 }
 
 void ControlsTest::layout()
@@ -50,6 +68,8 @@ void ControlsTest::layout()
 
 	buttonBounds += vec2( 0, buttonBounds.getHeight() + 10 );
 	mToggle->setBounds( buttonBounds );
+
+	mImageButton->setPos( vec2( mButton->getBounds().x2 + padding, mButton->getPosY() ) );
 
 	Rectf sliderHBounds = Rectf( padding, buttonBounds.y2 + padding, padding + 200, buttonBounds.y2 + padding + 30 );
 	mHSlider->setBounds( sliderHBounds );

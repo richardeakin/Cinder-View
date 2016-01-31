@@ -18,5 +18,5 @@ private:
 
 	ui::HSliderRef			mHSlider;
 	ui::VSliderRef			mVSlider;
-	ui::ButtonRef			mButton, mToggle;
+	ui::ButtonRef			mButton, mImageButton, mToggle;
 };
