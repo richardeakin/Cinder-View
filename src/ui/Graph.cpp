@@ -139,26 +139,14 @@ void Graph::propagateDraw()
 // Events
 // ----------------------------------------------------------------------------------------------------
 
-void Graph::connectTouchEvents( int priority )
+void Graph::connectEvents( const EventOptions &options )
 {
-	mEventSlotPriority = priority;
+	mEventSlotPriority = options.mPriority;
 
 	if( ! mEventConnections.empty() )
 		disconnectEvents();
 
-	// touch events
-	if( mMultiTouchEnabled ) {
-		mEventConnections.push_back( mWindow->getSignalTouchesBegan().connect( mEventSlotPriority, [&]( app::TouchEvent &event ) {
-			propagateTouchesBegan( event );
-		} ) );
-		mEventConnections.push_back( mWindow->getSignalTouchesMoved().connect( mEventSlotPriority, [&]( app::TouchEvent &event ) {
-			propagateTouchesMoved( event );
-		} ) );
-		mEventConnections.push_back( mWindow->getSignalTouchesEnded().connect( mEventSlotPriority, [&]( app::TouchEvent &event ) {
-			propagateTouchesEnded( event );
-		} ) );
-	}
-	else {
+	if( options.mMouse ) {
 		mEventConnections.push_back( mWindow->getSignalMouseDown().connect( mEventSlotPriority, [&]( app::MouseEvent &event ) {
 			app::TouchEvent touchEvent( event.getWindow(), vector<app::TouchEvent::Touch>( 1, app::TouchEvent::Touch( event.getPos(), vec2( 0 ), 0, 0, &event ) ) );
 			propagateTouchesBegan( touchEvent );
@@ -176,13 +164,26 @@ void Graph::connectTouchEvents( int priority )
 		} ) );
 	}
 
-	// key events
-	mEventConnections.push_back( mWindow->getSignalKeyDown().connect( mEventSlotPriority, [&]( app::KeyEvent &event ) {
-		propagateKeyDown( event );
-	} ) );
-	mEventConnections.push_back( mWindow->getSignalKeyUp().connect( mEventSlotPriority, [&]( app::KeyEvent &event ) {
-		propagateKeyUp( event );
-	} ) );
+	if( options.mTouches ) {
+		mEventConnections.push_back( mWindow->getSignalTouchesBegan().connect( mEventSlotPriority, [&]( app::TouchEvent &event ) {
+			propagateTouchesBegan( event );
+		} ) );
+		mEventConnections.push_back( mWindow->getSignalTouchesMoved().connect( mEventSlotPriority, [&]( app::TouchEvent &event ) {
+			propagateTouchesMoved( event );
+		} ) );
+		mEventConnections.push_back( mWindow->getSignalTouchesEnded().connect( mEventSlotPriority, [&]( app::TouchEvent &event ) {
+			propagateTouchesEnded( event );
+		} ) );
+	}
+
+	if( options.mKeyboard ) {
+		mEventConnections.push_back( mWindow->getSignalKeyDown().connect( mEventSlotPriority, [&]( app::KeyEvent &event ) {
+			propagateKeyDown( event );
+		} ) );
+		mEventConnections.push_back( mWindow->getSignalKeyUp().connect( mEventSlotPriority, [&]( app::KeyEvent &event ) {
+			propagateKeyUp( event );
+		} ) );
+	}
 }
 
 void Graph::disconnectEvents()

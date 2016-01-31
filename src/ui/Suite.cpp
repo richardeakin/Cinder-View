@@ -45,7 +45,7 @@ Suite::Suite()
 	mGraph = make_shared<ui::Graph>();
 	mGraph->setLabel( "Suite root" );
 	mGraph->setFillParentEnabled();
-	mGraph->connectTouchEvents();
+	mGraph->connectEvents();
 
 	mSelector = make_shared<ui::VSelector>();
 	mSelector->getBackground()->setColor( ColorA::gray( 0, 0.3f ) );

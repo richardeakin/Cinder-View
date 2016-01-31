@@ -66,9 +66,24 @@ class Graph : public View {
 	void propagateKeyDown( ci::app::KeyEvent &event );
 	void propagateKeyUp( ci::app::KeyEvent &event );
 
-	//! Connects this View's touches propagation methods to the Window's touch event signals
-	void connectTouchEvents( int prioririty = 1 );
-	//! Disconnects touches propagation methods.
+	struct EventOptions {
+		EventOptions& mouse( bool enable = true )		{ mMouse = enable; return *this; }
+		EventOptions& touches( bool enable = true )		{ mTouches = enable; return *this; }
+		EventOptions& keyboard( bool enable = true )	{ mKeyboard = enable; return *this; }
+		EventOptions& priority( int priority )			{ mPriority = priority; return *this; }
+
+	  private:
+		bool	mMouse		= true;
+		bool	mTouches	= true;
+		bool	mKeyboard	= true;
+		int		mPriority	= -1;
+
+		friend class Graph;
+	};
+
+	//! Connects this View's event propagation methods to the Window's event signals
+	void connectEvents( const EventOptions &options = EventOptions() );
+	//! Disconnects all event propagation methods.
 	void disconnectEvents();
 
 	//! Returns a map of all current touches in the window (key = touch id).
