@@ -307,12 +307,8 @@ void View::updateImpl()
 	}
 
 	// handle transparency that needs a Layer for compositing
-	if( mRenderTransparencyToFrameBuffer ) {
-		if( isTransparent() ) {
-			if( ! mRendersToFrameBuffer ) {
-				needsLayer = true;
-			}
-		}
+	if( mRenderTransparencyToFrameBuffer && isTransparent() ) {
+		needsLayer = true;
 	}
 
 	// handle Filters as they need a Layer and FrameBuffer to render with
