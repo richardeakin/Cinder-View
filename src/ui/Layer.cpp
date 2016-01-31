@@ -201,11 +201,15 @@ void Layer::beginClip( View *view, Renderer *ren )
 	if( mRootView->mRendersToFrameBuffer ) {
 		// get bounds of view relative to framebuffer. // TODO: need a method like convertPointToView( view, point );
 		Rectf frameBufferWorldBounds = mRootView->getWorldBounds();
-		Rectf boundsInFrameBuffer = viewWorldBounds - frameBufferWorldBounds.getUpperLeft();
+ 		Rectf viewBoundsInFrameBuffer = viewWorldBounds - frameBufferWorldBounds.getUpperLeft();
 
 		// Take lower left relative to FrameBuffer, which might actually be larger than mFrameBufferBounds
-		lowerLeft = boundsInFrameBuffer.getLowerLeft();
+		lowerLeft = viewBoundsInFrameBuffer.getLowerLeft();
 		lowerLeft.y = mFrameBuffer->getHeight() - lowerLeft.y;
+
+		// TODO: reason through if this makes sense in general
+		// - needed to add it when rendering to virtual canvas but stroked rect went beyond borders
+		lowerLeft.y += mFrameBufferBounds.y1;
 	}
 	else {
 		// rendering to window, flip y relative to Graph's bottom left using its clipping size
