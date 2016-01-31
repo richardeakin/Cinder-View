@@ -105,6 +105,9 @@ void Layer::updateView( View *view )
 {
 	view->mIsIteratingSubviews = true;
 
+	// update parents before children
+	view->updateImpl();
+
 	for( auto &subview : view->getSubviews() ) {
 		if( subview->mMarkedForRemoval )
 			continue;
@@ -115,14 +118,11 @@ void Layer::updateView( View *view )
 		updateView( subview.get() );
 	}
 
-	view->updateImpl();
-
 	if( view->mLayer && view->mLayer.get() != this && ! view->mMarkedForRemoval ) {
 		view->mLayer->update();
 	}
 
 	// make sure we have the right FrameBuffer size
-	// TODO NEXT: bounds is (0,0) for Layer that sould draw for filters, find out why
 	if( mRootView->mRendersToFrameBuffer ) {
 		Rectf frameBufferBounds = view->getBoundsForFrameBuffer();
 		if( mFrameBufferBounds.getWidth() < frameBufferBounds.getWidth() && mFrameBufferBounds.getHeight() < frameBufferBounds.getHeight() ) {
