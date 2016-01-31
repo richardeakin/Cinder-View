@@ -67,17 +67,15 @@ const ColorA& Button::getTitleColorForState( State state ) const
 
 void Button::draw( Renderer *ren )
 {
-	if( mHasBackgroundColor ) {
-		// draw background
-		ren->setColor( getColor() );
-		ren->drawSolidRect( getBoundsLocal() );
-	}
-
 	if( mImageNormal ) {
 		// draw image
 		ren->draw( mImageNormal, getBoundsLocal() );
 	}
 	else {
+		// draw background solid color
+		ren->setColor( getColor() );
+		ren->drawSolidRect( getBoundsLocal() );
+
 		// draw title
 		const float padding = 6;
 		ren->setColor( getTitleColor() );
@@ -111,8 +109,6 @@ void Button::setTitleColor( const ci::ColorA &color, State state )
 
 void Button::setColor( const ci::ColorA &color, State state )
 {
-	mHasBackgroundColor = true;
-
 	switch( state ) {
 		case State::NORMAL: mColorNormal = color; return;
 		case State::ENABLED: mColorEnabled = color; return;

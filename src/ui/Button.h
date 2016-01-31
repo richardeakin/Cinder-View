@@ -70,7 +70,6 @@ protected:
 
 	bool        mEnabled = false;
 	bool        mIsToggle = false;
-	bool        mHasBackgroundColor = false;
 	State       mState = State::NORMAL;
 
 	ci::ColorA	mColorNormal = ci::ColorA::gray( 0.5f );
