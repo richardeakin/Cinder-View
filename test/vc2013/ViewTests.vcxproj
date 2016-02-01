@@ -301,6 +301,7 @@
     <ClInclude Include="..\src\BasicViewTests.h" />
     <ClInclude Include="..\src\CompositingTest.h" />
     <ClInclude Include="..\src\ControlsTest.h" />
+    <ClInclude Include="..\src\FilterTest.h" />
     <ClInclude Include="..\src\MultiTouchTest.h" />
     <ClInclude Include="..\src\ScrollTests.h" />
   </ItemGroup>
@@ -309,6 +310,7 @@
     <ClCompile Include="..\src\BasicViewTests.cpp" />
     <ClCompile Include="..\src\CompositingTest.cpp" />
     <ClCompile Include="..\src\ControlsTest.cpp" />
+    <ClCompile Include="..\src\FilterTest.cpp" />
     <ClCompile Include="..\src\MultiTouchTest.cpp" />
     <ClCompile Include="..\src\ScrollTests.cpp" />
     <ClCompile Include="..\src\ViewTestsApp.cpp" />
