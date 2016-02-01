@@ -6,7 +6,7 @@ uniform float		uAttenuation = 1.0;
 
 in vec2 vTexCoord0;
 
-out vec4 oColor;
+out vec4 oFragColor;
 
 void main()
 { 
@@ -33,7 +33,5 @@ void main()
 	sum += texture( uTex0, vTexCoord0 +   9.0 * uSampleOffset ).rgb * 0.014053461291849008;
 	sum += texture( uTex0, vTexCoord0 +  10.0 * uSampleOffset ).rgb * 0.009167927656011385;
 
-	oColor = vec4( sum * uAttenuation, 1 );
-
-	// oColor = vec4( 1, 1, 0, 1 );
+	oFragColor = vec4( sum * uAttenuation, 1.0 );
 }
