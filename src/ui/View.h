@@ -172,12 +172,11 @@ class View : public std::enable_shared_from_this<View> {
 
 	void setParent( View *parent );
 	void calcWorldPos() const;
+	void layoutImpl();
 	void updateImpl();
 	void drawImpl( Renderer *ren );
 	void clearViewsMarkedForRemoval();
 
-	// TODO: consider moving to Graph, as all other propagation methods are there.
-	void propagateLayout();
 
 	typedef std::map<uint32_t, ci::app::TouchEvent::Touch> TouchMapT; // TODO just store this as vector and use std::find
 

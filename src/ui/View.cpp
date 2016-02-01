@@ -260,13 +260,12 @@ void View::addFilter( const FilterRef &filter )
 	mFilters.push_back( filter );
 }
 
-// TODO: consider moving layout propagation to Graph, at which point it will also configure layer tree
-void View::propagateLayout()
+void View::layoutImpl()
 {
 	mWorldPosDirty = true;
 
 	if( mBackground )
-		mBackground->propagateLayout();
+		mBackground->layoutImpl();
 
 	if( mFillParent ) {
 		auto parent = getParent();
@@ -278,11 +277,6 @@ void View::propagateLayout()
 
 	layout();
 	mNeedsLayout = false;
-
-	for( auto &view : mSubviews ) {
-		if( view->mNeedsLayout )
-			view->propagateLayout();
-	}
 }
 
 void View::updateImpl()
@@ -328,7 +322,7 @@ void View::updateImpl()
 	}
 
 	if( needsLayout )
-		propagateLayout();
+		layoutImpl();
 
 	if( hasBackground ) {
 		mBackground->mGraph = mGraph;
