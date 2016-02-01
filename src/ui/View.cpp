@@ -260,6 +260,11 @@ void View::addFilter( const FilterRef &filter )
 	mFilters.push_back( filter );
 }
 
+void View::removeFilter( const FilterRef &filter )
+{
+	mFilters.erase( remove( mFilters.begin(), mFilters.end(), filter ), mFilters.end() );
+}
+
 void View::layoutImpl()
 {
 	mWorldPosDirty = true;
