@@ -4,7 +4,7 @@
 #include "cinder/Log.h"
 #include "cinder/gl/gl.h"
 
-#include "../../blocks/Cinder-FileWatcher/src/mason/FileWatcher.cpp" // TEMP
+#include "../../lib/Cinder-FileWatcher/src/mason/FileWatcher.cpp" // TEMP
 
 using namespace std;
 using namespace ci;
@@ -118,26 +118,82 @@ FilterTest::FilterTest()
 	mFilterBlur = make_shared<FilterBlur>();
 	mImageView->addFilter( mFilterBlur );
 
-	mContainerView->addSubview( mImageView );
+	auto imageBorder = make_shared<ui::StrokedRectView>();
+	imageBorder->setFillParentEnabled();
+	imageBorder->setColor( Color( 0.9f, 0.5f, 0.0f ) );
+	mImageView->addSubview( imageBorder );
+
+	const Color toggleEnabledColor = { 0, 0.2f, 0.6f };
+
+	mToggleBlur = make_shared<ui::Button>();
+	mToggleBlur->setTitle( "enable blur" );
+	mToggleBlur->setAsToggle();
+	mToggleBlur->setColor( toggleEnabledColor, ui::Button::State::ENABLED );
+	mToggleBlur->setTitleColor( Color::white() );
+	mToggleBlur->setEnabled( true ); // start as enabled because we already added mFilterBlur to the image
+	mToggleBlur->getSignalReleased().connect( [this] {
+		if( mToggleBlur->isEnabled() )
+			mImageView->addFilter( mFilterBlur );
+		else
+			mImageView->removeFilter( mFilterBlur );
+	} );
+
+	mToggleDropShadow = make_shared<ui::Button>();
+	mToggleDropShadow->setTitle( "enable drop shadow" );
+	mToggleDropShadow->setAsToggle();
+	mToggleDropShadow->setColor( toggleEnabledColor, ui::Button::State::ENABLED );
+	mToggleDropShadow->setTitleColor( Color::white() );
+
+	mSliderBlur = make_shared<ui::HSlider>();
+	mSliderBlur->setTitle( "blur pixels" );
+	mSliderBlur->setMax( 10 );
+	mSliderBlur->setValue( mFilterBlur->getBlurPixels().x );
+	mSliderBlur->getSignalValueChanged().connect( [this] {
+		mFilterBlur->setBlurPixels( vec2( mSliderBlur->getValue() ) );
+	} );
+
+	mSliderDropShadow = make_shared<ui::HSlider>();
+	mSliderDropShadow->setTitle( "drop shadow pixels" );
+	mSliderDropShadow->setMax( 10 );
+
+	mContainerView->addSubviews( { 
+		mImageView,
+		mToggleBlur, mToggleDropShadow,
+		mSliderBlur, mSliderDropShadow
+	} );
+
 	addSubview( mContainerView );
 }
 
 void FilterTest::layout()
 {
-	const float padding = 50.0f;
-	const vec2 imageViewSize = { 550, 350 };
+	const float containerPadding = 50;
+	const float controlPadding = 10;
 
-	//mContainerView->setBounds( Rectf( padding, padding, getWidth() - padding, getHeight() - padding ) );
-	//vec2 center = mContainerView->getCenter();
-
-	Rectf containerBounds = Rectf( padding, padding, getWidth() - padding, getHeight() - padding );
+	Rectf containerBounds = Rectf( containerPadding, containerPadding, getWidth() - containerPadding, getHeight() - containerPadding );
 	mContainerView->setBounds( containerBounds );
 
-	vec2 center = containerBounds.getCenter();
+	vec2 togglePos = { controlPadding, controlPadding };
+	vec2 toggleSize = { 130, 40 };
 
-	Rectf imageRect = { center.x - imageViewSize.x / 2, center.y - imageViewSize.y / 2, center.x + imageViewSize.x / 2, center.y + imageViewSize.y / 2 };
-	imageRect -= vec2( padding ); // TODO: why is this needed? shouldn't matter as mImageView lives inside mContainerView
-	mImageView->setBounds( imageRect );
+	mToggleBlur->setPos( togglePos );
+	mToggleBlur->setSize( toggleSize );
+
+	vec2 sliderPos = { togglePos.x, togglePos.y + toggleSize.y + controlPadding }; 
+	vec2 sliderSize = { 210, 40 };
+	mSliderBlur->setPos( sliderPos );
+	mSliderBlur->setSize( sliderSize );
+
+	togglePos.x = getCenter().x;
+	mToggleDropShadow->setPos( togglePos );
+	mToggleDropShadow->setSize( toggleSize );
+
+	sliderPos.x = togglePos.x;
+	mSliderDropShadow->setPos( sliderPos );
+	mSliderDropShadow->setSize( sliderSize );
+
+	mImageView->setPos( { mSliderBlur->getPosX(), mSliderBlur->getBounds().y2 + controlPadding } );
+	mImageView->setSize( { ( containerBounds.getWidth() - controlPadding ) / 2.0f, containerBounds.getHeight() - mImageView->getPosY() - controlPadding } );
 }
 
 bool FilterTest::keyDown( ci::app::KeyEvent &event )
