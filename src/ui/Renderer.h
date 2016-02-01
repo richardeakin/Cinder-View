@@ -79,8 +79,9 @@ class FrameBuffer {
 
 	ci::gl::FboRef		mFbo; // TODO: make private
 
+	bool                mIsBound = false; // TODO: make private
+
 private:
-	bool                mIsBound = false;
 	bool				mDiscarded = false;
 
 	friend class Renderer;

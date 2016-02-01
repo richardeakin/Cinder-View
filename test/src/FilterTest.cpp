@@ -48,7 +48,9 @@ ui::FrameBufferRef FilterBlur::process( ui::Renderer *ren, const ui::FrameBuffer
 	// blur horizontally and the size of 1 pixel
 	mGlslBlur->uniform( "uSampleOffset", vec2( mBlurPixels.x / inputFrameBuffer->getWidth(), 0.0f ) );
 
-	inputFrameBuffer->mIsBound = true; // HACK: frameBuffer has just been unbound in Layer::draw(), so ren->getFrameBuffer() will otherwise return the same one to us
+	// TODO NEXT: figure out how to ask for unique FrameBuffers. I need another for vertical blur too
+	// HACK: frameBuffer has just been unbound in Layer::draw(), so ren->getFrameBuffer() will otherwise return the same one to us
+	inputFrameBuffer->mIsBound = true;
 
 	// copy a horizontally blurred version of our scene into the first blur Fbo
 	auto frameBufferBlur1 = ren->getFrameBuffer( inputFrameBuffer->getSize() );
@@ -58,13 +60,12 @@ ui::FrameBufferRef FilterBlur::process( ui::Renderer *ren, const ui::FrameBuffer
 
 		// TODO: is this needed? framebuffer is same size
 		gl::ScopedViewport viewport( 0, 0, inputFrameBuffer->getWidth(), inputFrameBuffer->getHeight() );
+		gl::ScopedMatrices matScope;
+		gl::setMatricesWindow( inputFrameBuffer->getWidth(), inputFrameBuffer->getHeight() );
 
 		gl::ScopedTextureBind tex0( inputFrameBuffer->getColorTexture(), 0 );
 
-		//gl::ScopedMatrices matScope;
-		//gl::setMatricesWindow( mFboBlur1->getWidth(), mFboBlur1->getHeight() );
-		//gl::clear();
-
+		gl::clear( ColorA::zero() );
 		gl::drawSolidRect( Rectf( vec2( 0 ), frameBufferBlur1->getSize() ) );
 
 		ren->popFrameBuffer( frameBufferBlur1 );
