@@ -55,7 +55,6 @@ ui::FrameBufferRef FilterBlur::process( ui::Renderer *ren, const ui::FrameBuffer
 	// copy a horizontally blurred version of our scene into the first blur Fbo
 	auto frameBufferBlur1 = ren->getFrameBuffer( inputFrameBuffer->getSize() );
 	{
-
 		ren->pushFrameBuffer( frameBufferBlur1 );
 
 		// TODO: is this needed? framebuffer is same size
@@ -71,28 +70,32 @@ ui::FrameBufferRef FilterBlur::process( ui::Renderer *ren, const ui::FrameBuffer
 		ren->popFrameBuffer( frameBufferBlur1 );
 	}
 
-	//frameBufferBlur1->mFbo->blitTo( inputFrameBuffer->mFbo, frameBufferBlur1->mFbo->getBounds(), inputFrameBuffer->mFbo->getBounds() );
-	CI_CHECK_GL();
+	// blur vertically and the size of 1 pixel
+	mGlslBlur->uniform( "uSampleOffset", vec2( 0.0f, mBlurPixels.y / inputFrameBuffer->getWidth() ) );
+
+	frameBufferBlur1->mIsBound = true;
+	auto frameBufferBlur2 = ren->getFrameBuffer( inputFrameBuffer->getSize() );
+
+	// copy a vertically blurred version of our blurred scene into the second blur Fbo
+	{
+		ren->pushFrameBuffer( frameBufferBlur2 );
+
+		gl::ScopedViewport viewport( 0, 0, frameBufferBlur1->getWidth(), frameBufferBlur1->getHeight() );
+		gl::ScopedMatrices matScope;
+		gl::setMatricesWindow( frameBufferBlur1->getWidth(), frameBufferBlur1->getHeight() );
+
+		gl::ScopedTextureBind tex0( frameBufferBlur1->getColorTexture(), 0 );
+
+		gl::clear( ColorA::zero() );
+		gl::drawSolidRect( Rectf( vec2( 0 ), frameBufferBlur1->getSize() ) );
+
+		ren->popFrameBuffer( frameBufferBlur2 );
+	}
 
 	inputFrameBuffer->mIsBound = false;
-	return frameBufferBlur1;
+	frameBufferBlur1->mIsBound = false;
 
-	// blur vertically and the size of 1 pixel
-	//mGlslBlur->uniform( "uSampleOffset", vec2( 0.0f, 1.0f / mFboBlur2->getHeight() ) );
-
-	//// copy a vertically blurred version of our blurred scene into the second blur Fbo
-	//{
-	//	gl::ScopedFramebuffer fboScope( mFboBlur2 );
-	//	gl::ScopedViewport viewportScope( 0, 0, mFboBlur2->getWidth(), mFboBlur2->getHeight() );
-
-	//	gl::ScopedTextureBind tex0( mFboBlur1->getColorTexture(), 0 );
-
-	//	gl::ScopedMatrices matScope;
-	//	gl::setMatricesWindow( mFboBlur2->getWidth(), mFboBlur2->getHeight() );
-	//	gl::clear();
-
-	//	gl::drawSolidRect( mFboBlur2->getBounds() );
-	//}
+	return frameBufferBlur2;
 }
 
 FilterTest::FilterTest()
