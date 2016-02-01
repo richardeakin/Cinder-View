@@ -38,7 +38,7 @@ FilterBlur::FilterBlur()
 	}
 }
 
-void FilterBlur::process( ui::Renderer *ren, const ui::FrameBufferRef &frameBuffer)
+ui::FrameBufferRef FilterBlur::process( ui::Renderer *ren, const ui::FrameBufferRef &inputFrameBuffer )
 {
 	gl::ScopedGlslProg glslScope( mGlslBlur );
 
@@ -46,18 +46,20 @@ void FilterBlur::process( ui::Renderer *ren, const ui::FrameBufferRef &frameBuff
 	//mGlslBlur->uniform( "uAttenuation", attenuation );
 
 	// blur horizontally and the size of 1 pixel
-	mGlslBlur->uniform( "uSampleOffset", vec2( 1.0f / frameBuffer->getWidth(), 0.0f ) );
+	mGlslBlur->uniform( "uSampleOffset", vec2( mBlurPixels.x / inputFrameBuffer->getWidth(), 0.0f ) );
+
+	inputFrameBuffer->mIsBound = true; // HACK: frameBuffer has just been unbound in Layer::draw(), so ren->getFrameBuffer() will otherwise return the same one to us
 
 	// copy a horizontally blurred version of our scene into the first blur Fbo
-	auto frameBufferBlur1 = ren->getFrameBuffer( frameBuffer->getSize() );
+	auto frameBufferBlur1 = ren->getFrameBuffer( inputFrameBuffer->getSize() );
 	{
 
 		ren->pushFrameBuffer( frameBufferBlur1 );
 
-		// TODO: is this needed? famebuffer is same size
-		gl::ScopedViewport viewport( 0, 0, frameBuffer->getWidth(), frameBuffer->getHeight() );
+		// TODO: is this needed? framebuffer is same size
+		gl::ScopedViewport viewport( 0, 0, inputFrameBuffer->getWidth(), inputFrameBuffer->getHeight() );
 
-		gl::ScopedTextureBind tex0( frameBufferBlur1->getColorTexture(), 0 );
+		gl::ScopedTextureBind tex0( inputFrameBuffer->getColorTexture(), 0 );
 
 		//gl::ScopedMatrices matScope;
 		//gl::setMatricesWindow( mFboBlur1->getWidth(), mFboBlur1->getHeight() );
@@ -68,8 +70,11 @@ void FilterBlur::process( ui::Renderer *ren, const ui::FrameBufferRef &frameBuff
 		ren->popFrameBuffer( frameBufferBlur1 );
 	}
 
-	frameBufferBlur1->mFbo->blitTo( frameBuffer->mFbo, frameBufferBlur1->mFbo->getBounds(), frameBuffer->mFbo->getBounds() );
+	//frameBufferBlur1->mFbo->blitTo( inputFrameBuffer->mFbo, frameBufferBlur1->mFbo->getBounds(), inputFrameBuffer->mFbo->getBounds() );
 	CI_CHECK_GL();
+
+	inputFrameBuffer->mIsBound = false;
+	return frameBufferBlur1;
 
 	// blur vertically and the size of 1 pixel
 	//mGlslBlur->uniform( "uSampleOffset", vec2( 0.0f, 1.0f / mFboBlur2->getHeight() ) );

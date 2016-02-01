@@ -17,7 +17,7 @@
  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  POSSIBILITY OF SUCH DAMAGE.
- */
+*/
 
 #include "ui/Layer.h"
 #include "ui/Graph.h"
@@ -162,15 +162,16 @@ void Layer::draw( Renderer *ren )
 		gl::popMatrices();
 
 		// process all Filters before drawing FrameBuffer
+		auto frameBuffer = mFrameBuffer;
 		for( auto &filter : mRootView->mFilters ) {
-			filter->process( ren, mFrameBuffer );
+			frameBuffer = filter->process( ren, mFrameBuffer );
 		}
 
 		ren->pushBlendMode( BlendMode::PREMULT_ALPHA );
 		ren->pushColor( ColorA::gray( 1, getAlpha() ) );
 
 		auto destRect = mFrameBufferBounds + mRootView->getPos();
-		ren->draw( mFrameBuffer, Area( 0, 0, mFrameBufferBounds.getWidth(), mFrameBufferBounds.getHeight() ), destRect );
+		ren->draw( frameBuffer, Area( 0, 0, mFrameBufferBounds.getWidth(), mFrameBufferBounds.getHeight() ), destRect );
 		ren->popColor();
 		ren->popBlendMode();
 	}

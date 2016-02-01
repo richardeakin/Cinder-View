@@ -12,7 +12,7 @@ class FilterBlur : public ui::Filter {
   public:
 	FilterBlur();
 
-	void process( ui::Renderer *ren, const ui::FrameBufferRef &frameBuffer ) override;
+	ui::FrameBufferRef process( ui::Renderer *ren, const ui::FrameBufferRef &inputFrameBuffer ) override;
 
 	ci::gl::GlslProgRef	mGlslBlur;
 	mason::ScopedWatch mWatchGlsl;
