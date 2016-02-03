@@ -125,6 +125,8 @@ class View : public std::enable_shared_from_this<View> {
 	bool	isBoundsAnimating() const;
 	bool    isTransparent() const;
 
+	const  std::map<uint32_t, ci::app::TouchEvent::Touch>&	getActiveTouches() const	{ return mActiveTouches; }
+
 	// TODO: this needs to mark layer tree dirty, at least if there is compositing going on (should skip reconfigure otherwise)
 	void setRenderTransparencyToFrameBufferEnabled( bool enable )	{ mRenderTransparencyToFrameBuffer = enable; }
 	bool isRenderTransparencyToFrameBufferEnabled() const			{ return mRenderTransparencyToFrameBuffer; }
@@ -175,7 +177,7 @@ class View : public std::enable_shared_from_this<View> {
 	// TODO: consider moving to Graph, as all other propagation methods are there.
 	void propagateLayout();
 
-	typedef std::map<uint32_t, ci::app::TouchEvent::Touch> TouchMapT;
+	typedef std::map<uint32_t, ci::app::TouchEvent::Touch> TouchMapT; // TODO just store this as vector and use std::find
 
 	TouchMapT				mActiveTouches;
 
