@@ -67,6 +67,8 @@ class Graph : public View {
 	void propagateKeyUp( ci::app::KeyEvent &event );
 
 	struct EventOptions {
+		EventOptions() {}
+
 		EventOptions& mouse( bool enable = true )		{ mMouse = enable; return *this; }
 		EventOptions& touches( bool enable = true )		{ mTouches = enable; return *this; }
 		EventOptions& keyboard( bool enable = true )	{ mKeyboard = enable; return *this; }
