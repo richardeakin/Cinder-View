@@ -114,7 +114,7 @@ ivec2 FrameBuffer::getSize() const
 
 bool FrameBuffer::isUsable() const
 {
-	return ! mDiscarded && ! mIsBound;
+	return ! mDiscarded && ! mInUse;
 }
 
 ImageSourceRef FrameBuffer::createImageSource() const
@@ -198,7 +198,7 @@ FrameBufferRef Renderer::getFrameBuffer( const ci::ivec2 &size )
 	auto availableFrameBufferIt = mFrameBufferCache.end();
 	for( auto frameBufferIt = mFrameBufferCache.begin(); frameBufferIt < mFrameBufferCache.end(); ++frameBufferIt ) {
 		auto &frameBuffer = *frameBufferIt;
-		if( frameBuffer->isBound() )
+		if( frameBuffer->isInUse() )
 			continue;
 
 		// Check for any unbound FrameBuffer large enough for the requested size
@@ -238,13 +238,13 @@ FrameBufferRef Renderer::getFrameBuffer( const ci::ivec2 &size )
 
 void Renderer::pushFrameBuffer( const FrameBufferRef &frameBuffer )
 {
-	frameBuffer->mIsBound = true;
+	frameBuffer->mInUse = true;
 	gl::context()->pushFramebuffer( frameBuffer->mFbo );
 }
 
 void Renderer::popFrameBuffer( const FrameBufferRef &frameBuffer )
 {
-	frameBuffer->mIsBound = false;
+	frameBuffer->mInUse = false;
 	gl::context()->popFramebuffer();
 }
 

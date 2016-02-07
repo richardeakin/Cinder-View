@@ -27,6 +27,7 @@ namespace ui {
 
 void Filter::configure( const ivec2 &size, PassInfo *info )
 {
+	info->mSizes.resize( 1, size );
 }
 
 } // namespace ui

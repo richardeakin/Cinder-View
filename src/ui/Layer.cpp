@@ -175,8 +175,24 @@ void Layer::draw( Renderer *ren )
 			const auto &passInfo = mFilterPassInfoList.at( i );
 			Filter::Pass pass;
 			pass.setIndex( i );
-			// TODO: attach specified FrameBuffers
+			pass.mFrameBuffer = frameBuffer;
+
+			ivec2 size = passInfo.getSize();
+
+			frameBuffer->mInUse = true;
+			frameBuffer = ren->getFrameBuffer( size );
+
+			ren->pushFrameBuffer( frameBuffer );
+
+			gl::ScopedViewport viewport( 0, 0, size.x, size.y );
+			gl::ScopedMatrices matScope;
+			gl::setMatricesWindow( size.x, size.y );
+
+			gl::clear( ColorA::zero() );
+
 			filter->process( ren, pass );
+
+			ren->popFrameBuffer( frameBuffer );
 		}
 
 		ren->pushBlendMode( BlendMode::PREMULT_ALPHA );

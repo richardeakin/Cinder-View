@@ -40,8 +40,13 @@ class Filter {
 		void	setCount( size_t count )	{ mCount = count; }
 		size_t	getCount() const			{ return mCount; }
 
+		ci::ivec2	getSize( size_t passIndex = 0 ) const		{ return mSizes.at( passIndex ); }
+
 	  private:
-		size_t mCount = 1;
+		size_t					mCount = 1;
+		std::vector<ci::ivec2>	mSizes;
+
+		friend class Filter;
 	};
 
 	//! Provided during process() that contains information about the current processing pass
@@ -50,10 +55,14 @@ class Filter {
 		//! Returns the index of the current pass
 		size_t	getIndex() const	{ return mIndex; }
 
+		ci::ivec2			getSize() const				{ return mFrameBuffer->getSize(); }
+		ci::gl::TextureRef	getColorTexture() const		{ return mFrameBuffer->getColorTexture(); }
+
 	  private:
 		void setIndex( size_t index )	{ mIndex = index; }
 
 		size_t mIndex = 0;
+		FrameBufferRef	mFrameBuffer;
 
 		friend class Layer;
 	};

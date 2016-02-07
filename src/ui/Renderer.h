@@ -69,7 +69,7 @@ class FrameBuffer {
 	ci::ivec2   getSize() const;
 	int         getWidth() const { return getSize().x; }
 	int         getHeight() const { return getSize().y; }
-	bool        isBound() const { return mIsBound; }
+	bool        isInUse() const { return mInUse; }
 	bool		isUsable() const;
 
 	ci::ImageSourceRef  createImageSource() const;
@@ -79,7 +79,7 @@ class FrameBuffer {
 
 	ci::gl::FboRef		mFbo; // TODO: make private
 
-	bool                mIsBound = false; // TODO: make private
+	bool                mInUse = false; // TODO: make private
 
 private:
 	bool				mDiscarded = false;
