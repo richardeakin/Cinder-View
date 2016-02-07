@@ -64,6 +64,9 @@
     <ClCompile Include="..\src\ui\View.cpp">
       <Filter>Source Files\ui</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\ui\Filter.cpp">
+      <Filter>Source Files\ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\cppformat\format.h">
@@ -118,6 +121,9 @@
       <Filter>Source Files\ui</Filter>
     </ClInclude>
     <ClInclude Include="..\src\ui\View.h">
+      <Filter>Source Files\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\ui\Filter.h">
       <Filter>Source Files\ui</Filter>
     </ClInclude>
   </ItemGroup>

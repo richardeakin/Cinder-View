@@ -30,6 +30,7 @@
     <ClCompile Include="..\src\cppformat\format.cc" />
     <ClCompile Include="..\src\ui\Button.cpp" />
     <ClCompile Include="..\src\ui\Control.cpp" />
+    <ClCompile Include="..\src\ui\Filter.cpp" />
     <ClCompile Include="..\src\ui\Graph.cpp" />
     <ClCompile Include="..\src\ui\Image.cpp" />
     <ClCompile Include="..\src\ui\ImageView.cpp" />
@@ -49,6 +50,7 @@
     <ClInclude Include="..\src\mason\Factory.h" />
     <ClInclude Include="..\src\ui\Button.h" />
     <ClInclude Include="..\src\ui\Control.h" />
+    <ClInclude Include="..\src\ui\Filter.h" />
     <ClInclude Include="..\src\ui\Graph.h" />
     <ClInclude Include="..\src\ui\Image.h" />
     <ClInclude Include="..\src\ui\ImageView.h" />
