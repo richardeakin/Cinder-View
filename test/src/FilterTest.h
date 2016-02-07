@@ -7,13 +7,25 @@
 
 #include "../../lib/Cinder-FileWatcher/src/mason/FileWatcher.h" // TEMP
 
+class FilterSinglePass : public ui::Filter {
+public:
+	FilterSinglePass();
+
+	void process( ui::Renderer *ren, const ui::Filter::Pass &pass  ) override;
+
+	ci::gl::GlslProgRef	mGlsl;
+	mason::ScopedWatch	mWatchGlsl;
+
+private:
+};
+
 class FilterBlur : public ui::Filter {
   public:
 	FilterBlur();
 
-	ui::FrameBufferRef process( ui::Renderer *ren, const ui::FrameBufferRef &inputFrameBuffer ) override;
+	void process( ui::Renderer *ren, const ui::Filter::Pass &frame  ) override;
 
-	ci::gl::GlslProgRef	mGlslBlur;
+	ci::gl::GlslProgRef	mGlsl;
 	mason::ScopedWatch mWatchGlsl;
 
 	const ci::vec2&	getBlurPixels() const						{ return mBlurPixels; }
@@ -34,10 +46,11 @@ class FilterTest : public ui::SuiteView {
   private:
 	bool keyDown( ci::app::KeyEvent &event ) override;
 
-	FilterBlurRef			mFilterBlur;
+	std::shared_ptr<FilterSinglePass>	mFilterSinglePass;
+	FilterBlurRef						mFilterBlur;
 
 	ui::ViewRef				mContainerView;
 	ui::ImageViewRef        mImageView;
-	ui::ButtonRef			mToggleBlur, mToggleDropShadow;
+	ui::ButtonRef			mToggleSinglePass, mToggleBlur, mToggleDropShadow;
 	ui::HSliderRef			mSliderBlur, mSliderDropShadow;
 };

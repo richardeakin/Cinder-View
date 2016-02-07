@@ -93,7 +93,7 @@ void ViewTestsApp::drawLayerBorders()
 
 CINDER_APP( ViewTestsApp, RendererGl( RendererGl::Options().msaa( 8 ) ), []( App::Settings *settings ) {
 //	settings->setWindowPos( 0, 0 );
-	settings->setWindowSize( 960, 565 );
+	settings->setWindowSize( 1000, 650 );
 
 //	settings->setMultiTouchEnabled();
 

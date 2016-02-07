@@ -81,6 +81,13 @@ void Layer::init()
 		LOG_LAYER( "enabling FrameBuffer for view '" << mRootView->getName() << "', size: " << mRootView->getSize() );
 		LOG_LAYER( "\t- reason: num filters = " << mRootView->mFilters.size() );
 		mRootView->mRendersToFrameBuffer = true;
+
+		CI_ASSERT( mFilterPassInfoList.empty() );
+		for( auto &filter : mRootView->mFilters ) {
+			Filter::PassInfo info;
+			filter->configure( ivec2( mRootView->getSize() ), &info );
+			mFilterPassInfoList.push_back( info );
+		}
 	}
 	else {
 		if( mFrameBuffer ) {
@@ -163,8 +170,13 @@ void Layer::draw( Renderer *ren )
 
 		// process all Filters before drawing FrameBuffer
 		auto frameBuffer = mFrameBuffer;
-		for( auto &filter : mRootView->mFilters ) {
-			frameBuffer = filter->process( ren, mFrameBuffer );
+		for( size_t i = 0; i < mRootView->mFilters.size(); i++ ) {
+			auto &filter = mRootView->mFilters[i];
+			const auto &passInfo = mFilterPassInfoList.at( i );
+			Filter::Pass pass;
+			pass.setIndex( i );
+			// TODO: attach specified FrameBuffers
+			filter->process( ren, pass );
 		}
 
 		ren->pushBlendMode( BlendMode::PREMULT_ALPHA );

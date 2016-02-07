@@ -139,6 +139,7 @@ class View : public std::enable_shared_from_this<View> {
 
 	void    addFilter( const FilterRef &filter );
 	void	removeFilter( const FilterRef &filter );
+	void	removeAllFilters();
 
 	void	setFillParentEnabled( bool enable = true );
 	bool	isFillParentEnabled() const					{ return mFillParent; }

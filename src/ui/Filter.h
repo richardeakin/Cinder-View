@@ -29,10 +29,41 @@ namespace ui {
 
 typedef std::shared_ptr<class Filter>   FilterRef;
 
+//! Performs filter effects as post-process operation.
 class Filter {
   public:
-	//! Returns the output FrameBuffer that contains post-processed data
-	virtual FrameBufferRef process( Renderer *ren, const FrameBufferRef &inputFrameBuffer ) = 0;
+
+  protected:
+	//! Passed during initialize() to configure render targets
+	struct PassInfo {
+	  public:
+		void	setCount( size_t count )	{ mCount = count; }
+		size_t	getCount() const			{ return mCount; }
+
+	  private:
+		size_t mCount = 1;
+	};
+
+	//! Provided during process() that contains information about the current processing pass
+	class Pass {
+	  public:
+		//! Returns the index of the current pass
+		size_t	getIndex() const	{ return mIndex; }
+
+	  private:
+		void setIndex( size_t index )	{ mIndex = index; }
+
+		size_t mIndex = 0;
+
+		friend class Layer;
+	};
+
+	//! Called when Passes need to be configured. Defaults to one pass with a render target the size of \a size.
+	virtual void configure( const ci::ivec2 &size, PassInfo *info );
+
+	virtual void process( Renderer *ren, const Pass &pass ) = 0;
+
+	friend class Layer;
 };
 
 } // namespace ui
