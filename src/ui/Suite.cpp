@@ -68,7 +68,8 @@ void Suite::resize()
 
 	const float width = 120; // TODO: calculate widest segment
 	const float height = 22 * mSelector->getSegmentLabels().size();
-	mSelector->setBounds( Rectf( mGraph->getWidth() - width - PADDING, PADDING, mGraph->getWidth() - PADDING, height + PADDING ) );
+	const float windowWidth = app::getWindowWidth();
+	mSelector->setBounds( Rectf( windowWidth - width - PADDING, PADDING, windowWidth - PADDING, height + PADDING ) );
 
 	resizeInfoLabel();
 }
