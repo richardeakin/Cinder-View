@@ -151,16 +151,19 @@ void Graph::connectEvents( const EventOptions &options )
 			app::TouchEvent touchEvent( event.getWindow(), vector<app::TouchEvent::Touch>( 1, app::TouchEvent::Touch( event.getPos(), vec2( 0 ), 0, 0, &event ) ) );
 			propagateTouchesBegan( touchEvent );
 			event.setHandled( touchEvent.isHandled() );
+			mPrevMousePos = event.getPos();
 		} ) );
 		mEventConnections.push_back( mWindow->getSignalMouseDrag().connect( mEventSlotPriority, [&]( app::MouseEvent &event ) {
-			app::TouchEvent touchEvent( event.getWindow(), vector<app::TouchEvent::Touch>( 1, app::TouchEvent::Touch( event.getPos(), vec2( 0 ), 0, 0, &event ) ) );
+			app::TouchEvent touchEvent( event.getWindow(), vector<app::TouchEvent::Touch>( 1, app::TouchEvent::Touch( event.getPos(), mPrevMousePos, 0, 0, &event ) ) );
 			propagateTouchesMoved( touchEvent );
 			event.setHandled( touchEvent.isHandled() );
+			mPrevMousePos = event.getPos();
 		} ) );
 		mEventConnections.push_back( mWindow->getSignalMouseUp().connect( mEventSlotPriority, [&]( app::MouseEvent &event ) {
-			app::TouchEvent touchEvent( event.getWindow(), vector<app::TouchEvent::Touch>( 1, app::TouchEvent::Touch( event.getPos(), vec2( 0 ), 0, 0, &event ) ) );
+			app::TouchEvent touchEvent( event.getWindow(), vector<app::TouchEvent::Touch>( 1, app::TouchEvent::Touch( event.getPos(), mPrevMousePos, 0, 0, &event ) ) );
 			propagateTouchesEnded( touchEvent );
 			event.setHandled( touchEvent.isHandled() );
+			mPrevMousePos = event.getPos();
 		} ) );
 	}
 

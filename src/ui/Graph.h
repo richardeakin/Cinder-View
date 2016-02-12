@@ -120,6 +120,7 @@ class Graph : public View {
 	bool				mClippingSizeSet = false;
 
 	std::vector<ci::signals::Connection>	mEventConnections;
+	ci::vec2								mPrevMousePos;
 
 	std::list<LayerRef>	    mLayers;
 	std::list<ViewRef>	    mViewsWithTouches;
