@@ -107,8 +107,6 @@ void CompositingTest::layout()
 
 void CompositingTest::update()
 {
-	size_t numFrameBuffers = getSuite()->getGraph()->getRenderer()->getNumFrameBuffersCached();
-	getSuite()->getInfoLabel()->setRow( 1, { "num FrameBuffers: ", to_string( numFrameBuffers ) } );
 }
 
 bool CompositingTest::keyDown( app::KeyEvent &event )
