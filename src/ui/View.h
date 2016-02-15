@@ -145,9 +145,11 @@ class View : public std::enable_shared_from_this<View> {
 	bool	isFillParentEnabled() const					{ return mFillParent; }
 
 	//! Informs layout propagation that this View and its subviews need layout() to be called.
-	void setNeedsLayout();
+	void	setNeedsLayout();
+	//! Returns whether this View needs to have its layout() method called before the next update().
+	bool	needsLayout() const	{ return mNeedsLayout; }
 	//! This is done when the world position should be recalculated but calling layout isn't necessary (ex. when ScrollView offset moves)
-	void setWorldPosDirty();
+	void	setWorldPosDirty();
 
 	friend std::ostream& operator<<( std::ostream &os, const ViewRef &rhs );
 	void printHeirarchy( std::ostream &os );
