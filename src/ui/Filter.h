@@ -55,13 +55,14 @@ class Filter {
 		//! Returns the index of the current pass
 		size_t	getIndex() const	{ return mIndex; }
 
-		ci::ivec2			getSize() const				{ return mFrameBuffer->getSize(); }
+		ci::ivec2			getSize() const				{ return mSize; }
 		ci::gl::TextureRef	getColorTexture() const		{ return mFrameBuffer->getColorTexture(); }
 
 	  private:
 		void setIndex( size_t index )	{ mIndex = index; }
 
-		size_t mIndex = 0;
+		size_t			mIndex = 0;
+		ci::ivec2		mSize;
 		FrameBufferRef	mFrameBuffer;
 
 		friend class Layer;
@@ -69,8 +70,11 @@ class Filter {
 
 	//! Called when Passes need to be configured. Defaults to one pass with a render target the size of \a size.
 	virtual void configure( const ci::ivec2 &size, PassInfo *info );
-
+	//! Called when the Filter should perform processing. The requested FrameBuffer will already be bound.
 	virtual void process( Renderer *ren, const Pass &pass ) = 0;
+
+  private:
+	std::vector<Pass>	mPasses;
 
 	friend class Layer;
 };

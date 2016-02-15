@@ -81,13 +81,6 @@ void Layer::init()
 		LOG_LAYER( "enabling FrameBuffer for view '" << mRootView->getName() << "', size: " << mRootView->getSize() );
 		LOG_LAYER( "\t- reason: num filters = " << mRootView->mFilters.size() );
 		mRootView->mRendersToFrameBuffer = true;
-
-		CI_ASSERT( mFilterPassInfoList.empty() );
-		for( auto &filter : mRootView->mFilters ) {
-			Filter::PassInfo info;
-			filter->configure( ivec2( mRootView->getSize() ), &info );
-			mFilterPassInfoList.push_back( info );
-		}
 	}
 	else {
 		if( mFrameBuffer ) {
@@ -113,6 +106,7 @@ void Layer::updateView( View *view )
 	view->mIsIteratingSubviews = true;
 
 	// update parents before children
+	const bool willLayout = view->needsLayout();
 	view->updateImpl();
 
 	for( auto &subview : view->getSubviews() ) {
@@ -129,13 +123,15 @@ void Layer::updateView( View *view )
 		view->mLayer->update();
 	}
 
-	// make sure we have the right FrameBuffer size
-	if( mRootView->mRendersToFrameBuffer ) {
+	// If View::layout() was called, make sure we have the right FrameBuffer size
+	if( willLayout && mRootView->mRendersToFrameBuffer ) {
 		Rectf frameBufferBounds = view->getBoundsForFrameBuffer();
 		if( mFrameBufferBounds.getWidth() < frameBufferBounds.getWidth() && mFrameBufferBounds.getHeight() < frameBufferBounds.getHeight() ) {
 			mFrameBufferBounds = ceil( frameBufferBounds );
 			LOG_LAYER( "mFrameBufferBounds: " << mFrameBufferBounds );
 		}
+
+		mFiltersNeedConfiguration = true;
 	}
 
 	view->mIsIteratingSubviews = false;
@@ -168,31 +164,14 @@ void Layer::draw( Renderer *ren )
 		gl::popViewport();
 		gl::popMatrices();
 
-		// process all Filters before drawing FrameBuffer
-		auto frameBuffer = mFrameBuffer;
-		for( size_t i = 0; i < mRootView->mFilters.size(); i++ ) {
-			auto &filter = mRootView->mFilters[i];
-			const auto &passInfo = mFilterPassInfoList.at( i );
-			Filter::Pass pass;
-			pass.setIndex( i );
-			pass.mFrameBuffer = frameBuffer;
-
-			ivec2 size = passInfo.getSize();
-
-			frameBuffer->mInUse = true;
-			frameBuffer = ren->getFrameBuffer( size );
-
-			ren->pushFrameBuffer( frameBuffer );
-
-			gl::ScopedViewport viewport( 0, 0, size.x, size.y );
-			gl::ScopedMatrices matScope;
-			gl::setMatricesWindow( size.x, size.y );
-
-			gl::clear( ColorA::zero() );
-
-			filter->process( ren, pass );
-
-			ren->popFrameBuffer( frameBuffer );
+		FrameBufferRef frameBuffer;
+		if( ! mRootView->mFilters.empty() ) {
+			processFilters( ren );
+			// set the FrameBuffer that should be drawn as texture to the last Pass of the last Filter
+			frameBuffer = mRootView->mFilters.back()->mPasses.back().mFrameBuffer;
+		}
+		else {
+			frameBuffer = mFrameBuffer;
 		}
 
 		ren->pushBlendMode( BlendMode::PREMULT_ALPHA );
@@ -232,6 +211,50 @@ void Layer::drawView( View *view, Renderer *ren )
 
 	if( view->isClipEnabled() )
 		endClip();
+}
+
+void Layer::processFilters( Renderer *ren )
+{
+	// call configure() for any Filters, updating its Pass information
+	for( auto &filter : mRootView->mFilters ) {
+		if( mFiltersNeedConfiguration ) {
+			filter->mPasses.clear();
+			Filter::PassInfo info;
+			filter->configure( ivec2( mFrameBufferBounds.getSize() ), &info );
+			for( int i = 0; i < info.getCount(); i++ ) {
+				filter->mPasses.push_back( Filter::Pass() );
+				auto &pass = filter->mPasses.back();
+				pass.setIndex( i );
+
+				ivec2 requiredSize = info.getSize( i );
+				pass.mFrameBuffer = ren->getFrameBuffer( requiredSize );
+
+				LOG_LAYER( "acquired FrameBuffer for view '" << mRootView->getName() << ", size: " << pass.mFrameBuffer->getSize()
+					<< "', required size: " << requiredSize );
+
+				// TODO: think of a better way to determine a FrameBuffer is already in use during this tree draw
+				// - with this, the FrameBuffer can't be used in any other part of the draw hierarchy
+				pass.mFrameBuffer->mInUse = true;
+			}
+		}
+
+		for( auto &pass : filter->mPasses ) {
+			ren->pushFrameBuffer( pass.mFrameBuffer );
+
+			gl::ScopedViewport viewport( 0, 0, pass.getSize().x, pass.getSize().y );
+			gl::ScopedMatrices matScope;
+			gl::setMatricesWindow( pass.getSize() );
+
+			gl::clear( ColorA::zero() ); // TODO: move this to Process or make an option on Pass
+
+			filter->process( ren, pass );
+
+			ren->popFrameBuffer( pass.mFrameBuffer );
+			//pass.mFrameBuffer->mInUse = false;
+		}
+	}
+
+	mFiltersNeedConfiguration = false;
 }
 
 void Layer::beginClip( View *view, Renderer *ren )

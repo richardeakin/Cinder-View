@@ -59,6 +59,7 @@ class Layer : public std::enable_shared_from_this<Layer> {
 	void init();
 	void updateView( View *view );
 	void drawView( View *view, Renderer *ren );
+	void processFilters( Renderer *ren );
 	void beginClip( View *view, Renderer *ren );
 	void endClip();
 
@@ -67,8 +68,7 @@ class Layer : public std::enable_shared_from_this<Layer> {
 	FrameBufferRef	mFrameBuffer;
 	ci::Rectf       mFrameBufferBounds = ci::Rectf::zero();
 
-	std::vector<Filter::PassInfo>	mFilterPassInfoList;
-
+	bool			mFiltersNeedConfiguration = false;
 	bool            mShouldRemove = false;
 
 	friend class Graph;
