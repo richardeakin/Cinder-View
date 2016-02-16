@@ -28,13 +28,13 @@ vec3 ContrastSaturationBrightness( vec3 color, float brt, float sat, float con )
 
 void main()
 { 
-	vec3 col = texture( uTex0, vTexCoord0 ).rgb;
+	vec4 col = texture( uTex0, vTexCoord0 );
 
     float t = ciElapsedSeconds;
     float brightness = sin( t + 9.19 ) * 0.5 + 1.5;
     float saturation = sin( t + 5.33 ) * 0.5 + 1.5;
     float contrast = sin( t + 13.11 ) * 0.5 + 1.5;
-	col = ContrastSaturationBrightness( col, brightness, saturation, contrast );
+	col.rgb = ContrastSaturationBrightness( col.rgb, brightness, saturation, contrast );
 
-	oFragColor = vec4( col, 1.0 );
+	oFragColor = col;
 }
