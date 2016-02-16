@@ -30,4 +30,17 @@ void Filter::configure( const ivec2 &size, PassInfo *info )
 	info->mSizes.resize( 1, size );
 }
 
+ci::gl::TextureRef Filter::getRenderColorTexture() const
+{
+	return mRenderFrameBuffer->getColorTexture();
+}
+
+gl::TextureRef Filter::getPassColorTexture( size_t passIndex ) const
+{
+	if( passIndex >= mPasses.size() )
+		return nullptr;
+
+	return mPasses[passIndex].getColorTexture();
+}
+
 } // namespace ui

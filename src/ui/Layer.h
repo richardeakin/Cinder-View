@@ -59,7 +59,7 @@ class Layer : public std::enable_shared_from_this<Layer> {
 	void init();
 	void updateView( View *view );
 	void drawView( View *view, Renderer *ren );
-	void processFilters( Renderer *ren );
+	void processFilters( Renderer *ren, const FrameBufferRef &renderFrameBuffer );
 	void beginClip( View *view, Renderer *ren );
 	void endClip();
 

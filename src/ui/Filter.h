@@ -73,8 +73,13 @@ class Filter {
 	//! Called when the Filter should perform processing. The requested FrameBuffer will already be bound.
 	virtual void process( Renderer *ren, const Pass &pass ) = 0;
 
+
+	ci::gl::TextureRef getRenderColorTexture() const;
+	ci::gl::TextureRef getPassColorTexture( size_t passIndex ) const;
+
   private:
 	std::vector<Pass>	mPasses;
+	FrameBufferRef		mRenderFrameBuffer;
 
 	friend class Layer;
 };

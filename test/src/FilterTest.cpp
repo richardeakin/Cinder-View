@@ -45,8 +45,9 @@ FilterSinglePass::FilterSinglePass()
 void FilterSinglePass::process( ui::Renderer *ren, const ui::Filter::Pass &pass  )
 {
 	gl::ScopedGlslProg		glslScope( mGlsl );
-	gl::ScopedTextureBind	texScope( pass.getColorTexture(), 0 );
+	gl::ScopedTextureBind	texScope( getRenderColorTexture() );
 
+	gl::clear( ColorA::zero() );
 	gl::drawSolidRect( Rectf( vec2( 0 ), pass.getSize() ) );
 }
 

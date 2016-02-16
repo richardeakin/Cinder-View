@@ -169,7 +169,7 @@ void Layer::draw( Renderer *ren )
 
 		FrameBufferRef frameBuffer;
 		if( ! mRootView->mFilters.empty() ) {
-			processFilters( ren );
+			processFilters( ren, mFrameBuffer );
 			// set the FrameBuffer that should be drawn as texture to the last Pass of the last Filter
 			frameBuffer = mRootView->mFilters.back()->mPasses.back().mFrameBuffer;
 		}
@@ -216,8 +216,10 @@ void Layer::drawView( View *view, Renderer *ren )
 		endClip();
 }
 
-void Layer::processFilters( Renderer *ren )
+void Layer::processFilters( Renderer *ren, const FrameBufferRef &renderFrameBuffer )
 {
+	renderFrameBuffer->mInUse = true;
+
 	// call configure() for any Filters, updating its Pass information
 	for( auto &filter : mRootView->mFilters ) {
 		if( mFiltersNeedConfiguration ) {
@@ -242,14 +244,14 @@ void Layer::processFilters( Renderer *ren )
 			}
 		}
 
+		filter->mRenderFrameBuffer = renderFrameBuffer;
+
 		for( auto &pass : filter->mPasses ) {
 			ren->pushFrameBuffer( pass.mFrameBuffer );
 
 			gl::ScopedViewport viewport( 0, 0, pass.getSize().x, pass.getSize().y );
 			gl::ScopedMatrices matScope;
 			gl::setMatricesWindow( pass.getSize() );
-
-			gl::clear( ColorA::zero() ); // TODO: move this to Process or make an option on Pass
 
 			filter->process( ren, pass );
 
@@ -259,6 +261,7 @@ void Layer::processFilters( Renderer *ren )
 	}
 
 	mFiltersNeedConfiguration = false;
+	renderFrameBuffer->mInUse = false;
 }
 
 void Layer::beginClip( View *view, Renderer *ren )
