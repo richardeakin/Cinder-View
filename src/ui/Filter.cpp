@@ -20,10 +20,24 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include "ui/Filter.h"
+#include "cinder/CinderAssert.h"
 
 using namespace ci;
 
 namespace ui {
+
+void Filter::PassInfo::setCount( size_t count )
+{ 
+	mCount = count;
+	mSizes.resize( count );
+}
+
+void Filter::PassInfo::setSize( const ci::ivec2 &size, size_t passIndex )
+{
+	CI_ASSERT( passIndex <= mSizes.size() );
+
+	mSizes[passIndex] = size;
+}
 
 void Filter::configure( const ivec2 &size, PassInfo *info )
 {

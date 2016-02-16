@@ -50,6 +50,8 @@ class Layer : public std::enable_shared_from_this<Layer> {
 
 	ci::Rectf   getBoundsWorld() const;
 
+	void setFiltersNeedConfiguration()	{ mFiltersNeedConfiguration = true; }
+
   private:
 
 	void update();

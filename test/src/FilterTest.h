@@ -23,6 +23,7 @@ class FilterBlur : public ui::Filter {
   public:
 	FilterBlur();
 
+	void configure( const ci::ivec2 &size, ui::Filter::PassInfo *info ) override;
 	void process( ui::Renderer *ren, const ui::Filter::Pass &frame  ) override;
 
 	ci::gl::GlslProgRef	mGlsl;

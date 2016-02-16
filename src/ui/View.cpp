@@ -258,6 +258,9 @@ void View::setWorldPosDirty()
 void View::addFilter( const FilterRef &filter )
 {
 	mFilters.push_back( filter );
+	if( isLayerRoot() ) {
+		mLayer->setFiltersNeedConfiguration();
+	}
 }
 
 void View::removeFilter( const FilterRef &filter )

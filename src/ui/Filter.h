@@ -37,9 +37,10 @@ class Filter {
 	//! Passed during initialize() to configure render targets
 	struct PassInfo {
 	  public:
-		void	setCount( size_t count )	{ mCount = count; }
+		void	setCount( size_t count );
 		size_t	getCount() const			{ return mCount; }
 
+		void		setSize( const ci::ivec2 &size, size_t passIndex = 0 );
 		ci::ivec2	getSize( size_t passIndex = 0 ) const		{ return mSizes.at( passIndex ); }
 
 	  private:
@@ -56,6 +57,8 @@ class Filter {
 		size_t	getIndex() const	{ return mIndex; }
 
 		ci::ivec2			getSize() const				{ return mSize; }
+		int					getWidth() const			{ return mSize.x; }
+		int					getHeight() const			{ return mSize.y; }
 		ci::gl::TextureRef	getColorTexture() const		{ return mFrameBuffer->getColorTexture(); }
 
 	  private:
