@@ -126,9 +126,12 @@ void FilterBlur::process( ui::Renderer *ren, const ui::Filter::Pass &pass )
 
 FilterDropShadow::FilterDropShadow()
 {
+	// TODO: this needs to be a shadow direction
+	mBlurPixels = vec2( 2.0f );
+
 	vector<fs::path> glslPaths = {
 		"glsl/blur.vert",
-		"glsl/blur.frag"
+		"glsl/dropshadow.frag"
 	};
 
 	try {
@@ -136,7 +139,7 @@ FilterDropShadow::FilterDropShadow()
 			auto format = gl::GlslProg::Format()
 				.vertex( loadFile( fullPaths.at( 0 ) ) )
 				.fragment( loadFile( fullPaths.at( 1 ) ) )
-				;
+			;
 
 			try {
 				mGlsl = gl::GlslProg::create( format );
@@ -178,12 +181,22 @@ void FilterDropShadow::process( ui::Renderer *ren, const ui::Filter::Pass &pass 
 		tex = getPassColorTexture( 0 );
 	}
 
-	gl::ScopedGlslProg glslScope( mGlsl );
-	mGlsl->uniform( "uSampleOffset", sampleOffset );
+	{
+		gl::ScopedGlslProg glslScope( mGlsl );
+		mGlsl->uniform( "uSampleOffset", sampleOffset );
 
-	gl::ScopedTextureBind texScope( tex );
-	gl::clear( ColorA::zero() );
-	gl::drawSolidRect( Rectf( vec2( 0 ), pass.getSize() ) );
+		gl::ScopedTextureBind texScope( tex );
+		gl::clear( ColorA::zero() );
+		gl::drawSolidRect( Rectf( vec2( 0 ), pass.getSize() ) );
+	}
+
+	if( pass.getIndex() == 1 ) {
+		// draw original image again on top
+
+		gl::ScopedModelMatrix modelScope;
+		gl::translate( vec2( -40, -10 ) );
+		gl::draw( getRenderColorTexture(), Rectf( vec2( 0 ), pass.getSize() ) );
+	}
 }
 
 // ----------------------------------------------------------------------------------------------------
@@ -215,7 +228,7 @@ FilterTest::FilterTest()
 	mLabel->setText( "T" );
 	mLabel->setLabel( "Label with FilterDropShadow" );
 	mLabel->setFontFace( ui::FontFace::BOLD );
-	mLabel->setFontSize( 140 );
+	mLabel->setFontSize( 280 );
 	mLabel->setAlignment( ui::TextAlignment::CENTER );
 	mLabel->setTextColor( Color( 0, 0, 0.75f ) );
 
@@ -282,6 +295,14 @@ FilterTest::FilterTest()
 	mToggleDropShadow->setAsToggle();
 	mToggleDropShadow->setColor( toggleEnabledColor, ui::Button::State::ENABLED );
 	mToggleDropShadow->setTitleColor( Color::white() );
+	mToggleDropShadow->setEnabled( true ); // filter already added
+	mToggleDropShadow->getSignalReleased().connect( [this] {
+		if( mToggleDropShadow->isEnabled() ) {
+			mLabel->addFilter( mFilterBlur );
+		}
+		else
+			mLabel->removeFilter( mFilterBlur );
+	} );
 
 	mSliderBlur = make_shared<ui::HSlider>();
 	mSliderBlur->setTitle( "blur pixels" );
@@ -294,6 +315,10 @@ FilterTest::FilterTest()
 	mSliderDropShadow = make_shared<ui::HSlider>();
 	mSliderDropShadow->setTitle( "drop shadow pixels" );
 	mSliderDropShadow->setMax( 10 );
+	mSliderDropShadow->getSignalValueChanged().connect( [this] {
+		// TODO: this should be shadow offset
+		mFilterDropShadow->setBlurPixels( vec2( mSliderDropShadow->getValue() ) );
+	} );
 
 	mContainerView->addSubviews( { 
 		mImageView,
