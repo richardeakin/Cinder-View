@@ -19,6 +19,8 @@ public:
 private:
 };
 
+typedef std::shared_ptr<class FilterBlur>	FilterBlurRef;
+
 class FilterBlur : public ui::Filter {
   public:
 	FilterBlur();
@@ -36,7 +38,24 @@ class FilterBlur : public ui::Filter {
 	ci::vec2	mBlurPixels = ci::vec2( 1 );
 };
 
-typedef std::shared_ptr<FilterBlur>	FilterBlurRef;
+typedef std::shared_ptr<class FilterDropShadow>	FilterDropShadowRef;
+
+class FilterDropShadow : public ui::Filter {
+public:
+	FilterDropShadow();
+
+	void configure( const ci::ivec2 &size, ui::Filter::PassInfo *info ) override;
+	void process( ui::Renderer *ren, const ui::Filter::Pass &frame  ) override;
+
+	ci::gl::GlslProgRef	mGlsl;
+	mason::ScopedWatch mWatchGlsl;
+
+	const ci::vec2&	getBlurPixels() const						{ return mBlurPixels; }
+	void			setBlurPixels( const ci::vec2 &pixels )		{ mBlurPixels = pixels; }
+
+private:
+	ci::vec2	mBlurPixels = ci::vec2( 1 );
+};
 
 class FilterTest : public ui::SuiteView {
   public:
@@ -49,9 +68,11 @@ class FilterTest : public ui::SuiteView {
 
 	std::shared_ptr<FilterSinglePass>	mFilterSinglePass;
 	FilterBlurRef						mFilterBlur;
+	FilterDropShadowRef					mFilterDropShadow;
 
 	ui::ViewRef				mContainerView;
 	ui::ImageViewRef        mImageView;
 	ui::ButtonRef			mToggleSinglePass, mToggleBlur, mToggleDropShadow;
 	ui::HSliderRef			mSliderBlur, mSliderDropShadow;
+	ui::LabelRef			mLabel;
 };

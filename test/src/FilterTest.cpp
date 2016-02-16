@@ -121,6 +121,72 @@ void FilterBlur::process( ui::Renderer *ren, const ui::Filter::Pass &pass )
 }
 
 // ----------------------------------------------------------------------------------------------------
+// FilterDropShadow
+// ----------------------------------------------------------------------------------------------------
+
+FilterDropShadow::FilterDropShadow()
+{
+	vector<fs::path> glslPaths = {
+		"glsl/blur.vert",
+		"glsl/blur.frag"
+	};
+
+	try {
+		mWatchGlsl = mason::FileWatcher::load( glslPaths, [this]( const std::vector<fs::path> &fullPaths ) {
+			auto format = gl::GlslProg::Format()
+				.vertex( loadFile( fullPaths.at( 0 ) ) )
+				.fragment( loadFile( fullPaths.at( 1 ) ) )
+				;
+
+			try {
+				mGlsl = gl::GlslProg::create( format );
+
+				CI_LOG_I( "dropshadow glsl loaded." );
+			}
+			catch( std::exception &exc ) {
+				CI_LOG_EXCEPTION( "failed to compile GlslProg at: " << format.getVertexPath(), exc );
+			}
+		} );
+	}
+	catch( std::exception &exc ) {
+		CI_LOG_EXCEPTION( "failed to load blur glsl", exc );
+	}
+}
+
+void FilterDropShadow::configure( const ci::ivec2 &size, ui::Filter::PassInfo *info )
+{
+	// TODO: rethink how these should be specified
+	info->setCount( 2 );
+	info->setSize( size, 0 );
+	info->setSize( size, 1 );
+}
+
+void FilterDropShadow::process( ui::Renderer *ren, const ui::Filter::Pass &pass )
+{
+	if( ! mGlsl )
+		return;
+
+	vec2 sampleOffset;
+	gl::TextureRef tex;
+
+	if( pass.getIndex() == 0 ) {
+		sampleOffset.x = mBlurPixels.x / (float)pass.getWidth();
+		tex = getRenderColorTexture();
+	}
+	else {
+		sampleOffset.y = mBlurPixels.y / (float)pass.getHeight();
+		tex = getPassColorTexture( 0 );
+	}
+
+	gl::ScopedGlslProg glslScope( mGlsl );
+	mGlsl->uniform( "uSampleOffset", sampleOffset );
+
+	gl::ScopedTextureBind texScope( tex );
+	gl::clear( ColorA::zero() );
+	gl::drawSolidRect( Rectf( vec2( 0 ), pass.getSize() ) );
+}
+
+// ----------------------------------------------------------------------------------------------------
 // FilterTest
 // ----------------------------------------------------------------------------------------------------
 
@@ -145,17 +211,36 @@ FilterTest::FilterTest()
 		CI_LOG_EXCEPTION( "failed to load image at path: " << imageFilePath, exc );
 	}
 
+	mLabel = make_shared<ui::Label>();
+	mLabel->setText( "T" );
+	mLabel->setLabel( "Label with FilterDropShadow" );
+	mLabel->setFontFace( ui::FontFace::BOLD );
+	mLabel->setFontSize( 140 );
+	mLabel->setAlignment( ui::TextAlignment::CENTER );
+	mLabel->setTextColor( Color( 0, 0, 0.75f ) );
+
 	mFilterSinglePass = make_shared<FilterSinglePass>();
 	mFilterBlur = make_shared<FilterBlur>();
+	mFilterDropShadow = make_shared<FilterDropShadow>();
 
 	mImageView->addFilter( mFilterSinglePass );
 	//mImageView->addFilter( mFilterBlur );
+	mLabel->addFilter( mFilterDropShadow );
 
-	auto imageBorder = make_shared<ui::StrokedRectView>();
-	imageBorder->setFillParentEnabled();
-	imageBorder->setColor( Color( 0.9f, 0.5f, 0.0f ) );
-	imageBorder->setLineWidth( 2 );
-	mImageView->addSubview( imageBorder );
+	{
+		auto imageBorder = make_shared<ui::StrokedRectView>();
+		imageBorder->setFillParentEnabled();
+		imageBorder->setColor( Color( 0.9f, 0.5f, 0.0f ) );
+		imageBorder->setLineWidth( 2 );
+		mImageView->addSubview( imageBorder );
+	}
+	//{
+	//	auto labelBorder = make_shared<ui::StrokedRectView>();
+	//	labelBorder->setFillParentEnabled();
+	//	labelBorder->setColor( Color( 0.9f, 0.5f, 0.0f ) );
+	//	labelBorder->setLineWidth( 2 );
+	//	mLabel->addSubview( labelBorder );
+	//}
 
 	const Color toggleEnabledColor = { 0, 0.2f, 0.6f };
 
@@ -212,6 +297,7 @@ FilterTest::FilterTest()
 
 	mContainerView->addSubviews( { 
 		mImageView,
+		mLabel,
 		mToggleSinglePass, mToggleBlur, mToggleDropShadow,
 		mSliderBlur, mSliderDropShadow
 	} );
@@ -252,6 +338,9 @@ void FilterTest::layout()
 
 	mImageView->setPos( { controlPadding, mSliderBlur->getBounds().y2 + controlPadding } );
 	mImageView->setSize( { ( containerBounds.getWidth() - controlPadding ) / 2.0f, containerBounds.getHeight() - mImageView->getPosY() - controlPadding } );
+
+	mLabel->setPos( { containerBounds.getCenter().x, mSliderDropShadow->getBounds().y2 + controlPadding } );
+	mLabel->setSize( vec2( 384, mImageView->getHeight() ) ); // TODO: fix this
 }
 
 bool FilterTest::keyDown( ci::app::KeyEvent &event )
