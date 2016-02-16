@@ -81,6 +81,7 @@ void Layer::init()
 		LOG_LAYER( "enabling FrameBuffer for view '" << mRootView->getName() << "', size: " << mRootView->getSize() );
 		LOG_LAYER( "\t- reason: num filters = " << mRootView->mFilters.size() );
 		mRootView->mRendersToFrameBuffer = true;
+		mFiltersNeedConfiguration = true;
 	}
 	else {
 		if( mFrameBuffer ) {
@@ -107,6 +108,10 @@ void Layer::updateView( View *view )
 
 	// update parents before children
 	const bool willLayout = view->needsLayout();
+	if( willLayout && ! mRootView->mFilters.empty() ) {
+		mFiltersNeedConfiguration = true;
+	}
+
 	view->updateImpl();
 
 	for( auto &subview : view->getSubviews() ) {
@@ -124,14 +129,12 @@ void Layer::updateView( View *view )
 	}
 
 	// If View::layout() was called, make sure we have the right FrameBuffer size
-	if( willLayout && mRootView->mRendersToFrameBuffer ) {
+	if( mRootView->mRendersToFrameBuffer ) {
 		Rectf frameBufferBounds = view->getBoundsForFrameBuffer();
 		if( mFrameBufferBounds.getWidth() < frameBufferBounds.getWidth() && mFrameBufferBounds.getHeight() < frameBufferBounds.getHeight() ) {
 			mFrameBufferBounds = ceil( frameBufferBounds );
 			LOG_LAYER( "mFrameBufferBounds: " << mFrameBufferBounds );
 		}
-
-		mFiltersNeedConfiguration = true;
 	}
 
 	view->mIsIteratingSubviews = false;
@@ -228,6 +231,7 @@ void Layer::processFilters( Renderer *ren )
 
 				ivec2 requiredSize = info.getSize( i );
 				pass.mFrameBuffer = ren->getFrameBuffer( requiredSize );
+				pass.mSize = requiredSize;
 
 				LOG_LAYER( "acquired FrameBuffer for view '" << mRootView->getName() << ", size: " << pass.mFrameBuffer->getSize()
 					<< "', required size: " << requiredSize );
