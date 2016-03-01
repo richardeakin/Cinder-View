@@ -53,7 +53,7 @@ class ImageView : public View {
 	ci::Rectf getDestRect() const;
 
   protected:
-	virtual void draw( Renderer *ren ) override;
+	void draw( Renderer *ren ) override;
 
   private:
 	ImageRef	        mImage;
