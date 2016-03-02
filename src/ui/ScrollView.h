@@ -54,6 +54,9 @@ class ScrollView : public View {
 	const ci::vec2&			getContentOffset() const	{ return mContentOffset; }
 	ci::Anim<ci::vec2>&		getContentOffsetAnim()		{ return mContentOffset; }
 
+	//! Returns whether the user is currently dragging on the ScrollView
+	bool isDragging() const			{ return mDragging; }
+	//! Returns whether the contents are freely decelerating, e.g. after the user has finished dragging.
 	bool isDecelerating() const		{ return mDecelerating; }
 
 	//! Sets the friction factor to apply to velocity to slow it down (inside bounds). Default: 0.05
@@ -90,7 +93,12 @@ class ScrollView : public View {
 	void setHorizontalScrollingEnabled( bool enable )		{ mHorizontalScrollingEnabled = enable; }
 	bool isHorizontalScrollingEnabled() const				{ return mHorizontalScrollingEnabled; }
 
+	//! Signal emitted whenever the content scrolls (both by dragging and when decelerating).
 	ci::signals::Signal<void ()>& getSignalDidScroll()		{ return mSignalDidScroll; }
+	//! Signal emitted when dragging begins.
+	ci::signals::Signal<void ()>& getSignalDragBegin()		{ return mSignalDragBegin; }
+	//! Signal emitted when dragging ends.
+	ci::signals::Signal<void ()>& getSignalDragEnd()		{ return mSignalDragEnd; }
 
   protected:
 	void layout()	override;
@@ -120,7 +128,8 @@ class ScrollView : public View {
 	size_t					mMaxStoredTouches = 10;
 	// --------------------------------------------
 
-	bool					mDecelerating = false;
+	bool					mDragging		= false;
+	bool					mDecelerating	= false;
 	ci::vec2				mTargetOffset;
 
   private:
@@ -146,7 +155,7 @@ class ScrollView : public View {
 	bool							mVerticalScrollingEnabled = true;
 	bool							mHorizontalScrollingEnabled = true;
 
-	ci::signals::Signal<void ()>	mSignalDidScroll;
+	ci::signals::Signal<void ()>	mSignalDidScroll, mSignalDragBegin, mSignalDragEnd;
 };
 
 class PagingScrollView : public ScrollView {

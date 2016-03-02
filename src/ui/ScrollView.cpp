@@ -253,6 +253,8 @@ bool ScrollView::touchesBegan( app::TouchEvent &event )
 	mStoredTouches.clear();
 	storeTouchPos( pos );
 
+	mDragging = false; // will set to true once touchesMoved() is fired
+
 	mFirstTouch = mStoredTouches.front();
 	firstTouch.setHandled();
 	return true;
@@ -264,6 +266,11 @@ bool ScrollView::touchesMoved( app::TouchEvent &event )
 	vec2 lastPos = mStoredTouches.back().position;
 	updateOffset( pos, lastPos );
 	storeTouchPos( pos );
+	
+	if( ! mDragging ) {
+		mDragging = true;
+		mSignalDragBegin.emit();
+	}
 
 	if( ! mContentView->getSubviews().empty() )
 		mSignalDidScroll.emit();
@@ -279,6 +286,11 @@ bool ScrollView::touchesEnded( app::TouchEvent &event )
 	storeTouchPos( pos );
 
 	calcTouchVelocity();
+
+	if( mDragging ) {
+		mDragging = false;
+		mSignalDragEnd.emit();
+	}
 
 	if( ! mContentView->getSubviews().empty() ) {
 		mDecelerating = true;
