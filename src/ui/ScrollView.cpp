@@ -20,6 +20,7 @@
 */
 
 #include "ui/ScrollView.h"
+#include "cinder/Log.h"
 
 #include "cinder/app/App.h" // TODO: remove me. currently used for app::getElapsedSeconds(), but will get this from Graph instead
 
@@ -481,7 +482,7 @@ void PagingScrollView::layoutPage( size_t index )
 
 	if( mLayoutMode == SNAP_TO_BOUNDS ) {
 		if( mAxis == HORIZONTAL ) {
-			// layout horiztonal
+			// layout horizontal
 			float originX = getWidth() * index;
 			pageView->setBounds( Rectf( originX + mPageMargin.x, mPageMargin.y, originX + getWidth() - mPageMargin.x, getHeight() - mPageMargin.y ) );
 		}
@@ -508,7 +509,7 @@ void PagingScrollView::layoutPage( size_t index )
 		}
 	}
 
-	LOG_SCROLL( "index: " << index << ", bounds: " << contentView->getBounds() );
+	LOG_SCROLL( "index: " << index << ", bounds: " << getContentView()->getBounds() );
 }
 
 vec2 PagingScrollView::getTargetOffsetForPage( size_t index ) const
