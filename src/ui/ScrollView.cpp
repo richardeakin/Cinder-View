@@ -200,12 +200,19 @@ void ScrollView::updateDeceleratingOffset()
 	auto offsetLength = length( mTargetOffset - contentOffset );
 
 	if( velLength < mMinVelocityConsideredAsStopped && offsetLength < mMinOffsetUntilStopped ) {
+		// snap to boundaries and finish deceleration
 		contentOffset = mTargetOffset;
 		mDecelerating = false;
-	}
 
-	updateContentViewOffset( contentOffset );
-	mSignalDidScroll.emit();
+		// make sure scroll signal gets called before a page ended signal
+		updateContentViewOffset( contentOffset );
+		mSignalDidScroll.emit(); 
+		onDecelerationEnded();
+	}
+	else {
+		updateContentViewOffset( contentOffset );
+		mSignalDidScroll.emit();
+	}
 }
 
 void ScrollView::updateContentViewOffset( const vec2 &offset )
@@ -368,6 +375,7 @@ void PagingScrollView::nextPage( bool animate )
 	if( mCurrentPageIndex == getNumContentViews() - 1 )
 		return;
 
+	mSignalPageWillChange.emit();
 	mCurrentPageIndex++;
 	handlePageUpdate( animate );
 }
@@ -377,6 +385,7 @@ void PagingScrollView::previousPage( bool animate )
 	if( mCurrentPageIndex == 0 )
 		return;
 
+	mSignalPageWillChange.emit();
 	mCurrentPageIndex--;
 	handlePageUpdate( animate );
 }
@@ -385,6 +394,7 @@ void PagingScrollView::setPage( size_t index, bool animate )
 {
 	CI_ASSERT_MSG( index < getNumContentViews(), "index out of bounds" );
 
+	mSignalPageWillChange.emit();
 	mCurrentPageIndex = index;
 	handlePageUpdate( animate );
 }
@@ -520,6 +530,14 @@ vec2 PagingScrollView::getTargetOffsetForPage( size_t index ) const
 	return mAxis == HORIZONTAL ? vec2( contentBounds.x1 - mPageMargin.x, 0 ) : vec2( 0, contentBounds.y1 - mPageMargin.y );
 }
 
+void PagingScrollView::onDecelerationEnded()
+{
+	if( mPageIsChangingAnimated ) {
+		mPageIsChangingAnimated = false;
+		mSignalPageDidChange.emit();
+	}
+}
+
 const Rectf& PagingScrollView::getDeceleratingBoundaries() const
 {
 	return mDeceleratingBoundaries;
@@ -543,16 +561,18 @@ void PagingScrollView::calcDeceleratingBoundaries()
 void PagingScrollView::handlePageUpdate( bool animate )
 {
 	calcDeceleratingBoundaries();
-	if( animate )
+	if( animate ) {
 		mDecelerating = true;
+		mPageIsChangingAnimated = true;
+	}
 	else {
 		// jump to the current offset
 		updateDeceleratingOffset();
 		setContentOffset( mTargetOffset );
+		mSignalPageDidChange.emit();
 	}
 
 	LOG_SCROLL( "current page: " << mCurrentPageIndex );
-	mSignalDidChangePage.emit();
 }
 
 bool PagingScrollView::isOnFirstPage() const

@@ -108,6 +108,7 @@ class ScrollView : public View {
 	bool touchesMoved( ci::app::TouchEvent &event )	override;
 	bool touchesEnded( ci::app::TouchEvent &event )	override;
 
+	virtual void				onDecelerationEnded()	{}
 	virtual const ci::Rectf&	getDeceleratingBoundaries() const;
 
 	void calcContentSize();
@@ -203,13 +204,15 @@ class PagingScrollView : public ScrollView {
 	//! Returns the minimum distance (pixels) to discount a touch sequence from being counted as a swipe (default: 50).
 	float	getSwipeDistanceThreshold() const			{ return mSwipeDistanceThreshold; }
 
-	ci::signals::Signal<void ()>& getSignalDidChangePage()		{ return mSignalDidChangePage; }
+	ci::signals::Signal<void ()>& getSignalPageWillChange()		{ return mSignalPageWillChange; }
+	ci::signals::Signal<void ()>& getSignalPageDidChange()		{ return mSignalPageDidChange; }
 
   protected:
 
 	void layout()		override;
 	bool touchesEnded( ci::app::TouchEvent &event )	override;
 
+	void				onDecelerationEnded() override;
 	const ci::Rectf&	getDeceleratingBoundaries() const	override;
 
 	void layoutPages();
@@ -226,11 +229,11 @@ class PagingScrollView : public ScrollView {
 	size_t			mCurrentPageIndex = 0;
 	ci::vec2		mPageMargin = ci::vec2( 0 );
 	ci::Rectf		mDeceleratingBoundaries = ci::Rectf::zero();
+	float			mSwipeVelocityThreshold	= 500;
+	float			mSwipeDistanceThreshold	= 50;
+	bool			mPageIsChangingAnimated = false;
 
-	float mSwipeVelocityThreshold	= 500;
-	float mSwipeDistanceThreshold	= 50;
-
-	ci::signals::Signal<void ()>	mSignalDidChangePage;
+	ci::signals::Signal<void ()>	mSignalPageWillChange, mSignalPageDidChange;
 };
 
 } // namespace ui
