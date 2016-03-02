@@ -217,9 +217,9 @@ void ScrollView::updateDeceleratingOffset()
 
 void ScrollView::updateContentViewOffset( const vec2 &offset )
 {
-	if( mVerticalScrollingEnabled )
+	if( mScrollingEnabled && mVerticalScrollingEnabled )
 		mContentOffset().y = offset.y;
-	if( mHorizontalScrollingEnabled )
+	if( mScrollingEnabled && mHorizontalScrollingEnabled )
 		mContentOffset().x = offset.x;
 
 	// Move all of the content's position based on mContentOffset. Their world positions will be marked dirty.

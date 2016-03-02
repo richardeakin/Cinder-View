@@ -58,6 +58,10 @@ class ScrollView : public View {
 	bool isDragging() const			{ return mDragging; }
 	//! Returns whether the contents are freely decelerating, e.g. after the user has finished dragging.
 	bool isDecelerating() const		{ return mDecelerating; }
+	//! Returns whether scrolling is enabled or not.
+	bool isScrollingEnabled() const	{ return mScrollingEnabled; }
+	//! Sets whether scrolling is enabled or not.
+	void setScrollingEnabled( bool enable = true )	{ mScrollingEnabled = enable; }
 
 	//! Sets the friction factor to apply to velocity to slow it down (inside bounds). Default: 0.05
 	void setDecelerationFactorInside( float value )			{ mDecelerationFactorInside = value; }
@@ -153,6 +157,7 @@ class ScrollView : public View {
 	float mMinOffsetUntilStopped			= 0.1f;  // TODO: add max offset too (but should still move smoothly perhaps tanh).
 	float mMaxSpeed							= 300.0f;
 
+	bool							mScrollingEnabled = true;
 	bool							mVerticalScrollingEnabled = true;
 	bool							mHorizontalScrollingEnabled = true;
 
