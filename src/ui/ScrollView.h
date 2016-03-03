@@ -28,6 +28,8 @@ namespace ui {
 typedef std::shared_ptr<class ScrollView>			ScrollViewRef;
 typedef std::shared_ptr<class PagingScrollView>		PagingScrollViewRef;
 
+class SwipeTracker;
+
 class ScrollView : public View {
   public:
 	ScrollView( const ci::Rectf &bounds = ci::Rectf::zero() );
@@ -120,18 +122,8 @@ class ScrollView : public View {
 	void updateOffset( const ci::vec2 &currentPos, const ci::vec2 &previousPos );
 	void updateDeceleratingOffset();
 
-	// --------------------------------------------
-	// Touch tracking
-	struct StoredTouch {
-		ci::vec2	position;
-		double		eventSeconds;
-	};
-
-	std::list<StoredTouch>	mStoredTouches;
-	StoredTouch				mFirstTouch;
-	ci::vec2				mTouchVelocity;
-	size_t					mMaxStoredTouches = 10;
-	// --------------------------------------------
+	std::unique_ptr<SwipeTracker>	mSwipeTracker;
+	ci::vec2						mSwipeVelocity;
 
 	bool					mDragging		= false;
 	bool					mDecelerating	= false;
@@ -139,8 +131,6 @@ class ScrollView : public View {
 
   private:
 	void updateContentViewOffset( const ci::vec2 &offset );
-	void storeTouchPos( const ci::vec2 &pos );
-	void calcTouchVelocity();
 
 	class ContentView;
 	std::shared_ptr<ContentView>	mContentView;

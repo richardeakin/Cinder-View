@@ -32,6 +32,94 @@ using namespace std;
 
 namespace ui {
 
+// ----------------------------------------------------------------------------------------------------
+// SwipeTracker
+// ----------------------------------------------------------------------------------------------------
+
+class SwipeTracker {
+  public:
+
+	void clear();
+	void storeTouchPos( const ci::vec2 &pos, double currentTime );
+	vec2 calcSwipeVelocity();
+	vec2 calcSwipeDistance();
+
+	vec2 getFirstTouchPos() const	{ return mFirstTouch.position; }
+	vec2 getLastTouchPos() const;
+
+  private:
+	struct StoredTouch {
+		ci::vec2	position;
+		double		eventSeconds;
+	};
+
+	std::list<StoredTouch>	mStoredTouches;
+	StoredTouch				mFirstTouch;
+	size_t					mMaxStoredTouches = 10;
+};
+
+void SwipeTracker::clear()
+{
+	mStoredTouches.clear();
+}
+
+void SwipeTracker::storeTouchPos( const ci::vec2 &pos, double currentTime )
+{
+	if( mStoredTouches.size() >= mMaxStoredTouches )
+		mStoredTouches.pop_front();
+
+	StoredTouch touch;
+	touch.position = pos;
+	touch.eventSeconds = currentTime;
+	mStoredTouches.push_back( touch );
+
+	if( mStoredTouches.size() == 1 )
+		mFirstTouch = mStoredTouches.front();
+}
+
+
+vec2 SwipeTracker::calcSwipeVelocity()
+{
+	if( mStoredTouches.size() < 2 )
+		return vec2( 0 );
+
+	vec2 touchVelocity = vec2( 0 );
+	int samples = 0;
+	auto lastIt = --mStoredTouches.end();
+	for( auto it = mStoredTouches.begin(); it != lastIt; ++it ) {
+		auto nextIt = it;
+		++nextIt;
+		double dt = nextIt->eventSeconds - it->eventSeconds;
+		if( dt > 0.001 ) {
+			touchVelocity += ( nextIt->position - it->position ) / float( dt );
+			samples += 1;
+		}
+	}
+
+	if( samples > 0 ) {
+		touchVelocity /= float( samples );
+	}
+
+	return touchVelocity;
+}
+
+vec2 SwipeTracker::calcSwipeDistance()
+{
+	return getLastTouchPos() - getFirstTouchPos();
+}
+
+vec2 SwipeTracker::getLastTouchPos() const
+{
+	if( mStoredTouches.empty() )
+		return vec2( 0 );
+
+	return mStoredTouches.back().position;
+}
+
+// ----------------------------------------------------------------------------------------------------
+// ScrollView::ContentView
+// ----------------------------------------------------------------------------------------------------
+
 class ScrollView::ContentView : public View {
   public:
 	ContentView( ScrollView *parent )
@@ -40,12 +128,19 @@ class ScrollView::ContentView : public View {
 	}
 };
 
+// ----------------------------------------------------------------------------------------------------
+// ScrollView
+// ----------------------------------------------------------------------------------------------------
+
 ScrollView::ScrollView( const ci::Rectf &bounds )
 	: View( bounds )
 {
 	setClipEnabled();
+
 	mContentView = make_shared<ContentView>( this );
 	addSubview( mContentView );
+
+	mSwipeTracker = make_unique<SwipeTracker>();
 }
 
 ScrollView::~ScrollView()
@@ -180,11 +275,11 @@ void ScrollView::updateDeceleratingOffset()
 	// apply velocity to content offset
 	const float targetFrameRate = app::getFrameRate(); // TODO: need to get time + framerate from a source that is independant of app (something akin to a Context)
 	float deltaTime = 1.0f / targetFrameRate;
-	vec2 contentOffset = mContentOffset() - mTouchVelocity * deltaTime;
+	vec2 contentOffset = mContentOffset() - mSwipeVelocity * deltaTime;
 
 	const Rectf &boundaries = getDeceleratingBoundaries();
 	float decelFactor = boundaries.contains( contentOffset ) ? mDecelerationFactorInside : mDecelerationFactorOutside;
-	mTouchVelocity *= 1 - decelFactor;
+	mSwipeVelocity *= 1 - decelFactor;
 
 	mTargetOffset = boundaries.closestPoint( contentOffset );
 
@@ -196,7 +291,7 @@ void ScrollView::updateDeceleratingOffset()
 	}
 	contentOffset += velocity;
 
-	auto velLength = length( mTouchVelocity );
+	auto velLength = length( mSwipeVelocity );
 	auto offsetLength = length( mTargetOffset - contentOffset );
 
 	if( velLength < mMinVelocityConsideredAsStopped && offsetLength < mMinOffsetUntilStopped ) {
@@ -226,30 +321,6 @@ void ScrollView::updateContentViewOffset( const vec2 &offset )
 	mContentView->setPos( - mContentOffset() );
 }
 
-void ScrollView::calcTouchVelocity()
-{
-	if( mStoredTouches.size() < 2 )
-		return;
-
-	vec2 touchVelocity = vec2( 0 );
-	int samples = 0;
-	auto lastIt = --mStoredTouches.end();
-	for( auto it = mStoredTouches.begin(); it != lastIt; ++it ) {
-		auto nextIt = it;
-		++nextIt;
-		double dt = nextIt->eventSeconds - it->eventSeconds;
-		if( dt > 0.001 ) {
-			touchVelocity += ( nextIt->position - it->position ) / float( dt );
-			samples += 1;
-		}
-	}
-
-	if( samples > 0 ) {
-		mTouchVelocity = touchVelocity / float( samples );
-	}
-}
-
-
 // ----------------------------------------------------------------------------------------------------
 // Events
 // ----------------------------------------------------------------------------------------------------
@@ -258,12 +329,11 @@ bool ScrollView::touchesBegan( app::TouchEvent &event )
 {
 	auto &firstTouch = event.getTouches().front();
 	vec2 pos = toLocal( firstTouch.getPos() );
-	mStoredTouches.clear();
-	storeTouchPos( pos );
+	mSwipeTracker->clear();
+	mSwipeTracker->storeTouchPos( pos, app::getElapsedSeconds() );
 
 	mDragging = false; // will set to true once touchesMoved() is fired
 
-	mFirstTouch = mStoredTouches.front();
 	firstTouch.setHandled();
 	return true;
 }
@@ -271,9 +341,9 @@ bool ScrollView::touchesBegan( app::TouchEvent &event )
 bool ScrollView::touchesMoved( app::TouchEvent &event )
 {
 	vec2 pos = toLocal( event.getTouches().front().getPos() );
-	vec2 lastPos = mStoredTouches.back().position;
+	vec2 lastPos = mSwipeTracker->getLastTouchPos();
 	updateOffset( pos, lastPos );
-	storeTouchPos( pos );
+	mSwipeTracker->storeTouchPos( pos, app::getElapsedSeconds() );
 	
 	if( ! mDragging ) {
 		mDragging = true;
@@ -289,11 +359,11 @@ bool ScrollView::touchesMoved( app::TouchEvent &event )
 bool ScrollView::touchesEnded( app::TouchEvent &event )
 {
 	vec2 pos = toLocal( event.getTouches().front().getPos() );
-	vec2 lastPos = mStoredTouches.back().position;
+	vec2 lastPos = mSwipeTracker->getLastTouchPos();
 	updateOffset( pos, lastPos );
-	storeTouchPos( pos );
+	mSwipeTracker->storeTouchPos( pos, app::getElapsedSeconds() );
 
-	calcTouchVelocity();
+	mSwipeVelocity = mSwipeTracker->calcSwipeVelocity();
 
 	if( mDragging ) {
 		mDragging = false;
@@ -308,24 +378,9 @@ bool ScrollView::touchesEnded( app::TouchEvent &event )
 	return true;
 }
 
-// ----------------------------------------------------------------------------------------------------
-// ScrollView Other
-// ----------------------------------------------------------------------------------------------------
-
 const Rectf& ScrollView::getDeceleratingBoundaries() const
 {
 	return mOffsetBoundaries;
-}
-
-void ScrollView::storeTouchPos( const ci::vec2 &pos )
-{
-	if( mStoredTouches.size() >= mMaxStoredTouches )
-		mStoredTouches.pop_front();
-
-	StoredTouch touch;
-	touch.position = pos;
-	touch.eventSeconds = app::getElapsedSeconds();
-	mStoredTouches.push_back( touch );
 }
 
 // ----------------------------------------------------------------------------------------------------
@@ -448,11 +503,11 @@ bool PagingScrollView::touchesEnded( app::TouchEvent &event )
 
 	vec2 pageOffset = getTargetOffsetForPage( mCurrentPageIndex );
 
-	vec2 diff = mStoredTouches.back().position - mFirstTouch.position;
+	vec2 diff = mSwipeTracker->calcSwipeDistance();
 
 	if( mAxis == HORIZONTAL ) {
 		float halfSize = getWidth() / 2.0f;
-		bool didSwipe = ( fabsf( mTouchVelocity.x ) > mSwipeVelocityThreshold ) && ( fabsf( diff.x ) > mSwipeDistanceThreshold );
+		bool didSwipe = ( fabsf( mSwipeVelocity.x ) > mSwipeVelocityThreshold ) && ( fabsf( diff.x ) > mSwipeDistanceThreshold );
 
 		if( ( didSwipe && diff.x < 0 ) || ( ! wasDecelerating && ( getContentOffset().x - pageOffset.x > halfSize && ! isOnLastPage() ) ) )
 			nextPage();
@@ -462,7 +517,7 @@ bool PagingScrollView::touchesEnded( app::TouchEvent &event )
 	else {
 		// VERTICAL
 		float halfSize = getHeight() / 2.0f;
-		bool didSwipe = ( fabsf( mTouchVelocity.y ) > mSwipeVelocityThreshold ) && ( fabsf( diff.y ) > mSwipeDistanceThreshold );
+		bool didSwipe = ( fabsf( mSwipeVelocity.y ) > mSwipeVelocityThreshold ) && ( fabsf( diff.y ) > mSwipeDistanceThreshold );
 
 		if( ( didSwipe && diff.y < 0 ) || ( ! wasDecelerating && ( getContentOffset().y - pageOffset.y > halfSize && ! isOnLastPage() ) ) )
 			nextPage();
