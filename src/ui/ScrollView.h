@@ -144,7 +144,7 @@ class ScrollView : public View {
 	float mConstraintStiffness				= 0.2f;
 	float mStretchFactor					= 0.5f;
 	float mMinVelocityConsideredAsStopped	= 10;
-	float mMinOffsetUntilStopped			= 0.1f;  // TODO: add max offset too (but should still move smoothly perhaps tanh).
+	float mMinOffsetUntilStopped			= 0.5f;  // TODO: add max offset too (but should still move smoothly perhaps tanh).
 	float mMaxSpeed							= 300.0f;
 
 	bool							mScrollingEnabled = true;
