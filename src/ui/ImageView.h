@@ -52,12 +52,17 @@ class ImageView : public View {
 
 	ci::Rectf getDestRect() const;
 
+	void					setColor( const ci::Color &color )	{ mColor = color; }
+	const ci::Color&		getColor() const					{ return mColor; }
+	ci::Anim<ci::Color>*	getColorAnim()						{ return &mColor; }
+
   protected:
 	void draw( Renderer *ren ) override;
 
   private:
-	ImageRef	        mImage;
-	ImageScaleMode		mScaleMode = ImageScaleMode::FIT;
+	ImageRef				mImage;
+	ImageScaleMode			mScaleMode = ImageScaleMode::FIT;
+	ci::Anim<ci::Color>		mColor = ci::Color::white();
 };
 
 
