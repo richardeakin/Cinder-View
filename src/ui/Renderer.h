@@ -133,7 +133,7 @@ class Renderer {
 	//!
 	void draw( const FrameBufferRef &frameBuffer, const ci::Area &sourceArea, const ci::Rectf &destRect );
 	//!
-	void draw( const ImageRef &image, const ci::Rectf &destRect );
+	void draw( const ImageRef &image, const ci::Rectf &destRect, const ci::gl::GlslProgRef &glsl = nullptr );
 
 	//! Draws a solid rectangle with dimensions \a rect.
 	void drawSolidRect( const ci::Rectf &rect );

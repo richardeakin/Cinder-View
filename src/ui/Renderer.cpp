@@ -268,9 +268,18 @@ void Renderer::draw( const FrameBufferRef &frameBuffer, const ci::Area &sourceAr
 	gl::draw( frameBuffer->mFbo->getColorTexture(), sourceArea, destRect );
 }
 
-void Renderer::draw( const ImageRef &image, const ci::Rectf &destRect )
+void Renderer::draw( const ImageRef &image, const ci::Rectf &destRect, const ci::gl::GlslProgRef &glsl )
 {
-	gl::draw( image->mTexture, destRect );
+	// TODO: use Batch. if no glsl then use a default one, replacing on Batch as necessary
+	if( glsl ) {
+		gl::ScopedGlslProg glslScope( glsl );
+		gl::ScopedTextureBind texScope( image->mTexture );
+
+		gl::drawSolidRect( destRect );
+	}
+	else {
+		gl::draw( image->mTexture, destRect );
+	}
 }
 
 void Renderer::drawSolidRect( const Rectf &rect )
