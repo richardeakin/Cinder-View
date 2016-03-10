@@ -38,6 +38,7 @@ class ScrollView : public View {
 	virtual void addContentView( const ViewRef &view, bool updateContentLayout = true );
 	void addContentViews( const std::vector<ViewRef> &views );
 
+	// TODO: remove this, use getPageView instead
 	ViewRef getContentView( size_t pageIndex ) const;
 
 	// TODO: why is this returning the container? return the content views added with addContentView
@@ -178,6 +179,8 @@ class PagingScrollView : public ScrollView {
 	void setPage( size_t index, bool animate = true );
 	size_t getPage() const						{ return mCurrentPageIndex; }
 	size_t getNumPages() const;
+
+	ui::ViewRef getPageView( size_t pageIndex ) const;
 
 	ci::vec2 getTargetOffsetForPage( size_t index ) const;
 

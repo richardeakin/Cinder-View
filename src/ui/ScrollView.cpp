@@ -412,6 +412,16 @@ void PagingScrollView::addContentView( const ViewRef &view, bool updateContentLa
 	}
 }
 
+ViewRef	PagingScrollView::getPageView( size_t index ) const
+{
+	if( index >= getNumPages() ) {
+		CI_ASSERT_NOT_REACHABLE();
+		return nullptr;
+	}
+
+	return getContentView( index );
+}
+
 void PagingScrollView::removeAllSubviews()
 {
 	ScrollView::removeAllSubviews();
