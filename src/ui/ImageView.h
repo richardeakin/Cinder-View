@@ -45,12 +45,13 @@ class ImageView : public View {
 
 	ImageView( const ci::Rectf &bounds = ci::Rectf::zero() );
 
-	void setImage( const ImageRef &image );
+	void			setImage( const ImageRef &image );
+	ImageRef		getImage() const	{ return mImage; }
 
-	void setScaleMode( ImageScaleMode mode )	{ mScaleMode = mode; }
-	ImageScaleMode getScaleMode() const			{ return mScaleMode; }
+	void			setScaleMode( ImageScaleMode mode )	{ mScaleMode = mode; }
+	ImageScaleMode	getScaleMode() const				{ return mScaleMode; }
 
-	ci::Rectf getDestRect() const;
+	ci::Rectf		getDestRect() const;
 
 	void					setColor( const ci::Color &color )	{ mColor = color; }
 	const ci::Color&		getColor() const					{ return mColor; }

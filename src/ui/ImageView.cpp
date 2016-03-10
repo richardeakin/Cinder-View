@@ -44,7 +44,7 @@ void ImageView::draw( Renderer *ren )
 	if( ! mImage )
 		return;
 
-	ren->setColor( mColor.value() );
+	ren->setColor( getColor() );
 	ren->draw( mImage, getDestRect() );
 }
 
