@@ -49,6 +49,8 @@ class Image {
 	const ci::ivec2&    getSize() const     { return mSize; }
 	ci::Area            getBounds() const   { return ci::Area( 0, 0, mSize.x, mSize.y ); }
 
+	const ci::gl::TextureRef&	getTexture() const	{ return mTexture; }
+
   private:
 	ci::gl::TextureRef	mTexture;
 	ci::ivec2           mSize;
