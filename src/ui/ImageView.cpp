@@ -45,10 +45,10 @@ void ImageView::draw( Renderer *ren )
 		return;
 
 	ren->setColor( getColor() );
-	ren->draw( mImage, getDestRect() );
+	ren->draw( mImage, getDestRectLocal() );
 }
 
-Rectf ImageView::getDestRect() const
+Rectf ImageView::getDestRectLocal() const
 {
 	if( ! mImage ) {
 		return Rectf::zero();

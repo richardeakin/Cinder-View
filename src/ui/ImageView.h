@@ -51,7 +51,8 @@ class ImageView : public View {
 	void			setScaleMode( ImageScaleMode mode )	{ mScaleMode = mode; }
 	ImageScaleMode	getScaleMode() const				{ return mScaleMode; }
 
-	ci::Rectf		getDestRect() const;
+	//! Returns the destination Rect in this ImageView's coordinate system.
+	ci::Rectf		getDestRectLocal() const;
 
 	void					setColor( const ci::Color &color )	{ mColor = color; }
 	const ci::Color&		getColor() const					{ return mColor; }
