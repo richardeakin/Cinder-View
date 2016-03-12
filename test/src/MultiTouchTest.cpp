@@ -286,14 +286,14 @@ void MultiTouchTest::injectContinuousTouches()
 	vector<app::TouchEvent::Touch> touchesMoved;
 	vector<app::TouchEvent::Touch> touchesEnded;
 
-	for( size_t i = 0; i < mTestTouches.size(); i++ ) {
+	for( uint32_t i = 0; i < mTestTouches.size(); i++ ) {
 		auto &t = mTestTouches[i];
 		if( t.mPhase == TestTouch::Phase::BEGAN )
-			touchesBegan.emplace_back( t.mPos, vec2( 0 ), i, 0, nullptr );
+			touchesBegan.emplace_back( t.mPos, vec2( 0 ), i, 0.0, nullptr );
 		else if( t.mPhase == TestTouch::Phase::MOVED )
-			touchesMoved.emplace_back( t.mPos, vec2( 0 ), i, 0, nullptr );
+			touchesMoved.emplace_back( t.mPos, vec2( 0 ), i, 0.0, nullptr );
 		else if( t.mPhase == TestTouch::Phase::ENDED ) {
-			touchesEnded.emplace_back( t.mPos, vec2( 0 ), i, 0, nullptr );
+			touchesEnded.emplace_back( t.mPos, vec2( 0 ), i, 0.0, nullptr );
 			t.mPhase = TestTouch::Phase::UNUSED;
 		}
 	}
@@ -315,12 +315,12 @@ void MultiTouchTest::injectContinuousTouches()
 void MultiTouchTest::endCountinuousTouches()
 {
 	vector<app::TouchEvent::Touch> touchesEnded;
-	for( size_t i = 0; i < mTestTouches.size(); i++ ) {
+	for( uint32_t i = 0; i < mTestTouches.size(); i++ ) {
 		auto &t = mTestTouches[i];
 		if( t.mPhase == TestTouch::Phase::UNUSED )
 			continue;
 
-		touchesEnded.emplace_back( t.mPos, vec2( 0 ), i, 0, nullptr );
+		touchesEnded.emplace_back( t.mPos, vec2( 0 ), i, 0.0, nullptr );
 		t.mPhase = TestTouch::Phase::UNUSED;
 		t.mPos.stop();
 	}
