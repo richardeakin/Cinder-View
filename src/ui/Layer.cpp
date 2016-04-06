@@ -147,7 +147,7 @@ void Layer::draw( Renderer *ren )
 		ivec2 frameBufferSize = ivec2( mFrameBufferBounds.getSize() );
 		if( ! mFrameBuffer || ! mFrameBuffer->isUsable() || mFrameBuffer->getSize().x < frameBufferSize.x || mFrameBuffer->getSize().y < frameBufferSize.y ) {
 			mFrameBuffer = ren->getFrameBuffer( frameBufferSize );
-			LOG_LAYER( "acquiring FrameBuffer for view '" << mRootView->getName() << ", size: " << mFrameBuffer->getSize()
+			LOG_LAYER( "acquiring FrameBuffer for view '" << mRootView->getName() << "', size: " << mFrameBuffer->getSize()
 			           << "', mFrameBufferBounds: " << mFrameBufferBounds << ", view bounds:" << mRootView->getBounds() );
 		}
 
@@ -235,8 +235,8 @@ void Layer::processFilters( Renderer *ren, const FrameBufferRef &renderFrameBuff
 				pass.mFrameBuffer = ren->getFrameBuffer( requiredSize );
 				pass.mSize = requiredSize;
 
-				LOG_LAYER( "acquired FrameBuffer for view '" << mRootView->getName() << ", size: " << pass.mFrameBuffer->getSize()
-					<< "', required size: " << requiredSize );
+				LOG_LAYER( "acquired FrameBuffer for view '" << mRootView->getName() << "', pass: " << i
+					<< ", size: " << pass.mFrameBuffer->getSize() << ", required size: " << requiredSize );
 
 				// TODO: think of a better way to determine a FrameBuffer is already in use during this tree draw
 				// - with this, the FrameBuffer can't be used in any other part of the draw hierarchy

@@ -264,11 +264,14 @@ FilterTest::FilterTest()
 	mToggleSinglePass->getSignalReleased().connect( [this] {
 		if( mToggleSinglePass->isEnabled() ) {
 			mImageView->removeAllFilters();
+			CI_LOG_I( "-------- adding mFilterSinglePass --------" );
 			mImageView->addFilter( mFilterSinglePass );
 			mToggleBlur->setEnabled( false );
 		}
-		else
+		else {
+			CI_LOG_I( "-------- removing mFilterSinglePass --------" );
 			mImageView->removeFilter( mFilterSinglePass );
+		}
 	} );
 
 
@@ -281,11 +284,14 @@ FilterTest::FilterTest()
 	mToggleBlur->getSignalReleased().connect( [this] {
 		if( mToggleBlur->isEnabled() ) {
 			mImageView->removeAllFilters();
+			CI_LOG_I( "-------- adding mFilterBlur --------" );
 			mImageView->addFilter( mFilterBlur );
 			mToggleSinglePass->setEnabled( false );
 		}
-		else
+		else {
+			CI_LOG_I( "-------- removing mFilterBlur --------" );
 			mImageView->removeFilter( mFilterBlur );
+		}
 	} );
 
 	mToggleDropShadow = make_shared<ui::Button>();
@@ -296,9 +302,11 @@ FilterTest::FilterTest()
 	mToggleDropShadow->setEnabled( true ); // filter already added
 	mToggleDropShadow->getSignalReleased().connect( [this] {
 		if( mToggleDropShadow->isEnabled() ) {
+			CI_LOG_I( "-------- adding mFilterDropShadow --------" );
 			mLabel->addFilter( mFilterDropShadow );
 		}
 		else {
+			CI_LOG_I( "-------- removing mFilterDropShadow --------" );
 			mLabel->removeFilter( mFilterDropShadow );
 		}
 	} );
@@ -371,4 +379,3 @@ bool FilterTest::keyDown( ci::app::KeyEvent &event )
 {
 	return false;
 }
-

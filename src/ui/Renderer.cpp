@@ -96,6 +96,8 @@ bool FrameBuffer::Format::operator==(const Format &other) const
 
 FrameBuffer::FrameBuffer( const Format &format )
 {
+	LOG_FRAMEBUFFER( "creating FrameBuffer " << hex << this << dec << ", size: " << format.mSize );
+
 	auto fboFormat = gl::Fbo::Format();
 	fboFormat.colorTexture(
 			gl::Texture2d::Format()
@@ -104,7 +106,6 @@ FrameBuffer::FrameBuffer( const Format &format )
 	);
 
 	mFbo = gl::Fbo::create( format.mSize.x, format.mSize.y, fboFormat );
-	LOG_FRAMEBUFFER( "created FrameBuffer of size: " << format.mSize );
 }
 
 ivec2 FrameBuffer::getSize() const
@@ -203,6 +204,7 @@ FrameBufferRef Renderer::getFrameBuffer( const ci::ivec2 &size )
 
 		// Check for any unbound FrameBuffer large enough for the requested size
 		if( frameBuffer->getSize().x >= size.x && frameBuffer->getSize().y >= size.y ) {
+			LOG_FRAMEBUFFER( "using FrameBuffer: " << hex << frameBuffer.get() << dec << " not in use, required size: " << size << ", framebuffer size: " << frameBuffer->getSize() );
 			return frameBuffer;
 		}
 
@@ -226,7 +228,7 @@ FrameBufferRef Renderer::getFrameBuffer( const ci::ivec2 &size )
 	// Replace the largest unbound FrameBuffer, or push another one if one wasn't available
 	if( availableFrameBufferIt != mFrameBufferCache.end()  ) {
 		auto old = *availableFrameBufferIt;
-		LOG_FRAMEBUFFER( "discarding FrameBuffer of size: " << old->getSize() );
+		LOG_FRAMEBUFFER( "discarding FrameBuffer : " << hex << old.get() << dec << ", size: " << old->getSize() );
 		old->mDiscarded = true;
 		*availableFrameBufferIt = result;
 	}
