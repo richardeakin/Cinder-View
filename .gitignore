@@ -16,6 +16,7 @@ build/
 *.sdf
 *.opensdf
 *.VC.opendb
+*.VC.db
 Debug/
 RelWithDebInfo/
 Release/
