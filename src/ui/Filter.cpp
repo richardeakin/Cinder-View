@@ -39,6 +39,18 @@ void Filter::PassInfo::setSize( const ci::ivec2 &size, size_t passIndex )
 	mSizes[passIndex] = size;
 }
 
+Filter::Pass::~Pass()
+{
+	// temporary: marking FrameBuffer as unused once Pass is destroyed because it is the sole owner
+	// TODO: remove this once caching is fixed
+	if( mFrameBuffer )
+		mFrameBuffer->mInUse = false;
+}
+
+Filter::~Filter()
+{
+}
+
 void Filter::configure( const ivec2 &size, PassInfo *info )
 {
 	info->mSizes.resize( 1, size );

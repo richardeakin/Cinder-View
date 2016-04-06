@@ -133,6 +133,8 @@ class Renderer {
 	//!
 	void popFrameBuffer( const FrameBufferRef &frameBuffer );
 	//!
+	void clearUnusedFrameBuffers();
+	//!
 	void draw( const FrameBufferRef &frameBuffer, const ci::Rectf &destRect );
 	//!
 	void draw( const FrameBufferRef &frameBuffer, const ci::Area &sourceArea, const ci::Rectf &destRect );

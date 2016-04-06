@@ -32,6 +32,7 @@ typedef std::shared_ptr<class Filter>   FilterRef;
 //! Performs filter effects as post-process operation.
 class Filter {
   public:
+	  virtual ~Filter();
 
   protected:
 	//! Passed during initialize() to configure render targets
@@ -53,6 +54,8 @@ class Filter {
 	//! Provided during process() that contains information about the current processing pass
 	class Pass {
 	  public:
+		~Pass();
+
 		//! Returns the index of the current pass
 		size_t	getIndex() const	{ return mIndex; }
 
@@ -69,6 +72,7 @@ class Filter {
 		FrameBufferRef	mFrameBuffer;
 
 		friend class Layer;
+		friend class Filter;
 	};
 
 	//! Called when Passes need to be configured. Defaults to one pass with a render target the size of \a size.

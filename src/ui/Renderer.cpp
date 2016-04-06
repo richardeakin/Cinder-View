@@ -29,7 +29,7 @@
 #include "cinder/gl/Fbo.h"
 #include "cinder/Log.h"
 
-#define ENABLE_FRAMEBUFFER_CACHING 1
+#define FRAMEBUFFER_CACHING_ENABLED 0
 
 //#define LOG_FRAMEBUFFER( stream )	CI_LOG_I( stream )
 #define LOG_FRAMEBUFFER( stream )	    ( (void)( 0 ) )
@@ -196,6 +196,7 @@ void Renderer::popBlendMode()
 
 FrameBufferRef Renderer::getFrameBuffer( const ci::ivec2 &size )
 {
+#if FRAMEBUFFER_CACHING_ENABLED
 	auto availableFrameBufferIt = mFrameBufferCache.end();
 	for( auto frameBufferIt = mFrameBufferCache.begin(); frameBufferIt < mFrameBufferCache.end(); ++frameBufferIt ) {
 		auto &frameBuffer = *frameBufferIt;
@@ -235,7 +236,26 @@ FrameBufferRef Renderer::getFrameBuffer( const ci::ivec2 &size )
 	else {
 		mFrameBufferCache.push_back( result );
 	}
+
+#else
+	// temporary: always create and return a new FrameBuffer
+	clearUnusedFrameBuffers();
+
+	auto format = FrameBuffer::Format().size( size );
+	auto result = make_shared<FrameBuffer>( format );
+	result->mInUse = true; // always in use when caching is disabled
+	mFrameBufferCache.push_back( result );
+#endif
+
 	return result;
+}
+
+void Renderer::clearUnusedFrameBuffers()
+{
+	mFrameBufferCache.erase( remove_if( mFrameBufferCache.begin(), mFrameBufferCache.end(),
+		[]( const FrameBufferRef &frameBuffer ) {
+			return ! frameBuffer->isInUse();
+		} ), mFrameBufferCache.end() );
 }
 
 void Renderer::pushFrameBuffer( const FrameBufferRef &frameBuffer )
@@ -246,7 +266,9 @@ void Renderer::pushFrameBuffer( const FrameBufferRef &frameBuffer )
 
 void Renderer::popFrameBuffer( const FrameBufferRef &frameBuffer )
 {
+#if FRAMEBUFFER_CACHING_ENABLED
 	frameBuffer->mInUse = false;
+#endif
 	gl::context()->popFramebuffer();
 }
 

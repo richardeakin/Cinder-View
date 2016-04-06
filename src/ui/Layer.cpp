@@ -56,6 +56,11 @@ Layer::Layer( View *view )
 Layer::~Layer()
 {
 	LOG_LAYER( "bang" );
+
+	// temporary: marking FrameBuffer as unused once Layer is destroyed because it is the sole owner
+	// TODO: remove this once caching is fixed
+	if( mFrameBuffer )
+		mFrameBuffer->mInUse = false;
 }
 
 float Layer::getAlpha() const
