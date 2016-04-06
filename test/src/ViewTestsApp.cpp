@@ -51,6 +51,13 @@ void ViewTestsApp::setup()
 
 void ViewTestsApp::keyDown( app::KeyEvent event )
 {
+	if( event.isControlDown() ) {
+		if( event.getChar() == 'r' ) {
+			CI_LOG_I( "reloading.." );
+			mTestSuite->reload();
+		}
+	}
+
 	switch( event.getCode() ) {
 		case app::KeyEvent::KEY_p:
 			mTestSuite->getGraph()->printHeirarchy( app::console() );
