@@ -214,11 +214,9 @@ FilterTest::FilterTest()
 
 	fs::path imageFilePath = app::getAssetPath( "images/monkey_hitchhike.jpg" );
 	try {
-		CI_LOG_I( "loading image view.." );
 		auto image = make_shared<ui::Image>( loadImage( loadFile( imageFilePath ) ) );
 		mImageView->setImage( image );
 		//mImageView->setScaleMode( ui::ImageScaleMode::FILL );
-		CI_LOG_I( "complete" );
 	}
 	catch( std::exception &exc ) {
 		CI_LOG_EXCEPTION( "failed to load image at path: " << imageFilePath, exc );
@@ -298,10 +296,11 @@ FilterTest::FilterTest()
 	mToggleDropShadow->setEnabled( true ); // filter already added
 	mToggleDropShadow->getSignalReleased().connect( [this] {
 		if( mToggleDropShadow->isEnabled() ) {
-			mLabel->addFilter( mFilterBlur );
+			mLabel->addFilter( mFilterDropShadow );
 		}
-		else
-			mLabel->removeFilter( mFilterBlur );
+		else {
+			mLabel->removeFilter( mFilterDropShadow );
+		}
 	} );
 
 	mSliderBlur = make_shared<ui::HSlider>();
