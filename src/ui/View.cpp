@@ -448,6 +448,15 @@ float View::getAlphaCombined() const
 	return alpha;
 }
 
+ViewRef View::getViewWithLabel( const std::string &label ) const
+{
+	auto it = find_if( mSubviews.begin(), mSubviews.end(), [&label] ( const ViewRef &subview ) {
+		return subview->getLabel() == label;
+	} );
+
+	return it == mSubviews.end() ? nullptr : *it;
+}
+
 std::string View::getName() const
 {
 	return ( ! mLabel.empty() ? mLabel : System::demangleTypeName( typeid( *this ).name() ) );

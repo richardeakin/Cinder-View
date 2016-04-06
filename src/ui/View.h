@@ -101,6 +101,8 @@ class View : public std::enable_shared_from_this<View> {
 	//! Sets a label that can be used to identify this View
 	void				setLabel( const std::string &label )	{ mLabel = label; }
 	const std::string&	getLabel() const						{ return mLabel; }
+	//! Returns the first label whose label matches the specified string, or an empty ViewRef.
+	ViewRef				getViewWithLabel( const std::string &label ) const;
 
 	//! Returns this View's label if it has one, otherwise it's typename
 	std::string			getName() const;
