@@ -115,7 +115,11 @@ ivec2 FrameBuffer::getSize() const
 
 bool FrameBuffer::isUsable() const
 {
+#if FRAMEBUFFER_CACHING_ENABLED
 	return ! mDiscarded && ! mInUse;
+#else
+	return ! mDiscarded;
+#endif
 }
 
 ImageSourceRef FrameBuffer::createImageSource() const

@@ -266,7 +266,7 @@ void Layer::processFilters( Renderer *ren, const FrameBufferRef &renderFrameBuff
 	}
 
 	mFiltersNeedConfiguration = false;
-	renderFrameBuffer->mInUse = false;
+	//renderFrameBuffer->mInUse = false; // TODO: this will need to be re-enabled when caching is turned back on (but will also likely be replaced by a better solution)
 }
 
 void Layer::beginClip( View *view, Renderer *ren )
