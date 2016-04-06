@@ -94,22 +94,17 @@ void ViewTestsApp::drawLayerBorders()
 	ren->popColor();
 }
 
-CINDER_APP( ViewTestsApp, RendererGl( RendererGl::Options().msaa( 8 ) ), []( App::Settings *settings ) {
-//	settings->setWindowPos( 0, 0 );
+void prepareSettings( app::App::Settings *settings )
+{
+	//settings->setWindowPos( 0, 0 );
 	settings->setWindowSize( 1000, 650 );
 
-//	settings->setMultiTouchEnabled();
+	//settings->setMultiTouchEnabled();
 
-	// move app to macbook display
-	for( const auto &display : Display::getDisplays() ) {
-		CI_LOG_I( "display name: " << display->getName() );
-		if( display->getName() == "Color LCD" ) {
-			settings->setDisplay( display );
-		}
-		else if( display->getName() == "Generic PnP Monitor" ) {
-			// gechic 1303i 13"touch display
-			settings->setDisplay( display );
-			//settings->setFullScreen( true );
-		}
+	// move app to secondary display
+	if( Display::getDisplays().size() > 1 ) {
+		settings->setDisplay( Display::getDisplays()[1] );
 	}
-} )
+}
+
+CINDER_APP( ViewTestsApp, RendererGl( RendererGl::Options().msaa( 8 ) ), prepareSettings )
