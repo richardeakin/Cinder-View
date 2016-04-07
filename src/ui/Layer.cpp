@@ -185,8 +185,10 @@ void Layer::draw( Renderer *ren )
 		ren->pushBlendMode( BlendMode::PREMULT_ALPHA );
 		ren->pushColor( ColorA::gray( 1, getAlpha() ) );
 
+		//auto sourceArea = Area( 0, 0, mFrameBufferBounds.getWidth(), mFrameBufferBounds.getHeight() );
+		auto sourceArea = frameBuffer->mFbo->getBounds();
 		auto destRect = mFrameBufferBounds + mRootView->getPos();
-		ren->draw( frameBuffer, Area( 0, 0, mFrameBufferBounds.getWidth(), mFrameBufferBounds.getHeight() ), destRect );
+		ren->draw( frameBuffer, sourceArea, destRect );
 		ren->popColor();
 		ren->popBlendMode();
 	}
