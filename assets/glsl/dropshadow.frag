@@ -47,7 +47,8 @@ void main()
 	sum += texture( uTex0, vTexCoord0 +  10.0 * offset + dropShadowOffset ) * 0.009167927656011385;
 
 	// Convert to grayscale using NTSC conversion weights
-    float gray = dot( sum.rgb, vec3( 0.299, 0.587, 0.114 ) );
+    //float gray = dot( sum.rgb, vec3( 0.299, 0.587, 0.114 ) );
+	float gray = 0; // black shadow
 
 	// sum.a *= 1.1; // this makes it strong, but with pixelation
 
