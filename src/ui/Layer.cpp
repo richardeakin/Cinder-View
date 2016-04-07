@@ -75,30 +75,32 @@ void Layer::init()
 
 	LOG_LAYER( "mRootView: " << mRootView->getName() );
 
+	bool needsFrameBuffer = false;
 	if( mRootView->isTransparent() ) {
+		needsFrameBuffer = true;
 		if( ! mRootView->mRendersToFrameBuffer ) {
 			LOG_LAYER( "enabling FrameBuffer for view '" << mRootView->getName() << "', size: " << mRootView->getSize() );
 			LOG_LAYER( "\t- reason: alpha = " << mRootView->getAlpha() );
 			mRootView->mRendersToFrameBuffer = true;
 		}
 	}
-	else if( ! mRootView->mFilters.empty() ) {
+	if( ! mRootView->mFilters.empty() ) {
 		LOG_LAYER( "enabling FrameBuffer for view '" << mRootView->getName() << "', size: " << mRootView->getSize() );
 		LOG_LAYER( "\t- reason: num filters = " << mRootView->mFilters.size() );
+		needsFrameBuffer = true;
 		mRootView->mRendersToFrameBuffer = true;
 		mFiltersNeedConfiguration = true;
 	}
-	else {
-		if( mFrameBuffer ) {
-			// TODO: Consider removing, this path currently isn't reached as the Layer will be removed when View calls Graph::removeLayer().
-			LOG_LAYER( "removing FrameBuffer for view '" << mRootView->getName() << "'" );
-			LOG_LAYER( "\t- reason: alpha = " << mRootView->getAlpha() );
-			mFrameBuffer.reset();
-			mRootView->mRendersToFrameBuffer = false;
-			mFrameBufferBounds = Rectf::zero();
-			mGraph->removeLayer( shared_from_this() );
-			return;
-		}
+
+	if( ! needsFrameBuffer && mFrameBuffer ) {
+		// TODO: Consider removing, this path currently isn't reached as the Layer will be removed when View calls Graph::removeLayer().
+		LOG_LAYER( "removing FrameBuffer for view '" << mRootView->getName() << "'" );
+		LOG_LAYER( "\t- reason: alpha = " << mRootView->getAlpha() );
+		mFrameBuffer.reset();
+		mRootView->mRendersToFrameBuffer = false;
+		mFrameBufferBounds = Rectf::zero();
+		mGraph->removeLayer( shared_from_this() );
+		return;
 	}
 }
 
