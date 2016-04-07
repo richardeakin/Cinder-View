@@ -4,7 +4,7 @@
 #include "cinder/Log.h"
 #include "cinder/gl/gl.h"
 
-#include "../../lib/Cinder-FileWatcher/src/mason/FileWatcher.cpp" // TEMP
+#include "../../blocks/Cinder-FileWatcher/src/mason/FileWatcher.cpp" // TEMP
 
 using namespace std;
 using namespace ci;
@@ -55,157 +55,6 @@ void FilterSinglePass::process( ui::Renderer *ren, const ui::Filter::Pass &pass 
 }
 
 // ----------------------------------------------------------------------------------------------------
-// FilterBlur
-// ----------------------------------------------------------------------------------------------------
-
-FilterBlur::FilterBlur()
-{
-	vector<fs::path> glslPaths = {
-		"glsl/blur.vert",
-		"glsl/blur.frag"
-	};
-
-	try {
-		mWatchGlsl = mason::FileWatcher::load( glslPaths, [this]( const std::vector<fs::path> &fullPaths ) {
-			auto format = gl::GlslProg::Format()
-				.vertex( loadFile( fullPaths.at( 0 ) ) )
-				.fragment( loadFile( fullPaths.at( 1 ) ) )
-			;
-
-			try {
-				mGlsl = gl::GlslProg::create( format );
-
-				CI_LOG_I( "blur glsl loaded." );
-			}
-			catch( std::exception &exc ) {
-				CI_LOG_EXCEPTION( "failed to compile GlslProg at: " << format.getVertexPath(), exc );
-			}
-		} );
-	}
-	catch( std::exception &exc ) {
-		CI_LOG_EXCEPTION( "failed to load blur glsl", exc );
-	}
-}
-
-void FilterBlur::configure( const ci::ivec2 &size, ui::Filter::PassInfo *info )
-{
-	// TODO: rethink how these should be specified
-	info->setCount( 2 );
-	info->setSize( size, 0 );
-	info->setSize( size, 1 );
-}
-
-void FilterBlur::process( ui::Renderer *ren, const ui::Filter::Pass &pass )
-{
-	if( ! mGlsl )
-		return;
-
-	vec2 sampleOffset;
-	gl::TextureRef tex;
-
-	if( pass.getIndex() == 0 ) {
-		sampleOffset.x = mBlurPixels.x / (float)pass.getWidth();
-		tex = getRenderColorTexture();
-	}
-	else {
-		sampleOffset.y = mBlurPixels.y / (float)pass.getHeight();
-		tex = getPassColorTexture( 0 );
-	}
-
-	gl::ScopedGlslProg glslScope( mGlsl );
-	mGlsl->uniform( "uSampleOffset", sampleOffset );
-
-	gl::ScopedTextureBind texScope( tex );
-	gl::clear( ColorA::zero() );
-	gl::drawSolidRect( Rectf( vec2( 0 ), pass.getSize() ) );
-}
-
-// ----------------------------------------------------------------------------------------------------
-// FilterDropShadow
-// ----------------------------------------------------------------------------------------------------
-
-FilterDropShadow::FilterDropShadow()
-{
-	// TODO: this needs to be a shadow direction
-	mBlurPixels = vec2( 2.0f );
-
-	vector<fs::path> glslPaths = {
-		"glsl/blur.vert",
-		"glsl/dropshadow.frag"
-	};
-
-	try {
-		mWatchGlsl = mason::FileWatcher::load( glslPaths, [this]( const std::vector<fs::path> &fullPaths ) {
-			auto format = gl::GlslProg::Format()
-				.vertex( loadFile( fullPaths.at( 0 ) ) )
-				.fragment( loadFile( fullPaths.at( 1 ) ) )
-			;
-
-			try {
-				mGlsl = gl::GlslProg::create( format );
-
-				CI_LOG_I( "dropshadow glsl loaded." );
-			}
-			catch( std::exception &exc ) {
-				CI_LOG_EXCEPTION( "failed to compile GlslProg at: " << format.getVertexPath(), exc );
-			}
-		} );
-	}
-	catch( std::exception &exc ) {
-		CI_LOG_EXCEPTION( "failed to load blur glsl", exc );
-	}
-}
-
-void FilterDropShadow::configure( const ci::ivec2 &size, ui::Filter::PassInfo *info )
-{
-	ivec2 framebufferSize( vec2( size ) / (float)mDownsampleFactor );
-	info->setCount( 2 );
-	info->setSize( framebufferSize, 0 );
-	info->setSize( framebufferSize, 1 );
-}
-
-void FilterDropShadow::setDownsampleFactor( float factor )
-{ 
-	mDownsampleFactor = glm::max( 1.0f, factor );
-	// TODO: need to mark the filter as needing to be re-configured
-}
-
-void FilterDropShadow::process( ui::Renderer *ren, const ui::Filter::Pass &pass )
-{
-	if( ! mGlsl )
-		return;
-
-	vec2 sampleOffset;
-	gl::TextureRef tex;
-
-	if( pass.getIndex() == 0 ) {
-		sampleOffset.x = mBlurPixels.x / (float)pass.getWidth();
-		tex = getRenderColorTexture();
-	}
-	else {
-		sampleOffset.y = mBlurPixels.y / (float)pass.getHeight();
-		tex = getPassColorTexture( 0 );
-	}
-
-	vec2 shadowOffset = mShadowOffset / vec2( pass.getSize() );
-
-	{
-		gl::ScopedGlslProg glslScope( mGlsl );
-		mGlsl->uniform( "uSampleOffset", sampleOffset );
-		mGlsl->uniform( "uShadowOffset", shadowOffset );
-
-		gl::ScopedTextureBind texScope( tex );
-		gl::clear( ColorA::zero() );
-		gl::drawSolidRect( Rectf( vec2( 0 ), pass.getSize() ) );
-	}
-
-	if( pass.getIndex() == 1 ) {
-		// draw original image again on top
-		gl::draw( getRenderColorTexture(), Rectf( vec2( 0 ), pass.getSize() ) );
-	}
-}
-
-// ----------------------------------------------------------------------------------------------------
 // FilterTest
 // ----------------------------------------------------------------------------------------------------
 
@@ -237,9 +86,12 @@ FilterTest::FilterTest()
 	mLabel->setTextColor( Color( 0, 0, 0.75f ) );
 
 	mFilterSinglePass = make_shared<FilterSinglePass>();
-	mFilterBlur = make_shared<FilterBlur>();
-	mFilterDropShadow = make_shared<FilterDropShadow>();
+	mFilterBlur = make_shared<ui::FilterBlur>();
+	mFilterDropShadow = make_shared<ui::FilterDropShadow>();
 	mFilterDropShadow->setDownsampleFactor( 1 );
+	mFilterDropShadow->setShadowOffset( vec2( -10, 8 ) );
+
+	loadGlsl(); // uncomment to load live shaders in assets folder
 
 	mImageView->addFilter( mFilterSinglePass );
 	//mImageView->addFilter( mFilterBlur );
@@ -385,4 +237,69 @@ void FilterTest::layout()
 bool FilterTest::keyDown( ci::app::KeyEvent &event )
 {
 	return false;
+}
+
+void FilterTest::loadGlsl()
+{
+	// load blur shader
+	{
+		vector<fs::path> glslPaths = {
+			"glsl/blur.vert",
+			"glsl/blur.frag"
+		};
+
+		try {
+			mWatchGlslBlur = mason::FileWatcher::load( glslPaths, [this]( const std::vector<fs::path> &fullPaths ) {
+				auto format = gl::GlslProg::Format()
+					.vertex( loadFile( fullPaths.at( 0 ) ) )
+					.fragment( loadFile( fullPaths.at( 1 ) ) )
+				;
+
+				try {
+					mGlslBlur = gl::GlslProg::create( format );
+					if( mFilterBlur )
+						mFilterBlur->setGlslProg( mGlslBlur );
+
+					CI_LOG_I( "blur glsl loaded." );
+				}
+				catch( std::exception &exc ) {
+					CI_LOG_EXCEPTION( "failed to compile GlslProg at: " << format.getVertexPath(), exc );
+				}
+			} );
+		}
+		catch( std::exception &exc ) {
+			CI_LOG_EXCEPTION( "failed to load blur glsl", exc );
+		}
+	}
+
+	// load dropshadow shader
+	{
+		vector<fs::path> glslPaths = {
+			"glsl/blur.vert",
+			"glsl/dropshadow.frag"
+		};
+
+		try {
+			mWatchGlslDropshadow = mason::FileWatcher::load( glslPaths, [this]( const std::vector<fs::path> &fullPaths ) {
+				auto format = gl::GlslProg::Format()
+					.vertex( loadFile( fullPaths.at( 0 ) ) )
+					.fragment( loadFile( fullPaths.at( 1 ) ) )
+				;
+
+				try {
+					mGlslDropshadow = gl::GlslProg::create( format );
+					if( mFilterDropShadow )
+						mFilterDropShadow->setGlslProg( mGlslDropshadow );
+
+					CI_LOG_I( "dropshadow glsl loaded." );
+				}
+				catch( std::exception &exc ) {
+					CI_LOG_EXCEPTION( "failed to compile GlslProg at: " << format.getVertexPath(), exc );
+				}
+			} );
+		}
+		catch( std::exception &exc ) {
+			CI_LOG_EXCEPTION( "failed to load blur glsl", exc );
+		}
+	}
 }

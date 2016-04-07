@@ -25,9 +25,15 @@
 
 #include <memory>
 
+namespace cinder { namespace gl {
+typedef std::shared_ptr<class GlslProg> GlslProgRef;
+} } // namespace cinder::gl
+
 namespace ui {
 
-typedef std::shared_ptr<class Filter>   FilterRef;
+typedef std::shared_ptr<class Filter>				FilterRef;
+typedef std::shared_ptr<class FilterBlur>			FilterBlurRef;
+typedef std::shared_ptr<class FilterDropShadow>		FilterDropShadowRef;
 
 //! Performs filter effects as post-process operation.
 class Filter {
@@ -89,6 +95,50 @@ class Filter {
 	FrameBufferRef		mRenderFrameBuffer;
 
 	friend class Layer;
+};
+
+class FilterBlur : public ui::Filter {
+public:
+	FilterBlur();
+
+	void configure( const ci::ivec2 &size, ui::Filter::PassInfo *info ) override;
+	void process( ui::Renderer *ren, const ui::Filter::Pass &frame ) override;
+
+	const ci::vec2&	getBlurPixels() const { return mBlurPixels; }
+	void			setBlurPixels( const ci::vec2 &pixels ) { mBlurPixels = pixels; }
+
+	void	setGlslProg( const ci::gl::GlslProgRef &glsl )	{ mGlsl = glsl; }
+
+private:
+	ci::gl::GlslProgRef	mGlsl;
+
+	ci::vec2	mBlurPixels = ci::vec2( 1 );
+};
+
+class FilterDropShadow : public ui::Filter {
+public:
+	FilterDropShadow();
+
+	void configure( const ci::ivec2 &size, ui::Filter::PassInfo *info ) override;
+	void process( ui::Renderer *ren, const ui::Filter::Pass &frame ) override;
+
+	void			setBlurPixels( const ci::vec2 &pixels ) { mBlurPixels = pixels; }
+	const ci::vec2&	getBlurPixels() const { return mBlurPixels; }
+
+	void			setShadowOffset( const ci::vec2 &pixels ) { mShadowOffset = pixels; }
+	const ci::vec2&	getShadowOffset() const { return mShadowOffset; }
+
+	void			setDownsampleFactor( float factor );
+	float			getDownsampleFactor() const { return mDownsampleFactor; }
+
+	void	setGlslProg( const ci::gl::GlslProgRef &glsl ) { mGlsl = glsl; }
+
+private:
+	ci::gl::GlslProgRef	mGlsl;
+
+	ci::vec2	mBlurPixels = ci::vec2( 1 );
+	ci::vec2	mShadowOffset = ci::vec2( 10 );
+	float		mDownsampleFactor = 1;
 };
 
 } // namespace ui

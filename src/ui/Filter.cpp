@@ -22,9 +22,18 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "ui/Filter.h"
 #include "cinder/CinderAssert.h"
 
+#include "cinder/gl/scoped.h"
+#include "cinder/gl/draw.h"
+#include "cinder/gl/wrapper.h"
+#include "cinder/gl/GlslProg.h"
+
 using namespace ci;
 
 namespace ui {
+
+// ----------------------------------------------------------------------------------------------------
+// Filter::PassInfo
+// ----------------------------------------------------------------------------------------------------
 
 void Filter::PassInfo::setCount( size_t count )
 { 
@@ -39,6 +48,10 @@ void Filter::PassInfo::setSize( const ci::ivec2 &size, size_t passIndex )
 	mSizes[passIndex] = size;
 }
 
+// ----------------------------------------------------------------------------------------------------
+// Filter::Pass
+// ----------------------------------------------------------------------------------------------------
+
 Filter::Pass::~Pass()
 {
 	// temporary: marking FrameBuffer as unused once Pass is destroyed because it is the sole owner
@@ -46,6 +59,10 @@ Filter::Pass::~Pass()
 	if( mFrameBuffer )
 		mFrameBuffer->mInUse = false;
 }
+
+// ----------------------------------------------------------------------------------------------------
+// Filter
+// ----------------------------------------------------------------------------------------------------
 
 Filter::~Filter()
 {
@@ -67,6 +84,105 @@ gl::TextureRef Filter::getPassColorTexture( size_t passIndex ) const
 		return nullptr;
 
 	return mPasses[passIndex].getColorTexture();
+}
+
+// ----------------------------------------------------------------------------------------------------
+// FilterBlur
+// ----------------------------------------------------------------------------------------------------
+
+FilterBlur::FilterBlur()
+{
+}
+
+void FilterBlur::configure( const ci::ivec2 &size, ui::Filter::PassInfo *info )
+{
+	// TODO: rethink how these should be specified
+	info->setCount( 2 );
+	info->setSize( size, 0 );
+	info->setSize( size, 1 );
+}
+
+void FilterBlur::process( ui::Renderer *ren, const ui::Filter::Pass &pass )
+{
+	if( ! mGlsl )
+		return;
+
+	vec2 sampleOffset;
+	gl::TextureRef tex;
+
+	if( pass.getIndex() == 0 ) {
+		sampleOffset.x = mBlurPixels.x / (float)pass.getWidth();
+		tex = getRenderColorTexture();
+	}
+	else {
+		sampleOffset.y = mBlurPixels.y / (float)pass.getHeight();
+		tex = getPassColorTexture( 0 );
+	}
+
+	gl::ScopedGlslProg glslScope( mGlsl );
+	mGlsl->uniform( "uSampleOffset", sampleOffset );
+
+	gl::ScopedTextureBind texScope( tex );
+	gl::clear( ColorA::zero() );
+	gl::drawSolidRect( Rectf( vec2( 0 ), pass.getSize() ) );
+}
+
+// ----------------------------------------------------------------------------------------------------
+// FilterDropShadow
+// ----------------------------------------------------------------------------------------------------
+
+FilterDropShadow::FilterDropShadow()
+{
+	mBlurPixels = vec2( 2.0f );
+}
+
+void FilterDropShadow::configure( const ci::ivec2 &size, ui::Filter::PassInfo *info )
+{
+	ivec2 framebufferSize( vec2( size ) / (float)mDownsampleFactor );
+	info->setCount( 2 );
+	info->setSize( framebufferSize, 0 );
+	info->setSize( framebufferSize, 1 );
+}
+
+void FilterDropShadow::setDownsampleFactor( float factor )
+{
+	mDownsampleFactor = glm::max( 1.0f, factor );
+	// TODO: need to mark the filter as needing to be re-configured
+}
+
+void FilterDropShadow::process( ui::Renderer *ren, const ui::Filter::Pass &pass )
+{
+	if( ! mGlsl )
+		return;
+
+	vec2 sampleOffset;
+	gl::TextureRef tex;
+
+	if( pass.getIndex() == 0 ) {
+		sampleOffset.x = mBlurPixels.x / (float)pass.getWidth();
+		tex = getRenderColorTexture();
+	}
+	else {
+		sampleOffset.y = mBlurPixels.y / (float)pass.getHeight();
+		tex = getPassColorTexture( 0 );
+	}
+
+	vec2 shadowOffset = mShadowOffset / vec2( pass.getSize() );
+
+	{
+		gl::ScopedGlslProg glslScope( mGlsl );
+		mGlsl->uniform( "uSampleOffset", sampleOffset );
+		mGlsl->uniform( "uShadowOffset", shadowOffset );
+
+		gl::ScopedTextureBind texScope( tex );
+		gl::clear( ColorA::zero() );
+		gl::drawSolidRect( Rectf( vec2( 0 ), pass.getSize() ) );
+	}
+
+	if( pass.getIndex() == 1 ) {
+		// draw original image again on top
+		gl::draw( getRenderColorTexture(), Rectf( vec2( 0 ), pass.getSize() ) );
+	}
 }
 
 } // namespace ui
