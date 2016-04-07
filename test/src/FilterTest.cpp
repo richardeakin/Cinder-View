@@ -91,7 +91,7 @@ FilterTest::FilterTest()
 	mFilterDropShadow->setDownsampleFactor( 1 );
 	mFilterDropShadow->setShadowOffset( vec2( -10, 8 ) );
 
-	loadGlsl(); // uncomment to load live shaders in assets folder
+	//loadGlsl(); // uncomment to load live shaders in assets folder
 
 	mImageView->addFilter( mFilterSinglePass );
 	//mImageView->addFilter( mFilterBlur );
