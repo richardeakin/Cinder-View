@@ -181,9 +181,12 @@ void FilterDropShadow::process( ui::Renderer *ren, const ui::Filter::Pass &pass 
 		tex = getPassColorTexture( 0 );
 	}
 
+	vec2 shadowOffset = mShadowOffset / vec2( pass.getSize() );
+
 	{
 		gl::ScopedGlslProg glslScope( mGlsl );
 		mGlsl->uniform( "uSampleOffset", sampleOffset );
+		mGlsl->uniform( "uShadowOffset", shadowOffset );
 
 		gl::ScopedTextureBind texScope( tex );
 		gl::clear( ColorA::zero() );
@@ -192,9 +195,6 @@ void FilterDropShadow::process( ui::Renderer *ren, const ui::Filter::Pass &pass 
 
 	if( pass.getIndex() == 1 ) {
 		// draw original image again on top
-
-		gl::ScopedModelMatrix modelScope;
-		gl::translate( vec2( -40, -10 ) );
 		gl::draw( getRenderColorTexture(), Rectf( vec2( 0 ), pass.getSize() ) );
 	}
 }

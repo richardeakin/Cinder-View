@@ -53,8 +53,12 @@ public:
 	const ci::vec2&	getBlurPixels() const						{ return mBlurPixels; }
 	void			setBlurPixels( const ci::vec2 &pixels )		{ mBlurPixels = pixels; }
 
+	const ci::vec2&	getShadowOffset() const						{ return mShadowOffset; }
+	void			setShadowOffset( const ci::vec2 &pixels )	{ mShadowOffset= pixels; }
+
 private:
 	ci::vec2	mBlurPixels = ci::vec2( 1 );
+	ci::vec2	mShadowOffset = ci::vec2( 10 );
 };
 
 class FilterTest : public ui::SuiteView {
