@@ -19,7 +19,7 @@ void main()
 #if 0
 	// debug overriding shadow offset
 	vec2 texSize = vec2( textureSize( uTex0, 0 ) );
-	dropShadowOffset.x = 10.0 / texSize.x;
+	dropShadowOffset.x = -10.0 / texSize.x;
 	dropShadowOffset.y = 10.0 / texSize.y;
 #endif
 
@@ -48,6 +48,8 @@ void main()
 
 	// Convert to grayscale using NTSC conversion weights
     float gray = dot( sum.rgb, vec3( 0.299, 0.587, 0.114 ) );
+
+	// sum.a *= 1.1; // this makes it strong, but with pixelation
 
 	oFragColor = vec4( gray, gray, gray, sum.a );
 	
