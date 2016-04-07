@@ -50,15 +50,19 @@ public:
 	ci::gl::GlslProgRef	mGlsl;
 	mason::ScopedWatch mWatchGlsl;
 
-	const ci::vec2&	getBlurPixels() const						{ return mBlurPixels; }
 	void			setBlurPixels( const ci::vec2 &pixels )		{ mBlurPixels = pixels; }
+	const ci::vec2&	getBlurPixels() const { return mBlurPixels; }
 
-	const ci::vec2&	getShadowOffset() const						{ return mShadowOffset; }
 	void			setShadowOffset( const ci::vec2 &pixels )	{ mShadowOffset= pixels; }
+	const ci::vec2&	getShadowOffset() const { return mShadowOffset; }
+
+	void			setDownsampleFactor( float factor );
+	float			getDownsampleFactor() const			{ return mDownsampleFactor; }
 
 private:
 	ci::vec2	mBlurPixels = ci::vec2( 1 );
 	ci::vec2	mShadowOffset = ci::vec2( 10 );
+	float		mDownsampleFactor = 1;
 };
 
 class FilterTest : public ui::SuiteView {

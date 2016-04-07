@@ -158,10 +158,16 @@ FilterDropShadow::FilterDropShadow()
 
 void FilterDropShadow::configure( const ci::ivec2 &size, ui::Filter::PassInfo *info )
 {
-	// TODO: rethink how these should be specified
+	ivec2 framebufferSize( vec2( size ) / (float)mDownsampleFactor );
 	info->setCount( 2 );
-	info->setSize( size, 0 );
-	info->setSize( size, 1 );
+	info->setSize( framebufferSize, 0 );
+	info->setSize( framebufferSize, 1 );
+}
+
+void FilterDropShadow::setDownsampleFactor( float factor )
+{ 
+	mDownsampleFactor = glm::max( 1.0f, factor );
+	// TODO: need to mark the filter as needing to be re-configured
 }
 
 void FilterDropShadow::process( ui::Renderer *ren, const ui::Filter::Pass &pass )
@@ -233,6 +239,7 @@ FilterTest::FilterTest()
 	mFilterSinglePass = make_shared<FilterSinglePass>();
 	mFilterBlur = make_shared<FilterBlur>();
 	mFilterDropShadow = make_shared<FilterDropShadow>();
+	mFilterDropShadow->setDownsampleFactor( 1 );
 
 	mImageView->addFilter( mFilterSinglePass );
 	//mImageView->addFilter( mFilterBlur );
