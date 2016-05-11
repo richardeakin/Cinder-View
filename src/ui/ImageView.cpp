@@ -44,7 +44,15 @@ void ImageView::draw( Renderer *ren )
 	if( ! mImage )
 		return;
 
-	ren->setColor( getColor() );
+	// TODO: this should be handled at the Renderer level
+	if( isRenderTransparencyToFrameBufferEnabled() )
+		ren->setColor( getColor() );
+	else {
+		ColorA color = getColor();
+		color.a = getAlphaCombined();
+		ren->setColor( color );
+	}
+
 	ren->draw( mImage, getDestRectLocal() );
 }
 
