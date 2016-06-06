@@ -225,7 +225,7 @@ void Graph::propagateTouchesBegan( ViewRef &view, app::TouchEvent &event, size_t
 		}
 	}
 
-	LOG_TOUCHES( view->getName() << " | num touchesInsde: " << touchesInside.size() ); // TODO: why is this 0 for TouchOverlayView?
+	LOG_TOUCHES( view->getName() << " | num touchesInsde: " << touchesInside.size() );
 
 	if( touchesInside.empty() )
 		return;
@@ -237,7 +237,7 @@ void Graph::propagateTouchesBegan( ViewRef &view, app::TouchEvent &event, size_t
 			return;
 	}
 
-	event.getTouches() = touchesInside; // TODO: same as above
+	event.getTouches() = touchesInside;
 
 	if( view->touchesBegan( event ) ) {
 		// Only allow this View to handle this touch in other UI events.
