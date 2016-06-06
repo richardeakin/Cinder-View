@@ -230,7 +230,10 @@ void Graph::propagateTouchesBegan( ViewRef &view, app::TouchEvent &event, size_t
 	if( touchesInside.empty() )
 		return;
 
-	for( auto rIt = view->mSubviews.rbegin(); rIt != view->mSubviews.rend(); ++rIt ) {
+	// TODO: this copy is currently necessary to prevent bad iterators if a view is added during iteration
+	// - Might defer adding but need to think through how the ordering will be handled
+	auto subviews = view->mSubviews;
+	for( auto rIt = subviews.rbegin(); rIt != subviews.rend(); ++rIt ) {
 		event.getTouches() = touchesInside; // TODO: find a way to avoid making this copy per subview
 		propagateTouchesBegan( *rIt, event, numTouchesHandled );
 		if( event.isHandled() )
