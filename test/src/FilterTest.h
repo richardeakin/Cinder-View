@@ -5,8 +5,6 @@
 
 #include "cinder/gl/TextureFont.h"
 
-#include "../../blocks/Cinder-FileWatcher/src/mason/FileWatcher.h" // TEMP
-
 class FilterSinglePass : public ui::Filter {
 public:
 	FilterSinglePass();
@@ -14,7 +12,6 @@ public:
 	void process( ui::Renderer *ren, const ui::Filter::Pass &pass  ) override;
 
 	ci::gl::GlslProgRef	mGlsl;
-	mason::ScopedWatch	mWatchGlsl;
 
 private:
 };
@@ -35,7 +32,6 @@ class FilterTest : public ui::SuiteView {
 	ui::FilterDropShadowRef				mFilterDropShadow;
 
 	ci::gl::GlslProgRef					mGlslBlur, mGlslDropshadow;
-	mason::ScopedWatch					mWatchGlslBlur, mWatchGlslDropshadow;
 
 	ui::ViewRef				mContainerView;
 	ui::ImageViewRef        mImageView;
