@@ -14,6 +14,7 @@
 		00B784B60FF439BC000DE1D7 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B784B20FF439BC000DE1D7 /* CoreAudio.framework */; };
 		1118C06619AA386600F0D18B /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1118C06519AA386600F0D18B /* AVFoundation.framework */; };
 		1118C06819AA388500F0D18B /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1118C06719AA388500F0D18B /* CoreMedia.framework */; };
+		1134430B1C73F7350033C5B0 /* FilterTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 113443091C73F7350033C5B0 /* FilterTest.cpp */; };
 		114F64B01BE09841000CE3EE /* ViewTestsApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64AB1BE09841000CE3EE /* ViewTestsApp.cpp */; };
 		114F64B11BE09841000CE3EE /* ScrollTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64AC1BE09841000CE3EE /* ScrollTests.cpp */; };
 		114F64B21BE09841000CE3EE /* BasicViewTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64AE1BE09841000CE3EE /* BasicViewTests.cpp */; };
@@ -59,6 +60,8 @@
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		1118C06519AA386600F0D18B /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		1118C06719AA388500F0D18B /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
+		113443091C73F7350033C5B0 /* FilterTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FilterTest.cpp; path = ../src/FilterTest.cpp; sourceTree = "<group>"; };
+		1134430A1C73F7350033C5B0 /* FilterTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FilterTest.h; path = ../src/FilterTest.h; sourceTree = "<group>"; };
 		114F64AB1BE09841000CE3EE /* ViewTestsApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ViewTestsApp.cpp; path = ../src/ViewTestsApp.cpp; sourceTree = "<group>"; };
 		114F64AC1BE09841000CE3EE /* ScrollTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScrollTests.cpp; path = ../src/ScrollTests.cpp; sourceTree = "<group>"; };
 		114F64AD1BE09841000CE3EE /* ScrollTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScrollTests.h; path = ../src/ScrollTests.h; sourceTree = "<group>"; };
@@ -113,6 +116,8 @@
 		080E96DDFE201D6D7F000001 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				113443091C73F7350033C5B0 /* FilterTest.cpp */,
+				1134430A1C73F7350033C5B0 /* FilterTest.h */,
 				114F64AE1BE09841000CE3EE /* BasicViewTests.cpp */,
 				114F64AF1BE09841000CE3EE /* BasicViewTests.h */,
 				11A00A6A1C09108200DCA5A7 /* CompositingTest.cpp */,
@@ -308,6 +313,7 @@
 				114F65311BE0B1D4000CE3EE /* ControlsTest.cpp in Sources */,
 				114F64B11BE09841000CE3EE /* ScrollTests.cpp in Sources */,
 				114F64B21BE09841000CE3EE /* BasicViewTests.cpp in Sources */,
+				1134430B1C73F7350033C5B0 /* FilterTest.cpp in Sources */,
 				11A00A6C1C09108200DCA5A7 /* CompositingTest.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
