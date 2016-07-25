@@ -113,6 +113,14 @@ void Suite::select( size_t index )
 	mSelector->select( index );
 }
 
+void Suite::setDrawUiEnabled( bool enable )
+{
+	mDrawUi = enable;
+
+	mInfoLabel->setHidden( ! enable );
+	mSelector->setHidden( ! enable );
+}
+
 void Suite::reload()
 {
 	selectTest( mSelector->getSelectedLabel() );

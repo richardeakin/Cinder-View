@@ -79,6 +79,9 @@ class Suite {
 	//! Returns the Graph owned by this Suite
 	ui::GraphRef	getGraph() const	{ return mGraph; }
 
+	void setDrawUiEnabled( bool enable );
+	bool isDrawUiEnabled() const	{ return mDrawUi; }
+
   private:
 	void resize();
 	void resizeInfoLabel();
@@ -90,6 +93,7 @@ class Suite {
 	ui::VSelectorRef	mSelector;
 	ui::LabelGridRef    mInfoLabel;
 	std::string			mCurrentTestKey;
+	bool				mDrawUi = true;
 
 	mason::Factory<SuiteView>	mFactory;
 };
