@@ -24,3 +24,15 @@ list( APPEND VIEW_SOURCES
 )
 
 add_library( cinder-view ${VIEW_SOURCES} )
+
+# Check compiler support for c++14.
+include( CheckCXXCompilerFlag )
+CHECK_CXX_COMPILER_FLAG( "-std=c++14" COMPILER_SUPPORTS_CXX14 )
+
+if( COMPILER_SUPPORTS_CXX14 )
+	set( CINDER_VIEW_COMPILER_FLAGS "-std=c++14" )
+else()
+	message( FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} does not support C++14." )
+endif()
+
+target_compile_options( cinder-view PUBLIC ${CINDER_VIEW_COMPILER_FLAGS} )

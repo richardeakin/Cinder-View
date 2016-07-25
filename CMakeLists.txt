@@ -2,14 +2,13 @@ cmake_minimum_required( VERSION 3.0 FATAL_ERROR )
 project( cinder-view )
 
 # Cache options
-set( CINDER_PATH "../../cinder" CACHE STRING "Path to Cinder directory" )
+set( CINDER_VIEW_CINDER_PATH "../../cinder" CACHE STRING "Path to Cinder directory" )
 option( CINDER_VIEW_TEST_ENABLE "ViewTests" ON )
 
 
 set( CMAKE_VERBOSE_MAKEFILE ON )
-set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14" )
 
-get_filename_component( CINDER_PATH_FULL "${CMAKE_CURRENT_SOURCE_DIR}/${CINDER_PATH}" ABSOLUTE )
+get_filename_component( CINDER_PATH_FULL "${CMAKE_CURRENT_LIST_DIR}/${CINDER_VIEW_CINDER_PATH}" ABSOLUTE )
 get_filename_component( VIEW_SOURCE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/src" ABSOLUTE )
 
 message( STATUS "[cinder-view] cinder path: ${CINDER_PATH_FULL}" )
