@@ -9,6 +9,7 @@
 #include "ControlsTest.h"
 #include "CompositingTest.h"
 #include "FilterTest.h"
+#include "LayoutTests.h"
 #include "MultiTouchTest.h"
 #include "ScrollTests.h"
 
@@ -37,6 +38,7 @@ void ViewTestsApp::setup()
 	mTestSuite->registerSuiteView<BasicViewTests>( "basic" );
 	mTestSuite->registerSuiteView<CompositingTest>( "compositing" );
 	mTestSuite->registerSuiteView<ControlsTest>( "controls" );
+	mTestSuite->registerSuiteView<LayoutTests>( "layout" );
 	mTestSuite->registerSuiteView<MultiTouchTest>( "multitouch" );
 	mTestSuite->registerSuiteView<ScrollTests>( "scroll" );
 	mTestSuite->registerSuiteView<FilterTest>( "filters" );
@@ -46,7 +48,7 @@ void ViewTestsApp::setup()
 		CI_LOG_I( "selected test index: " << mTestSuite->getCurrentIndex() << ", key: " << mTestSuite->getCurrentKey() );
 	} );
 
-	mTestSuite->select( 5 );
+	mTestSuite->select( 3 );
 }
 
 void ViewTestsApp::keyDown( app::KeyEvent event )

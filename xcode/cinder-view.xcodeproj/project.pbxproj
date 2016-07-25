@@ -18,6 +18,8 @@
 		11533B831C336ACC00933145 /* Image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11533B811C336ACC00933145 /* Image.cpp */; };
 		11533B841C336ACC00933145 /* Image.h in Headers */ = {isa = PBXBuildFile; fileRef = 11533B821C336ACC00933145 /* Image.h */; };
 		11533B8A1C37E8C100933145 /* ui.h in Headers */ = {isa = PBXBuildFile; fileRef = 11533B891C37E8C100933145 /* ui.h */; };
+		1196E3F91D45A65B00BEDBAD /* Layout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1196E3F71D45A65B00BEDBAD /* Layout.cpp */; };
+		1196E3FA1D45A65B00BEDBAD /* Layout.h in Headers */ = {isa = PBXBuildFile; fileRef = 1196E3F81D45A65B00BEDBAD /* Layout.h */; };
 		11A00A291C072A1700DCA5A7 /* Button.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11A00A131C072A1700DCA5A7 /* Button.cpp */; };
 		11A00A2A1C072A1700DCA5A7 /* Button.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11A00A131C072A1700DCA5A7 /* Button.cpp */; };
 		11A00A2B1C072A1700DCA5A7 /* Button.h in Headers */ = {isa = PBXBuildFile; fileRef = 11A00A141C072A1700DCA5A7 /* Button.h */; };
@@ -88,6 +90,8 @@
 		11533B811C336ACC00933145 /* Image.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Image.cpp; sourceTree = "<group>"; };
 		11533B821C336ACC00933145 /* Image.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Image.h; sourceTree = "<group>"; };
 		11533B891C37E8C100933145 /* ui.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ui.h; sourceTree = "<group>"; };
+		1196E3F71D45A65B00BEDBAD /* Layout.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Layout.cpp; sourceTree = "<group>"; };
+		1196E3F81D45A65B00BEDBAD /* Layout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Layout.h; sourceTree = "<group>"; };
 		11A00A131C072A1700DCA5A7 /* Button.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Button.cpp; sourceTree = "<group>"; };
 		11A00A141C072A1700DCA5A7 /* Button.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Button.h; sourceTree = "<group>"; };
 		11A00A151C072A1700DCA5A7 /* Control.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Control.cpp; sourceTree = "<group>"; };
@@ -221,6 +225,8 @@
 				11A00A1C1C072A1700DCA5A7 /* Label.h */,
 				11A00A571C072A4500DCA5A7 /* Layer.cpp */,
 				11A00A581C072A4500DCA5A7 /* Layer.h */,
+				1196E3F71D45A65B00BEDBAD /* Layout.cpp */,
+				1196E3F81D45A65B00BEDBAD /* Layout.h */,
 				11A00A591C072A4500DCA5A7 /* Renderer.cpp */,
 				11A00A5A1C072A4500DCA5A7 /* Renderer.h */,
 				11A00A1D1C072A1700DCA5A7 /* ScrollView.cpp */,
@@ -263,6 +269,7 @@
 				11533B841C336ACC00933145 /* Image.h in Headers */,
 				11A00A2B1C072A1700DCA5A7 /* Button.h in Headers */,
 				11A00A5D1C072A4500DCA5A7 /* Graph.h in Headers */,
+				1196E3FA1D45A65B00BEDBAD /* Layout.h in Headers */,
 				113443101C73F8270033C5B0 /* Filter.h in Headers */,
 				11A00A4B1C072A1700DCA5A7 /* Suite.h in Headers */,
 				11A00A471C072A1700DCA5A7 /* Slider.h in Headers */,
@@ -370,6 +377,7 @@
 				11A00A5F1C072A4500DCA5A7 /* Layer.cpp in Sources */,
 				11A00A631C072A4500DCA5A7 /* Renderer.cpp in Sources */,
 				114F65111BE0AA0B000CE3EE /* format.cc in Sources */,
+				1196E3F91D45A65B00BEDBAD /* Layout.cpp in Sources */,
 				11A00A291C072A1700DCA5A7 /* Button.cpp in Sources */,
 				11A00A351C072A1700DCA5A7 /* Interface3d.cpp in Sources */,
 				11A00A2D1C072A1700DCA5A7 /* Control.cpp in Sources */,

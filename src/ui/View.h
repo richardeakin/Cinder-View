@@ -25,6 +25,7 @@
 
 #include "ui/Layer.h"
 #include "ui/Renderer.h"
+#include "ui/Layout.h"
 
 #include "cinder/app/TouchEvent.h"
 #include "cinder/app/KeyEvent.h"
@@ -97,6 +98,9 @@ class View : public std::enable_shared_from_this<View> {
 	LayerRef	            getLayer() const	{ return mLayer; }
 	//!
 	bool                    isLayerRoot() const;
+
+	void				setLayout( const LayoutRef &layout );
+	LayoutRef			getLayout() const	{ return mLayout; }
 
 	//! Sets a label that can be used to identify this View
 	void				setLabel( const std::string &label )	{ mLabel = label; }
@@ -213,6 +217,7 @@ class View : public std::enable_shared_from_this<View> {
 	RectViewRef				mBackground;
 	LayerRef				mLayer;
 	std::vector<FilterRef>  mFilters;
+	LayoutRef				mLayout;
 
 	friend class Layer;
 	friend class Graph;

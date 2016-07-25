@@ -288,6 +288,9 @@ void View::layoutImpl()
 		}
 	}
 
+	if( mLayout )
+		mLayout->layout( this );
+
 	layout();
 	mNeedsLayout = false;
 }
@@ -446,6 +449,11 @@ float View::getAlphaCombined() const
 		alpha *= mParent->getAlphaCombined();
 
 	return alpha;
+}
+
+void View::setLayout( const LayoutRef &layout )
+{
+	mLayout = layout;
 }
 
 ViewRef View::getViewWithLabel( const std::string &label ) const
