@@ -28,6 +28,7 @@
 namespace ui {
 
 typedef std::shared_ptr<class Button>	ButtonRef;
+typedef std::shared_ptr<class CheckBox>	CheckBoxRef;
 
 class Button : public Control {
 public:
@@ -88,6 +89,16 @@ protected:
 	ImageRef   mImageNormal, mImageEnabled, mImagePressed;
 
 	ci::signals::Signal<void ()>	mSignalPressed, mSignalReleased; // TODO: look at other frameworks (like html5, dart) and see what they name these, and how they organize the events
+};
+
+//! Toggle Button with text off to the right side.
+class CheckBox : public Button {
+  public:
+	CheckBox( const ci::Rectf &bounds = ci::Rectf::zero() );
+
+  protected:
+	void draw( Renderer *ren )	override;
+
 };
 
 } // namespace ui

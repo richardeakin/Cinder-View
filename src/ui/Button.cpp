@@ -201,4 +201,39 @@ bool Button::touchesEnded( app::TouchEvent &event )
 	return true;
 }
 
+// ----------------------------------------------------------------------------------------------------
+// CheckBox
+// ----------------------------------------------------------------------------------------------------
+
+CheckBox::CheckBox( const Rectf &bounds )
+	: Button( bounds )
+{
+	setAsToggle();
+}
+
+void CheckBox::draw( Renderer *ren )
+{
+	// draw background solid color
+//	ren->setColor( getColor() );
+//	ren->drawSolidRect( getBoundsLocal() );
+
+	const float padding = 6;
+	float r = glm::max( getHeight() - padding * 2, 2.0f );
+
+	auto checkBorder = Rectf( padding, padding, padding + r, padding + r );
+	auto checkFilled = Rectf( padding * 2, padding * 2, r, r );
+
+	ren->setColor( Color( 1, 1, 1 ) );
+	ren->drawStrokedRect( checkBorder, 2 );
+
+	if( isEnabled() ) {
+		ren->drawSolidRect( checkFilled );
+	}
+
+	// draw title
+	ren->setColor( getTitleColor() );
+	const float offsetY = 4;
+	mTextTitle->drawString( getTitle(), vec2( r + padding * 2, getCenterLocal().y + mTextTitle->getDescent() + offsetY ) );
+}
+
 } // namespace ui
