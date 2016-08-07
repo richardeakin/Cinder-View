@@ -29,22 +29,20 @@ using namespace std;
 
 namespace ui {
 
-
 void VerticalLayout::layout( View *view )
 {
-	const float PADDING = 6;
 	const vec2 size = view->getSize();
-	vec2 offset = { PADDING, PADDING };
+	vec2 offset = { mMargin.x1, mMargin.y1 };
 
 	const auto subviews = view->getSubviews();
 
-	const vec2 subviewSize = { size.x - PADDING * 2, ( size.y - PADDING * float( subviews.size() + 1 ) ) / (float)subviews.size() };
+//	const vec2 subviewSize = { size.x - PADDING * 2, ( size.y - PADDING * float( subviews.size() + 1 ) ) / (float)subviews.size() };
 
 	for( auto &subview : subviews ) {
 		subview->setPos( offset );
-		subview->setSize( subviewSize );
+//		subview->setSize( subviewSize );
 
-		offset.y += subview->getSize().y + PADDING;
+		offset.y += subview->getSize().y + mPadding;
 	}
 }
 

@@ -23,6 +23,7 @@
 
 #pragma once
 
+#include "cinder/Rect.h"
 #include <memory>
 
 namespace ui {
@@ -41,7 +42,16 @@ class Layout {
 
 class VerticalLayout : public Layout {
   public:
+
+	void setMargin( const ci::Rectf &margin )	{ mMargin = margin; }
+	void setPadding( float padding )			{ mPadding = padding; }
+
 	void layout( View *view )	override;
+
+  private:
+
+	ci::Rectf	mMargin = ci::Rectf( 6, 6, 6, 6 );
+	float		mPadding = 6;
 };
 
 } // namespace ui
