@@ -4,10 +4,16 @@ set( CMAKE_VERBOSE_MAKEFILE ON )
 project( Cinder-View )
 
 # Cache options
-#set( CINDER_VIEW_CINDER_PATH "../../cinder" CACHE STRING "Path to Cinder directory" )
+if( NOT CINDER_PATH )
+	message( "no CINDER_PATH defined" )
+	set( CINDER_PATH "../.." CACHE STRING "Path to Cinder directory" )
+else()
+	message( "CINDER_PATH already set to: ${CINDER_PATH}" )
+endif()
+
 option( CINDER_VIEW_TEST_ENABLE "ViewTests" ON )
 
-#get_filename_component( CINDER_PATH_FULL "${CMAKE_CURRENT_LIST_DIR}/${CINDER_VIEW_CINDER_PATH}" ABSOLUTE )
+get_filename_component( CINDER_PATH "${CINDER_PATH}" ABSOLUTE )
 
 if( NOT CMAKE_BUILD_TYPE )
 	set( CMAKE_BUILD_TYPE Debug CACHE STRING

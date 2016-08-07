@@ -3,11 +3,11 @@ set( CMAKE_VERBOSE_MAKEFILE ON )
 
 project( ViewTests )
 
-# TODO: see if this can be a cache option and what happens there when it is set by the root
 if( NOT CINDER_PATH )
-	get_filename_component( CINDER_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../../.." ABSOLUTE )
+	set( CINDER_PATH "../../../../.." CACHE STRING "Path to Cinder directory" )
 endif()
 
+get_filename_component( CINDER_PATH "${CINDER_PATH}" ABSOLUTE )
 get_filename_component( APP_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../.." ABSOLUTE )
 
 message( "[CinderView tests] CINDER_PATH: ${CINDER_PATH}" )
@@ -30,7 +30,7 @@ set( APP_SOURCES
 #	${APP_PATH}/src
 #)
 
-set( CMAKE_DEBUG_TARGET_PROPERTIES INCLUDE_DIRECTORIES COMPILE_DEFINITIONS )
+#set( CMAKE_DEBUG_TARGET_PROPERTIES INCLUDE_DIRECTORIES COMPILE_DEFINITIONS )
 
 ci_make_app(
 	SOURCES         ${APP_SOURCES}
