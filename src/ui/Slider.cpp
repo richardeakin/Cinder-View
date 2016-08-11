@@ -70,7 +70,7 @@ void SliderBase::setValue( float value, bool emitChanged )
 	updateSliderPos();
 
 	if( emitChanged )
-		mSignalValueChanged.emit();
+		getSignalValueChanged().emit();
 }
 
 void SliderBase::draw( Renderer *ren )
@@ -168,7 +168,7 @@ void SliderBase::updateValue( const ci::vec2 &pos )
 		mValue = roundf( mValue );
 
 	if( mValue != prevValue )
-		mSignalValueChanged.emit();
+		getSignalValueChanged().emit();
 }
 
 float HSlider::getValuePercentage( const ci::vec2 &pos )

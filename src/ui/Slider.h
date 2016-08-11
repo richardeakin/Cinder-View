@@ -54,8 +54,6 @@ public:
 	void setSnapToIntEnabled( bool enable )	{ mSnapToInt = enable; }
 	bool isSnapToIntEnabled() const			{ return mSnapToInt; }
 
-	ci::signals::Signal<void ()>&	getSignalValueChanged()	{ return mSignalValueChanged; }
-
 protected:
 	void draw( Renderer *ren )	override;
 
@@ -83,8 +81,6 @@ private:
 	ci::ColorA	mTitleColor = ci::ColorA::gray( 1, 0.6f );
 	std::string	mTitle;
 	TextRef		mTextLabel;
-
-	ci::signals::Signal<void ()>	mSignalValueChanged;
 };
 
 class HSlider : public SliderBase {
