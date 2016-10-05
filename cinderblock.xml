@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<cinder>
+<block
+	name="Cinder-View"
+	id="org.libcinder.cinderview"
+	author=""
+	license=""
+	summary=""
+	url="https://github.com/cinder/Cinder-View"
+	git="git://github.com/cinder/Cinder-View.git"
+	>
+	<supports os="msw"/>
+
+	<includePath>src</includePath>
+    
+    <headerPattern>src/cppformat/*.h</headerPattern>
+    <headerPattern>src/mason/*.h</headerPattern>
+    <headerPattern>src/ui/*.h</headerPattern>
+
+    <sourcePattern>src/cppformat/*.cc</sourcePattern>
+    <sourcePattern>src/ui/*.cpp</sourcePattern>
+    
+	<platform os="msw">
+		<staticLibrary>lib/msw/$(Platform)/$(Configuration)/cinder-view.lib</staticLibrary>
+	</platform>
+</block>
+</cinder>
