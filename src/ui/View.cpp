@@ -459,7 +459,7 @@ void printRecursive( ostream &os, const ViewRef &view, size_t depth )
 
 } // anonymous namespace
 
-void View::printHeirarchy( ostream &os )
+void View::printHierarchy( ostream &os )
 {
 	printRecursive( os, shared_from_this(), 0 );
 }
