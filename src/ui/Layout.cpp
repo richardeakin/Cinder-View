@@ -51,4 +51,24 @@ void VerticalLayout::layout( View *view )
 	}
 }
 
+BoxLayout::BoxLayout( Orientation orientation, Alignment alignment )
+	: mOrientation{ orientation }, mAlignment{ alignment }
+{
+}
+
+void BoxLayout::layout( View * view )
+{
+	vec2 containerSize = view->getSize();
+	int axis1 = (int)mOrientation;
+	int axis2 = ((int)mOrientation + 1) % 2;
+
+	vec2 position{ 0 };
+	vec2 offset = { mMargin.x1, mMargin.y1 };
+	const auto subviews = view->getSubviews();
+	for( auto &subview : subviews ) {
+		subview->setPos( offset );
+		offset[axis1] += subview->getSize()[axis1] + mPadding;
+	}
+}
+
 } // namespace ui
