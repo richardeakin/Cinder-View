@@ -29,19 +29,24 @@ using namespace std;
 
 namespace ui {
 
+void HorizontalLayout::layout( View * view )
+{
+	const vec2 size = view->getSize();
+	vec2 offset = { mMargin.x1, mMargin.y1 };
+	const auto subviews = view->getSubviews();
+	for( auto &subview : subviews ) {
+		subview->setPos( offset );
+		offset.x += subview->getSize().x + mPadding;
+	}
+}
+
 void VerticalLayout::layout( View *view )
 {
 	const vec2 size = view->getSize();
 	vec2 offset = { mMargin.x1, mMargin.y1 };
-
 	const auto subviews = view->getSubviews();
-
-//	const vec2 subviewSize = { size.x - PADDING * 2, ( size.y - PADDING * float( subviews.size() + 1 ) ) / (float)subviews.size() };
-
 	for( auto &subview : subviews ) {
 		subview->setPos( offset );
-//		subview->setSize( subviewSize );
-
 		offset.y += subview->getSize().y + mPadding;
 	}
 }
