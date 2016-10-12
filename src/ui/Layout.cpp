@@ -26,30 +26,7 @@
 
 using namespace ci;
 using namespace std;
-
-namespace ui {
-
-void HorizontalLayout::layout( View * view )
-{
-	const vec2 size = view->getSize();
-	vec2 offset = { mMargin.x1, mMargin.y1 };
-	const auto subviews = view->getSubviews();
-	for( auto &subview : subviews ) {
-		subview->setPos( offset );
-		offset.x += subview->getSize().x + mPadding;
-	}
-}
-
-void VerticalLayout::layout( View *view )
-{
-	const vec2 size = view->getSize();
-	vec2 offset = { mMargin.x1, mMargin.y1 };
-	const auto subviews = view->getSubviews();
-	for( auto &subview : subviews ) {
-		subview->setPos( offset );
-		offset.y += subview->getSize().y + mPadding;
-	}
-}
+using namespace ui;
 
 BoxLayout::BoxLayout( Orientation orientation, Alignment alignment )
 	: mOrientation{ orientation }, mAlignment{ alignment }
@@ -70,5 +47,3 @@ void BoxLayout::layout( View * view )
 		offset[axis1] += subview->getSize()[axis1] + mPadding;
 	}
 }
-
-} // namespace ui

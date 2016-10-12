@@ -40,30 +40,6 @@ class Layout {
   private:
 };
 
-class HorizontalLayout : public Layout {
-public:
-	void setMargin( const ci::Rectf &margin ) { mMargin = margin; }
-	void setPadding( float padding ) { mPadding = padding; }
-	void layout( View *view )	override;
-private:
-	ci::Rectf	mMargin = ci::Rectf( 0, 0, 0, 0 );
-	float		mPadding = 0;
-};
-
-class VerticalLayout : public Layout {
-  public:
-
-	void setMargin( const ci::Rectf &margin )	{ mMargin = margin; }
-	void setPadding( float padding )			{ mPadding = padding; }
-
-	void layout( View *view ) override;
-
-  private:
-
-	ci::Rectf	mMargin = ci::Rectf( 0,0,0,0 );
-	float		mPadding = 0;
-};
-
 enum class Alignment : uint8_t {
 	Minimum = 0,
 	Middle,
