@@ -24,6 +24,9 @@
 #include "ui/Layout.h"
 #include "ui/View.h"
 
+#include <functional>
+#include <numeric>
+
 using namespace ci;
 using namespace std;
 using namespace ui;
@@ -70,15 +73,25 @@ void ui::LinearLayout::layout( View * view )
 	int axis1 = (int)mOrientation;
 	int axis2 = ((int)mOrientation + 1) % 2;
 
-	vec2 offset{ 0 };
-	float i = 0.0f;
 	const auto subviews = view->getSubviews();
+	vec2 offset{ 0 };
+	float totalSize = std::accumulate( subviews.begin(), subviews.end(), 0.0f, [&] ( float sum, const ui::ViewRef& view ) {
+		return sum + view->getSize()[axis1];
+	} );
+
+	float i = 0.0f;
 	for( auto &subview : subviews ) {
-		if( mMode == Mode::CenterDistribute ) {
+		if( mMode == Mode::DistributeCenter ) {
 			auto pos = subview->getPos();
 			float center = ( i + 0.5f ) * ( containerSize[axis1] / float( subviews.size() ) );
 			pos[axis1] = center - 0.5f * subview->getSize()[axis1];
 			subview->setPos( pos );
+		}
+		else if( mMode == Mode::DistributeMargin ) {
+			float margin = ( containerSize[axis1] - totalSize ) / float( subviews.size() + 1 );
+			offset[axis1] += margin;
+			subview->setPos( offset );
+			offset[axis1] += subview->getSize()[axis1];
 		}
 		else if( mMode == Mode::Fill ) {
 			vec2 size = subview->getSize();

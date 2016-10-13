@@ -75,7 +75,8 @@ class LinearLayout : public Layout {
 public:
 	enum class Mode : uint8_t {
 		Increment = 0,
-		CenterDistribute,
+		DistributeCenter,
+		DistributeMargin,
 		Fill
 	};
 
