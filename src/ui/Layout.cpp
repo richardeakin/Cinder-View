@@ -35,15 +35,62 @@ BoxLayout::BoxLayout( Orientation orientation, Alignment alignment )
 
 void BoxLayout::layout( View * view )
 {
+	// TODO: fix padding and margin behavior
 	vec2 containerSize = view->getSize();
 	int axis1 = (int)mOrientation;
 	int axis2 = ((int)mOrientation + 1) % 2;
 
-	vec2 position{ 0 };
 	vec2 offset = { mMargin.x1, mMargin.y1 };
 	const auto subviews = view->getSubviews();
 	for( auto &subview : subviews ) {
-		subview->setPos( offset );
-		offset[axis1] += subview->getSize()[axis1] + mPadding;
+		if( mAlignment == Alignment::Minimum ) {
+			subview->setPos( offset );
+		}
+		else if( mAlignment == Alignment::Middle ) {
+			subview->setPos( 0.5f * ( containerSize - subview->getSize() ) );
+		}
+		else if( mAlignment == Alignment::Maximum ) {
+			subview->setPos( containerSize - subview->getSize() - 2.0f * offset );
+		}
+		else if( mAlignment == Alignment::Fill ) {
+			subview->setPos( offset );
+			subview->setSize( containerSize - 2.0f * offset );
+		}
+	}
+}
+
+ui::LinearLayout::LinearLayout( Orientation orientation, Mode mode )
+	: mOrientation{ orientation }, mMode{ mode }
+{
+}
+
+void ui::LinearLayout::layout( View * view )
+{
+	vec2 containerSize = view->getSize();
+	int axis1 = (int)mOrientation;
+	int axis2 = ((int)mOrientation + 1) % 2;
+
+	vec2 offset{ 0 };
+	float i = 0.0f;
+	const auto subviews = view->getSubviews();
+	for( auto &subview : subviews ) {
+		if( mMode == Mode::CenterDistribute ) {
+			auto pos = subview->getPos();
+			float center = ( i + 0.5f ) * ( containerSize[axis1] / float( subviews.size() ) );
+			pos[axis1] = center - 0.5f * subview->getSize()[axis1];
+			subview->setPos( pos );
+		}
+		else if( mMode == Mode::Fill ) {
+			vec2 size = subview->getSize();
+			size[axis1] = containerSize[axis1] / float( subviews.size() );
+			subview->setBounds( Rectf( vec2(), size ) );
+			subview->setPos( offset );
+			offset[axis1] += subview->getSize()[axis1];
+		}
+		else {
+			subview->setPos( offset );
+			offset[axis1] += subview->getSize()[axis1];
+		}
+		i += 1.0f;
 	}
 }

@@ -40,13 +40,6 @@ class Layout {
   private:
 };
 
-enum class Alignment : uint8_t {
-	Minimum = 0,
-	Middle,
-	Maximum,
-	Fill
-};
-
 /// The direction of data flow for a layout.
 enum class Orientation {
 	Horizontal = 0,
@@ -55,23 +48,46 @@ enum class Orientation {
 
 class BoxLayout : public Layout {
 public:
-	BoxLayout( Orientation orientation, Alignment alignment = Alignment::Middle );
+	enum class Alignment : uint8_t {
+		Minimum = 0,
+		Middle,
+		Maximum,
+		Fill
+	};
+
+	BoxLayout( Orientation orientation, Alignment alignment = Alignment::Minimum );
 
 	Orientation orientation() const { return mOrientation; }
 	void setOrientation( Orientation orientation ) { mOrientation = orientation; }
 
 	Alignment alignment() const { return mAlignment; }
 	void setAlignment( Alignment alignment ) { mAlignment = alignment; }
-
 	void setMargin( const ci::Rectf &margin ) { mMargin = margin; }
-	void setPadding( float padding ) { mPadding = padding; }
 
 	void layout( View *view ) override;
 protected:
 	Orientation	mOrientation;
 	Alignment	mAlignment;
 	ci::Rectf	mMargin = ci::Rectf( 0, 0, 0, 0 );
-	float		mPadding = 0;
+};
+
+class LinearLayout : public Layout {
+public:
+	enum class Mode : uint8_t {
+		Increment = 0,
+		CenterDistribute,
+		Fill
+	};
+
+	LinearLayout( Orientation orientation, Mode mode = Mode::Increment );
+
+	Orientation orientation() const { return mOrientation; }
+	void setOrientation( Orientation orientation ) { mOrientation = orientation; }
+
+	void layout( View *view ) override;
+protected:
+	Orientation	mOrientation;
+	Mode mMode;
 };
 
 } // namespace ui
