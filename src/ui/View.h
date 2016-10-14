@@ -82,7 +82,7 @@ class View : public std::enable_shared_from_this<View> {
 
 	ci::Anim<float>*		animAlpha()			{ return &mAlpha; }
 	ci::Anim<ci::vec2>*		animPos()			{ return &mPos; }
-	ci::Anim<ci::vec2>*		animSize()			{ return &mPos; }
+	ci::Anim<ci::vec2>*		animSize()			{ return &mSize; }
 
 	std::vector<ViewRef>&	getSubviews()		{ return mSubviews; }
 	ViewRef&				getSubview( size_t index );
