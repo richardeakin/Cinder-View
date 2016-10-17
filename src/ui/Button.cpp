@@ -93,8 +93,13 @@ void Button::draw( Renderer *ren )
 
 void Button::setEnabled( bool enabled )
 {
+	if( mEnabled == enabled )
+		return;
+	
 	mEnabled = enabled;
 	mState = enabled ? State::ENABLED : State::NORMAL;
+
+	getSignalValueChanged().emit();
 }
 
 void Button::setTitle( const string &title, State state )

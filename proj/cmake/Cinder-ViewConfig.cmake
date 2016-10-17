@@ -9,7 +9,7 @@ if( NOT TARGET Cinder-View )
 	list( APPEND VIEW_SOURCES
 		${VIEW_SOURCE_PATH}/ui/Button.cpp
 		${VIEW_SOURCE_PATH}/ui/Control.cpp
-		${VIEW_SOURCE_PATH}/ui/Filter.cpp
+#		${VIEW_SOURCE_PATH}/ui/Filter.cpp
 		${VIEW_SOURCE_PATH}/ui/Graph.cpp
 		${VIEW_SOURCE_PATH}/ui/Image.cpp
 		${VIEW_SOURCE_PATH}/ui/ImageView.cpp

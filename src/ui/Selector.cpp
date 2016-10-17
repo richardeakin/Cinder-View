@@ -117,7 +117,7 @@ void SelectorBase::updateSelection( const vec2 &pos )
 
 	if( mSelectedIndex != selectedIndex ) {
 		mSelectedIndex = selectedIndex;
-		mSignalValueChanged.emit();
+		getSignalValueChanged().emit();
 	}
 }
 
@@ -132,7 +132,7 @@ void SelectorBase::select( size_t index )
 
 	if( mSelectedIndex != index ) {
 		mSelectedIndex = index;
-		mSignalValueChanged.emit();
+		getSignalValueChanged().emit();
 	}
 }
 
