@@ -78,10 +78,11 @@ protected:
 class LinearLayout : public Layout {
 public:
 	enum class Mode : uint8_t {
-		Increment = 0,
+		Increment = 0, //! Each successive View is placed after the previous one + margin
 		DistributeCenter,
 		DistributeMargin,
-		Fill
+		Fill,
+		NumModes
 	};
 
 	LinearLayout( Orientation orientation, Mode mode = Mode::Increment );
@@ -89,10 +90,24 @@ public:
 	Orientation orientation() const { return mOrientation; }
 	void setOrientation( Orientation orientation ) { mOrientation = orientation; }
 
+	//! Sets the mode used for laying out views
+	void setMode( Mode mode )	{ mMode = mode; }
+	//! Returns the mode used for laying out views
+	Mode	getMode() const		{ return mMode; }
+
+	//! Sets the margin around the bounds of the Layout object
+	void setMargin( const ci::Rectf &margin ) { mMargin = margin; }
+	//! Sets the padding between successive Views.
+	void setPadding( float padding ) { mPadding = padding; }
+
 	void layout( View *view ) override;
 protected:
 	Orientation	mOrientation;
-	Mode mMode;
+	Mode		mMode;
+	ci::Rectf	mMargin = ci::Rectf( 0, 0, 0, 0 );
+	float		mPadding = 0;
+};
+
 class VerticalLayout : public LinearLayout {
   public:
 	VerticalLayout( Mode mode = Mode::Increment )
