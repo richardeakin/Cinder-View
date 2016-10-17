@@ -2,6 +2,8 @@
 
 #include "ui/Suite.h"
 
+#include "ui/Layout.h"
+
 class LayoutTests : public ui::SuiteView {
 public:
 	LayoutTests();
@@ -11,5 +13,7 @@ public:
 
 private:
 
-	ui::ViewRef	mVerticalGroup;
+	ui::ViewRef	mVerticalGroupView;
+	ui::VerticalLayoutRef	mVerticalLayout;
+	ui::HorizontalLayoutRef mHorizontalLayout;
 };
