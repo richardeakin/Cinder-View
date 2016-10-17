@@ -27,6 +27,9 @@
 
 namespace ui {
 
+typedef std::shared_ptr<class Control>	ControlRef;
+
+//! Base class for all Controls, which usually are meant to be interacted with by a user.
 class Control : public View {
 public:
 	Control( const ci::Rectf &bounds = ci::Rectf::zero() )	: View( bounds ) {}
@@ -37,12 +40,17 @@ public:
 	void setCancelPadding( const ci::Rectf &padding )   { mCancelPadding = padding; }
 	const ci::Rectf& getCancelPadding() const           { return mCancelPadding; }
 
+	//! Signal that is emitted whenever a Control's value changes
+	ci::signals::Signal<void ()>&	getSignalValueChanged()	{ return mSignalValueChanged; }
+
 protected:
 	bool hitTestInsideCancelPadding( const ci::vec2 &localPos ) const;
 
 private:
 	ci::Rectf	mCancelPadding = ci::Rectf( 40, 40, 40, 40 );
 	bool		mTouchCanceled = false;
+
+	ci::signals::Signal<void ()>	mSignalValueChanged;
 };
 
 } // namespace ui

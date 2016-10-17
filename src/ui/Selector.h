@@ -57,8 +57,6 @@ public:
 	//! Causes value changed signal to be fired if the selection changes.
 	void select( const std::string &label );
 
-	ci::signals::Signal<void ()>&	getSignalValueChanged()	{ return mSignalValueChanged; }
-
 protected:
 	void draw( Renderer *ren )	override;
 
@@ -75,8 +73,6 @@ protected:
 	ci::ColorA					mTitleColor = ci::ColorA::gray( 0.75f, 0.5f );
 	std::string					mTitle;
 	TextRef						mTextLabel;
-
-	ci::signals::Signal<void ()>				mSignalValueChanged;
 };
 
 class VSelector : public SelectorBase {
