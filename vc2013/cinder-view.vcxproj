@@ -37,6 +37,7 @@
     <ClCompile Include="..\src\ui\Interface3d.cpp" />
     <ClCompile Include="..\src\ui\Label.cpp" />
     <ClCompile Include="..\src\ui\Layer.cpp" />
+    <ClCompile Include="..\src\ui\Layout.cpp" />
     <ClCompile Include="..\src\ui\Renderer.cpp" />
     <ClCompile Include="..\src\ui\ScrollView.cpp" />
     <ClCompile Include="..\src\ui\Selector.cpp" />
@@ -57,6 +58,7 @@
     <ClInclude Include="..\src\ui\Interface3d.h" />
     <ClInclude Include="..\src\ui\Label.h" />
     <ClInclude Include="..\src\ui\Layer.h" />
+    <ClInclude Include="..\src\ui\Layout.h" />
     <ClInclude Include="..\src\ui\Renderer.h" />
     <ClInclude Include="..\src\ui\ScrollView.h" />
     <ClInclude Include="..\src\ui\Selector.h" />
