@@ -30,7 +30,11 @@ namespace ui {
 
 class View;
 
-typedef std::shared_ptr<class Layout>	LayoutRef;
+typedef std::shared_ptr<class Layout>				LayoutRef;
+typedef std::shared_ptr<class BoxLayout>			BoxLayoutRef;
+typedef std::shared_ptr<class LinearLayout>			LinearLayoutRef;
+typedef std::shared_ptr<class VerticalLayout>		VerticalLayoutRef;
+typedef std::shared_ptr<class HorizontalLayout>		HorizontalLayoutRef;
 
 class Layout {
   public:
@@ -89,6 +93,18 @@ public:
 protected:
 	Orientation	mOrientation;
 	Mode mMode;
+class VerticalLayout : public LinearLayout {
+  public:
+	VerticalLayout( Mode mode = Mode::Increment )
+		: LinearLayout( Orientation::Vertical, mode )
+	{}
+};
+
+class HorizontalLayout : public LinearLayout {
+  public:
+	HorizontalLayout( Mode mode = Mode::Increment )
+		: LinearLayout( Orientation::Horizontal, mode )
+	{}
 };
 
 } // namespace ui

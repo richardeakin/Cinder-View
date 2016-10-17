@@ -74,6 +74,8 @@ void ui::LinearLayout::layout( View * view )
 
 	const auto subviews = view->getSubviews();
 	vec2 offset{ 0 };
+	vec2 offset = mMargin.getUpperLeft();
+
 	float totalSize = std::accumulate( subviews.begin(), subviews.end(), 0.0f, [&] ( float sum, const ui::ViewRef& view ) {
 		return sum + view->getSize()[axis];
 	} );
