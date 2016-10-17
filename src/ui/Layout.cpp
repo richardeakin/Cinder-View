@@ -70,39 +70,38 @@ ui::LinearLayout::LinearLayout( Orientation orientation, Mode mode )
 void ui::LinearLayout::layout( View * view )
 {
 	vec2 containerSize = view->getSize();
-	int axis1 = (int)mOrientation;
-	int axis2 = ((int)mOrientation + 1) % 2;
+	int axis = (int)mOrientation;
 
 	const auto subviews = view->getSubviews();
 	vec2 offset{ 0 };
 	float totalSize = std::accumulate( subviews.begin(), subviews.end(), 0.0f, [&] ( float sum, const ui::ViewRef& view ) {
-		return sum + view->getSize()[axis1];
+		return sum + view->getSize()[axis];
 	} );
 
 	float i = 0.0f;
 	for( auto &subview : subviews ) {
 		if( mMode == Mode::DistributeCenter ) {
 			auto pos = subview->getPos();
-			float center = ( i + 0.5f ) * ( containerSize[axis1] / float( subviews.size() ) );
-			pos[axis1] = center - 0.5f * subview->getSize()[axis1];
+			float center = ( i + 0.5f ) * ( containerSize[axis] / float( subviews.size() ) );
+			pos[axis] = center - 0.5f * subview->getSize()[axis];
 			subview->setPos( pos );
 		}
 		else if( mMode == Mode::DistributeMargin ) {
-			float margin = ( containerSize[axis1] - totalSize ) / float( subviews.size() + 1 );
-			offset[axis1] += margin;
+			float margin = ( containerSize[axis] - totalSize ) / float( subviews.size() + 1 );
+			offset[axis] += margin;
 			subview->setPos( offset );
-			offset[axis1] += subview->getSize()[axis1];
+			offset[axis] += subview->getSize()[axis];
 		}
 		else if( mMode == Mode::Fill ) {
 			vec2 size = subview->getSize();
-			size[axis1] = containerSize[axis1] / float( subviews.size() );
+			size[axis] = containerSize[axis] / float( subviews.size() );
 			subview->setBounds( Rectf( vec2(), size ) );
 			subview->setPos( offset );
-			offset[axis1] += subview->getSize()[axis1];
+			offset[axis] += subview->getSize()[axis];
 		}
 		else {
 			subview->setPos( offset );
-			offset[axis1] += subview->getSize()[axis1];
+			offset[axis] += subview->getSize()[axis];
 		}
 		i += 1.0f;
 	}
