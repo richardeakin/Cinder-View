@@ -35,6 +35,9 @@
     <ClCompile Include="..\src\FilterTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\LayoutTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\BasicViewTests.h">
@@ -53,6 +56,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\FilterTest.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\LayoutTests.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
