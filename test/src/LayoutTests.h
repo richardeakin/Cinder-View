@@ -13,8 +13,9 @@ public:
 	bool keyDown( ci::app::KeyEvent &event ) override;
 
 private:
+	void addLabels( const ui::ViewRef &view, size_t count );
 
-	ui::ViewRef	mVerticalGroupView;
+	ui::ViewRef	mVerticalGroupView, mHorizontalGroupView;
 	ui::VerticalLayoutRef	mVerticalLayout;
 	ui::HorizontalLayoutRef mHorizontalLayout;
 
