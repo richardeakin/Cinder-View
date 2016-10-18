@@ -10,7 +10,7 @@ using namespace ci;
 LayoutTests::LayoutTests()
 {
 	const float padding = 6;
-	const Rectf margin = Rectf( 10, 10, 10, 10 );
+	const Rectf margin = Rectf( 6, 6, 6, 6 );
 	const Color backgroundColor = Color( 0.85f, 0.5f, 0 );
 
 	mVerticalLayout = make_shared<ui::VerticalLayout>();

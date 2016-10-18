@@ -31,29 +31,33 @@ using namespace ci;
 using namespace std;
 using namespace ui;
 
-ui::LinearLayout::LinearLayout( Orientation orientation, Mode mode, Alignment alignment )
-	: mOrientation{ orientation }, mMode{ mode }, mAlignment{ alignment }
-{
+namespace {
 
-}
-
-inline void updateAxisPos( const ui::ViewRef &view, float position, int axis )
+void updateAxisPos( const ui::ViewRef &view, float position, int axis )
 {
 	auto current = view->getPos();
 	current[axis] = position;
 	view->setPos( current );
 }
 
+} // anonymous namespace
+
+ui::LinearLayout::LinearLayout( Orientation orientation, Mode mode, Alignment alignment )
+	: mOrientation( orientation ), mMode( mode ), mAlignment( alignment )
+{
+
+}
+
 void ui::LinearLayout::layout( View *view )
 {
 	int axis = (int)mOrientation;
-	int axis2 = ((int)mOrientation + 1) % 2;
+	int axis2 = ( axis + 1 ) % 2;
 	const auto subviews = view->getSubviews();
 
 	vec2 containerSize = view->getSize();
 	float containerSizeMinusMargins = containerSize[axis] - mMargin.getUpperLeft()[axis] - mMargin.getLowerRight()[axis];
-	float paddingTotal = glm::max( 0.0f, float(subviews.size()) - 1.0f ) * mPadding;
-	float subviewsTotal = std::accumulate( subviews.begin(), subviews.end(), 0.0f, [&] ( float sum, const ui::ViewRef& view ) {
+	float paddingTotal = glm::max( 0.0f, float( subviews.size() ) - 1.0f ) * mPadding;
+	float subviewsTotal = std::accumulate( subviews.begin(), subviews.end(), 0.0f, [&] ( float sum, const ui::ViewRef &view ) {
 		return sum + view->getSize()[axis];
 	} );
 
@@ -61,14 +65,14 @@ void ui::LinearLayout::layout( View *view )
 	float offset = mMargin.getUpperLeft()[axis];
 	for( auto &subview : subviews ) {
 		if( mMode == Mode::DISTRIBUTE ) {
-			offset += (containerSizeMinusMargins - subviewsTotal) / float( subviews.size() + 1 );
+			offset += ( containerSizeMinusMargins - subviewsTotal ) / float( subviews.size() + 1 );
 			updateAxisPos( subview, offset, axis );
 			offset += subview->getSize()[axis];
 		}
 		else if( mMode == Mode::FILL ) {
 			vec2 size = subview->getSize();
-			size[axis] = (containerSizeMinusMargins - paddingTotal) / float( subviews.size() );
-			subview->setBounds( Rectf( vec2(), size ) );
+			size[axis] = ( containerSizeMinusMargins - paddingTotal ) / float( subviews.size() );
+			subview->setSize( size );
 			updateAxisPos( subview, offset, axis );
 			offset += subview->getSize()[axis] + mPadding;
 		}
