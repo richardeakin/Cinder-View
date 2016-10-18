@@ -31,37 +31,6 @@ using namespace ci;
 using namespace std;
 using namespace ui;
 
-BoxLayout::BoxLayout( Orientation orientation, Alignment alignment )
-	: mOrientation{ orientation }, mAlignment{ alignment }
-{
-}
-
-void BoxLayout::layout( View * view )
-{
-	// TODO: fix padding and margin behavior
-	vec2 containerSize = view->getSize();
-	int axis1 = (int)mOrientation;
-	int axis2 = ((int)mOrientation + 1) % 2;
-
-	vec2 offset = { mMargin.x1, mMargin.y1 };
-	const auto subviews = view->getSubviews();
-	for( auto &subview : subviews ) {
-		if( mAlignment == Alignment::Minimum ) {
-			subview->setPos( offset );
-		}
-		else if( mAlignment == Alignment::Middle ) {
-			subview->setPos( 0.5f * ( containerSize - subview->getSize() ) );
-		}
-		else if( mAlignment == Alignment::Maximum ) {
-			subview->setPos( containerSize - subview->getSize() - 2.0f * offset );
-		}
-		else if( mAlignment == Alignment::Fill ) {
-			subview->setPos( offset );
-			subview->setSize( containerSize - 2.0f * offset );
-		}
-	}
-}
-
 ui::LinearLayout::LinearLayout( Orientation orientation, Mode mode )
 	: mOrientation{ orientation }, mMode{ mode }
 {
@@ -82,12 +51,6 @@ void ui::LinearLayout::layout( View * view )
 	float i = 0.0f;
 	vec2 offset = mMargin.getUpperLeft();
 	for( auto &subview : subviews ) {
-		//if( mMode == Mode::Distribute ) {
-		//	auto pos = subview->getPos();
-		//	float center = ( i + 0.5f ) * ( axisContainerSizeMinusMargins / float( subviews.size() ) );
-		//	pos[axis] = offset[axis] + center - 0.5f * subview->getSize()[axis];
-		//	subview->setPos( pos );
-		//}
 		if( mMode == Mode::Distribute ) {
 			offset[axis] += ( axisContainerSizeMinusMargins - axisSubviewsTotal ) / float( subviews.size() + 1 );
 			subview->setPos( offset );
