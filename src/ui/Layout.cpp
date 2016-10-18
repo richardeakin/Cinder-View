@@ -60,12 +60,12 @@ void ui::LinearLayout::layout( View * view )
 	// Update layout based on selected mode and primary axis.
 	float offset = mMargin.getUpperLeft()[axis];
 	for( auto &subview : subviews ) {
-		if( mMode == Mode::Distribute ) {
+		if( mMode == Mode::DISTRIBUTE ) {
 			offset += (containerSizeMinusMargins - subviewsTotal) / float( subviews.size() + 1 );
 			updateAxisPos( subview, offset, axis );
 			offset += subview->getSize()[axis];
 		}
-		else if( mMode == Mode::Fill ) {
+		else if( mMode == Mode::FILL ) {
 			vec2 size = subview->getSize();
 			size[axis] = (containerSizeMinusMargins - paddingTotal) / float( subviews.size() );
 			subview->setBounds( Rectf( vec2(), size ) );
@@ -82,18 +82,18 @@ void ui::LinearLayout::layout( View * view )
 	offset = mMargin.getUpperLeft()[axis2];
 	containerSizeMinusMargins = containerSize[axis2] - mMargin.getUpperLeft()[axis2] - mMargin.getLowerRight()[axis2];
 	for( auto &subview : subviews ) {
-		if( mAlignment == Alignment::Minimum ) {
+		if( mAlignment == Alignment::MINIMUM ) {
 			updateAxisPos( subview, offset, axis2 );
 		}
-		else if( mAlignment == Alignment::Middle ) {
+		else if( mAlignment == Alignment::MIDDLE ) {
 			float center = 0.5f * ( containerSize[axis2] - subview->getSize()[axis2] );
 			updateAxisPos( subview, center, axis2 );
 		}
-		else if( mAlignment == Alignment::Maximum ) {
+		else if( mAlignment == Alignment::MAXIMUM ) {
 			float pos = containerSize[axis2] - mMargin.getLowerRight()[axis2] - subview->getSize()[axis2];
 			updateAxisPos( subview, pos, axis2 );
 		}
-		else if( mAlignment == Alignment::Fill ) {
+		else if( mAlignment == Alignment::FILL ) {
 			updateAxisPos( subview, offset, axis2 );
 
 			auto currentSize = subview->getSize();

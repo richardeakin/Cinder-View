@@ -46,51 +46,51 @@ class Layout {
 
 /// The direction of data flow for a layout.
 enum class Orientation {
-	Horizontal = 0,
-	Vertical
+	HORIZONTAL = 0,
+	VERTICAL
 };
 
 enum class Alignment : uint8_t {
-	Minimum = 0,
-	Middle,
-	Maximum,
-	Fill,
-	NumAlignments
+	MINIMUM = 0,
+	MIDDLE,
+	MAXIMUM,
+	FILL,
+	NUM_ALIGNMENTS
 };
 
 class LinearLayout : public Layout {
 public:
 	enum class Mode : uint8_t {
-		Increment = 0, //! Each successive View is placed after the previous one + margin
-		Fill, //! Spreads and expands subiews, overriding each subview's size.
-		Distribute, //! Spreads subviews equally based on their center. Ignores padding.
-		NumModes
+		INCREMENT = 0, //! Each successive View is placed after the previous one + margin
+		FILL, //! Spreads and expands subviews, overriding each subview's size.
+		DISTRIBUTE, //! Spreads subviews equally based on their center. Ignores padding.
+		NUM_MODES
 	};
 
-	explicit LinearLayout( Orientation orientation, Mode mode = Mode::Increment, Alignment alignment = Alignment::Minimum );
+	explicit LinearLayout( Orientation orientation, Mode mode = Mode::INCREMENT, Alignment alignment = Alignment::MINIMUM );
 
-	Orientation orientation() const { return mOrientation; }
-	void setOrientation( Orientation orientation ) { mOrientation = orientation; }
+	Orientation		getOrientation() const { return mOrientation; }
+	void			setOrientation( Orientation orientation ) { mOrientation = orientation; }
 
-	Alignment getAlignment() const { return mAlignment; }
-	void setAlignment( Alignment alignment ) { mAlignment = alignment; }
+	Alignment		getAlignment() const { return mAlignment; }
+	void			setAlignment( Alignment alignment ) { mAlignment = alignment; }
 
 	//! Sets the mode used for laying out views
-	void setMode( Mode mode )	{ mMode = mode; }
+	void			setMode( Mode mode )	{ mMode = mode; }
 	//! Returns the mode used for laying out views
-	Mode	getMode() const		{ return mMode; }
+	Mode			getMode() const		{ return mMode; }
 
 	//! Sets the margin around the bounds of the Layout object
-	void setMargin( const ci::Rectf &margin ) { mMargin = margin; }
+	void			setMargin( const ci::Rectf &margin ) { mMargin = margin; }
 	//! Sets the padding between successive Views.
-	void setPadding( float padding ) { mPadding = padding; }
+	void			setPadding( float padding ) { mPadding = padding; }
 
 	void layout( View *view ) override;
 protected:
 	Orientation	mOrientation;
 	Alignment	mAlignment;
 	Mode		mMode;
-	//! Spacing surrounding the suviews.
+	//! Spacing surrounding the subviews.
 	ci::Rectf	mMargin = ci::Rectf( 0, 0, 0, 0 );
 	//! Spacing between the subviews. Used by the linear layout mode.
 	float		mPadding = 0;
@@ -98,15 +98,15 @@ protected:
 
 class VerticalLayout : public LinearLayout {
   public:
-	explicit VerticalLayout( Mode mode = Mode::Increment, Alignment alignment = Alignment::Minimum )
-		: LinearLayout( Orientation::Vertical, mode, alignment )
+	explicit VerticalLayout( Mode mode = Mode::INCREMENT, Alignment alignment = Alignment::MINIMUM )
+		: LinearLayout( Orientation::VERTICAL, mode, alignment )
 	{}
 };
 
 class HorizontalLayout : public LinearLayout {
   public:
-	explicit HorizontalLayout( Mode mode = Mode::Increment, Alignment alignment = Alignment::Minimum )
-		: LinearLayout( Orientation::Horizontal, mode, alignment )
+	explicit HorizontalLayout( Mode mode = Mode::INCREMENT, Alignment alignment = Alignment::MINIMUM )
+		: LinearLayout( Orientation::HORIZONTAL, mode, alignment )
 	{}
 };
 
