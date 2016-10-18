@@ -31,42 +31,74 @@ using namespace ci;
 using namespace std;
 using namespace ui;
 
-ui::LinearLayout::LinearLayout( Orientation orientation, Mode mode )
-	: mOrientation{ orientation }, mMode{ mode }
+ui::LinearLayout::LinearLayout( Orientation orientation, Mode mode, Alignment alignment )
+	: mOrientation{ orientation }, mMode{ mode }, mAlignment{ alignment }
 {
+
+}
+
+inline void updateAxisPos( const ui::ViewRef& view, float position, int axis )
+{
+	auto current = view->getPos();
+	current[axis] = position;
+	view->setPos( current );
 }
 
 void ui::LinearLayout::layout( View * view )
 {
 	int axis = (int)mOrientation;
+	int axis2 = ((int)mOrientation + 1) % 2;
 	const auto subviews = view->getSubviews();
 
 	vec2 containerSize = view->getSize();
-	float axisContainerSizeMinusMargins = containerSize[axis] - mMargin.getUpperLeft()[axis] - mMargin.getLowerRight()[axis];
-	float axisPaddingTotal = glm::max( 0.0f, float(subviews.size()) - 1.0f ) * mPadding;
-	float axisSubviewsTotal = std::accumulate( subviews.begin(), subviews.end(), 0.0f, [&] ( float sum, const ui::ViewRef& view ) {
+	float containerSizeMinusMargins = containerSize[axis] - mMargin.getUpperLeft()[axis] - mMargin.getLowerRight()[axis];
+	float paddingTotal = glm::max( 0.0f, float(subviews.size()) - 1.0f ) * mPadding;
+	float subviewsTotal = std::accumulate( subviews.begin(), subviews.end(), 0.0f, [&] ( float sum, const ui::ViewRef& view ) {
 		return sum + view->getSize()[axis];
 	} );
 
-	float i = 0.0f;
-	vec2 offset = mMargin.getUpperLeft();
+	// Update layout based on selected mode and primary axis.
+	float offset = mMargin.getUpperLeft()[axis];
 	for( auto &subview : subviews ) {
 		if( mMode == Mode::Distribute ) {
-			offset[axis] += ( axisContainerSizeMinusMargins - axisSubviewsTotal ) / float( subviews.size() + 1 );
-			subview->setPos( offset );
-			offset[axis] += subview->getSize()[axis];
+			offset += (containerSizeMinusMargins - subviewsTotal) / float( subviews.size() + 1 );
+			updateAxisPos( subview, offset, axis );
+			offset += subview->getSize()[axis];
 		}
 		else if( mMode == Mode::Fill ) {
 			vec2 size = subview->getSize();
-			size[axis] = ( axisContainerSizeMinusMargins - axisPaddingTotal ) / float( subviews.size() );
+			size[axis] = (containerSizeMinusMargins - paddingTotal) / float( subviews.size() );
 			subview->setBounds( Rectf( vec2(), size ) );
-			subview->setPos( offset );
-			offset[axis] += subview->getSize()[axis] + mPadding;
+			updateAxisPos( subview, offset, axis );
+			offset += subview->getSize()[axis] + mPadding;
 		}
 		else {
-			subview->setPos( offset );
-			offset[axis] += subview->getSize()[axis] + mPadding;
+			updateAxisPos( subview, offset, axis );
+			offset += subview->getSize()[axis] + mPadding;
 		}
-		i += 1.0f;
+	}
+
+	// Update alignment of all subviews on secondary axis.
+	offset = mMargin.getUpperLeft()[axis2];
+	containerSizeMinusMargins = containerSize[axis2] - mMargin.getUpperLeft()[axis2] - mMargin.getLowerRight()[axis2];
+	for( auto &subview : subviews ) {
+		if( mAlignment == Alignment::Minimum ) {
+			updateAxisPos( subview, offset, axis2 );
+		}
+		else if( mAlignment == Alignment::Middle ) {
+			float center = 0.5f * ( containerSize[axis2] - subview->getSize()[axis2] );
+			updateAxisPos( subview, center, axis2 );
+		}
+		else if( mAlignment == Alignment::Maximum ) {
+			float pos = containerSize[axis2] - mMargin.getLowerRight()[axis2] - subview->getSize()[axis2];
+			updateAxisPos( subview, pos, axis2 );
+		}
+		else if( mAlignment == Alignment::Fill ) {
+			updateAxisPos( subview, offset, axis2 );
+
+			auto currentSize = subview->getSize();
+			currentSize[axis2] = containerSizeMinusMargins;
+			subview->setSize( currentSize );
+		}
 	}
 }

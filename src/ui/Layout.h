@@ -50,6 +50,14 @@ enum class Orientation {
 	Vertical
 };
 
+enum class Alignment : uint8_t {
+	Minimum = 0,
+	Middle,
+	Maximum,
+	Fill,
+	NumAlignments
+};
+
 class LinearLayout : public Layout {
 public:
 	enum class Mode : uint8_t {
@@ -59,10 +67,13 @@ public:
 		NumModes
 	};
 
-	LinearLayout( Orientation orientation, Mode mode = Mode::Increment );
+	explicit LinearLayout( Orientation orientation, Mode mode = Mode::Increment, Alignment alignment = Alignment::Minimum );
 
 	Orientation orientation() const { return mOrientation; }
 	void setOrientation( Orientation orientation ) { mOrientation = orientation; }
+
+	Alignment getAlignment() const { return mAlignment; }
+	void setAlignment( Alignment alignment ) { mAlignment = alignment; }
 
 	//! Sets the mode used for laying out views
 	void setMode( Mode mode )	{ mMode = mode; }
@@ -77,22 +88,25 @@ public:
 	void layout( View *view ) override;
 protected:
 	Orientation	mOrientation;
+	Alignment	mAlignment;
 	Mode		mMode;
+	//! Spacing surrounding the suviews.
 	ci::Rectf	mMargin = ci::Rectf( 0, 0, 0, 0 );
+	//! Spacing between the subviews. Used by the linear layout mode.
 	float		mPadding = 0;
 };
 
 class VerticalLayout : public LinearLayout {
   public:
-	VerticalLayout( Mode mode = Mode::Increment )
-		: LinearLayout( Orientation::Vertical, mode )
+	explicit VerticalLayout( Mode mode = Mode::Increment, Alignment alignment = Alignment::Minimum )
+		: LinearLayout( Orientation::Vertical, mode, alignment )
 	{}
 };
 
 class HorizontalLayout : public LinearLayout {
   public:
-	HorizontalLayout( Mode mode = Mode::Increment )
-		: LinearLayout( Orientation::Horizontal, mode )
+	explicit HorizontalLayout( Mode mode = Mode::Increment, Alignment alignment = Alignment::Minimum )
+		: LinearLayout( Orientation::Horizontal, mode, alignment )
 	{}
 };
 

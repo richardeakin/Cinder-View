@@ -36,20 +36,26 @@ LayoutTests::LayoutTests()
 void LayoutTests::layout()
 {
 	mVerticalGroupView->setPos( vec2( 40, 40 ) );
-	mVerticalGroupView->setSize( vec2( 200, 500 ) );
+	mVerticalGroupView->setSize( vec2( 300, 500 ) );
 }
 
 bool LayoutTests::keyDown( ci::app::KeyEvent &event )
 {
+	// Reset sizes to initial setting
+	for( auto& view : mVerticalGroupView->getSubviews() ) {
+		view->setSize( mInitialSizes[view] );
+	}
 	bool handled = true;
-	if( event.getChar() == 'v' ) {
-		// Reset sizes to initial setting
-		for( auto& view : mVerticalGroupView->getSubviews() ) {
-			view->setSize( mInitialSizes[view] );
-		}
+	if( event.getCode() == ci::app::KeyEvent::KEY_v ) {
 		auto nextMode = ui::LinearLayout::Mode( ( (int)mVerticalLayout->getMode() + 1 ) % (int)ui::LinearLayout::Mode::NumModes );
 		CI_LOG_I( "next mode (vertical): " << (int)nextMode );
 		mVerticalLayout->setMode( nextMode );
+		mVerticalGroupView->setNeedsLayout(); // TODO: this should happen automatically when updating the mode
+	}
+	if( event.getCode() == ci::app::KeyEvent::KEY_a ) {
+		auto nextAlignment = ui::Alignment( ((int)mVerticalLayout->getAlignment() + 1) % (int)ui::Alignment::NumAlignments );
+		CI_LOG_I( "next mode (vertical): " << (int)nextAlignment );
+		mVerticalLayout->setAlignment( nextAlignment );
 		mVerticalGroupView->setNeedsLayout(); // TODO: this should happen automatically when updating the mode
 	}
 	else
