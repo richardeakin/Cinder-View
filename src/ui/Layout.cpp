@@ -69,36 +69,36 @@ ui::LinearLayout::LinearLayout( Orientation orientation, Mode mode )
 
 void ui::LinearLayout::layout( View * view )
 {
-	vec2 containerSize = view->getSize();
 	int axis = (int)mOrientation;
-
 	const auto subviews = view->getSubviews();
-	vec2 offset = mMargin.getUpperLeft();
 
-	float totalSize = std::accumulate( subviews.begin(), subviews.end(), 0.0f, [&] ( float sum, const ui::ViewRef& view ) {
+	vec2 containerSize = view->getSize();
+	float axisContainerSizeMinusMargins = containerSize[axis] - mMargin.getUpperLeft()[axis] - mMargin.getLowerRight()[axis];
+	float axisPaddingTotal = glm::max( 0.0f, float(subviews.size()) - 1.0f ) * mPadding;
+	float axisSubviewsTotal = std::accumulate( subviews.begin(), subviews.end(), 0.0f, [&] ( float sum, const ui::ViewRef& view ) {
 		return sum + view->getSize()[axis];
 	} );
 
 	float i = 0.0f;
+	vec2 offset = mMargin.getUpperLeft();
 	for( auto &subview : subviews ) {
-		if( mMode == Mode::DistributeCenter ) {
-			auto pos = subview->getPos();
-			float center = ( i + 0.5f ) * ( containerSize[axis] / float( subviews.size() ) );
-			pos[axis] = center - 0.5f * subview->getSize()[axis];
-			subview->setPos( pos );
-		}
-		else if( mMode == Mode::DistributeMargin ) {
-			float margin = ( containerSize[axis] - totalSize ) / float( subviews.size() + 1 );
-			offset[axis] += margin;
+		//if( mMode == Mode::Distribute ) {
+		//	auto pos = subview->getPos();
+		//	float center = ( i + 0.5f ) * ( axisContainerSizeMinusMargins / float( subviews.size() ) );
+		//	pos[axis] = offset[axis] + center - 0.5f * subview->getSize()[axis];
+		//	subview->setPos( pos );
+		//}
+		if( mMode == Mode::Distribute ) {
+			offset[axis] += ( axisContainerSizeMinusMargins - axisSubviewsTotal ) / float( subviews.size() + 1 );
 			subview->setPos( offset );
 			offset[axis] += subview->getSize()[axis];
 		}
 		else if( mMode == Mode::Fill ) {
 			vec2 size = subview->getSize();
-			size[axis] = containerSize[axis] / float( subviews.size() );
+			size[axis] = ( axisContainerSizeMinusMargins - axisPaddingTotal ) / float( subviews.size() );
 			subview->setBounds( Rectf( vec2(), size ) );
 			subview->setPos( offset );
-			offset[axis] += subview->getSize()[axis];
+			offset[axis] += subview->getSize()[axis] + mPadding;
 		}
 		else {
 			subview->setPos( offset );

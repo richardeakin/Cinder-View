@@ -79,9 +79,8 @@ class LinearLayout : public Layout {
 public:
 	enum class Mode : uint8_t {
 		Increment = 0, //! Each successive View is placed after the previous one + margin
-		DistributeCenter,
-		DistributeMargin,
-		Fill,
+		Fill, //! Spreads and expands subiews, overriding each subview's size.
+		Distribute, //! Spreads subviews equally based on their center.
 		NumModes
 	};
 
