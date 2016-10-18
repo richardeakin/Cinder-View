@@ -50,37 +50,12 @@ enum class Orientation {
 	Vertical
 };
 
-class BoxLayout : public Layout {
-public:
-	enum class Alignment : uint8_t {
-		Minimum = 0,
-		Middle,
-		Maximum,
-		Fill
-	};
-
-	BoxLayout( Orientation orientation, Alignment alignment = Alignment::Minimum );
-
-	Orientation orientation() const { return mOrientation; }
-	void setOrientation( Orientation orientation ) { mOrientation = orientation; }
-
-	Alignment alignment() const { return mAlignment; }
-	void setAlignment( Alignment alignment ) { mAlignment = alignment; }
-	void setMargin( const ci::Rectf &margin ) { mMargin = margin; }
-
-	void layout( View *view ) override;
-protected:
-	Orientation	mOrientation;
-	Alignment	mAlignment;
-	ci::Rectf	mMargin = ci::Rectf( 0, 0, 0, 0 );
-};
-
 class LinearLayout : public Layout {
 public:
 	enum class Mode : uint8_t {
 		Increment = 0, //! Each successive View is placed after the previous one + margin
 		Fill, //! Spreads and expands subiews, overriding each subview's size.
-		Distribute, //! Spreads subviews equally based on their center.
+		Distribute, //! Spreads subviews equally based on their center. Ignores padding.
 		NumModes
 	};
 
