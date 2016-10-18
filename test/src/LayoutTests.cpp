@@ -26,24 +26,27 @@ LayoutTests::LayoutTests()
 		label->setFontSize( 24 );
 		label->setText( "Label " + to_string( i ) );
 		label->getBackground()->setColor( Color( CM_HSV, 1.0f - (float)i * 0.2f / (float)numVerticalPages, 1.0f, 0.75f ) );
-
-		if( mVerticalLayout->getMode() == ui::LinearLayout::Mode::Increment )
-			label->setSize( vec2( 180, 40 ) );
-
+		label->setSize( vec2( 180, 40 ) );
 		mVerticalGroupView->addSubview( label );
+
+		mInitialSizes[static_pointer_cast<ui::View>( label )] = label->getSize();
 	}
 }
 
 void LayoutTests::layout()
 {
 	mVerticalGroupView->setPos( vec2( 40, 40 ) );
-	mVerticalGroupView->setSize( vec2( 200, 300 ) );
+	mVerticalGroupView->setSize( vec2( 200, 500 ) );
 }
 
 bool LayoutTests::keyDown( ci::app::KeyEvent &event )
 {
 	bool handled = true;
 	if( event.getChar() == 'v' ) {
+		// Reset sizes to initial setting
+		for( auto& view : mVerticalGroupView->getSubviews() ) {
+			view->setSize( mInitialSizes[view] );
+		}
 		auto nextMode = ui::LinearLayout::Mode( ( (int)mVerticalLayout->getMode() + 1 ) % (int)ui::LinearLayout::Mode::NumModes );
 		CI_LOG_I( "next mode (vertical): " << (int)nextMode );
 		mVerticalLayout->setMode( nextMode );
