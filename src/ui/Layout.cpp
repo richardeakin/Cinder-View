@@ -37,14 +37,14 @@ ui::LinearLayout::LinearLayout( Orientation orientation, Mode mode, Alignment al
 
 }
 
-inline void updateAxisPos( const ui::ViewRef& view, float position, int axis )
+inline void updateAxisPos( const ui::ViewRef &view, float position, int axis )
 {
 	auto current = view->getPos();
 	current[axis] = position;
 	view->setPos( current );
 }
 
-void ui::LinearLayout::layout( View * view )
+void ui::LinearLayout::layout( View *view )
 {
 	int axis = (int)mOrientation;
 	int axis2 = ((int)mOrientation + 1) % 2;
