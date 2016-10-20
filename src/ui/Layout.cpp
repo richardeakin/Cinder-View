@@ -71,13 +71,13 @@ void ui::LinearLayout::layout( View *view )
 			offset += subview->getSize()[axis] + mPadding;
 		}
 		else if( mMode == Mode::DISTRIBUTE ) {
-			offset += (containerSizeMinusMargins - subviewsTotal) / float( subviews.size() + 1 );
+			offset += ( containerSizeMinusMargins - subviewsTotal ) / float( subviews.size() + 1 );
 			updateAxisPos( subview, offset, axis );
 			offset += subview->getSize()[axis];
 		}
 		else if( mMode == Mode::FILL ) {
 			vec2 size = subview->getSize();
-			size[axis] = (containerSizeMinusMargins - paddingTotal) / float( subviews.size() );
+			size[axis] = ( containerSizeMinusMargins - paddingTotal ) / float( subviews.size() );
 			subview->setSize( size );
 			updateAxisPos( subview, offset, axis );
 			offset += subview->getSize()[axis] + mPadding;
