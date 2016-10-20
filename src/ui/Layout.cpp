@@ -62,24 +62,38 @@ void ui::LinearLayout::layout( View *view )
 	} );
 
 	// Update layout based on selected mode and primary axis.
+	size_t index = 0;
 	float offset = mMargin.getUpperLeft()[axis];
+	float negativeOffset = containerSize[axis] - mMargin.getLowerRight()[axis];
 	for( auto &subview : subviews ) {
-		if( mMode == Mode::DISTRIBUTE ) {
-			offset += ( containerSizeMinusMargins - subviewsTotal ) / float( subviews.size() + 1 );
+		if( mMode == Mode::INCREMENT ) {
+			updateAxisPos( subview, offset, axis );
+			offset += subview->getSize()[axis] + mPadding;
+		}
+		else if( mMode == Mode::DISTRIBUTE ) {
+			offset += (containerSizeMinusMargins - subviewsTotal) / float( subviews.size() + 1 );
 			updateAxisPos( subview, offset, axis );
 			offset += subview->getSize()[axis];
 		}
 		else if( mMode == Mode::FILL ) {
 			vec2 size = subview->getSize();
-			size[axis] = ( containerSizeMinusMargins - paddingTotal ) / float( subviews.size() );
+			size[axis] = (containerSizeMinusMargins - paddingTotal) / float( subviews.size() );
 			subview->setSize( size );
 			updateAxisPos( subview, offset, axis );
 			offset += subview->getSize()[axis] + mPadding;
 		}
-		else {
-			updateAxisPos( subview, offset, axis );
-			offset += subview->getSize()[axis] + mPadding;
+		else if( mMode == Mode::PERIPHERAL ) {
+			if( index < glm::ceil( 0.5f * subviews.size() ) ) {
+				updateAxisPos( subview, offset, axis );
+				offset += subview->getSize()[axis] + mPadding;
+			}
+			else {
+				negativeOffset -= subview->getSize()[axis];
+				updateAxisPos( subview, negativeOffset, axis );
+				negativeOffset -= mPadding;
+			}
 		}
+		++index;
 	}
 
 	// Update alignment of all subviews on secondary axis.

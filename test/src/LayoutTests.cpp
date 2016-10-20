@@ -54,10 +54,10 @@ void LayoutTests::addLabels( const ui::ViewRef &view, size_t count )
 void LayoutTests::layout()
 {
 	mHorizontalGroupView->setPos( vec2( 40, 40 ) );
-	mHorizontalGroupView->setSize( vec2( 800, 80 ) );
+	mHorizontalGroupView->setSize( vec2( 800, 100 ) );
 
-	mVerticalGroupView->setPos( vec2( 40, 140 ) );
-	mVerticalGroupView->setSize( vec2( 300, 300 ) );
+	mVerticalGroupView->setPos( vec2( 40, 180 ) );
+	mVerticalGroupView->setSize( vec2( 300, 400 ) );
 }
 
 bool LayoutTests::keyDown( ci::app::KeyEvent &event )
