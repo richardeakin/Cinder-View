@@ -204,7 +204,7 @@ bool MultiTouchTest::keyDown( app::KeyEvent &event )
 			mEnableContinuousInjection = ! mEnableContinuousInjection;
 			CI_LOG_I( "mEnableContinuousInjection: " << mEnableContinuousInjection );
 			if( ! mEnableContinuousInjection )
-				endCountinuousTouches();
+				endContinuousTouches();
 
 			// avoid hitting the test selector and inadvertently changing tests
 			// - comment this out to test deleting Views while iterating over them
@@ -312,7 +312,7 @@ void MultiTouchTest::injectContinuousTouches()
 	}
 }
 
-void MultiTouchTest::endCountinuousTouches()
+void MultiTouchTest::endContinuousTouches()
 {
 	vector<app::TouchEvent::Touch> touchesEnded;
 	for( uint32_t i = 0; i < mTestTouches.size(); i++ ) {

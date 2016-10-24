@@ -154,7 +154,7 @@ class View : public std::enable_shared_from_this<View> {
 	void	setWorldPosDirty();
 
 	friend std::ostream& operator<<( std::ostream &os, const ViewRef &rhs );
-	void printHeirarchy( std::ostream &os );
+	void printHierarchy( std::ostream &os );
 
   protected:
 	virtual void layout()		        {}
@@ -217,6 +217,9 @@ class View : public std::enable_shared_from_this<View> {
 	friend class Layer;
 	friend class Graph;
 };
+
+std::ostream& operator<<( std::ostream &os, const View &rhs );
+std::ostream& operator<<( std::ostream &os, const ViewRef &rhs );
 
 template<typename ViewT, typename... Args>
 std::shared_ptr<ViewT> View::makeSubview( Args&&... args )

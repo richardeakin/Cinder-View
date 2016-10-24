@@ -37,6 +37,8 @@ public:
 
 	void setEnabled( bool enabled = true );
 	bool isEnabled() const					{ return mEnabled; }
+	bool getValue() const					{ return isEnabled(); }
+
 	void setAsToggle( bool toggle = true )	{ mIsToggle = toggle; }
 	bool isToggle() const					{ return mIsToggle; }
 

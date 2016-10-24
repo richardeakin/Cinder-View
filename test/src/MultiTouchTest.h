@@ -27,7 +27,7 @@ class MultiTouchTest : public ui::SuiteView {
 	void layoutDraggables();
 	void injectTouches();
 	void injectContinuousTouches();
-	void endCountinuousTouches();
+	void endContinuousTouches();
 
 	ui::VSliderRef			mVSlider1, mVSlider2;
 	ui::ButtonRef			mButton, mToggle;
