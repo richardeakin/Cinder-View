@@ -138,7 +138,7 @@ void Layer::updateView( View *view )
 	// If View::layout() was called, make sure we have the right FrameBuffer size
 	if( mRootView->mRendersToFrameBuffer ) {
 		Rectf frameBufferBounds = view->getBoundsForFrameBuffer();
-		if( mFrameBufferBounds.getWidth() < frameBufferBounds.getWidth() && mFrameBufferBounds.getHeight() < frameBufferBounds.getHeight() ) {
+		if( mFrameBufferBounds.getWidth() < frameBufferBounds.getWidth() || mFrameBufferBounds.getHeight() < frameBufferBounds.getHeight() ) {
 			mFrameBufferBounds = ceil( frameBufferBounds );
 			LOG_LAYER( "mFrameBufferBounds: " << mFrameBufferBounds );
 		}
