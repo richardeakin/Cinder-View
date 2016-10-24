@@ -42,7 +42,7 @@ Rectf ceil( const Rectf &r )
 	return Rectf( ceilf( r.x1 ), ceilf( r.y1 ), ceilf( r.x2 ), ceilf( r.y2 ) );
 }
 
-} // anonymous namesapce
+} // anonymous namespace
 
 namespace ui {
 
@@ -50,12 +50,12 @@ Layer::Layer( View *view )
 	: mRootView( view )
 {
 	CI_ASSERT_MSG( mRootView, "null pointer for root View" );
-	LOG_LAYER( "root view: " << mRootView->getName() );
+	LOG_LAYER( hex << this << dec << " root view: " << mRootView->getName() );
 }
 
 Layer::~Layer()
 {
-	LOG_LAYER( "bang" );
+	LOG_LAYER( hex << this << dec );
 
 	// temporary: marking FrameBuffer as unused once Layer is destroyed because it is the sole owner
 	// TODO: remove this once caching is fixed
