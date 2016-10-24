@@ -432,16 +432,20 @@ std::string View::getName() const
 	return ( ! mLabel.empty() ? mLabel : System::demangleTypeName( typeid( *this ).name() ) );
 }
 
-std::ostream& operator<<( std::ostream &os, const ViewRef &rhs )
+std::ostream& operator<<( std::ostream &os, const View &rhs )
 {
-	auto rhsPtr = rhs.get();
-	os << System::demangleTypeName( typeid( *rhsPtr ).name() );
-	if( ! rhs->getLabel().empty() )
-		os << " (" << rhs->getLabel() << ")";
+	os << System::demangleTypeName( typeid( rhs ).name() );
+	if( ! rhs.getLabel().empty() )
+		os << " (" << rhs.getLabel() << ")";
 
-	os << " - pos: " << rhs->getPos() << ", world pos: " << rhs->getWorldPos() << ", size: " << rhs->getSize() << ", interactive: " << boolalpha << rhs->isInteractive() << ", hidden: " << rhs->isHidden() << dec;
+	os << " - pos: " << rhs.getPos() << ", world pos: " << rhs.getWorldPos() << ", size: " << rhs.getSize() << ", interactive: " << boolalpha << rhs.isInteractive() << ", hidden: " << rhs.isHidden() << dec;
 
 	return os;
+}
+
+std::ostream& operator<<( std::ostream &os, const ViewRef &rhs )
+{
+	return os << *rhs;
 }
 
 namespace {
