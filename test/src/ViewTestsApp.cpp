@@ -62,7 +62,7 @@ void ViewTestsApp::keyDown( app::KeyEvent event )
 
 	switch( event.getCode() ) {
 		case app::KeyEvent::KEY_p:
-			mTestSuite->getGraph()->printHeirarchy( app::console() );
+			mTestSuite->getGraph()->printHierarchy( app::console() );
 		break;
 		case app::KeyEvent::KEY_b:
 			mDrawLayerBorders = ! mDrawLayerBorders;

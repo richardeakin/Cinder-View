@@ -470,16 +470,28 @@ std::string View::getName() const
 	return ( ! mLabel.empty() ? mLabel : System::demangleTypeName( typeid( *this ).name() ) );
 }
 
-std::ostream& operator<<( std::ostream &os, const ViewRef &rhs )
+std::ostream& operator<<( std::ostream &os, const View &rhs )
 {
-	auto rhsPtr = rhs.get();
-	os << System::demangleTypeName( typeid( *rhsPtr ).name() );
-	if( ! rhs->getLabel().empty() )
-		os << " (" << rhs->getLabel() << ")";
+	os << System::demangleTypeName( typeid( rhs ).name() );
+	if( ! rhs.getLabel().empty() )
+		os << " (" << rhs.getLabel() << ")";
 
-	os << " - pos: " << rhs->getPos() << ", world pos: " << rhs->getWorldPos() << ", size: " << rhs->getSize() << ", interactive: " << boolalpha << rhs->isInteractive() << ", hidden: " << rhs->isHidden() << dec;
+	os << " - pos: " << rhs.getPos() << ", world pos: " << rhs.getWorldPos() << ", size: " << rhs.getSize() << ", interactive: " << boolalpha << rhs.isInteractive() << ", hidden: " << rhs.isHidden() << dec;
+
+	if( rhs.getLayer() ) {
+		os << "\n[Layer";
+		if( rhs.getLayer()->getFrameBuffer() ) {
+			os << " FrameBuffer " << hex << rhs.getLayer()->getFrameBuffer().get() << dec << " size: " << rhs.getLayer()->getFrameBuffer()->getSize();
+		}
+		os << "]";
+	}
 
 	return os;
+}
+
+std::ostream& operator<<( std::ostream &os, const ViewRef &rhs )
+{
+	return os << *rhs;
 }
 
 namespace {
@@ -497,7 +509,7 @@ void printRecursive( ostream &os, const ViewRef &view, size_t depth )
 
 } // anonymous namespace
 
-void View::printHeirarchy( ostream &os )
+void View::printHierarchy( ostream &os )
 {
 	printRecursive( os, shared_from_this(), 0 );
 }
