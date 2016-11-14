@@ -24,6 +24,8 @@
 #include "cinder/Exception.h"
 
 #include <map>
+#include <memory>
+#include <functional>
 
 namespace mason {
 
