@@ -157,7 +157,7 @@ class View : public std::enable_shared_from_this<View> {
 	//! This is done when the world position should be recalculated but calling layout isn't necessary (ex. when ScrollView offset moves)
 	void	setWorldPosDirty();
 
-	friend std::ostream& operator<<( std::ostream &os, const ViewRef &rhs );
+	//! Prints information about this View and all of its children with ci::log. TODO: return a string instead.
 	void printHierarchy( std::ostream &os );
 
   protected:
