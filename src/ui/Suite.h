@@ -23,7 +23,6 @@
 
 #include "ui/View.h"
 #include "ui/Button.h"
-#include "ui/Label.h"
 #include "ui/Selector.h"
 #include "ui/Slider.h"
 #include "ui/Graph.h"
@@ -66,8 +65,6 @@ class Suite {
 	const std::string&  getCurrentKey() const   { return mCurrentTestKey; }
 	//! Returns the Control used for selecting a SuiteView
 	ui::VSelectorRef	getSelector() const	        { return mSelector; }
-	//! Returns a LabelGrid that SuiteViews can use to display information
-	ui::LabelGridRef    getInfoLabel() const        { return mInfoLabel; }
 
 	//! Reloads the current SuiteView
 	void reload();
@@ -84,14 +81,11 @@ class Suite {
 
   private:
 	void resize();
-	void resizeInfoLabel();
 	void selectTest( const std::string &key );
-	void updateUI();
 
 	ui::GraphRef		mGraph;
 	SuiteViewRef		mCurrentSuiteView;
 	ui::VSelectorRef	mSelector;
-	ui::LabelGridRef    mInfoLabel;
 	std::string			mCurrentTestKey;
 	bool				mDrawUi = true;
 

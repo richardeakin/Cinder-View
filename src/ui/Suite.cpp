@@ -33,7 +33,6 @@ using namespace ci;
 
 namespace ui {
 
-const vec2 INFO_ROW_SIZE    = vec2( 200, 20 );
 const float PADDING         = 6;
 
 // ----------------------------------------------------------------------------------------------------
@@ -53,11 +52,7 @@ Suite::Suite()
 		selectTest( mSelector->getSelectedLabel() );
 	} );
 
-	mInfoLabel = make_shared<ui::LabelGrid>();
-	mInfoLabel->setTextColor( Color::white() );
-	mInfoLabel->getBackground()->setColor( ColorA::gray( 0, 0.3f ) );
-
-	mGraph->addSubviews( { mSelector, mInfoLabel } );
+	mGraph->addSubview( mSelector );
 
 	app::getWindow()->getSignalResize().connect( bind( &Suite::resize, this ) );
 }
@@ -70,16 +65,6 @@ void Suite::resize()
 	const float height = 22 * mSelector->getSegmentLabels().size();
 	const float windowWidth = app::getWindowWidth();
 	mSelector->setBounds( Rectf( windowWidth - width - PADDING, PADDING, windowWidth - PADDING, height + PADDING ) );
-
-	resizeInfoLabel();
-}
-
-void Suite::resizeInfoLabel()
-{
-	const int numRows = mInfoLabel->getNumRows();
-	vec2 windowSize = vec2( app::getWindow()->getSize() );
-	vec2 labelSize = { INFO_ROW_SIZE.x, INFO_ROW_SIZE.y * numRows };
-	mInfoLabel->setBounds( { windowSize - labelSize - PADDING, windowSize - PADDING } ); // anchor bottom right
 }
 
 void Suite::selectTest( const string &key )
@@ -91,8 +76,6 @@ void Suite::selectTest( const string &key )
 		mCurrentSuiteView->removeFromParent();
 		mCurrentSuiteView.reset();
 	}
-
-	mInfoLabel->clearCells();
 
 	auto suiteView = mFactory.build( key );
 	if( ! suiteView ) {
@@ -117,7 +100,6 @@ void Suite::setDrawUiEnabled( bool enable )
 {
 	mDrawUi = enable;
 
-	mInfoLabel->setHidden( ! enable );
 	mSelector->setHidden( ! enable );
 }
 
@@ -132,17 +114,7 @@ void Suite::update()
 	if( ! mCurrentSuiteView && ! mSelector->getSegmentLabels().empty() )
 		selectTest( mSelector->getSelectedLabel() );
 
-	updateUI();
-
 	mGraph->propagateUpdate();
-}
-
-void Suite::updateUI()
-{
-	mInfoLabel->setRow( 0, { "fps:",  fmt::format( "{}", app::App::get()->getAverageFps() ) } );
-
-	if( ! glm::epsilonEqual( INFO_ROW_SIZE.y * mInfoLabel->getNumRows(), mInfoLabel->getHeight(), 0.01f ) )
-		resizeInfoLabel();
 }
 
 void Suite::draw()
