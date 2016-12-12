@@ -234,4 +234,27 @@ class PagingScrollView : public ScrollView {
 	ci::signals::Signal<void ()>	mSignalPageWillChange, mSignalPageDidChange;
 };
 
+// TODO: should probably move this to some sort of GestureTrackers.h, but it isn't very well thought out.
+class SwipeTracker {
+public:
+
+	void clear();
+	void storeTouchPos( const ci::vec2 &pos, double currentTime );
+	ci::vec2 calcSwipeVelocity();
+	ci::vec2 calcSwipeDistance();
+
+	ci::vec2 getFirstTouchPos() const	{ return mFirstTouch.position; }
+	ci::vec2 getLastTouchPos() const;
+
+private:
+	struct StoredTouch {
+		ci::vec2	position;
+		double		eventSeconds;
+	};
+
+	std::list<StoredTouch>	mStoredTouches;
+	StoredTouch				mFirstTouch;
+	size_t					mMaxStoredTouches = 10;
+};
+
 } // namespace ui
