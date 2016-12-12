@@ -94,6 +94,14 @@ vec2 SwipeTracker::getLastTouchPos() const
 	return mStoredTouches.back().position;
 }
 
+double SwipeTracker::getLastTouchTime() const
+{
+	if( mStoredTouches.empty() )
+		return -1;
+
+	return mStoredTouches.back().eventSeconds;
+}
+
 // ----------------------------------------------------------------------------------------------------
 // ScrollView::ContentView
 // ----------------------------------------------------------------------------------------------------

@@ -244,7 +244,12 @@ public:
 	ci::vec2 calcSwipeDistance();
 
 	ci::vec2 getFirstTouchPos() const	{ return mFirstTouch.position; }
+	//! Returns the positions of the last recorded touch, or vec2( 0 ) if none have yet been recorded.
 	ci::vec2 getLastTouchPos() const;
+	//! Returns the time of the last recorded touch, or -1 if none have yet been recorded.
+	double getLastTouchTime() const;
+	//! Returns the number of stored touches.
+	size_t getNumStoredTouches() const	{ return mStoredTouches.size(); }
 
 private:
 	struct StoredTouch {
