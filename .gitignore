@@ -1,4 +1,5 @@
 build/
+lib
 
 # Mac OS X cruft
 *.pbxuser
@@ -12,8 +13,6 @@ xcuserdata/
 .DS_Store
 
 # Windows cruft
-Debug/
-Release/
 *.suo
 *.ncb
 *.sdf
