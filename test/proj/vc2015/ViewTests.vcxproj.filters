@@ -29,6 +29,12 @@
     <ClCompile Include="..\..\src\ViewTestsApp.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\FilterTest.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\LayoutTests.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resources.rc">
@@ -49,6 +55,12 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\ScrollTests.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\FilterTest.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\LayoutTests.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
