@@ -2,11 +2,15 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros">
-    <CINDER_PATH>..\..\..\..\cinder</CINDER_PATH>
+    <REPO_PATH>..\..\..</REPO_PATH>
+    <CINDER_PATH>$(REPO_PATH)\..\..</CINDER_PATH>
   </PropertyGroup>
   <PropertyGroup />
   <ItemDefinitionGroup />
   <ItemGroup>
+    <BuildMacro Include="REPO_PATH">
+      <Value>$(REPO_PATH)</Value>
+    </BuildMacro>
     <BuildMacro Include="CINDER_PATH">
       <Value>$(CINDER_PATH)</Value>
     </BuildMacro>

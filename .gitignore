@@ -1,3 +1,6 @@
+build/
+lib
+
 # Mac OS X cruft
 *.pbxuser
 *.mode1v3
@@ -6,18 +9,18 @@
 project.xcworkspace
 xcuserdata/
 *.xccheckout
+*.xcscmblueprint
 .DS_Store
-
-build/
 
 # Windows cruft
 *.suo
 *.ncb
 *.sdf
-*.opensdf
 *.VC.opendb
 *.VC.db
-Debug/
-RelWithDebInfo/
-Release/
+*.opensdf
 ipch/
+**/vc2013/enc_temp_folder/**
+
+# Jetbrains IDEs
+.idea
