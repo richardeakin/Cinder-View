@@ -13,9 +13,15 @@
 #include "MultiTouchTest.h"
 #include "ScrollTests.h"
 
+#include "glm/gtc/epsilon.hpp"
+#include "cppformat/format.h"
+
 using namespace ci;
 using namespace ci::app;
 using namespace std;
+
+const vec2 INFO_ROW_SIZE    = vec2( 200, 20 );
+const float PADDING         = 6;
 
 class ViewTestsApp : public App {
   public:
@@ -24,9 +30,12 @@ class ViewTestsApp : public App {
 	void update() override;
 	void draw() override;
 
+	void ViewTestsApp::updateUI();
+	void ViewTestsApp::resizeInfoLabel();
 	void drawLayerBorders();
 
-	ui::SuiteRef	mTestSuite;
+	ui::SuiteRef		mTestSuite;
+	ui::LabelGridRef    mInfoLabel;
 
 	bool    mDrawLayerBorders = false;
 };
@@ -49,6 +58,12 @@ void ViewTestsApp::setup()
 	} );
 
 	mTestSuite->select( 3 );
+
+	mInfoLabel = make_shared<ui::LabelGrid>();
+	mInfoLabel->setTextColor( Color::white() );
+	mInfoLabel->getBackground()->setColor( ColorA::gray( 0, 0.3f ) );
+
+	mTestSuite->getGraph()->addSubview( mInfoLabel );
 }
 
 void ViewTestsApp::keyDown( app::KeyEvent event )
@@ -72,10 +87,27 @@ void ViewTestsApp::keyDown( app::KeyEvent event )
 
 void ViewTestsApp::update()
 {
-	size_t numFrameBuffers = mTestSuite->getGraph()->getRenderer()->getNumFrameBuffersCached();
-	mTestSuite->getInfoLabel()->setRow( 1, { "num FrameBuffers: ", to_string( numFrameBuffers ) } );
-
 	mTestSuite->update();
+	updateUI();
+}
+
+void ViewTestsApp::updateUI()
+{
+	mInfoLabel->setRow( 0, { "fps:",  fmt::format( "{}", getAverageFps() ) } );
+
+	size_t numFrameBuffers = mTestSuite->getGraph()->getRenderer()->getNumFrameBuffersCached();
+	mInfoLabel->setRow( 1, { "num FrameBuffers: ", to_string( numFrameBuffers ) } );
+
+	if( ! glm::epsilonEqual( INFO_ROW_SIZE.y * mInfoLabel->getNumRows(), mInfoLabel->getHeight(), 0.01f ) )
+		resizeInfoLabel();
+}
+
+void ViewTestsApp::resizeInfoLabel()
+{
+	const int numRows = mInfoLabel->getNumRows();
+	vec2 windowSize = vec2( app::getWindow()->getSize() );
+	vec2 labelSize = { INFO_ROW_SIZE.x, INFO_ROW_SIZE.y * numRows };
+	mInfoLabel->setBounds( { windowSize - labelSize - PADDING, windowSize - PADDING } ); // anchor bottom right
 }
 
 void ViewTestsApp::draw()
