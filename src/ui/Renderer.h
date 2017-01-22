@@ -27,6 +27,8 @@
 
 #include "ui/Image.h"
 
+#define UI_FRAMEBUFFER_CACHING_ENABLED 1
+
 namespace cinder {
 
 typedef std::shared_ptr<class ImageSource>		ImageSourceRef;

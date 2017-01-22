@@ -85,13 +85,15 @@ FilterTest::FilterTest()
 		imageBorder->setLineWidth( 2 );
 		mImageView->addSubview( imageBorder );
 	}
-	//{
-	//	auto labelBorder = make_shared<ui::StrokedRectView>();
-	//	labelBorder->setFillParentEnabled();
-	//	labelBorder->setColor( Color( 0.9f, 0.5f, 0.0f ) );
-	//	labelBorder->setLineWidth( 2 );
-	//	mLabel->addSubview( labelBorder );
-	//}
+#if 1
+	{
+		auto labelBorder = make_shared<ui::StrokedRectView>();
+		labelBorder->setFillParentEnabled();
+		labelBorder->setColor( Color( 0.9f, 0.5f, 0.0f ) );
+		labelBorder->setLineWidth( 2 );
+		mLabel->addSubview( labelBorder );
+	}
+#endif
 
 	const Color toggleEnabledColor = { 0, 0.2f, 0.6f };
 

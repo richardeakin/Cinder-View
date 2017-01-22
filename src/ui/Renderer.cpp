@@ -29,8 +29,6 @@
 #include "cinder/gl/Fbo.h"
 #include "cinder/Log.h"
 
-#define FRAMEBUFFER_CACHING_ENABLED 0
-
 //#define LOG_FRAMEBUFFER( stream )	CI_LOG_I( stream )
 #define LOG_FRAMEBUFFER( stream )	    ( (void)( 0 ) )
 
@@ -115,7 +113,7 @@ ivec2 FrameBuffer::getSize() const
 
 bool FrameBuffer::isUsable() const
 {
-#if FRAMEBUFFER_CACHING_ENABLED
+#if UI_FRAMEBUFFER_CACHING_ENABLED
 	return ! mDiscarded && ! mInUse;
 #else
 	return ! mDiscarded;
@@ -200,7 +198,7 @@ void Renderer::popBlendMode()
 
 FrameBufferRef Renderer::getFrameBuffer( const ci::ivec2 &size )
 {
-#if FRAMEBUFFER_CACHING_ENABLED
+#if UI_FRAMEBUFFER_CACHING_ENABLED
 	auto availableFrameBufferIt = mFrameBufferCache.end();
 	for( auto frameBufferIt = mFrameBufferCache.begin(); frameBufferIt < mFrameBufferCache.end(); ++frameBufferIt ) {
 		auto &frameBuffer = *frameBufferIt;
@@ -209,7 +207,7 @@ FrameBufferRef Renderer::getFrameBuffer( const ci::ivec2 &size )
 
 		// Check for any unbound FrameBuffer large enough for the requested size
 		if( frameBuffer->getSize().x >= size.x && frameBuffer->getSize().y >= size.y ) {
-			LOG_FRAMEBUFFER( "using FrameBuffer: " << hex << frameBuffer.get() << dec << " not in use, required size: " << size << ", framebuffer size: " << frameBuffer->getSize() );
+			LOG_FRAMEBUFFER( "using FrameBuffer: " << hex << frameBuffer.get() << dec << " (not in use), required size: " << size << ", framebuffer size: " << frameBuffer->getSize() );
 			return frameBuffer;
 		}
 
@@ -270,7 +268,7 @@ void Renderer::pushFrameBuffer( const FrameBufferRef &frameBuffer )
 
 void Renderer::popFrameBuffer( const FrameBufferRef &frameBuffer )
 {
-#if FRAMEBUFFER_CACHING_ENABLED
+#if UI_FRAMEBUFFER_CACHING_ENABLED
 	frameBuffer->mInUse = false;
 #endif
 	gl::context()->popFramebuffer();

@@ -150,11 +150,12 @@ void Layer::updateView( View *view )
 
 void Layer::draw( Renderer *ren )
 {
+	// acquire necessary FrameBuffers. TODO: setup Filter framebuffers here too?
 	if( mRootView->mRendersToFrameBuffer ) {
 		ivec2 frameBufferSize = ivec2( mFrameBufferBounds.getSize() );
 		if( ! mFrameBuffer || ! mFrameBuffer->isUsable() || mFrameBuffer->getSize().x < frameBufferSize.x || mFrameBuffer->getSize().y < frameBufferSize.y ) {
 			mFrameBuffer = ren->getFrameBuffer( frameBufferSize );
-			LOG_LAYER( "acquiring FrameBuffer for view '" << mRootView->getName() << "', size: " << mFrameBuffer->getSize()
+			LOG_LAYER( "aquired FrameBuffer for view '" << mRootView->getName() << "', size: " << mFrameBuffer->getSize()
 			           << "', mFrameBufferBounds: " << mFrameBufferBounds << ", view bounds:" << mRootView->getBounds() );
 		}
 
@@ -167,8 +168,10 @@ void Layer::draw( Renderer *ren )
 		gl::clear( ColorA::zero() );
 	}
 
+	// draw the subtree of Views that this Layer is responsible for
 	drawView( mRootView, ren );
 
+	// Do any necessary Filter processing and compositing
 	if( mRootView->mRendersToFrameBuffer ) {
 		ren->popFrameBuffer( mFrameBuffer );
 		gl::popViewport();
@@ -187,7 +190,6 @@ void Layer::draw( Renderer *ren )
 		ren->pushBlendMode( BlendMode::PREMULT_ALPHA );
 		ren->pushColor( ColorA::gray( 1, getAlpha() ) );
 
-		//auto sourceArea = Area( 0, 0, mFrameBufferBounds.getWidth(), mFrameBufferBounds.getHeight() );
 		auto sourceArea = frameBuffer->mFbo->getBounds();
 		auto destRect = mFrameBufferBounds + mRootView->getPos();
 		ren->draw( frameBuffer, sourceArea, destRect );
@@ -265,12 +267,15 @@ void Layer::processFilters( Renderer *ren, const FrameBufferRef &renderFrameBuff
 			filter->process( ren, pass );
 
 			ren->popFrameBuffer( pass.mFrameBuffer );
-			//pass.mFrameBuffer->mInUse = false;
 		}
 	}
 
 	mFiltersNeedConfiguration = false;
-	//renderFrameBuffer->mInUse = false; // TODO: this will need to be re-enabled when caching is turned back on (but will also likely be replaced by a better solution)
+
+#ifdef UI_FRAMEBUFFER_CACHING_ENABLED
+	// TODO: remove, see above TODO in filter processing loop
+	renderFrameBuffer->mInUse = false;
+#endif
 }
 
 void Layer::beginClip( View *view, Renderer *ren )
