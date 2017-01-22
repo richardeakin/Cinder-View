@@ -32,11 +32,13 @@ class ViewTestsApp : public App {
 
 	void ViewTestsApp::updateUI();
 	void ViewTestsApp::resizeInfoLabel();
+	void drawViewBorders();
 	void drawLayerBorders();
 
 	ui::SuiteRef		mTestSuite;
 	ui::LabelGridRef    mInfoLabel;
 
+	bool	mDrawViewBorders = false;
 	bool    mDrawLayerBorders = false;
 };
 
@@ -57,7 +59,7 @@ void ViewTestsApp::setup()
 		CI_LOG_I( "selected test index: " << mTestSuite->getCurrentIndex() << ", key: " << mTestSuite->getCurrentKey() );
 	} );
 
-	mTestSuite->select( 3 );
+	mTestSuite->select( 6 );
 
 	mInfoLabel = make_shared<ui::LabelGrid>();
 	mInfoLabel->setTextColor( Color::white() );
@@ -77,10 +79,13 @@ void ViewTestsApp::keyDown( app::KeyEvent event )
 
 	switch( event.getCode() ) {
 		case app::KeyEvent::KEY_p:
-			mTestSuite->getGraph()->printHierarchy( app::console() );
+			CI_LOG_I( "TestSuite View hierarchy\n: " << ui::printHierarchyToString( mTestSuite->getGraph() ) );
 		break;
-		case app::KeyEvent::KEY_b:
+		case app::KeyEvent::KEY_l:
 			mDrawLayerBorders = ! mDrawLayerBorders;
+		break;
+		case app::KeyEvent::KEY_v:
+			mDrawViewBorders = ! mDrawViewBorders;
 		break;
 	}
 }
@@ -116,10 +121,20 @@ void ViewTestsApp::draw()
 
 	mTestSuite->draw();
 
+	if( mDrawViewBorders )
+		drawViewBorders();
 	if( mDrawLayerBorders )
 		drawLayerBorders();
 
 	CI_CHECK_GL();
+}
+
+void ViewTestsApp::drawViewBorders()
+{
+	gl::ScopedColor colorScope( 0, 1, 1 );
+	ui::traverse( mTestSuite->getGraph(), []( const ui::ViewRef &view ) {
+		gl::drawStrokedRect( view->getWorldBounds(), 2 );
+	} );
 }
 
 void ViewTestsApp::drawLayerBorders()
@@ -127,10 +142,10 @@ void ViewTestsApp::drawLayerBorders()
 	auto graph = mTestSuite->getGraph();
 	auto ren = graph->getRenderer();
 
-	ren->pushColor( Color( 0.75f, 0.5f, 0 ) );
+	ren->pushColor( Color( 0.75f, 0, 0.75f ) );
 	for( auto &layer : graph->getLayers() ) {
 		Rectf layerBorder = layer->getBoundsWorld();
-		ren->drawStrokedRect( layerBorder, 2);
+		ren->drawStrokedRect( layerBorder, 3 );
 	}
 	ren->popColor();
 }

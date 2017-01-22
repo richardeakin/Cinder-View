@@ -157,9 +157,6 @@ class View : public std::enable_shared_from_this<View> {
 	//! This is done when the world position should be recalculated but calling layout isn't necessary (ex. when ScrollView offset moves)
 	void	setWorldPosDirty();
 
-	//! Prints information about this View and all of its children with ci::log. TODO: return a string instead.
-	void printHierarchy( std::ostream &os );
-
   protected:
 	virtual void layout()		        {}
 	virtual void update()		        {}
@@ -225,6 +222,11 @@ class View : public std::enable_shared_from_this<View> {
 
 std::ostream& operator<<( std::ostream &os, const View &rhs );
 std::ostream& operator<<( std::ostream &os, const ViewRef &rhs );
+
+//! Returns a string representation of the View hierchy starting at \a view (for debugging purposes).
+std::string printHierarchyToString( const ViewRef &view );
+//! Traverses the View hierchy of \a view, top to bottom.
+void traverse( const ViewRef &view, const std::function<void( const ViewRef & )> &applyFn );
 
 template<typename ViewT, typename... Args>
 std::shared_ptr<ViewT> View::makeSubview( Args&&... args )

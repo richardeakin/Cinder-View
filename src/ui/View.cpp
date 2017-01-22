@@ -507,11 +507,26 @@ void printRecursive( ostream &os, const ViewRef &view, size_t depth )
 		printRecursive( os, subview, depth + 1 );
 }
 
+void traverseRecursive( const ViewRef &view, const std::function<void( const ViewRef & )>&applyFn )
+{
+	applyFn( view );
+	for( const auto& subview : view->getSubviews() )
+		traverseRecursive( subview, applyFn );
+}
+
 } // anonymous namespace
 
-void View::printHierarchy( ostream &os )
+std::string printHierarchyToString( const ViewRef &view )
 {
-	printRecursive( os, shared_from_this(), 0 );
+	stringstream str;
+	printRecursive( str, view, 0 );
+
+	return str.str();
+}
+
+void traverse( const ViewRef &view, const std::function<void( const ViewRef & )> &applyFn )
+{
+	traverseRecursive( view, applyFn );
 }
 
 // ----------------------------------------------------------------------------------------------------
