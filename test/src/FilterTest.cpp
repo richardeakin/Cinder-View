@@ -148,8 +148,8 @@ FilterTest::FilterTest()
 			mLabel->addFilter( mFilterDropShadow );
 		}
 		else {
-			CI_LOG_I( "-------- removing mFilterDropShadow --------" );
-			mLabel->removeFilter( mFilterDropShadow );
+			CI_LOG_I( "-------- removing all filters from Label --------" );
+			mLabel->removeAllFilters();
 		}
 	} );
 
@@ -202,7 +202,7 @@ void FilterTest::layout()
 	mSliderBlur->setPos( sliderPos );
 	mSliderBlur->setSize( sliderSize );
 
-	togglePos.x = getCenter().x;
+	togglePos.x = ( containerBounds.getWidth() + controlPadding ) / 2;
 	mToggleDropShadow->setPos( togglePos );
 	mToggleDropShadow->setSize( toggleSize );
 
@@ -210,15 +210,22 @@ void FilterTest::layout()
 	mSliderDropShadow->setPos( sliderPos );
 	mSliderDropShadow->setSize( sliderSize );
 
+	// Sizing the Views with Filters attached: the Label's size is intentionally different in x and y than the ImageView, to test FrameBuffers being reused
+	// by multiple Filters within the same draw loop
 	mImageView->setPos( { controlPadding, mSliderBlur->getBounds().y2 + controlPadding } );
-	mImageView->setSize( { ( containerBounds.getWidth() - controlPadding ) / 2.0f, containerBounds.getHeight() - mImageView->getPosY() - controlPadding } );
+	mImageView->setSize( { ( containerBounds.getWidth() - controlPadding ) / 2.0f - controlPadding, containerBounds.getHeight() - mImageView->getPosY() - controlPadding } );
 
-	mLabel->setPos( { containerBounds.getCenter().x, mSliderDropShadow->getBounds().y2 + controlPadding } );
-	mLabel->setSize( vec2( containerBounds.getWidth() - mLabel->getPosX() - controlPadding, mImageView->getHeight() ) );
+	const vec2 sizeDiff = { 40, 40 };
+	mLabel->setPos( { togglePos.x, mSliderDropShadow->getBounds().y2 + controlPadding } );
+	mLabel->setSize( vec2( containerBounds.getWidth() - mLabel->getPosX() - controlPadding - sizeDiff.x, mImageView->getHeight() - sizeDiff.y ) );
 }
 
 bool FilterTest::keyDown( ci::app::KeyEvent &event )
 {
+	if( event.getChar() == ' ' ) {
+		loadGlsl();
+		return true;
+	}
 	return false;
 }
 
