@@ -236,7 +236,10 @@ void FilterBlur::process( ui::Renderer *ren, const ui::Filter::Pass &pass )
 
 	gl::ScopedTextureBind texScope( tex );
 	gl::clear( ColorA::zero() );
-	gl::drawSolidRect( Rectf( vec2( 0 ), pass.getSize() ) );
+
+	vec2 ratio = vec2( pass.getSize() ) / vec2( tex->getSize() );
+	vec2 lr = { ratio.x, 1 - ratio.y };
+	gl::drawSolidRect( Rectf( vec2( 0 ), pass.getSize() ), vec2( 0, 1 ), lr );
 }
 
 // ----------------------------------------------------------------------------------------------------
