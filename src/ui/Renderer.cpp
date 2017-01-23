@@ -106,6 +106,11 @@ FrameBuffer::FrameBuffer( const Format &format )
 	mFbo = gl::Fbo::create( format.mSize.x, format.mSize.y, fboFormat );
 }
 
+FrameBuffer::~FrameBuffer()
+{
+	LOG_FRAMEBUFFER(  hex << this << dec );
+}
+
 ivec2 FrameBuffer::getSize() const
 {
 	return mFbo->getSize();
@@ -272,6 +277,18 @@ void Renderer::popFrameBuffer( const FrameBufferRef &frameBuffer )
 	frameBuffer->mInUse = false;
 #endif
 	gl::context()->popFramebuffer();
+}
+
+std::string Renderer::printCurrentFrameBuffersToString() const
+{
+	stringstream s;
+
+	for( size_t i = 0; i < mFrameBufferCache.size(); i++ ) {
+		const auto &frameBuffer = mFrameBufferCache[i];
+		s << "[" << i << "] " << hex << frameBuffer.get() << dec << ": in use: " << frameBuffer->mInUse << ", discarded: " << frameBuffer->mDiscarded << ", ref count: " << frameBuffer.use_count() << endl;
+	}
+
+	return s.str();
 }
 
 void Renderer::draw( const FrameBufferRef &frameBuffer, const Rectf &destRect )

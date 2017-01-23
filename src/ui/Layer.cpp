@@ -157,6 +157,8 @@ void Layer::draw( Renderer *ren )
 			mFrameBuffer = ren->getFrameBuffer( frameBufferSize );
 			LOG_LAYER( "aquired FrameBuffer for view '" << mRootView->getName() << "', size: " << mFrameBuffer->getSize()
 			           << "', mFrameBufferBounds: " << mFrameBufferBounds << ", view bounds:" << mRootView->getBounds() );
+
+			LOG_LAYER( "current frame buffers:\n" << ren->printCurrentFrameBuffersToString() );
 		}
 
 		ren->pushFrameBuffer( mFrameBuffer );
@@ -252,6 +254,8 @@ void Layer::processFilters( Renderer *ren, const FrameBufferRef &renderFrameBuff
 				// TODO: think of a better way to determine a FrameBuffer is already in use during this tree draw
 				// - with this, the FrameBuffer can't be used in any other part of the draw hierarchy
 				pass.mFrameBuffer->mInUse = true;
+
+				LOG_LAYER( "current frame buffers:\n" << ren->printCurrentFrameBuffersToString() );
 			}
 		}
 

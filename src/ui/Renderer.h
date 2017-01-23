@@ -67,6 +67,7 @@ class FrameBuffer {
 	};
 
 	FrameBuffer( const Format &format );
+	~FrameBuffer();
 
 	ci::ivec2   getSize() const;
 	int         getWidth() const { return getSize().x; }
@@ -149,6 +150,8 @@ class Renderer {
 	void drawStrokedRect( const ci::Rectf &rect );
 	//! Draws a stroked rectangle centered around \a rect, with a line width of \a lineWidth
 	void drawStrokedRect( const ci::Rectf &rect, float lineWidth );
+
+	std::string printCurrentFrameBuffersToString() const;
 
   private:
 	std::vector<ci::ColorA>		mColorStack;

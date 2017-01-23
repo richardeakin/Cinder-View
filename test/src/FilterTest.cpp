@@ -214,7 +214,7 @@ void FilterTest::layout()
 	mImageView->setSize( { ( containerBounds.getWidth() - controlPadding ) / 2.0f, containerBounds.getHeight() - mImageView->getPosY() - controlPadding } );
 
 	mLabel->setPos( { containerBounds.getCenter().x, mSliderDropShadow->getBounds().y2 + controlPadding } );
-	mLabel->setSize( vec2( 384, mImageView->getHeight() ) ); // TODO: fix this
+	mLabel->setSize( vec2( containerBounds.getWidth() - mLabel->getPosX() - controlPadding, mImageView->getHeight() ) );
 }
 
 bool FilterTest::keyDown( ci::app::KeyEvent &event )
