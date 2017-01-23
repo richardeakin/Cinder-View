@@ -152,9 +152,9 @@ void Layer::draw( Renderer *ren )
 {
 	// acquire necessary FrameBuffers. TODO: setup Filter framebuffers here too?
 	if( mRootView->mRendersToFrameBuffer ) {
-		ivec2 frameBufferSize = ivec2( mFrameBufferBounds.getSize() );
-		if( ! mFrameBuffer || ! mFrameBuffer->isUsable() || mFrameBuffer->getSize().x < frameBufferSize.x || mFrameBuffer->getSize().y < frameBufferSize.y ) {
-			mFrameBuffer = ren->getFrameBuffer( frameBufferSize );
+		ivec2 renderSize = ivec2( mFrameBufferBounds.getSize() );
+		if( ! mFrameBuffer || ! mFrameBuffer->isUsable() || mFrameBuffer->getSize().x < renderSize.x || mFrameBuffer->getSize().y < renderSize.y ) {
+			mFrameBuffer = ren->getFrameBuffer( renderSize );
 			LOG_LAYER( "aquired FrameBuffer for view '" << mRootView->getName() << "', size: " << mFrameBuffer->getSize()
 			           << "', mFrameBufferBounds: " << mFrameBufferBounds << ", view bounds:" << mRootView->getBounds() );
 
@@ -162,9 +162,9 @@ void Layer::draw( Renderer *ren )
 		}
 
 		ren->pushFrameBuffer( mFrameBuffer );
-		gl::pushViewport( 0, mFrameBuffer->getHeight() - frameBufferSize.y, frameBufferSize.x, frameBufferSize.y );
+		gl::pushViewport( 0, mFrameBuffer->getHeight() - renderSize.y, renderSize.x, renderSize.y );
 		gl::pushMatrices();
-		gl::setMatricesWindow( frameBufferSize );
+		gl::setMatricesWindow( renderSize );
 		gl::translate( - mFrameBufferBounds.getUpperLeft() );
 
 		gl::clear( ColorA::zero() );
@@ -192,7 +192,7 @@ void Layer::draw( Renderer *ren )
 		ren->pushBlendMode( BlendMode::PREMULT_ALPHA );
 		ren->pushColor( ColorA::gray( 1, getAlpha() ) );
 
-		auto sourceArea = frameBuffer->mFbo->getBounds();
+		auto sourceArea = Area( ivec2( 0 ), ivec2( mFrameBufferBounds.getSize() ) );
 		auto destRect = mFrameBufferBounds + mRootView->getPos();
 		ren->draw( frameBuffer, sourceArea, destRect );
 		ren->popColor();
@@ -264,9 +264,10 @@ void Layer::processFilters( Renderer *ren, const FrameBufferRef &renderFrameBuff
 		for( auto &pass : filter->mPasses ) {
 			ren->pushFrameBuffer( pass.mFrameBuffer );
 
-			gl::ScopedViewport viewport( 0, 0, pass.getSize().x, pass.getSize().y );
+			gl::ScopedViewport viewport( 0, mFrameBuffer->getHeight() - pass.getSize().y, pass.getSize().x, pass.getSize().y );
 			gl::ScopedMatrices matScope;
 			gl::setMatricesWindow( pass.getSize() );
+			// TODO: need to translate for framebuffer bounds offset?
 
 			filter->process( ren, pass );
 
