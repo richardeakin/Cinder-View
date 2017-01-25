@@ -264,10 +264,13 @@ void Layer::processFilters( Renderer *ren, const FrameBufferRef &renderFrameBuff
 		for( auto &pass : filter->mPasses ) {
 			ren->pushFrameBuffer( pass.mFrameBuffer );
 
-			gl::ScopedViewport viewport( 0, mFrameBuffer->getHeight() - pass.getSize().y, pass.getSize().x, pass.getSize().y );
+			gl::ScopedViewport viewport( 0, pass.mFrameBuffer->getHeight() - pass.getSize().y, pass.getSize().x, pass.getSize().y );
 			gl::ScopedMatrices matScope;
 			gl::setMatricesWindow( pass.getSize() );
-			// TODO: need to translate for framebuffer bounds offset?
+			
+			// TODO: For each pass, need to specify how much padding is necessary
+			// - things like blur need to go larger than mFrameBufferBounds
+			//gl::translate( - mFrameBufferBounds.getUpperLeft() );
 
 			filter->process( ren, pass );
 

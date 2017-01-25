@@ -285,7 +285,12 @@ std::string Renderer::printCurrentFrameBuffersToString() const
 
 	for( size_t i = 0; i < mFrameBufferCache.size(); i++ ) {
 		const auto &frameBuffer = mFrameBufferCache[i];
-		s << "[" << i << "] " << hex << frameBuffer.get() << dec << ": in use: " << frameBuffer->mInUse << ", discarded: " << frameBuffer->mDiscarded << ", ref count: " << frameBuffer.use_count() << endl;
+		s << "[" << i << "] " << hex << frameBuffer.get() << dec;
+		s << ": in use: " << frameBuffer->mInUse;
+		s << ", discarded: " << frameBuffer->mDiscarded;
+		s << ", ref count: " << frameBuffer.use_count();
+		s << ", size: " << frameBuffer->getSize();
+		s << endl;
 	}
 
 	return s.str();
