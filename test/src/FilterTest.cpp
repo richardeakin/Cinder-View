@@ -32,7 +32,10 @@ void FilterSinglePass::process( ui::Renderer *ren, const ui::Filter::Pass &pass 
 	gl::ScopedTextureBind	texScope( getRenderColorTexture() );
 
 	gl::clear( ColorA::zero() );
-	gl::drawSolidRect( Rectf( vec2( 0 ), pass.getSize() ) );
+
+	vec2 ratio = vec2( pass.getSize() ) / vec2( getRenderColorTexture()->getSize() );
+	vec2 lr = { ratio.x, 1 - ratio.y };
+	gl::drawSolidRect( Rectf( vec2( 0 ), pass.getSize() ), vec2( 0, 1 ), lr );
 }
 
 // ----------------------------------------------------------------------------------------------------
@@ -70,7 +73,7 @@ FilterTest::FilterTest()
 	mFilterBlur = make_shared<ui::FilterBlur>();
 	mFilterDropShadow = make_shared<ui::FilterDropShadow>();
 	mFilterDropShadow->setDownsampleFactor( 1 );
-	mFilterDropShadow->setShadowOffset( vec2( -10, 8 ) );
+	mFilterDropShadow->setShadowOffset( vec2( -6, 4 ) );
 
 	//loadGlsl(); // uncomment to load live shaders in assets folder
 
@@ -85,7 +88,7 @@ FilterTest::FilterTest()
 		imageBorder->setLineWidth( 2 );
 		mImageView->addSubview( imageBorder );
 	}
-#if 1
+#if 0
 	{
 		auto labelBorder = make_shared<ui::StrokedRectView>();
 		labelBorder->setFillParentEnabled();

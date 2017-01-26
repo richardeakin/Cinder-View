@@ -291,12 +291,19 @@ void FilterDropShadow::process( ui::Renderer *ren, const ui::Filter::Pass &pass 
 
 		gl::ScopedTextureBind texScope( tex );
 		gl::clear( ColorA::zero() );
-		gl::drawSolidRect( Rectf( vec2( 0 ), pass.getSize() ) );
+		//gl::drawSolidRect( Rectf( vec2( 0 ), pass.getSize() ) );
+
+		vec2 ratio = vec2( pass.getSize() ) / vec2( tex->getSize() );
+		vec2 lr = { ratio.x, 1 - ratio.y };
+		gl::drawSolidRect( Rectf( vec2( 0 ), pass.getSize() ), vec2( 0, 1 ), lr );
 	}
 
 	if( pass.getIndex() == 1 ) {
 		// draw original image again on top
-		gl::draw( getRenderColorTexture(), Rectf( vec2( 0 ), pass.getSize() ) );
+		auto sourceArea = Area( ivec2( 0 ), pass.getSize() );
+		auto destRect = Rectf( vec2( 0 ), pass.getSize() );
+
+		gl::draw( getRenderColorTexture(), sourceArea, destRect );
 	}
 }
 
