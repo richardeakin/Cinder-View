@@ -3,25 +3,20 @@
 <block
 	name="Cinder-View"
 	id="org.libcinder.cinderview"
-	author=""
-	license=""
-	summary=""
+	author="Cinder project, Richard Eakin"
+	license="BSD"
+	summary="UI toolkit for Cinder C++ framework"
 	url="https://github.com/cinder/Cinder-View"
 	git="git://github.com/cinder/Cinder-View.git"
 	>
-	<supports os="msw"/>
 
 	<includePath>src</includePath>
-    
-    <headerPattern>src/cppformat/*.h</headerPattern>
-    <headerPattern>src/mason/*.h</headerPattern>
-    <headerPattern>src/ui/*.h</headerPattern>
+	
+	<headerPattern>src/cppformat/*.h</headerPattern>
+	<headerPattern>src/mason/*.h</headerPattern>
+	<headerPattern>src/ui/*.h</headerPattern>
 
-    <sourcePattern>src/cppformat/*.cc</sourcePattern>
-    <sourcePattern>src/ui/*.cpp</sourcePattern>
-    
-	<platform os="msw">
-		<staticLibrary>lib/msw/$(Platform)/$(Configuration)/cinder-view.lib</staticLibrary>
-	</platform>
+	<sourcePattern>src/cppformat/*.cc</sourcePattern>
+	<sourcePattern>src/ui/*.cpp</sourcePattern>
 </block>
 </cinder>
