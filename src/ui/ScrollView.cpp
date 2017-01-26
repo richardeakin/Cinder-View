@@ -36,28 +36,6 @@ namespace ui {
 // SwipeTracker
 // ----------------------------------------------------------------------------------------------------
 
-class SwipeTracker {
-  public:
-
-	void clear();
-	void storeTouchPos( const ci::vec2 &pos, double currentTime );
-	vec2 calcSwipeVelocity();
-	vec2 calcSwipeDistance();
-
-	vec2 getFirstTouchPos() const	{ return mFirstTouch.position; }
-	vec2 getLastTouchPos() const;
-
-  private:
-	struct StoredTouch {
-		ci::vec2	position;
-		double		eventSeconds;
-	};
-
-	std::list<StoredTouch>	mStoredTouches;
-	StoredTouch				mFirstTouch;
-	size_t					mMaxStoredTouches = 10;
-};
-
 void SwipeTracker::clear()
 {
 	mStoredTouches.clear();
@@ -114,6 +92,14 @@ vec2 SwipeTracker::getLastTouchPos() const
 		return vec2( 0 );
 
 	return mStoredTouches.back().position;
+}
+
+double SwipeTracker::getLastTouchTime() const
+{
+	if( mStoredTouches.empty() )
+		return -1;
+
+	return mStoredTouches.back().eventSeconds;
 }
 
 // ----------------------------------------------------------------------------------------------------

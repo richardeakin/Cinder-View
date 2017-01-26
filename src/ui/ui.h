@@ -23,6 +23,7 @@
 
 #include "ui/Button.h"
 #include "ui/Control.h"
+#include "ui/Filter.h"
 #include "ui/Graph.h"
 #include "ui/Image.h"
 #include "ui/ImageView.h"

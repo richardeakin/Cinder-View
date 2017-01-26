@@ -51,6 +51,7 @@ protected:
 
 private:
 	ci::vec2	getBaseLine() const;
+	void		measureTextSize();
 	
 	TextRef			mFont;
 	std::string		mText;

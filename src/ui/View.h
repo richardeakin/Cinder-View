@@ -25,6 +25,7 @@
 
 #include "ui/Layer.h"
 #include "ui/Renderer.h"
+#include "ui/Layout.h"
 
 #include "cinder/app/TouchEvent.h"
 #include "cinder/app/KeyEvent.h"
@@ -98,9 +99,14 @@ class View : public std::enable_shared_from_this<View> {
 	//!
 	bool                    isLayerRoot() const;
 
+	void				setLayout( const LayoutRef &layout );
+	LayoutRef			getLayout() const	{ return mLayout; }
+
 	//! Sets a label that can be used to identify this View
 	void				setLabel( const std::string &label )	{ mLabel = label; }
 	const std::string&	getLabel() const						{ return mLabel; }
+	//! Returns the first label whose label matches the specified string, or an empty ViewRef.
+	ViewRef				getViewWithLabel( const std::string &label ) const;
 
 	//! Returns this View's label if it has one, otherwise it's typename
 	std::string			getName() const;
@@ -134,19 +140,22 @@ class View : public std::enable_shared_from_this<View> {
 	void	setClipEnabled( bool enable = true );
 	bool	isClipEnabled() const;
 
-	void	setBlendMode( BlendMode mode )				{ mBlendMode = mode; }
+	void	    setBlendMode( BlendMode mode )			{ mBlendMode = mode; }
 	BlendMode	getBlendMode() const					{ return mBlendMode; }
+
+	void    addFilter( const FilterRef &filter );
+	void	removeFilter( const FilterRef &filter );
+	void	removeAllFilters();
 
 	void	setFillParentEnabled( bool enable = true );
 	bool	isFillParentEnabled() const					{ return mFillParent; }
 
 	//! Informs layout propagation that this View and its subviews need layout() to be called.
-	void setNeedsLayout();
+	void	setNeedsLayout();
+	//! Returns whether this View needs to have its layout() method called before the next update().
+	bool	needsLayout() const	{ return mNeedsLayout; }
 	//! This is done when the world position should be recalculated but calling layout isn't necessary (ex. when ScrollView offset moves)
-	void setWorldPosDirty();
-
-	friend std::ostream& operator<<( std::ostream &os, const ViewRef &rhs );
-	void printHierarchy( std::ostream &os );
+	void	setWorldPosDirty();
 
   protected:
 	virtual void layout()		        {}
@@ -170,12 +179,11 @@ class View : public std::enable_shared_from_this<View> {
 
 	void setParent( View *parent );
 	void calcWorldPos() const;
+	void layoutImpl();
 	void updateImpl();
 	void drawImpl( Renderer *ren );
 	void clearViewsMarkedForRemoval();
 
-	// TODO: consider moving to Graph, as all other propagation methods are there.
-	void propagateLayout();
 
 	typedef std::map<uint32_t, ci::app::TouchEvent::Touch> TouchMapT; // TODO just store this as vector and use std::find
 
@@ -205,6 +213,8 @@ class View : public std::enable_shared_from_this<View> {
 	std::vector<ViewRef>	mSubviews;
 	RectViewRef				mBackground;
 	LayerRef				mLayer;
+	std::vector<FilterRef>  mFilters;
+	LayoutRef				mLayout;
 
 	friend class Layer;
 	friend class Graph;
@@ -212,6 +222,11 @@ class View : public std::enable_shared_from_this<View> {
 
 std::ostream& operator<<( std::ostream &os, const View &rhs );
 std::ostream& operator<<( std::ostream &os, const ViewRef &rhs );
+
+//! Returns a string representation of the View hierchy starting at \a view (for debugging purposes).
+std::string printHierarchyToString( const ViewRef &view );
+//! Traverses the View hierchy of \a view, top to bottom.
+void traverse( const ViewRef &view, const std::function<void( const ViewRef & )> &applyFn );
 
 template<typename ViewT, typename... Args>
 std::shared_ptr<ViewT> View::makeSubview( Args&&... args )

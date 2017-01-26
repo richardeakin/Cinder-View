@@ -27,6 +27,8 @@
 
 #include "ui/Image.h"
 
+#define UI_FRAMEBUFFER_CACHING_ENABLED 1
+
 namespace cinder {
 
 typedef std::shared_ptr<class ImageSource>		ImageSourceRef;
@@ -65,19 +67,24 @@ class FrameBuffer {
 	};
 
 	FrameBuffer( const Format &format );
+	~FrameBuffer();
 
 	ci::ivec2   getSize() const;
 	int         getWidth() const { return getSize().x; }
 	int         getHeight() const { return getSize().y; }
-	bool        isBound() const { return mIsBound; }
+	bool        isInUse() const { return mInUse; }
 	bool		isUsable() const;
 
 	ci::ImageSourceRef  createImageSource() const;
 
-  private:
+	// TODO: don't expose gl, but as Renderer doesn't support passing in shaders for drawing this is the only way to custom draw a FrameBuffer's contents
+	ci::gl::TextureRef	getColorTexture() const;
 
-	cinder::gl::FboRef  mFbo;
-	bool                mIsBound = false;
+	ci::gl::FboRef		mFbo; // TODO: make private
+
+	bool                mInUse = false; // TODO: make private
+
+private:
 	bool				mDiscarded = false;
 
 	friend class Renderer;
@@ -129,6 +136,8 @@ class Renderer {
 	//!
 	void popFrameBuffer( const FrameBufferRef &frameBuffer );
 	//!
+	void clearUnusedFrameBuffers();
+	//!
 	void draw( const FrameBufferRef &frameBuffer, const ci::Rectf &destRect );
 	//!
 	void draw( const FrameBufferRef &frameBuffer, const ci::Area &sourceArea, const ci::Rectf &destRect );
@@ -141,6 +150,8 @@ class Renderer {
 	void drawStrokedRect( const ci::Rectf &rect );
 	//! Draws a stroked rectangle centered around \a rect, with a line width of \a lineWidth
 	void drawStrokedRect( const ci::Rectf &rect, float lineWidth );
+
+	std::string printCurrentFrameBuffersToString() const;
 
   private:
 	std::vector<ci::ColorA>		mColorStack;

@@ -255,13 +255,30 @@ void View::setWorldPosDirty()
 		subview->setWorldPosDirty();
 }
 
-// TODO: consider moving layout propagation to Graph, at which point it will also configure layer tree
-void View::propagateLayout()
+void View::addFilter( const FilterRef &filter )
+{
+	mFilters.push_back( filter );
+	if( isLayerRoot() ) {
+		mLayer->setFiltersNeedConfiguration();
+	}
+}
+
+void View::removeFilter( const FilterRef &filter )
+{
+	mFilters.erase( remove( mFilters.begin(), mFilters.end(), filter ), mFilters.end() );
+}
+
+void View::removeAllFilters()
+{
+	mFilters.clear();
+}
+
+void View::layoutImpl()
 {
 	mWorldPosDirty = true;
 
 	if( mBackground )
-		mBackground->propagateLayout();
+		mBackground->layoutImpl();
 
 	if( mFillParent ) {
 		auto parent = getParent();
@@ -271,13 +288,11 @@ void View::propagateLayout()
 		}
 	}
 
+	if( mLayout )
+		mLayout->layout( this );
+
 	layout();
 	mNeedsLayout = false;
-
-	for( auto &view : mSubviews ) {
-		if( view->mNeedsLayout )
-			view->propagateLayout();
-	}
 }
 
 void View::updateImpl()
@@ -287,6 +302,7 @@ void View::updateImpl()
 	// if bounds is animating, update background's position and size, propagate layout
 	bool needsLayout = mNeedsLayout;
 	bool hasBackground = (bool)mBackground;
+	bool needsLayer = false;
 
 	if( ! mPos.isComplete() ) {
 		if( hasBackground )
@@ -300,21 +316,29 @@ void View::updateImpl()
 			mBackground->setSize( getSize() );
 	}
 
-	if( mRenderTransparencyToFrameBuffer ) {
-		if( isTransparent() ) {
-			if( ! mRendersToFrameBuffer ) {
-				getGraph()->setNeedsLayer( this );
-			}
+	// handle transparency that needs a Layer for compositing
+	if( mRenderTransparencyToFrameBuffer && isTransparent() ) {
+		needsLayer = true;
+	}
+
+	// handle Filters as they need a Layer and FrameBuffer to render with
+	if( ! mFilters.empty() ) {
+		needsLayer = true;
+	}
+
+	if( needsLayer ) {
+		if( ! mLayer ) {
+			getGraph()->setNeedsLayer( this );
 		}
-		else if( mRendersToFrameBuffer ) {
-			CI_ASSERT( mLayer );
+	}
+	else {
+		// TODO: a bit hacky that Graph is always getting handled here, and that its Layer could potentially be removed when it always needs one
+		if( mLayer && getGraph() != this )
 			getGraph()->removeLayer( mLayer );
-			mRendersToFrameBuffer = false;
-		}
 	}
 
 	if( needsLayout )
-		propagateLayout();
+		layoutImpl();
 
 	if( hasBackground ) {
 		mBackground->mGraph = mGraph;
@@ -427,6 +451,20 @@ float View::getAlphaCombined() const
 	return alpha;
 }
 
+void View::setLayout( const LayoutRef &layout )
+{
+	mLayout = layout;
+}
+
+ViewRef View::getViewWithLabel( const std::string &label ) const
+{
+	auto it = find_if( mSubviews.begin(), mSubviews.end(), [&label] ( const ViewRef &subview ) {
+		return subview->getLabel() == label;
+	} );
+
+	return it == mSubviews.end() ? nullptr : *it;
+}
+
 std::string View::getName() const
 {
 	return ( ! mLabel.empty() ? mLabel : System::demangleTypeName( typeid( *this ).name() ) );
@@ -439,6 +477,14 @@ std::ostream& operator<<( std::ostream &os, const View &rhs )
 		os << " (" << rhs.getLabel() << ")";
 
 	os << " - pos: " << rhs.getPos() << ", world pos: " << rhs.getWorldPos() << ", size: " << rhs.getSize() << ", interactive: " << boolalpha << rhs.isInteractive() << ", hidden: " << rhs.isHidden() << dec;
+
+	if( rhs.getLayer() ) {
+		os << "\n[Layer";
+		if( rhs.getLayer()->getFrameBuffer() ) {
+			os << " FrameBuffer " << hex << rhs.getLayer()->getFrameBuffer().get() << dec << " size: " << rhs.getLayer()->getFrameBuffer()->getSize();
+		}
+		os << "]";
+	}
 
 	return os;
 }
@@ -461,11 +507,26 @@ void printRecursive( ostream &os, const ViewRef &view, size_t depth )
 		printRecursive( os, subview, depth + 1 );
 }
 
+void traverseRecursive( const ViewRef &view, const std::function<void( const ViewRef & )>&applyFn )
+{
+	applyFn( view );
+	for( const auto& subview : view->getSubviews() )
+		traverseRecursive( subview, applyFn );
+}
+
 } // anonymous namespace
 
-void View::printHierarchy( ostream &os )
+std::string printHierarchyToString( const ViewRef &view )
 {
-	printRecursive( os, shared_from_this(), 0 );
+	stringstream str;
+	printRecursive( str, view, 0 );
+
+	return str.str();
+}
+
+void traverse( const ViewRef &view, const std::function<void( const ViewRef & )> &applyFn )
+{
+	traverseRecursive( view, applyFn );
 }
 
 // ----------------------------------------------------------------------------------------------------

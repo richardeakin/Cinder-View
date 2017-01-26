@@ -49,6 +49,7 @@ Label::Label( const Rectf &bounds )
 void Label::setFont( float fontSize, FontFace fontFace )
 {
 	mFont = TextManager::loadText( fontFace, fontSize );
+	measureTextSize();
 }
 
 void Label::setText( const std::string &text )
@@ -57,7 +58,7 @@ void Label::setText( const std::string &text )
 		return;
 
 	mText = text;
-	mTextSize = mFont->measureString( text );
+	measureTextSize();
 }
 
 void Label::draw( Renderer *ren )
@@ -87,6 +88,11 @@ vec2 Label::getBaseLine() const
 
 	vec2 result( x, getCenterLocal().y + mFont->getDescent() );
 	return result;
+}
+
+void Label::measureTextSize()
+{
+	mTextSize = mFont->measureString( mText );
 }
 
 // ----------------------------------------------------------------------------------------------------
