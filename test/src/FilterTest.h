@@ -28,14 +28,14 @@ class FilterTest : public ui::SuiteView {
 	void loadGlsl();
 
 	std::shared_ptr<FilterSinglePass>	mFilterSinglePass;
-	ui::FilterBlurRef					mFilterBlur;
+	ui::FilterBlurRef					mFilterBlur, mFilterBlurNested;
 	ui::FilterDropShadowRef				mFilterDropShadow;
 
 	ci::gl::GlslProgRef					mGlslBlur, mGlslDropshadow;
 
 	ui::ViewRef				mContainerView;
 	ui::ImageViewRef        mImageView;
-	ui::ButtonRef			mToggleSinglePass, mToggleBlur, mToggleDropShadow;
+	ui::ButtonRef			mToggleSinglePass, mToggleBlur, mToggleBlurNested, mToggleDropShadow;
 	ui::HSliderRef			mSliderBlur, mSliderDropShadow;
-	ui::LabelRef			mLabel;
+	ui::LabelRef			mLabel, mLabelNested;
 };
