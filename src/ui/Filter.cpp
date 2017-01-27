@@ -231,6 +231,9 @@ void FilterBlur::process( ui::Renderer *ren, const ui::Filter::Pass &pass )
 		tex = getPassColorTexture( 0 );
 	}
 
+	// the shader varies the sample offset from -10 to 10, so bring it into 'pixel space' by dividing by 10
+	sampleOffset *= 0.1f;
+
 	gl::ScopedGlslProg glslScope( mGlsl );
 	mGlsl->uniform( "uSampleOffset", sampleOffset );
 

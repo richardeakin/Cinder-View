@@ -112,7 +112,7 @@ public:
 private:
 	ci::gl::GlslProgRef	mGlsl;
 
-	ci::vec2	mBlurPixels = ci::vec2( 1 );
+	ci::vec2	mBlurPixels = ci::vec2( 3 );
 };
 
 class FilterDropShadow : public ui::Filter {
