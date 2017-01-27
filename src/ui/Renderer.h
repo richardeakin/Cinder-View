@@ -84,8 +84,10 @@ class FrameBuffer {
 	ci::gl::FboRef		mFbo; // TODO: make private
 
 private:
+	//! Updates the internal FBO to match \a format.
+	void updateFormat( const Format &format );
+
 	bool                mInUse = false;
-	bool				mDiscarded = false;
 
 	friend class Renderer;
 };
