@@ -159,6 +159,7 @@ void Layer::draw( Renderer *ren )
 			LOG_LAYER( "aquired FrameBuffer for view '" << mRootView->getName() << "', size: " << mFrameBuffer->getSize()
 			           << "', mFrameBufferBounds: " << mFrameBufferBounds << ", view bounds:" << mRootView->getBounds() );
 
+			mFrameBuffer->setInUse( true ); // note: only so that the following LOG_LAYER prints correctly, this will be marked in use during the pushFrameBuffer()
 			LOG_LAYER( "current frame buffers:\n" << ren->printCurrentFrameBuffersToString() );
 		}
 
