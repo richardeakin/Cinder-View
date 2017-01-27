@@ -168,7 +168,7 @@ Filter::Pass::~Pass()
 	// temporary: marking FrameBuffer as unused once Pass is destroyed because it is the sole owner
 	// TODO: remove this once caching is fixed
 	if( mFrameBuffer )
-		mFrameBuffer->mInUse = false;
+		mFrameBuffer->setInUse( false );
 #endif
 }
 

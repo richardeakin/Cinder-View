@@ -125,6 +125,11 @@ bool FrameBuffer::isUsable() const
 #endif
 }
 
+void FrameBuffer::setInUse( bool inUse )
+{
+	mInUse = inUse;
+}
+
 ImageSourceRef FrameBuffer::createImageSource() const
 {
 	return mFbo->getColorTexture()->createSource();
@@ -250,7 +255,7 @@ FrameBufferRef Renderer::getFrameBuffer( const ci::ivec2 &size )
 
 	auto format = FrameBuffer::Format().size( size );
 	auto result = make_shared<FrameBuffer>( format );
-	result->mInUse = true; // always in use when caching is disabled
+	result->setInUse( true ); // always in use when caching is disabled
 	mFrameBufferCache.push_back( result );
 #endif
 
@@ -267,14 +272,14 @@ void Renderer::clearUnusedFrameBuffers()
 
 void Renderer::pushFrameBuffer( const FrameBufferRef &frameBuffer )
 {
-	frameBuffer->mInUse = true;
+	frameBuffer->setInUse( true );
 	gl::context()->pushFramebuffer( frameBuffer->mFbo );
 }
 
 void Renderer::popFrameBuffer( const FrameBufferRef &frameBuffer )
 {
 #if UI_FRAMEBUFFER_CACHING_ENABLED
-	frameBuffer->mInUse = false;
+	frameBuffer->setInUse( false );
 #endif
 	gl::context()->popFramebuffer();
 }
@@ -286,7 +291,7 @@ std::string Renderer::printCurrentFrameBuffersToString() const
 	for( size_t i = 0; i < mFrameBufferCache.size(); i++ ) {
 		const auto &frameBuffer = mFrameBufferCache[i];
 		s << "[" << i << "] " << hex << frameBuffer.get() << dec;
-		s << ": in use: " << frameBuffer->mInUse;
+		s << ": in use: " << frameBuffer->isInUse();
 		s << ", discarded: " << frameBuffer->mDiscarded;
 		s << ", ref count: " << frameBuffer.use_count();
 		s << ", size: " << frameBuffer->getSize();

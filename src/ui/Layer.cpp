@@ -57,10 +57,11 @@ Layer::~Layer()
 {
 	LOG_LAYER( hex << this << dec );
 
+#if ! defined( UI_FRAMEBUFFER_CACHING_ENABLED )
 	// temporary: marking FrameBuffer as unused once Layer is destroyed because it is the sole owner
-	// TODO: remove this once caching is fixed
 	if( mFrameBuffer )
-		mFrameBuffer->mInUse = false;
+		mFrameBuffer->setInUse( false );
+#endif
 }
 
 float Layer::getAlpha() const
@@ -231,7 +232,7 @@ void Layer::drawView( View *view, Renderer *ren )
 
 void Layer::processFilters( Renderer *ren, const FrameBufferRef &renderFrameBuffer )
 {
-	renderFrameBuffer->mInUse = true;
+	renderFrameBuffer->setInUse( true );
 
 	// call configure() for any Filters, updating its Pass information
 	for( auto &filter : mRootView->mFilters ) {
@@ -253,7 +254,7 @@ void Layer::processFilters( Renderer *ren, const FrameBufferRef &renderFrameBuff
 
 				// TODO: think of a better way to determine a FrameBuffer is already in use during this tree draw
 				// - with this, the FrameBuffer can't be used in any other part of the draw hierarchy
-				pass.mFrameBuffer->mInUse = true;
+				pass.mFrameBuffer->setInUse( true );
 
 				LOG_LAYER( "current frame buffers:\n" << ren->printCurrentFrameBuffersToString() );
 			}
@@ -280,9 +281,9 @@ void Layer::processFilters( Renderer *ren, const FrameBufferRef &renderFrameBuff
 
 	mFiltersNeedConfiguration = false;
 
-#ifdef UI_FRAMEBUFFER_CACHING_ENABLED
+#if defined( UI_FRAMEBUFFER_CACHING_ENABLED )
 	// TODO: remove, see above TODO in filter processing loop
-	renderFrameBuffer->mInUse = false;
+	renderFrameBuffer->setInUse( false );
 #endif
 }
 

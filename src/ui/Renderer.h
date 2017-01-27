@@ -74,6 +74,7 @@ class FrameBuffer {
 	int         getHeight() const { return getSize().y; }
 	bool        isInUse() const { return mInUse; }
 	bool		isUsable() const;
+	void		setInUse( bool inUse );
 
 	ci::ImageSourceRef  createImageSource() const;
 
@@ -82,9 +83,8 @@ class FrameBuffer {
 
 	ci::gl::FboRef		mFbo; // TODO: make private
 
-	bool                mInUse = false; // TODO: make private
-
 private:
+	bool                mInUse = false;
 	bool				mDiscarded = false;
 
 	friend class Renderer;
