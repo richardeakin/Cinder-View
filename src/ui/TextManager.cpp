@@ -105,7 +105,10 @@ TextRef TextManager::loadTextImplAsync( FontFace face, float size )
 
 std::string TextManager::getFontName( FontFace face ) const
 {
-	return "Arial";
+	if( face == FontFace::BOLD )
+		return "Arial Bold";
+	else
+		return "Arial";
 }
 
 // ----------------------------------------------------------------------------------------------------
