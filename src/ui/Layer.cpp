@@ -99,7 +99,7 @@ void Layer::init()
 		LOG_LAYER( "\t- reason: alpha = " << mRootView->getAlpha() );
 		mFrameBuffer.reset();
 		mRootView->mRendersToFrameBuffer = false;
-		mFrameBufferBounds = Rectf::zero();
+		mRenderBounds = Rectf::zero();
 		mGraph->removeLayer( shared_from_this() );
 		return;
 	}
@@ -139,9 +139,9 @@ void Layer::updateView( View *view )
 	// If View::layout() was called, make sure we have the right FrameBuffer size
 	if( mRootView->mRendersToFrameBuffer ) {
 		Rectf frameBufferBounds = view->getBoundsForFrameBuffer();
-		if( mFrameBufferBounds.getWidth() < frameBufferBounds.getWidth() || mFrameBufferBounds.getHeight() < frameBufferBounds.getHeight() ) {
-			mFrameBufferBounds = ceil( frameBufferBounds );
-			LOG_LAYER( "mFrameBufferBounds: " << mFrameBufferBounds );
+		if( mRenderBounds.getWidth() < frameBufferBounds.getWidth() || mRenderBounds.getHeight() < frameBufferBounds.getHeight() ) {
+			mRenderBounds = ceil( frameBufferBounds );
+			LOG_LAYER( "mRenderBounds: " << mRenderBounds );
 		}
 	}
 
@@ -153,11 +153,11 @@ void Layer::draw( Renderer *ren )
 {
 	// acquire necessary FrameBuffers. TODO: setup Filter framebuffers here too?
 	if( mRootView->mRendersToFrameBuffer ) {
-		ivec2 renderSize = ivec2( mFrameBufferBounds.getSize() );
+		ivec2 renderSize = ivec2( mRenderBounds.getSize() );
 		if( ! mFrameBuffer || ! mFrameBuffer->isUsable() || mFrameBuffer->getSize().x < renderSize.x || mFrameBuffer->getSize().y < renderSize.y ) {
 			mFrameBuffer = ren->getFrameBuffer( renderSize );
 			LOG_LAYER( "aquired main FrameBuffer for view '" << mRootView->getName() << "', size: " << mFrameBuffer->getSize()
-			           << "', mFrameBufferBounds: " << mFrameBufferBounds << ", view bounds:" << mRootView->getBounds() );
+			           << "', mRenderBounds: " << mRenderBounds << ", view bounds:" << mRootView->getBounds() );
 
 			mFrameBuffer->setInUse( true ); // note: only so that the following LOG_LAYER prints correctly, this will be marked in use during the pushFrameBuffer()
 			LOG_LAYER( "current frame buffers:\n" << ren->printCurrentFrameBuffersToString() );
@@ -167,7 +167,7 @@ void Layer::draw( Renderer *ren )
 		gl::pushViewport( 0, mFrameBuffer->getHeight() - renderSize.y, renderSize.x, renderSize.y );
 		gl::pushMatrices();
 		gl::setMatricesWindow( renderSize );
-		gl::translate( - mFrameBufferBounds.getUpperLeft() );
+		gl::translate( - mRenderBounds.getUpperLeft() );
 
 		gl::clear( ColorA::zero() );
 	}
@@ -194,8 +194,8 @@ void Layer::draw( Renderer *ren )
 		ren->pushBlendMode( BlendMode::PREMULT_ALPHA );
 		ren->pushColor( ColorA::gray( 1, getAlpha() ) );
 
-		auto sourceArea = Area( ivec2( 0 ), ivec2( mFrameBufferBounds.getSize() ) );
-		auto destRect = mFrameBufferBounds + mRootView->getPos();
+		auto sourceArea = Area( ivec2( 0 ), ivec2( mRenderBounds.getSize() ) );
+		auto destRect = mRenderBounds + mRootView->getPos();
 		ren->draw( frameBuffer, sourceArea, destRect );
 		ren->popColor();
 		ren->popBlendMode();
@@ -242,7 +242,7 @@ void Layer::processFilters( Renderer *ren, const FrameBufferRef &renderFrameBuff
 			LOG_LAYER( "configuring Filters for View: '" << mRootView->getName() << "', Filter: '" << System::demangleTypeName( typeid( *filter ).name() ) << "'" );
 			filter->mPasses.clear();
 			Filter::PassInfo info;
-			filter->configure( ivec2( mFrameBufferBounds.getSize() ), &info );
+			filter->configure( ivec2( mRenderBounds.getSize() ), &info );
 			for( int i = 0; i < info.getCount(); i++ ) {
 				filter->mPasses.push_back( Filter::Pass() );
 				auto &pass = filter->mPasses.back();
@@ -272,8 +272,8 @@ void Layer::processFilters( Renderer *ren, const FrameBufferRef &renderFrameBuff
 			gl::setMatricesWindow( pass.getSize() );
 			
 			// TODO: For each pass, need to specify how much padding is necessary
-			// - things like blur need to go larger than mFrameBufferBounds
-			//gl::translate( - mFrameBufferBounds.getUpperLeft() );
+			// - things like blur need to go larger than mRenderBounds
+			//gl::translate( - mRenderBounds.getUpperLeft() );
 
 			filter->process( ren, pass );
 
@@ -297,13 +297,13 @@ void Layer::beginClip( View *view, Renderer *ren )
 		Rectf frameBufferWorldBounds = mRootView->getWorldBounds();
  		Rectf viewBoundsInFrameBuffer = viewWorldBounds - frameBufferWorldBounds.getUpperLeft();
 
-		// Take lower left relative to FrameBuffer, which might actually be larger than mFrameBufferBounds
+		// Take lower left relative to FrameBuffer, which might actually be larger than mRenderBounds
 		lowerLeft = viewBoundsInFrameBuffer.getLowerLeft();
 		lowerLeft.y = mFrameBuffer->getHeight() - lowerLeft.y;
 
 		// TODO: reason through if this makes sense in general
 		// - needed to add it when rendering to virtual canvas but stroked rect went beyond borders
-		lowerLeft.y += mFrameBufferBounds.y1;
+		lowerLeft.y += mRenderBounds.y1;
 	}
 	else {
 		// rendering to window, flip y relative to Graph's bottom left using its clipping size
