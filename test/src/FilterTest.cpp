@@ -49,7 +49,7 @@ FilterTest::FilterTest()
 	mContainerView->setLabel( "container" );
 
 	mImageView = make_shared<ui::ImageView>();
-	mImageView->setLabel( "ImageView with filter" );
+	mImageView->setLabel( "ImageView" );
 
 	fs::path imageFilePath = app::getAssetPath( "images/monkey_hitchhike.jpg" );
 	try {
@@ -63,7 +63,7 @@ FilterTest::FilterTest()
 
 	mLabel = make_shared<ui::Label>();
 	mLabel->setText( "T" );
-	mLabel->setLabel( "Label with FilterDropShadow" );
+	mLabel->setLabel( "Label T" );
 	mLabel->setFontFace( ui::FontFace::NORMAL );
 	mLabel->setFontSize( 280 );
 	mLabel->setAlignment( ui::TextAlignment::CENTER );
@@ -71,7 +71,7 @@ FilterTest::FilterTest()
 
 	mLabelNested = make_shared<ui::Label>();
 	mLabelNested->setText( "PLFF!" );
-	mLabelNested->setLabel( "Label with FilterDropShadow" );
+	mLabelNested->setLabel( "Nested Label" );
 	mLabelNested->setFontFace( ui::FontFace::BOLD );
 	mLabelNested->setFontSize( 84 );
 	mLabelNested->setAlignment( ui::TextAlignment::CENTER );

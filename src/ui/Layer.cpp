@@ -156,7 +156,7 @@ void Layer::draw( Renderer *ren )
 		ivec2 renderSize = ivec2( mFrameBufferBounds.getSize() );
 		if( ! mFrameBuffer || ! mFrameBuffer->isUsable() || mFrameBuffer->getSize().x < renderSize.x || mFrameBuffer->getSize().y < renderSize.y ) {
 			mFrameBuffer = ren->getFrameBuffer( renderSize );
-			LOG_LAYER( "aquired FrameBuffer for view '" << mRootView->getName() << "', size: " << mFrameBuffer->getSize()
+			LOG_LAYER( "aquired main FrameBuffer for view '" << mRootView->getName() << "', size: " << mFrameBuffer->getSize()
 			           << "', mFrameBufferBounds: " << mFrameBufferBounds << ", view bounds:" << mRootView->getBounds() );
 
 			mFrameBuffer->setInUse( true ); // note: only so that the following LOG_LAYER prints correctly, this will be marked in use during the pushFrameBuffer()
@@ -233,11 +233,13 @@ void Layer::drawView( View *view, Renderer *ren )
 
 void Layer::processFilters( Renderer *ren, const FrameBufferRef &renderFrameBuffer )
 {
+	// mark the main FrameBuffer as in use while processing Filters, so it doesn't seem available when configuring
 	renderFrameBuffer->setInUse( true );
 
 	// call configure() for any Filters, updating its Pass information
 	for( auto &filter : mRootView->mFilters ) {
 		if( mFiltersNeedConfiguration ) {
+			LOG_LAYER( "configuring Filters for View: '" << mRootView->getName() << "', Filter: '" << System::demangleTypeName( typeid( *filter ).name() ) << "'" );
 			filter->mPasses.clear();
 			Filter::PassInfo info;
 			filter->configure( ivec2( mFrameBufferBounds.getSize() ), &info );
@@ -250,14 +252,13 @@ void Layer::processFilters( Renderer *ren, const FrameBufferRef &renderFrameBuff
 				pass.mFrameBuffer = ren->getFrameBuffer( requiredSize );
 				pass.mSize = requiredSize;
 
-				LOG_LAYER( "acquired FrameBuffer for view '" << mRootView->getName() << "', pass: " << i
-					<< ", size: " << pass.mFrameBuffer->getSize() << ", required size: " << requiredSize );
+				LOG_LAYER( "\t- acquired FrameBuffer for pass: " << i << ", size: " << pass.mFrameBuffer->getSize() << ", required size: " << requiredSize );
 
-				// TODO: think of a better way to determine a FrameBuffer is already in use during this tree draw
-				// - with this, the FrameBuffer can't be used in any other part of the draw hierarchy
+				// this marks the Pass's FrameBuffer as in use until after it is processed (end of for loop below)
 				pass.mFrameBuffer->setInUse( true );
 
-				LOG_LAYER( "current frame buffers:\n" << ren->printCurrentFrameBuffersToString() );
+				LOG_LAYER( "\t- current frame buffers:\n" << ren->printCurrentFrameBuffersToString() );
+				int blarg = 2;
 			}
 		}
 
@@ -283,7 +284,6 @@ void Layer::processFilters( Renderer *ren, const FrameBufferRef &renderFrameBuff
 	mFiltersNeedConfiguration = false;
 
 #if defined( UI_FRAMEBUFFER_CACHING_ENABLED )
-	// TODO: remove, see above TODO in filter processing loop
 	renderFrameBuffer->setInUse( false );
 #endif
 }

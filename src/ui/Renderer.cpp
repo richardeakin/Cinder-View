@@ -94,8 +94,6 @@ bool FrameBuffer::Format::operator==(const Format &other) const
 
 FrameBuffer::FrameBuffer( const Format &format )
 {
-	LOG_FRAMEBUFFER( "creating FrameBuffer " << hex << this << dec << ", size: " << format.mSize );
-
 	auto fboFormat = gl::Fbo::Format();
 	fboFormat.colorTexture(
 			gl::Texture2d::Format()
@@ -237,11 +235,12 @@ FrameBufferRef Renderer::getFrameBuffer( const ci::ivec2 &size )
 	// Make a new one.
 	auto format = FrameBuffer::Format().size( size );
 	auto result = make_shared<FrameBuffer>( format );
+	LOG_FRAMEBUFFER( "created FrameBuffer " << hex << result.get() << dec << ", size: " << result->getSize() );
 
 	// Replace the largest unbound FrameBuffer, or push another one if one wasn't available
 	if( availableFrameBufferIt != mFrameBufferCache.end()  ) {
 		auto old = *availableFrameBufferIt;
-		LOG_FRAMEBUFFER( "discarding FrameBuffer : " << hex << old.get() << dec << ", size: " << old->getSize() );
+		LOG_FRAMEBUFFER( "\t- discarding FrameBuffer : " << hex << old.get() << dec << ", size: " << old->getSize() );
 		old->mDiscarded = true;
 		*availableFrameBufferIt = result;
 	}
@@ -295,7 +294,9 @@ std::string Renderer::printCurrentFrameBuffersToString() const
 		s << ", discarded: " << frameBuffer->mDiscarded;
 		s << ", ref count: " << frameBuffer.use_count();
 		s << ", size: " << frameBuffer->getSize();
-		s << endl;
+
+		if( i < mFrameBufferCache.size() - 1 )
+			s << endl;
 	}
 
 	return s.str();
