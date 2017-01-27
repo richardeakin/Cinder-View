@@ -127,16 +127,6 @@ ivec2 FrameBuffer::getSize() const
 	return mFbo->getSize();
 }
 
-bool FrameBuffer::isUsable() const
-{
-#if UI_FRAMEBUFFER_CACHING_ENABLED
-	//return ! mDiscarded && ! mInUse;
-	return ! mInUse;
-#else
-	return ! mDiscarded;
-#endif
-}
-
 void FrameBuffer::setInUse( bool inUse )
 {
 	mInUse = inUse;

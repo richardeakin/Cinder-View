@@ -149,12 +149,16 @@ void Layer::updateView( View *view )
 	view->clearViewsMarkedForRemoval();
 }
 
+// rules for when we need a new main RenderBuffer:
+// 1. We don't have one already
+// 2. The one we have is currently in use (being rendered to)
+// 3. The one we have isn't large enough (a View was resized)
 void Layer::draw( Renderer *ren )
 {
-	// acquire necessary FrameBuffers. TODO: setup Filter framebuffers here too?
 	if( mRootView->mRendersToFrameBuffer ) {
 		ivec2 renderSize = ivec2( mRenderBounds.getSize() );
-		if( ! mFrameBuffer || ! mFrameBuffer->isUsable() || mFrameBuffer->getSize().x < renderSize.x || mFrameBuffer->getSize().y < renderSize.y ) {
+		if( ! mFrameBuffer || mFrameBuffer->isInUse() || mFrameBuffer->getSize().x < renderSize.x || mFrameBuffer->getSize().y < renderSize.y ) {
+			// acquire necessary FrameBuffers. TODO: setup Filter framebuffers here too?
 			mFrameBuffer = ren->getFrameBuffer( renderSize );
 			LOG_LAYER( "aquired main FrameBuffer for view '" << mRootView->getName() << "', size: " << mFrameBuffer->getSize()
 			           << "', mRenderBounds: " << mRenderBounds << ", view bounds:" << mRootView->getBounds() );

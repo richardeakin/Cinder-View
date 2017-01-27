@@ -73,7 +73,6 @@ class FrameBuffer {
 	int         getWidth() const { return getSize().x; }
 	int         getHeight() const { return getSize().y; }
 	bool        isInUse() const { return mInUse; }
-	bool		isUsable() const;
 	void		setInUse( bool inUse );
 
 	ci::ImageSourceRef  createImageSource() const;
