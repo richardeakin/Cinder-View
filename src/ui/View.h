@@ -23,6 +23,7 @@
 
 #pragma once
 
+#include "ui/Export.h"
 #include "ui/Layer.h"
 #include "ui/Renderer.h"
 #include "ui/Layout.h"
@@ -45,7 +46,7 @@ typedef std::shared_ptr<class RectView>			RectViewRef;
 typedef std::shared_ptr<class StrokedRectView>	StrokedRectViewRef;
 class Graph;
 
-class View : public std::enable_shared_from_this<View> {
+class CI_UI_API View : public std::enable_shared_from_this<View> {
   public:
 	View( const ci::Rectf &bounds = ci::Rectf::zero() );
 	virtual ~View();
@@ -220,13 +221,13 @@ class View : public std::enable_shared_from_this<View> {
 	friend class Graph;
 };
 
-std::ostream& operator<<( std::ostream &os, const View &rhs );
-std::ostream& operator<<( std::ostream &os, const ViewRef &rhs );
+CI_UI_API std::ostream& operator<<( std::ostream &os, const View &rhs );
+CI_UI_API std::ostream& operator<<( std::ostream &os, const ViewRef &rhs );
 
 //! Returns a string representation of the View hierchy starting at \a view (for debugging purposes).
-std::string printHierarchyToString( const ViewRef &view );
+CI_UI_API std::string printHierarchyToString( const ViewRef &view );
 //! Traverses the View hierchy of \a view, top to bottom.
-void traverse( const ViewRef &view, const std::function<void( const ViewRef & )> &applyFn );
+CI_UI_API void traverse( const ViewRef &view, const std::function<void( const ViewRef & )> &applyFn );
 
 template<typename ViewT, typename... Args>
 std::shared_ptr<ViewT> View::makeSubview( Args&&... args )
@@ -238,7 +239,7 @@ std::shared_ptr<ViewT> View::makeSubview( Args&&... args )
 	return result;
 }
 
-class RectView : public View {
+class CI_UI_API RectView : public View {
   public:
 	RectView( const ci::Rectf &bounds = ci::Rectf::zero() );
 
@@ -254,7 +255,7 @@ class RectView : public View {
 	friend class View;
 };
 
-class StrokedRectView : public RectView {
+class CI_UI_API StrokedRectView : public RectView {
   public:
 	enum class Placement { CENTERED, INSIDE, OUTSIDE };
 

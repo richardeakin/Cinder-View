@@ -30,7 +30,7 @@ typedef std::shared_ptr<class Label>		LabelRef;
 typedef std::shared_ptr<class LabelGrid>	LabelGridRef;
 
 //! Basic View to draw text. Non-interactive by default.
-class Label : public View {
+class CI_UI_API Label : public View {
 public:
 	Label( const ci::Rectf &bounds = ci::Rectf::zero() );
 
@@ -62,7 +62,7 @@ private:
 };
 
 //! Manages a grid of text entries, useful for building things like info panels. Non-interactive by default.
-class LabelGrid : public View {
+class CI_UI_API LabelGrid : public View {
 public:
 	LabelGrid( const ci::Rectf &bounds = ci::Rectf::zero() );
 

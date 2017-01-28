@@ -131,5 +131,8 @@
     <ClInclude Include="..\..\src\ui\Layout.h">
       <Filter>src\ui</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\ui\Export.h">
+      <Filter>src\ui</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

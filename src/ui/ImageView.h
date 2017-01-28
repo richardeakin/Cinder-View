@@ -40,7 +40,7 @@ enum ImageScaleMode {
 };
 
 //! Draws an Image with various scale modes. Non-interactive by default.
-class ImageView : public View {
+class CI_UI_API ImageView : public View {
   public:
 
 	ImageView( const ci::Rectf &bounds = ci::Rectf::zero() );
@@ -69,8 +69,8 @@ class ImageView : public View {
 
 
 //! Returns scaleMode in string representation.
-std::string toString( const ImageScaleMode &scaleMode );
+CI_UI_API std::string toString( const ImageScaleMode &scaleMode );
 //! Stream support for ScaleMode
-std::ostream& operator<<( std::ostream &os, const ImageScaleMode &rhs );
+CI_UI_API std::ostream& operator<<( std::ostream &os, const ImageScaleMode &rhs );
 
 } // namespace ui

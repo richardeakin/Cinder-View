@@ -23,6 +23,7 @@
 
 #pragma once
 
+#include "ui/Export.h"
 #include "cinder/Cinder.h"
 #include "cinder/ImageIo.h"
 
@@ -40,7 +41,7 @@ namespace ui {
 
 typedef std::shared_ptr<class Image>	ImageRef;
 
-class Image {
+class CI_UI_API Image {
   public:
 	Image( const ci::ImageSourceRef &imageSource );
 	//! \note this is public although in the long run, we will want a way to load textures without being tied to gl, so this will likely change.
