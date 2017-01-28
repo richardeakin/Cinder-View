@@ -73,7 +73,7 @@ class FrameBuffer {
 	int         getWidth() const { return getSize().x; }
 	int         getHeight() const { return getSize().y; }
 	bool        isInUse() const { return mInUse; }
-	bool		isUsable() const;
+	void		setInUse( bool inUse );
 
 	ci::ImageSourceRef  createImageSource() const;
 
@@ -82,10 +82,11 @@ class FrameBuffer {
 
 	ci::gl::FboRef		mFbo; // TODO: make private
 
-	bool                mInUse = false; // TODO: make private
-
 private:
-	bool				mDiscarded = false;
+	//! Updates the internal FBO to match \a format.
+	void updateFormat( const Format &format );
+
+	bool                mInUse = false;
 
 	friend class Renderer;
 };

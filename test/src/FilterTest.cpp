@@ -49,7 +49,7 @@ FilterTest::FilterTest()
 	mContainerView->setLabel( "container" );
 
 	mImageView = make_shared<ui::ImageView>();
-	mImageView->setLabel( "ImageView with filter" );
+	mImageView->setLabel( "ImageView" );
 
 	fs::path imageFilePath = app::getAssetPath( "images/monkey_hitchhike.jpg" );
 	try {
@@ -63,14 +63,23 @@ FilterTest::FilterTest()
 
 	mLabel = make_shared<ui::Label>();
 	mLabel->setText( "T" );
-	mLabel->setLabel( "Label with FilterDropShadow" );
-	mLabel->setFontFace( ui::FontFace::BOLD );
+	mLabel->setLabel( "Label T" );
+	mLabel->setFontFace( ui::FontFace::NORMAL );
 	mLabel->setFontSize( 280 );
 	mLabel->setAlignment( ui::TextAlignment::CENTER );
 	mLabel->setTextColor( Color( 0, 0, 0.75f ) );
 
+	mLabelNested = make_shared<ui::Label>();
+	mLabelNested->setText( "PLFF!" );
+	mLabelNested->setLabel( "Nested Label" );
+	mLabelNested->setFontFace( ui::FontFace::BOLD );
+	mLabelNested->setFontSize( 84 );
+	mLabelNested->setAlignment( ui::TextAlignment::CENTER );
+	mLabelNested->setTextColor( Color( 0, 0, 0.75f ) );
+
 	mFilterSinglePass = make_shared<FilterSinglePass>();
 	mFilterBlur = make_shared<ui::FilterBlur>();
+	mFilterBlurNested = make_shared<ui::FilterBlur>();
 	mFilterDropShadow = make_shared<ui::FilterDropShadow>();
 	mFilterDropShadow->setDownsampleFactor( 1 );
 	mFilterDropShadow->setShadowOffset( vec2( -6, 4 ) );
@@ -80,6 +89,7 @@ FilterTest::FilterTest()
 	mImageView->addFilter( mFilterSinglePass );
 	//mImageView->addFilter( mFilterBlur );
 	mLabel->addFilter( mFilterDropShadow );
+	mLabelNested->addFilter( mFilterBlurNested );
 
 	{
 		auto imageBorder = make_shared<ui::StrokedRectView>();
@@ -98,10 +108,10 @@ FilterTest::FilterTest()
 	}
 #endif
 
-	const Color toggleEnabledColor = { 0, 0.2f, 0.6f };
+	const Color toggleEnabledColor = { 0, 0.4f, 0.6f };
 
 	mToggleSinglePass = make_shared<ui::Button>();
-	mToggleSinglePass->setTitle( "enable single pass" );
+	mToggleSinglePass->setTitle( "single pass" );
 	mToggleSinglePass->setAsToggle();
 	mToggleSinglePass->setColor( toggleEnabledColor, ui::Button::State::ENABLED );
 	mToggleSinglePass->setTitleColor( Color::white() );
@@ -121,26 +131,40 @@ FilterTest::FilterTest()
 
 
 	mToggleBlur = make_shared<ui::Button>();
-	mToggleBlur->setTitle( "enable blur" );
+	mToggleBlur->setTitle( "blur" );
 	mToggleBlur->setAsToggle();
 	mToggleBlur->setColor( toggleEnabledColor, ui::Button::State::ENABLED );
 	mToggleBlur->setTitleColor( Color::white() );
 	mToggleBlur->setEnabled( false );
 	mToggleBlur->getSignalReleased().connect( [this] {
+		// swap out the monkey ImageView's Filter for blur (or swap back)
 		if( mToggleBlur->isEnabled() ) {
 			mImageView->removeAllFilters();
-			CI_LOG_I( "-------- adding mFilterBlur --------" );
 			mImageView->addFilter( mFilterBlur );
 			mToggleSinglePass->setEnabled( false );
 		}
 		else {
-			CI_LOG_I( "-------- removing mFilterBlur --------" );
 			mImageView->removeFilter( mFilterBlur );
 		}
 	} );
 
+	mToggleBlurNested = make_shared<ui::Button>();
+	mToggleBlurNested->setTitle( "blur nested" );
+	mToggleBlurNested->setAsToggle();
+	mToggleBlurNested->setColor( toggleEnabledColor, ui::Button::State::ENABLED );
+	mToggleBlurNested->setTitleColor( Color::white() );
+	mToggleBlurNested->setEnabled( true );
+	mToggleBlurNested->getSignalReleased().connect( [this] {
+		// toggle blur on the nested label, within the monkey ImageView
+		if( mToggleBlurNested->isEnabled() )
+			mLabelNested->addFilter( mFilterBlurNested );
+		else
+			mLabelNested->removeAllFilters();
+	} );
+
+
 	mToggleDropShadow = make_shared<ui::Button>();
-	mToggleDropShadow->setTitle( "enable drop shadow" );
+	mToggleDropShadow->setTitle( "drop shadow" );
 	mToggleDropShadow->setAsToggle();
 	mToggleDropShadow->setColor( toggleEnabledColor, ui::Button::State::ENABLED );
 	mToggleDropShadow->setTitleColor( Color::white() );
@@ -162,6 +186,7 @@ FilterTest::FilterTest()
 	mSliderBlur->setValue( mFilterBlur->getBlurPixels().x );
 	mSliderBlur->getSignalValueChanged().connect( [this] {
 		mFilterBlur->setBlurPixels( vec2( mSliderBlur->getValue() ) );
+		mFilterBlurNested->setBlurPixels( vec2( mSliderBlur->getValue() ) );
 	} );
 
 	mSliderDropShadow = make_shared<ui::HSlider>();
@@ -172,10 +197,13 @@ FilterTest::FilterTest()
 		mFilterDropShadow->setBlurPixels( vec2( mSliderDropShadow->getValue() ) );
 	} );
 
+
+	mImageView->addSubview( mLabelNested );
+
 	mContainerView->addSubviews( { 
 		mImageView,
 		mLabel,
-		mToggleSinglePass, mToggleBlur, mToggleDropShadow,
+		mToggleSinglePass, mToggleBlur, mToggleBlurNested, mToggleDropShadow,
 		mSliderBlur, mSliderDropShadow
 	} );
 
@@ -200,6 +228,10 @@ void FilterTest::layout()
 	mToggleBlur->setPos( togglePos );
 	mToggleBlur->setSize( toggleSize );
 
+	togglePos.x += toggleSize.x + controlPadding;
+	mToggleBlurNested->setPos( togglePos );
+	mToggleBlurNested->setSize( toggleSize );
+
 	vec2 sliderPos = { controlPadding, togglePos.y + toggleSize.y + controlPadding }; 
 	vec2 sliderSize = { 210, 40 };
 	mSliderBlur->setPos( sliderPos );
@@ -221,6 +253,10 @@ void FilterTest::layout()
 	const vec2 sizeDiff = { 40, 40 };
 	mLabel->setPos( { togglePos.x, mSliderDropShadow->getBounds().y2 + controlPadding } );
 	mLabel->setSize( vec2( containerBounds.getWidth() - mLabel->getPosX() - controlPadding - sizeDiff.x, mImageView->getHeight() - sizeDiff.y ) );
+
+	// Nested Label with blur filter lives in the ImageView, at the top right
+	mLabelNested->setPos( vec2( 220, 80 ) );
+	mLabelNested->setSize( vec2( 240, 100 ) );
 }
 
 bool FilterTest::keyDown( ci::app::KeyEvent &event )
@@ -239,6 +275,8 @@ void FilterTest::loadGlsl()
 		mGlslBlur = gl::GlslProg::create( app::loadAsset( "glsl/blur.vert" ), app::loadAsset( "glsl/blur.frag" ) );
 		if( mFilterBlur )
 			mFilterBlur->setGlslProg( mGlslBlur );
+		if( mFilterBlurNested )
+			mFilterBlurNested->setGlslProg( mGlslBlur );
 
 		CI_LOG_I( "blur glsl loaded." );
 	}

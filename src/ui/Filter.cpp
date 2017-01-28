@@ -168,7 +168,7 @@ Filter::Pass::~Pass()
 	// temporary: marking FrameBuffer as unused once Pass is destroyed because it is the sole owner
 	// TODO: remove this once caching is fixed
 	if( mFrameBuffer )
-		mFrameBuffer->mInUse = false;
+		mFrameBuffer->setInUse( false );
 #endif
 }
 
@@ -230,6 +230,9 @@ void FilterBlur::process( ui::Renderer *ren, const ui::Filter::Pass &pass )
 		sampleOffset.y = mBlurPixels.y / (float)pass.getHeight();
 		tex = getPassColorTexture( 0 );
 	}
+
+	// the shader varies the sample offset from -10 to 10, so bring it into 'pixel space' by dividing by 10
+	sampleOffset *= 0.1f;
 
 	gl::ScopedGlslProg glslScope( mGlsl );
 	mGlsl->uniform( "uSampleOffset", sampleOffset );

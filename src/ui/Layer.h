@@ -68,7 +68,7 @@ class Layer : public std::enable_shared_from_this<Layer> {
 	View*           mRootView;
 	Graph*          mGraph;
 	FrameBufferRef	mFrameBuffer;
-	ci::Rectf       mFrameBufferBounds = ci::Rectf::zero();
+	ci::Rectf       mRenderBounds = ci::Rectf::zero();
 
 	bool			mFiltersNeedConfiguration = false;
 	bool            mShouldRemove = false;

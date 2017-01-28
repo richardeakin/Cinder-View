@@ -87,6 +87,21 @@ void main()
 // FrameBuffer
 // ----------------------------------------------------------------------------------------------------
 
+namespace {
+
+gl::Fbo::Format	getBaseFboFormat()
+{
+	auto format = gl::Fbo::Format();
+	format.colorTexture(
+		gl::Texture2d::Format()
+			.internalFormat( GL_RGBA )
+			.minFilter( GL_LINEAR ).magFilter( GL_LINEAR )
+	);
+
+	return format;
+}
+
+} // anonymous namespace
 bool FrameBuffer::Format::operator==(const Format &other) const
 {
 	return mSize == other.mSize;
@@ -94,16 +109,7 @@ bool FrameBuffer::Format::operator==(const Format &other) const
 
 FrameBuffer::FrameBuffer( const Format &format )
 {
-	LOG_FRAMEBUFFER( "creating FrameBuffer " << hex << this << dec << ", size: " << format.mSize );
-
-	auto fboFormat = gl::Fbo::Format();
-	fboFormat.colorTexture(
-			gl::Texture2d::Format()
-					.internalFormat( GL_RGBA )
-					.minFilter( GL_LINEAR ).magFilter( GL_LINEAR )
-	);
-
-	mFbo = gl::Fbo::create( format.mSize.x, format.mSize.y, fboFormat );
+	mFbo = gl::Fbo::create( format.mSize.x, format.mSize.y, getBaseFboFormat() );
 }
 
 FrameBuffer::~FrameBuffer()
@@ -111,18 +117,19 @@ FrameBuffer::~FrameBuffer()
 	LOG_FRAMEBUFFER(  hex << this << dec );
 }
 
+void FrameBuffer::updateFormat( const Format &format )
+{
+	mFbo = gl::Fbo::create( format.mSize.x, format.mSize.y, getBaseFboFormat() );
+}
+
 ivec2 FrameBuffer::getSize() const
 {
 	return mFbo->getSize();
 }
 
-bool FrameBuffer::isUsable() const
+void FrameBuffer::setInUse( bool inUse )
 {
-#if UI_FRAMEBUFFER_CACHING_ENABLED
-	return ! mDiscarded && ! mInUse;
-#else
-	return ! mDiscarded;
-#endif
+	mInUse = inUse;
 }
 
 ImageSourceRef FrameBuffer::createImageSource() const
@@ -204,7 +211,7 @@ void Renderer::popBlendMode()
 FrameBufferRef Renderer::getFrameBuffer( const ci::ivec2 &size )
 {
 #if UI_FRAMEBUFFER_CACHING_ENABLED
-	auto availableFrameBufferIt = mFrameBufferCache.end();
+	auto availableIt = mFrameBufferCache.end();
 	for( auto frameBufferIt = mFrameBufferCache.begin(); frameBufferIt < mFrameBufferCache.end(); ++frameBufferIt ) {
 		auto &frameBuffer = *frameBufferIt;
 		if( frameBuffer->isInUse() )
@@ -217,32 +224,35 @@ FrameBufferRef Renderer::getFrameBuffer( const ci::ivec2 &size )
 		}
 
 		// store the largest unbound FrameBuffer, will replace this with one large enough if we don't find a suitable one in the cache
-		if( availableFrameBufferIt == mFrameBufferCache.end() ) {
-			availableFrameBufferIt = frameBufferIt;
+		if( availableIt == mFrameBufferCache.end() ) {
+			availableIt = frameBufferIt;
 			continue;
 		}
 
-		int currLargestArea = (*availableFrameBufferIt)->getSize().x * (*availableFrameBufferIt)->getSize().y;
+		int currLargestArea = (*availableIt)->getSize().x * (*availableIt)->getSize().y;
 		int area = frameBuffer->getSize().x * frameBuffer->getSize().y;
 		if( area > currLargestArea ) {
-			availableFrameBufferIt = frameBufferIt;
+			availableIt = frameBufferIt;
 		}
 	}
 
-	// Make a new one.
-	auto format = FrameBuffer::Format().size( size );
-	auto result = make_shared<FrameBuffer>( format );
+	// If a FrameBuffer is available but not large enough, resize it.
+	// - the size is increased to 1.5x the requested size, in order to prevent things that are animating larger from causing too many reallocations.
+	if( availableIt != mFrameBufferCache.end()  ) {
+		const float resizeFactor = 1.5f;
+		ivec2 nextSize = glm::ceil( vec2( size ) * resizeFactor );
+		LOG_FRAMEBUFFER( "\t- resizing FrameBuffer : " << hex << availableIt->get() << dec << ", from size: " << (*availableIt)->getSize() << " to: " << nextSize << " (requested size: " << size << ")" );
 
-	// Replace the largest unbound FrameBuffer, or push another one if one wasn't available
-	if( availableFrameBufferIt != mFrameBufferCache.end()  ) {
-		auto old = *availableFrameBufferIt;
-		LOG_FRAMEBUFFER( "discarding FrameBuffer : " << hex << old.get() << dec << ", size: " << old->getSize() );
-		old->mDiscarded = true;
-		*availableFrameBufferIt = result;
+		(*availableIt)->updateFormat( FrameBuffer::Format().size( nextSize ) );
+		return *availableIt;
 	}
-	else {
-		mFrameBufferCache.push_back( result );
-	}
+
+	// None were available, make a new one.
+	auto result = make_shared<FrameBuffer>( FrameBuffer::Format().size( size ) );
+	mFrameBufferCache.push_back( result );
+	LOG_FRAMEBUFFER( "created FrameBuffer " << hex << result.get() << dec << ", size: " << result->getSize() );
+
+	return result;
 
 #else
 	// temporary: always create and return a new FrameBuffer
@@ -250,11 +260,11 @@ FrameBufferRef Renderer::getFrameBuffer( const ci::ivec2 &size )
 
 	auto format = FrameBuffer::Format().size( size );
 	auto result = make_shared<FrameBuffer>( format );
-	result->mInUse = true; // always in use when caching is disabled
+	result->setInUse( true ); // always in use when caching is disabled
 	mFrameBufferCache.push_back( result );
-#endif
 
 	return result;
+#endif
 }
 
 void Renderer::clearUnusedFrameBuffers()
@@ -267,14 +277,14 @@ void Renderer::clearUnusedFrameBuffers()
 
 void Renderer::pushFrameBuffer( const FrameBufferRef &frameBuffer )
 {
-	frameBuffer->mInUse = true;
+	frameBuffer->setInUse( true );
 	gl::context()->pushFramebuffer( frameBuffer->mFbo );
 }
 
 void Renderer::popFrameBuffer( const FrameBufferRef &frameBuffer )
 {
 #if UI_FRAMEBUFFER_CACHING_ENABLED
-	frameBuffer->mInUse = false;
+	frameBuffer->setInUse( false );
 #endif
 	gl::context()->popFramebuffer();
 }
@@ -286,11 +296,12 @@ std::string Renderer::printCurrentFrameBuffersToString() const
 	for( size_t i = 0; i < mFrameBufferCache.size(); i++ ) {
 		const auto &frameBuffer = mFrameBufferCache[i];
 		s << "[" << i << "] " << hex << frameBuffer.get() << dec;
-		s << ": in use: " << frameBuffer->mInUse;
-		s << ", discarded: " << frameBuffer->mDiscarded;
+		s << ": in use: " << frameBuffer->isInUse();
 		s << ", ref count: " << frameBuffer.use_count();
 		s << ", size: " << frameBuffer->getSize();
-		s << endl;
+
+		if( i < mFrameBufferCache.size() - 1 )
+			s << endl;
 	}
 
 	return s.str();

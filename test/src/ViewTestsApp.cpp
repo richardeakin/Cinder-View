@@ -20,7 +20,7 @@ using namespace ci;
 using namespace ci::app;
 using namespace std;
 
-const vec2 INFO_ROW_SIZE    = vec2( 200, 20 );
+const vec2 INFO_ROW_SIZE    = vec2( 250, 20 );
 const float PADDING         = 6;
 
 class ViewTestsApp : public App {
@@ -59,7 +59,7 @@ void ViewTestsApp::setup()
 		CI_LOG_I( "selected test index: " << mTestSuite->getCurrentIndex() << ", key: " << mTestSuite->getCurrentKey() );
 	} );
 
-	mTestSuite->select( 6 );
+	mTestSuite->select( 1 );
 
 	mInfoLabel = make_shared<ui::LabelGrid>();
 	mInfoLabel->setTextColor( Color::white() );
@@ -101,7 +101,7 @@ void ViewTestsApp::updateUI()
 	mInfoLabel->setRow( 0, { "fps:",  fmt::format( "{}", getAverageFps() ) } );
 
 	size_t numFrameBuffers = mTestSuite->getGraph()->getRenderer()->getNumFrameBuffersCached();
-	mInfoLabel->setRow( 1, { "num FrameBuffers: ", to_string( numFrameBuffers ) } );
+	mInfoLabel->setRow( 1, { "FrameBuffers: ", to_string( numFrameBuffers ) } );
 
 	if( ! glm::epsilonEqual( INFO_ROW_SIZE.y * mInfoLabel->getNumRows(), mInfoLabel->getHeight(), 0.01f ) )
 		resizeInfoLabel();
