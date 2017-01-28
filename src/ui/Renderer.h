@@ -21,11 +21,12 @@
 
 #pragma once
 
+#include "ui/Export.h"
+#include "ui/Image.h"
+
 #include "cinder/Cinder.h"
 #include "cinder/Color.h"
 #include "cinder/Rect.h"
-
-#include "ui/Image.h"
 
 #define UI_FRAMEBUFFER_CACHING_ENABLED 1
 
@@ -51,7 +52,7 @@ enum class BlendMode {
 	PREMULT_ALPHA
 };
 
-class FrameBuffer {
+class CI_UI_API FrameBuffer {
   public:
 	struct Format {
 		Format &size( const ci::ivec2 &size )
@@ -110,7 +111,7 @@ struct hash<ui::FrameBuffer::Format> {
 
 namespace ui {
 
-class Renderer {
+class CI_UI_API Renderer {
   public:
 	Renderer();
 

@@ -30,7 +30,7 @@ typedef std::shared_ptr<class PagingScrollView>		PagingScrollViewRef;
 
 class SwipeTracker;
 
-class ScrollView : public View {
+class CI_UI_API ScrollView : public View {
   public:
 	ScrollView( const ci::Rectf &bounds = ci::Rectf::zero() );
 	virtual ~ScrollView();
@@ -155,7 +155,7 @@ class ScrollView : public View {
 	ci::signals::Signal<void ()>	mSignalDidScroll, mSignalDragBegin, mSignalDragEnd;
 };
 
-class PagingScrollView : public ScrollView {
+class CI_UI_API PagingScrollView : public ScrollView {
   public:
 	enum Axis {
 		HORIZONTAL,
@@ -235,7 +235,7 @@ class PagingScrollView : public ScrollView {
 };
 
 // TODO: should probably move this to some sort of GestureTrackers.h, but it isn't very well thought out.
-class SwipeTracker {
+class CI_UI_API SwipeTracker {
 public:
 
 	void clear();

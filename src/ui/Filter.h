@@ -36,7 +36,7 @@ typedef std::shared_ptr<class FilterBlur>			FilterBlurRef;
 typedef std::shared_ptr<class FilterDropShadow>		FilterDropShadowRef;
 
 //! Performs filter effects as post-process operation.
-class Filter {
+class CI_UI_API Filter {
   public:
 	  virtual ~Filter();
 
@@ -97,7 +97,7 @@ class Filter {
 	friend class Layer;
 };
 
-class FilterBlur : public ui::Filter {
+class CI_UI_API FilterBlur : public ui::Filter {
 public:
 	FilterBlur();
 
@@ -115,7 +115,7 @@ private:
 	ci::vec2	mBlurPixels = ci::vec2( 3 );
 };
 
-class FilterDropShadow : public ui::Filter {
+class CI_UI_API FilterDropShadow : public ui::Filter {
 public:
 	FilterDropShadow();
 

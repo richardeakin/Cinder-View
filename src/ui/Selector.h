@@ -30,7 +30,7 @@ namespace ui {
 
 typedef std::shared_ptr<class VSelector>	VSelectorRef;
 
-class SelectorBase : public Control {
+class CI_UI_API SelectorBase : public Control {
 public:
 	SelectorBase( const ci::Rectf &bounds = ci::Rectf::zero() );
 
@@ -75,7 +75,7 @@ protected:
 	TextRef						mTextLabel;
 };
 
-class VSelector : public SelectorBase {
+class CI_UI_API VSelector : public SelectorBase {
 public:
 	VSelector( const ci::Rectf &bounds = ci::Rectf::zero() ) : SelectorBase( bounds )	{}
 

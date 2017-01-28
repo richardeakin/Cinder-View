@@ -41,7 +41,7 @@ typedef std::shared_ptr<class Graph>	GraphRef;
 typedef std::shared_ptr<class View>		ViewRef;
 
 //! This is where it all starts! Construct a Graph as the root of your UI scene graph, add other views to it.
-class Graph : public View {
+class CI_UI_API Graph : public View {
   public:
 	Graph( const ci::app::WindowRef &window = nullptr );
 	~Graph();
@@ -128,7 +128,7 @@ class Graph : public View {
 	friend class Layer;
 };
 
-class GraphExc : public ci::Exception {
+class CI_UI_API GraphExc : public ci::Exception {
   public:
 	GraphExc( const std::string &description )
 		: Exception( description )

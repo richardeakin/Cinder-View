@@ -30,7 +30,7 @@ namespace ui {
 typedef std::shared_ptr<class CoordinateAxisView>		CoordinateAxisViewRef;
 
 //! Draws a 3d coordinate axis of a Camera's Orientation
-class CoordinateAxisView : public View {
+class CI_UI_API CoordinateAxisView : public View {
   public:
 	CoordinateAxisView( const ci::Rectf &bounds = ci::Rectf::zero() );
 

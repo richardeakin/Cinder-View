@@ -30,7 +30,7 @@ namespace ui {
 typedef std::shared_ptr<class Control>	ControlRef;
 
 //! Base class for all Controls, which usually are meant to be interacted with by a user.
-class Control : public View {
+class CI_UI_API Control : public View {
 public:
 	Control( const ci::Rectf &bounds = ci::Rectf::zero() )	: View( bounds ) {}
 
