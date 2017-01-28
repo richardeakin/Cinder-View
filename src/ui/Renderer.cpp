@@ -236,19 +236,19 @@ FrameBufferRef Renderer::getFrameBuffer( const ci::ivec2 &size )
 		}
 	}
 
-	auto format = FrameBuffer::Format().size( size );
-
 	// If a FrameBuffer is available but not large enough, resize it.
+	// - the size is increased to 1.5x the requested size, in order to prevent things that are animating larger from causing too many reallocations.
 	if( availableIt != mFrameBufferCache.end()  ) {
-		ivec2 nextSize = size;
-		LOG_FRAMEBUFFER( "\t- resizing FrameBuffer : " << hex << availableIt->get() << dec << ", from size: " << (*availableIt)->getSize() << " to: " << nextSize );
+		const float resizeFactor = 1.5f;
+		ivec2 nextSize = glm::ceil( vec2( size ) * resizeFactor );
+		LOG_FRAMEBUFFER( "\t- resizing FrameBuffer : " << hex << availableIt->get() << dec << ", from size: " << (*availableIt)->getSize() << " to: " << nextSize << " (requested size: " << size << ")" );
 
-		(*availableIt)->updateFormat( format );
+		(*availableIt)->updateFormat( FrameBuffer::Format().size( nextSize ) );
 		return *availableIt;
 	}
 
 	// None were available, make a new one.
-	auto result = make_shared<FrameBuffer>( format );
+	auto result = make_shared<FrameBuffer>( FrameBuffer::Format().size( size ) );
 	mFrameBufferCache.push_back( result );
 	LOG_FRAMEBUFFER( "created FrameBuffer " << hex << result.get() << dec << ", size: " << result->getSize() );
 
