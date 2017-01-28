@@ -12,6 +12,7 @@ using namespace ci;
 using namespace mason;
 
 const float PADDING = 50;
+const vec2 LABEL_SIZE = { 200, 200 };
 
 CompositingTest::CompositingTest()
 	: SuiteView()
@@ -59,42 +60,61 @@ CompositingTest::CompositingTest()
 
 	Rectf sliderRect =  Rectf( 10, 10, 150, 40 );
 	{
-		auto alphaSlider = make_shared<ui::HSlider>( sliderRect );
-		alphaSlider->setTitle( "container alpha" );
-		alphaSlider->setValue( mContainerView->getAlpha() );
-		alphaSlider->getBackground()->setColor( Color::gray( 0.15f ) );
-		auto alphaSliderPtr = alphaSlider.get(); // avoiding cyclical strong reference, slider is also owned by parent view
-		alphaSlider->getSignalValueChanged().connect( [this, alphaSliderPtr] {
+		auto slider = make_shared<ui::HSlider>( sliderRect );
+		slider->setTitle( "container alpha" );
+		slider->setValue( mContainerView->getAlpha() );
+		slider->getBackground()->setColor( Color::gray( 0.15f ) );
+		auto alphaSliderPtr = slider.get(); // avoiding cyclical strong reference, slider is also owned by parent view
+		slider->getSignalValueChanged().connect( [this, alphaSliderPtr] {
 			mContainerView->setAlpha( alphaSliderPtr->getValue() );
 		} );
 
-		mContainerView->addSubview( alphaSlider );
+		mContainerView->addSubview( slider );
 	}
 	sliderRect += vec2( 0, 40 );
 	{
-		auto alphaSlider = make_shared<ui::HSlider>( sliderRect );
-		alphaSlider->setTitle( "C alpha" );
-		alphaSlider->setValue( mLabelC->getAlpha() );
-		alphaSlider->getBackground()->setColor( Color::gray( 0.15f ) );
-		auto alphaSliderPtr = alphaSlider.get(); // avoiding cyclical strong reference, slider is also owned by parent view
-		alphaSlider->getSignalValueChanged().connect( [this, alphaSliderPtr] {
+		auto slider = make_shared<ui::HSlider>( sliderRect );
+		slider->setTitle( "C alpha" );
+		slider->setValue( mLabelC->getAlpha() );
+		slider->getBackground()->setColor( Color::gray( 0.15f ) );
+		auto alphaSliderPtr = slider.get(); // avoiding cyclical strong reference, slider is also owned by parent view
+		slider->getSignalValueChanged().connect( [this, alphaSliderPtr] {
 			mLabelC->setAlpha( alphaSliderPtr->getValue() );
 		} );
 
-		mContainerView->addSubview( alphaSlider );
+		mContainerView->addSubview( slider );
 	}
 	sliderRect += vec2( 0, 40 );
 	{
-		auto alphaSlider = make_shared<ui::HSlider>( sliderRect );
-		alphaSlider->setTitle( "D alpha" );
-		alphaSlider->setValue( mLabelD->getAlpha() );
-		alphaSlider->getBackground()->setColor( Color::gray( 0.15f ) );
-		auto alphaSliderPtr = alphaSlider.get(); // avoiding cyclical strong reference, slider is also owned by parent view
-		alphaSlider->getSignalValueChanged().connect( [this, alphaSliderPtr] {
+		auto slider = make_shared<ui::HSlider>( sliderRect );
+		slider->setTitle( "D alpha" );
+		slider->setValue( mLabelD->getAlpha() );
+		slider->getBackground()->setColor( Color::gray( 0.15f ) );
+		auto alphaSliderPtr = slider.get(); // avoiding cyclical strong reference, slider is also owned by parent view
+		slider->getSignalValueChanged().connect( [this, alphaSliderPtr] {
 			mLabelD->setAlpha( alphaSliderPtr->getValue() );
 		} );
 
-		mContainerView->addSubview( alphaSlider );
+		mContainerView->addSubview( slider );
+	}
+	sliderRect += vec2( 0, 40 );
+	{
+		auto slider = make_shared<ui::HSlider>( sliderRect );
+		slider->setTitle( "C scale" );
+		slider->setValue( 1 );
+		slider->setMin( 0.1f );
+		slider->setMax( 3 );
+		slider->getBackground()->setColor( Color::gray( 0.15f ) );
+		auto alphaSliderPtr = slider.get(); // avoiding cyclical strong reference, slider is also owned by parent view
+		slider->getSignalValueChanged().connect( [this, alphaSliderPtr] {
+			vec2 c = mLabelC->getCenter();
+			vec2 h = ( LABEL_SIZE / 2.0f ) * alphaSliderPtr->getValue();
+			Rectf bounds = Rectf( c.x - h.x, c.y - h.y, c.x + h.x, c.y + h.y );
+			mLabelC->setBounds( bounds );
+			//CI_LOG_I( "set bounds to: " << bounds );
+		} );
+
+		mContainerView->addSubview( slider );
 	}
 
 	mLabelC->addSubview( mLabelD );
@@ -107,15 +127,13 @@ void CompositingTest::layout()
 	mContainerView->setBounds( Rectf( PADDING, PADDING, getWidth() - PADDING, getHeight() - PADDING ) );
 	CI_LOG_I( "mContainerView bounds: " << mContainerView->getBounds() );
 
-	const vec2 labelSize = { 200, 200 };
-
 	mLabelA->setPos( { 200, 100 } );
 	mLabelB->setPos( { 450, 100 } );
 	mLabelC->setPos( { 325, 200 } );
 
-	mLabelA->setSize( labelSize );
-	mLabelB->setSize( labelSize );
-	mLabelC->setSize( labelSize );
+	mLabelA->setSize( LABEL_SIZE );
+	mLabelB->setSize( LABEL_SIZE );
+	mLabelC->setSize( LABEL_SIZE );
 
 	mLabelD->setPos( { 12, 70 } );
 	mLabelD->setSize( vec2( 60, 60 ) );
@@ -147,6 +165,11 @@ bool CompositingTest::keyDown( app::KeyEvent &event )
 		case app::KeyEvent::KEY_o: {
 			float nextBorderWidth = randFloat( 1, 30 );
 			app::timeline().apply( mContainerView->getLineWidthAnim(), nextBorderWidth, 0.6f, EaseOutExpo() );
+			break;
+		}
+		case app::KeyEvent::KEY_s: {
+			vec2 nextLabelSize = LABEL_SIZE * vec2( randFloat( 0.5f, 2.0f ), randFloat( 0.5f, 2.0f ) );
+			app::timeline().apply( mLabelC->animSize(), nextLabelSize, 0.6f, EaseInOutExpo() );
 			break;
 		}
 		default:

@@ -59,7 +59,7 @@ void ViewTestsApp::setup()
 		CI_LOG_I( "selected test index: " << mTestSuite->getCurrentIndex() << ", key: " << mTestSuite->getCurrentKey() );
 	} );
 
-	mTestSuite->select( 6 );
+	mTestSuite->select( 1 );
 
 	mInfoLabel = make_shared<ui::LabelGrid>();
 	mInfoLabel->setTextColor( Color::white() );
