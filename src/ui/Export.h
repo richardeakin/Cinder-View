@@ -1,6 +1,6 @@
 
 #if defined( CINDER_DLL )
-	#if defined( CINDER_UI_EXPORTS )
+	#if defined( CINDER_UI_EXPORT )
 		#define CI_UI_API __declspec(dllexport)
 	#else
 		#define CI_UI_API __declspec(dllimport)
