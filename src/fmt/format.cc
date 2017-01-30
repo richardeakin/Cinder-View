@@ -908,11 +908,11 @@ template void fmt::internal::ArgMap<char>::init(const fmt::ArgList &args);
 template void fmt::internal::PrintfFormatter<char>::format(
   BasicWriter<char> &writer, CStringRef format);
 
-template int fmt::internal::CharTraits<char>::format_float(
+template FMT_API int fmt::internal::CharTraits<char>::format_float(
     char *buffer, std::size_t size, const char *format,
     unsigned width, int precision, double value);
 
-template int fmt::internal::CharTraits<char>::format_float(
+template FMT_API int fmt::internal::CharTraits<char>::format_float(
     char *buffer, std::size_t size, const char *format,
     unsigned width, int precision, long double value);
 
@@ -925,11 +925,11 @@ template void fmt::internal::ArgMap<wchar_t>::init(const fmt::ArgList &args);
 template void fmt::internal::PrintfFormatter<wchar_t>::format(
     BasicWriter<wchar_t> &writer, WCStringRef format);
 
-template int fmt::internal::CharTraits<wchar_t>::format_float(
+template FMT_API int fmt::internal::CharTraits<wchar_t>::format_float(
     wchar_t *buffer, std::size_t size, const wchar_t *format,
     unsigned width, int precision, double value);
 
-template int fmt::internal::CharTraits<wchar_t>::format_float(
+template FMT_API int fmt::internal::CharTraits<wchar_t>::format_float(
     wchar_t *buffer, std::size_t size, const wchar_t *format,
     unsigned width, int precision, long double value);
 
