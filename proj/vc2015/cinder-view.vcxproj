@@ -35,7 +35,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\cppformat\format.cc" />
+    <ClCompile Include="..\..\src\fmt\format.cc" />
     <ClCompile Include="..\..\src\ui\Button.cpp" />
     <ClCompile Include="..\..\src\ui\Control.cpp" />
     <ClCompile Include="..\..\src\ui\Filter.cpp" />
@@ -55,7 +55,7 @@
     <ClCompile Include="..\..\src\ui\View.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\cppformat\format.h" />
+    <ClInclude Include="..\..\src\fmt\format.h" />
     <ClInclude Include="..\..\src\mason\Factory.h" />
     <ClInclude Include="..\..\src\ui\Button.h" />
     <ClInclude Include="..\..\src\ui\Control.h" />

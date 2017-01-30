@@ -14,7 +14,7 @@
 #include "ScrollTests.h"
 
 #include "glm/gtc/epsilon.hpp"
-#include "cppformat/format.h"
+#include "fmt/format.h"
 
 using namespace ci;
 using namespace ci::app;

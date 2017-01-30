@@ -25,7 +25,7 @@
 #include "cinder/Log.h"
 #include "cinder/audio/Context.h"
 
-#include "cppformat/format.h"
+#include "fmt/format.h"
 #include "glm/gtc/epsilon.hpp"
 
 using namespace std;

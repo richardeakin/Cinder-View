@@ -24,7 +24,7 @@
 #include "ui/Slider.h"
 
 #include "cinder/Log.h"
-#include "cppformat/format.h"
+#include "fmt/format.h"
 
 //#define LOG_TOUCHES( stream )	CI_LOG_I( stream )
 #define LOG_TOUCHES( stream )	( (void)( 0 ) )
