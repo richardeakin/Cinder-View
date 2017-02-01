@@ -23,6 +23,7 @@
 
 #pragma once
 
+#include "ui/Export.h"
 #include "cinder/Vector.h"
 
 #include <atomic>
@@ -54,7 +55,7 @@ enum class TextAlignment {
 
 typedef std::shared_ptr<class Text>	TextRef;
 
-class Text {
+class CI_UI_API Text {
 public:
 
 	float		getSize() const;
@@ -76,7 +77,7 @@ private:
 	friend class TextManager;
 };
 
-class TextManager {
+class CI_UI_API TextManager {
 public:
 	//! If size < 0, a default size will be picked (this is temporary until some sort of styling is introduced)
 	static TextRef loadText( FontFace fontFace, float size = -1 );

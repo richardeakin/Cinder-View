@@ -30,7 +30,7 @@ namespace ui {
 typedef std::shared_ptr<class Button>	ButtonRef;
 typedef std::shared_ptr<class CheckBox>	CheckBoxRef;
 
-class Button : public Control {
+class CI_UI_API Button : public Control {
 public:
 	enum class State { NORMAL, ENABLED, PRESSED };
 
@@ -94,7 +94,7 @@ protected:
 };
 
 //! Toggle Button with text off to the right side.
-class CheckBox : public Button {
+class CI_UI_API CheckBox : public Button {
   public:
 	CheckBox( const ci::Rectf &bounds = ci::Rectf::zero() );
 

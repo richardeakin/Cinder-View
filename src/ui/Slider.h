@@ -31,7 +31,7 @@ namespace ui {
 typedef std::shared_ptr<class HSlider>	HSliderRef;
 typedef std::shared_ptr<class VSlider>	VSliderRef;
 
-class SliderBase : public Control {
+class CI_UI_API SliderBase : public Control {
 public:
 	SliderBase( const ci::Rectf &bounds = ci::Rectf::zero() );
 
@@ -83,7 +83,7 @@ private:
 	TextRef		mTextLabel;
 };
 
-class HSlider : public SliderBase {
+class CI_UI_API HSlider : public SliderBase {
 public:
 	HSlider( const ci::Rectf &bounds = ci::Rectf::zero() ) : SliderBase( bounds )	{}
 
@@ -92,7 +92,7 @@ protected:
 	float		getValuePercentage( const ci::vec2 &pos )					override;
 };
 
-class VSlider : public SliderBase {
+class CI_UI_API VSlider : public SliderBase {
 public:
 	VSlider( const ci::Rectf &bounds = ci::Rectf::zero() ) : SliderBase( bounds )	{}
 

@@ -37,7 +37,7 @@ typedef std::shared_ptr<class SuiteView>	SuiteViewRef;
 class Suite;
 
 //! View type that can be registered with and managed by Suite.
-class SuiteView : public ui::View {
+class CI_UI_API SuiteView : public ui::View {
   public:
 	Suite*  getSuite() const   { return mSuite; }
 
@@ -48,7 +48,7 @@ class SuiteView : public ui::View {
 };
 
 //! Class for managing a selection of Views with some basic Controls and automatic layout. Useful for test or sample sets.
-class Suite {
+class CI_UI_API Suite {
   public:
 	Suite();
 

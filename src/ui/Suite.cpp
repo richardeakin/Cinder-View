@@ -25,7 +25,7 @@
 #include "cinder/Log.h"
 #include "cinder/audio/Context.h"
 
-#include "cppformat/format.h"
+#include "fmt/format.h"
 #include "glm/gtc/epsilon.hpp"
 
 using namespace std;
@@ -62,8 +62,8 @@ void Suite::resize()
 	mGraph->setNeedsLayout();
 
 	const float width = 120; // TODO: calculate widest segment
-	const float height = 22 * mSelector->getSegmentLabels().size();
-	const float windowWidth = app::getWindowWidth();
+	const float height = float( 22 * mSelector->getSegmentLabels().size() );
+	const float windowWidth = (float)app::getWindowWidth();
 	mSelector->setBounds( Rectf( windowWidth - width - PADDING, PADDING, windowWidth - PADDING, height + PADDING ) );
 }
 

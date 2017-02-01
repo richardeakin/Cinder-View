@@ -35,7 +35,7 @@ typedef std::shared_ptr<class Layer>		LayerRef;
 typedef std::shared_ptr<class FrameBuffer>	FrameBufferRef;
 
 //! A Layer controls specific rendering capabilities for Views, such as compositing with translucency.
-class Layer : public std::enable_shared_from_this<Layer> {
+class CI_UI_API Layer : public std::enable_shared_from_this<Layer> {
   public:
 	Layer( View *view );
 	virtual ~Layer();

@@ -23,6 +23,7 @@
 
 #pragma once
 
+#include "ui/Export.h"
 #include "cinder/Rect.h"
 #include <memory>
 
@@ -36,7 +37,7 @@ typedef std::shared_ptr<class LinearLayout>			LinearLayoutRef;
 typedef std::shared_ptr<class VerticalLayout>		VerticalLayoutRef;
 typedef std::shared_ptr<class HorizontalLayout>		HorizontalLayoutRef;
 
-class Layout {
+class CI_UI_API Layout {
   public:
 
 	virtual void layout( View *view )	{}
@@ -58,7 +59,7 @@ enum class Alignment : uint8_t {
 	NUM_ALIGNMENTS
 };
 
-class LinearLayout : public Layout {
+class CI_UI_API LinearLayout : public Layout {
 public:
 	enum class Mode : uint8_t {
 		INCREMENT = 0, //! Each successive View is placed after the previous one + margin
@@ -96,14 +97,14 @@ protected:
 	float		mPadding = 0;
 };
 
-class VerticalLayout : public LinearLayout {
+class CI_UI_API VerticalLayout : public LinearLayout {
   public:
 	explicit VerticalLayout( Mode mode = Mode::INCREMENT, Alignment alignment = Alignment::MINIMUM )
 		: LinearLayout( Orientation::VERTICAL, mode, alignment )
 	{}
 };
 
-class HorizontalLayout : public LinearLayout {
+class CI_UI_API HorizontalLayout : public LinearLayout {
   public:
 	explicit HorizontalLayout( Mode mode = Mode::INCREMENT, Alignment alignment = Alignment::MINIMUM )
 		: LinearLayout( Orientation::HORIZONTAL, mode, alignment )

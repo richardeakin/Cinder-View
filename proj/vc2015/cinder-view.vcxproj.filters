@@ -10,7 +10,7 @@
     <Filter Include="src\mason">
       <UniqueIdentifier>{626b98ae-e717-483d-b53e-362be5f41d79}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\cppformat">
+    <Filter Include="src\fmt">
       <UniqueIdentifier>{df61c0df-f7b2-46fd-9c08-049877f01376}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -60,14 +60,14 @@
     <ClCompile Include="..\..\src\ui\View.cpp">
       <Filter>src\ui</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\cppformat\format.cc">
-      <Filter>src\cppformat</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\ui\Filter.cpp">
       <Filter>src\ui</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\ui\Layout.cpp">
       <Filter>src\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\fmt\format.cc">
+      <Filter>src\fmt</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -122,14 +122,17 @@
     <ClInclude Include="..\..\src\mason\Factory.h">
       <Filter>src\mason</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\cppformat\format.h">
-      <Filter>src\cppformat</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\ui\Filter.h">
       <Filter>src\ui</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\ui\Layout.h">
       <Filter>src\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ui\Export.h">
+      <Filter>src\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\fmt\format.h">
+      <Filter>src\fmt</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
