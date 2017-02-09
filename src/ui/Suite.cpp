@@ -69,7 +69,7 @@ void Suite::resize()
 
 void Suite::selectTest( const string &key )
 {
-	CI_LOG_V( "selecting test: " << key ); // TODO: register signal instead, move log to test
+	mSignalSuiteViewWillChange.emit();
 
 	// first remove and destroy the current test
 	if( mCurrentSuiteView ) {
@@ -89,6 +89,8 @@ void Suite::selectTest( const string &key )
 	mGraph->insertSubview( suiteView, 0 );
 	mCurrentSuiteView = suiteView;
 	mCurrentTestKey = key;
+
+	mSignalSuiteViewDidChange.emit();
 }
 
 void Suite::select( size_t index )
@@ -105,6 +107,7 @@ void Suite::setDrawUiEnabled( bool enable )
 
 void Suite::reload()
 {
+	// TODO: rename all instances of Test to SuiteView
 	selectTest( mSelector->getSelectedLabel() );
 }
 

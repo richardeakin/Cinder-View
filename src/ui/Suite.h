@@ -65,7 +65,10 @@ class CI_UI_API Suite {
 	const std::string&  getCurrentKey() const   { return mCurrentTestKey; }
 	//! Returns the Control used for selecting a SuiteView
 	ui::VSelectorRef	getSelector() const	        { return mSelector; }
-
+	//! Signal that is emitted before the current SuiteView changes.
+	ci::signals::Signal<void ()>&	getSignalSuiteViewWillChange()	{ return mSignalSuiteViewWillChange; }
+	//! Signal that is emitted after the current SuiteView has changed.
+	ci::signals::Signal<void ()>&	getSignalSuiteViewDidChange()	{ return mSignalSuiteViewDidChange; }
 	//! Reloads the current SuiteView
 	void reload();
 
@@ -89,7 +92,8 @@ class CI_UI_API Suite {
 	std::string			mCurrentTestKey;
 	bool				mDrawUi = true;
 
-	mason::Factory<SuiteView>	mFactory;
+	mason::Factory<SuiteView>		mFactory;
+	ci::signals::Signal<void ()>	mSignalSuiteViewWillChange, mSignalSuiteViewDidChange;
 };
 
 template<typename Y>
