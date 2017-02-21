@@ -29,6 +29,9 @@
 
 namespace mason {
 
+template <typename T>
+using PointerT = std::shared_ptr<T>;
+
 //! Exception thrown when Factory cannot build an object for the requested key
 class FactoryException : public cinder::Exception {
   public:
@@ -51,7 +54,7 @@ class Factory {
 	}
 
 	//! Builds an object that inherits from T, which is associated with \a key via registerBuilder(), returning it in a shared_ptr.
-	std::shared_ptr<T>	build( const std::string &key, const Args&... args )
+	PointerT<T>	build( const std::string &key, const Args&... args )
 	{
 		auto builderFnIt = mBuilderMap.find( key );
 		if( builderFnIt == mBuilderMap.end() )
@@ -65,13 +68,14 @@ class Factory {
 	template<typename Y>
 	struct Builder {
 		//! returns a shared_ptr of a newly constructed T object
-		std::shared_ptr<T> operator()( const Args&... args )
+		PointerT<T> operator()( const Args&... args )
 		{
-			return std::make_shared<Y>( args... );
+			//return std::make_shared<Y>( args... );
+			return PointerT<T>( new Y( std::forward<Args>( args )... ) );
 		}
 	};
 
-	typedef std::function<std::shared_ptr<T>( Args... )>		BuilderFn;
+	typedef std::function<PointerT<T> ( Args... )>		BuilderFn;
 
 	std::map<std::string, BuilderFn> mBuilderMap;
 };
