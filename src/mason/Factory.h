@@ -29,8 +29,8 @@
 
 namespace mason {
 
-template <typename T>
-using PointerT = std::shared_ptr<T>;
+//template <typename T>
+//using PointerT = std::shared_ptr<T>;
 
 //! Exception thrown when Factory cannot build an object for the requested key
 class FactoryException : public cinder::Exception {
@@ -41,26 +41,28 @@ class FactoryException : public cinder::Exception {
 };
 
 //! Allows for constructing shared_ptr<T> objects by string, passing \a Args to T's constructor.
-template <typename T, typename... Args>
+template <typename PointerT, typename... Args>
 class Factory {
   public:
 	//! Register a builder of type \a Y, that can be built by calling `build( key )`. \note Y must inherit from T
 	template<typename Y>
 	void registerBuilder( const std::string &key )
 	{
-		static_assert( std::is_base_of<T, Y>::value, "Y must inherit from T" );
+		// Can't be done when PointerT = shared_ptr<T>
+		//static_assert( std::is_base_of<T, Y>::value, "Y must inherit from T" );
 
 		mBuilderMap[key] = Builder<Y>();
 	}
 
 	//! Builds an object that inherits from T, which is associated with \a key via registerBuilder(), returning it in a shared_ptr.
-	PointerT<T>	build( const std::string &key, const Args&... args )
+	PointerT	build( const std::string &key, const Args&... args )
 	{
 		auto builderFnIt = mBuilderMap.find( key );
 		if( builderFnIt == mBuilderMap.end() )
 			throw FactoryException( key );
 
-		return builderFnIt->second( args... );
+		//return builderFnIt->second( args... );
+		return builderFnIt->second();
 	}
 
   private:
@@ -68,14 +70,22 @@ class Factory {
 	template<typename Y>
 	struct Builder {
 		//! returns a shared_ptr of a newly constructed T object
-		PointerT<T> operator()( const Args&... args )
+		//PointerT operator()( const Args&... args )
+		//{
+		//	//return std::make_shared<Y>( args... );
+		//	return PointerT( new Y( std::forward<Args>( args )... ) );
+		//}
+
+		PointerT operator()()
 		{
 			//return std::make_shared<Y>( args... );
-			return PointerT<T>( new Y( std::forward<Args>( args )... ) );
+			return PointerT( new Y );
 		}
+
 	};
 
-	typedef std::function<PointerT<T> ( Args... )>		BuilderFn;
+	//typedef std::function<PointerT ( Args... )>		BuilderFn;
+	typedef std::function<PointerT ()>		BuilderFn;
 
 	std::map<std::string, BuilderFn> mBuilderMap;
 };

@@ -92,7 +92,7 @@ class CI_UI_API Suite {
 	std::string			mCurrentTestKey;
 	bool				mDrawUi = true;
 
-	mason::Factory<SuiteView>		mFactory;
+	mason::Factory<SuiteViewRef>		mFactory;
 	ci::signals::Signal<void ()>	mSignalSuiteViewWillChange, mSignalSuiteViewDidChange;
 };
 
