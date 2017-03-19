@@ -94,9 +94,10 @@ BasicViewTests::BasicViewTests()
 	mContainerView->addSubview( mBorderView );
 
 	mLabel = make_shared<ui::Label>();
-	mLabel->setText( "a label" );
+	mLabel->setText( "bold label" );
 	mLabel->setAlignment( ui::TextAlignment::CENTER );
 	mLabel->setTextColor( Color::white() );
+	mLabel->setFontFace( ui::FontFace::BOLD );
 	mLabel->getBackground()->setColor( Color( 0, 0, 0.4f ) );
 
 	mLabelClipped = make_shared<ui::Label>();
