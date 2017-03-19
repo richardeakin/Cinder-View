@@ -48,7 +48,6 @@ class DraggableView : public ui::RectView {
 		vec2 pos = firstTouch.getPos();
 
 		vec2 diff = pos - mPrevPos;
-		vec2 prevPosDebug = mPrevPos;
 		mPrevPos = pos;
 		setPos( getPos() + diff );
 
@@ -346,8 +345,6 @@ TouchOverlayView::TouchOverlayView()
 
 void TouchOverlayView::draw( ui::Renderer *ren )
 {
-	const float circleRadius = 14;
-
 	const auto &touches = getGraph()->getAllTouchesInWindow();
 	for( const auto &touch : touches ) {
 		vec2 pos = touch.second.getPos();

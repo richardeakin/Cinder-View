@@ -30,8 +30,8 @@ class ViewTestsApp : public App {
 	void update() override;
 	void draw() override;
 
-	void ViewTestsApp::updateUI();
-	void ViewTestsApp::resizeInfoLabel();
+	void updateUI();
+	void resizeInfoLabel();
 	void drawViewBorders();
 	void drawLayerBorders();
 
