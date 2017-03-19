@@ -1,10 +1,13 @@
 if( NOT TARGET Cinder-View )
-	message( "[cinder-view] cinder path: ${CINDER_PATH}" )
+
+	include( ${CINDER_PATH}/proj/cmake/utilities.cmake )
+
+	ci_log_v( "cinder path: ${CINDER_PATH}" )
 
 	get_filename_component( VIEW_SOURCE_PATH "${CMAKE_CURRENT_LIST_DIR}/../../src" ABSOLUTE )
 	get_filename_component( VIEW_LIB_PATH "${CMAKE_CURRENT_LIST_DIR}/../../lib/${CMAKE_BUILD_TYPE}" ABSOLUTE )
 
-	message( "[cinder-view] VIEW_LIB_PATH: ${VIEW_LIB_PATH}" )
+	ci_log_v( "VIEW_LIB_PATH: ${VIEW_LIB_PATH}" )
 
 	list( APPEND VIEW_SOURCES
 		${VIEW_SOURCE_PATH}/ui/Button.cpp

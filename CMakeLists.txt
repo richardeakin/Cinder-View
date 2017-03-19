@@ -26,11 +26,9 @@ endif()
 
 #set( VIEW_LIB_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/lib/${CMAKE_BUILD_TYPE} )
 
-message( "[cinder-view root] VIEW_LIB_DIRECTORY: ${VIEW_LIB_DIRECTORY}" )
-
 #add_definitions( -Wfatal-errors )
 
-# TODO NEXT: how do we still place the output in a lib folder? Should the CMAKE_ARCHIVE_OUTPUT_DIRECTORY setting be in the confgi.cmake?
+# TODO NEXT: how do we still place the output in a lib folder? Should the CMAKE_ARCHIVE_OUTPUT_DIRECTORY setting be in the config.cmake?
 find_package( Cinder-View REQUIRED PATHS ${CMAKE_CURRENT_SOURCE_DIR}/proj/cmake NO_DEFAULT_PATH )
 
 #export( TARGETS cinder-view FILE cinder-view-exports.cmake )

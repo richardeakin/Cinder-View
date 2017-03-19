@@ -10,8 +10,10 @@ endif()
 get_filename_component( CINDER_PATH "${CINDER_PATH}" ABSOLUTE )
 get_filename_component( APP_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../.." ABSOLUTE )
 
-message( "[CinderView tests] CINDER_PATH: ${CINDER_PATH}" )
-message( "[CinderView tests] APP_PATH: ${APP_PATH}" )
+include( ${CINDER_PATH}/proj/cmake/utilities.cmake )
+
+ci_log_v( "CINDER_PATH: ${CINDER_PATH}" )
+ci_log_v( "APP_PATH: ${APP_PATH}" )
 
 include( "${CINDER_PATH}/proj/cmake/modules/cinderMakeApp.cmake" )
 
