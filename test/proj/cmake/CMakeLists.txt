@@ -19,7 +19,8 @@ set( APP_SOURCES
 	${APP_PATH}/src/BasicViewTests.cpp
 	${APP_PATH}/src/ControlsTest.cpp
 	${APP_PATH}/src/CompositingTest.cpp
-#	${APP_PATH}/src/FilterTest.cpp
+	${APP_PATH}/src/FilterTest.cpp
+	${APP_PATH}/src/LayoutTests.cpp
 	${APP_PATH}/src/MultiTouchTest.cpp
 	${APP_PATH}/src/ScrollTests.cpp
 	${APP_PATH}/src/ViewTestsApp.cpp
