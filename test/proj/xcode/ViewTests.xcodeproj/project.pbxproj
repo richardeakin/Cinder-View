@@ -14,36 +14,36 @@
 		00B784B60FF439BC000DE1D7 /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B784B20FF439BC000DE1D7 /* CoreAudio.framework */; };
 		1118C06619AA386600F0D18B /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1118C06519AA386600F0D18B /* AVFoundation.framework */; };
 		1118C06819AA388500F0D18B /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1118C06719AA388500F0D18B /* CoreMedia.framework */; };
-		1134430B1C73F7350033C5B0 /* FilterTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 113443091C73F7350033C5B0 /* FilterTest.cpp */; };
-		114F64B01BE09841000CE3EE /* ViewTestsApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64AB1BE09841000CE3EE /* ViewTestsApp.cpp */; };
-		114F64B11BE09841000CE3EE /* ScrollTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64AC1BE09841000CE3EE /* ScrollTests.cpp */; };
-		114F64B21BE09841000CE3EE /* BasicViewTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F64AE1BE09841000CE3EE /* BasicViewTests.cpp */; };
-		114F65311BE0B1D4000CE3EE /* ControlsTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 114F652F1BE0B1D4000CE3EE /* ControlsTest.cpp */; };
-		11533B8E1C39096800933145 /* MultiTouchTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11533B8C1C39096800933145 /* MultiTouchTest.cpp */; };
-		1196E4001D45ACFD00BEDBAD /* LayoutTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1196E3FE1D45ACFD00BEDBAD /* LayoutTests.cpp */; };
 		119C4EB81B2391DE006563C5 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 119C4EB71B2391DE006563C5 /* IOKit.framework */; };
-		11A00A6C1C09108200DCA5A7 /* CompositingTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11A00A6A1C09108200DCA5A7 /* CompositingTest.cpp */; };
+		11A390211E7E3A4A008C452D /* BasicViewTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11A390121E7E3A4A008C452D /* BasicViewTests.cpp */; };
+		11A390221E7E3A4A008C452D /* CompositingTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11A390141E7E3A4A008C452D /* CompositingTest.cpp */; };
+		11A390231E7E3A4A008C452D /* ControlsTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11A390161E7E3A4A008C452D /* ControlsTest.cpp */; };
+		11A390241E7E3A4A008C452D /* FilterTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11A390181E7E3A4A008C452D /* FilterTest.cpp */; };
+		11A390251E7E3A4A008C452D /* LayoutTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11A3901A1E7E3A4A008C452D /* LayoutTests.cpp */; };
+		11A390261E7E3A4A008C452D /* MultiTouchTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11A3901C1E7E3A4A008C452D /* MultiTouchTest.cpp */; };
+		11A390271E7E3A4A008C452D /* ScrollTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11A3901E1E7E3A4A008C452D /* ScrollTests.cpp */; };
+		11A390281E7E3A4A008C452D /* ViewTestsApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11A390201E7E3A4A008C452D /* ViewTestsApp.cpp */; };
 		5323E6B20EAFCA74003A9687 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5323E6B10EAFCA74003A9687 /* CoreVideo.framework */; };
 		5323E6B60EAFCA7E003A9687 /* QTKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5323E6B50EAFCA7E003A9687 /* QTKit.framework */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		114F64B91BE09A4E000CE3EE /* PBXContainerItemProxy */ = {
+		11A3900B1E7E3A16008C452D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 114F64B31BE09A4E000CE3EE /* cinder-view.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 1104F3C917753F10003EAA2B;
 			remoteInfo = "cinder-view-mac";
 		};
-		114F64BB1BE09A4E000CE3EE /* PBXContainerItemProxy */ = {
+		11A3900D1E7E3A16008C452D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 114F64B31BE09A4E000CE3EE /* cinder-view.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 11B0421C179B90450034BEE2;
 			remoteInfo = "cinder-view-ios";
 		};
-		114F651E1BE0AB6E000CE3EE /* PBXContainerItemProxy */ = {
+		11A390291E7E3A7D008C452D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 114F64B31BE09A4E000CE3EE /* cinder-view.xcodeproj */;
 			proxyType = 1;
@@ -61,24 +61,24 @@
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		1118C06519AA386600F0D18B /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		1118C06719AA388500F0D18B /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
-		113443091C73F7350033C5B0 /* FilterTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FilterTest.cpp; path = ../src/FilterTest.cpp; sourceTree = "<group>"; };
-		1134430A1C73F7350033C5B0 /* FilterTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FilterTest.h; path = ../src/FilterTest.h; sourceTree = "<group>"; };
-		114F64AB1BE09841000CE3EE /* ViewTestsApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ViewTestsApp.cpp; path = ../src/ViewTestsApp.cpp; sourceTree = "<group>"; };
-		114F64AC1BE09841000CE3EE /* ScrollTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScrollTests.cpp; path = ../src/ScrollTests.cpp; sourceTree = "<group>"; };
-		114F64AD1BE09841000CE3EE /* ScrollTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScrollTests.h; path = ../src/ScrollTests.h; sourceTree = "<group>"; };
-		114F64AE1BE09841000CE3EE /* BasicViewTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BasicViewTests.cpp; path = ../src/BasicViewTests.cpp; sourceTree = "<group>"; };
-		114F64AF1BE09841000CE3EE /* BasicViewTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BasicViewTests.h; path = ../src/BasicViewTests.h; sourceTree = "<group>"; };
-		114F64B31BE09A4E000CE3EE /* cinder-view.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "cinder-view.xcodeproj"; path = "../../xcode/cinder-view.xcodeproj"; sourceTree = "<group>"; };
-		114F652F1BE0B1D4000CE3EE /* ControlsTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ControlsTest.cpp; path = ../src/ControlsTest.cpp; sourceTree = "<group>"; };
-		114F65301BE0B1D4000CE3EE /* ControlsTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ControlsTest.h; path = ../src/ControlsTest.h; sourceTree = "<group>"; };
-		11533B8C1C39096800933145 /* MultiTouchTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MultiTouchTest.cpp; path = ../src/MultiTouchTest.cpp; sourceTree = "<group>"; };
-		11533B8D1C39096800933145 /* MultiTouchTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MultiTouchTest.h; path = ../src/MultiTouchTest.h; sourceTree = "<group>"; };
+		114F64B31BE09A4E000CE3EE /* cinder-view.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "cinder-view.xcodeproj"; path = "../../../proj/xcode/cinder-view.xcodeproj"; sourceTree = "<group>"; };
 		11576ABF1970AD9100BE66B3 /* Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Prefix.pch; sourceTree = "<group>"; };
-		1196E3FE1D45ACFD00BEDBAD /* LayoutTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LayoutTests.cpp; path = ../src/LayoutTests.cpp; sourceTree = "<group>"; };
-		1196E3FF1D45ACFD00BEDBAD /* LayoutTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LayoutTests.h; path = ../src/LayoutTests.h; sourceTree = "<group>"; };
 		119C4EB71B2391DE006563C5 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
-		11A00A6A1C09108200DCA5A7 /* CompositingTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CompositingTest.cpp; path = ../src/CompositingTest.cpp; sourceTree = "<group>"; };
-		11A00A6B1C09108200DCA5A7 /* CompositingTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CompositingTest.h; path = ../src/CompositingTest.h; sourceTree = "<group>"; };
+		11A390121E7E3A4A008C452D /* BasicViewTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BasicViewTests.cpp; path = ../../src/BasicViewTests.cpp; sourceTree = "<group>"; };
+		11A390131E7E3A4A008C452D /* BasicViewTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BasicViewTests.h; path = ../../src/BasicViewTests.h; sourceTree = "<group>"; };
+		11A390141E7E3A4A008C452D /* CompositingTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CompositingTest.cpp; path = ../../src/CompositingTest.cpp; sourceTree = "<group>"; };
+		11A390151E7E3A4A008C452D /* CompositingTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CompositingTest.h; path = ../../src/CompositingTest.h; sourceTree = "<group>"; };
+		11A390161E7E3A4A008C452D /* ControlsTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ControlsTest.cpp; path = ../../src/ControlsTest.cpp; sourceTree = "<group>"; };
+		11A390171E7E3A4A008C452D /* ControlsTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ControlsTest.h; path = ../../src/ControlsTest.h; sourceTree = "<group>"; };
+		11A390181E7E3A4A008C452D /* FilterTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FilterTest.cpp; path = ../../src/FilterTest.cpp; sourceTree = "<group>"; };
+		11A390191E7E3A4A008C452D /* FilterTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FilterTest.h; path = ../../src/FilterTest.h; sourceTree = "<group>"; };
+		11A3901A1E7E3A4A008C452D /* LayoutTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LayoutTests.cpp; path = ../../src/LayoutTests.cpp; sourceTree = "<group>"; };
+		11A3901B1E7E3A4A008C452D /* LayoutTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LayoutTests.h; path = ../../src/LayoutTests.h; sourceTree = "<group>"; };
+		11A3901C1E7E3A4A008C452D /* MultiTouchTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MultiTouchTest.cpp; path = ../../src/MultiTouchTest.cpp; sourceTree = "<group>"; };
+		11A3901D1E7E3A4A008C452D /* MultiTouchTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MultiTouchTest.h; path = ../../src/MultiTouchTest.h; sourceTree = "<group>"; };
+		11A3901E1E7E3A4A008C452D /* ScrollTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScrollTests.cpp; path = ../../src/ScrollTests.cpp; sourceTree = "<group>"; };
+		11A3901F1E7E3A4A008C452D /* ScrollTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScrollTests.h; path = ../../src/ScrollTests.h; sourceTree = "<group>"; };
+		11A390201E7E3A4A008C452D /* ViewTestsApp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ViewTestsApp.cpp; path = ../../src/ViewTestsApp.cpp; sourceTree = "<group>"; };
 		11C895881834977200F7C515 /* libjscre.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libjscre.a; path = "../blocks/Cinder-Dart/dart-runtime/lib/macosx/libjscre.a"; sourceTree = "<group>"; };
 		11C895891834977200F7C515 /* libdouble_conversion.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libdouble_conversion.a; path = "../blocks/Cinder-Dart/dart-runtime/lib/macosx/libdouble_conversion.a"; sourceTree = "<group>"; };
 		11C8958A1834977200F7C515 /* libdart_withcore.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libdart_withcore.a; path = "../blocks/Cinder-Dart/dart-runtime/lib/macosx/libdart_withcore.a"; sourceTree = "<group>"; };
@@ -119,21 +119,21 @@
 		080E96DDFE201D6D7F000001 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				114F64AE1BE09841000CE3EE /* BasicViewTests.cpp */,
-				114F64AF1BE09841000CE3EE /* BasicViewTests.h */,
-				11A00A6A1C09108200DCA5A7 /* CompositingTest.cpp */,
-				11A00A6B1C09108200DCA5A7 /* CompositingTest.h */,
-				114F652F1BE0B1D4000CE3EE /* ControlsTest.cpp */,
-				114F65301BE0B1D4000CE3EE /* ControlsTest.h */,
-				113443091C73F7350033C5B0 /* FilterTest.cpp */,
-				1134430A1C73F7350033C5B0 /* FilterTest.h */,
-				1196E3FE1D45ACFD00BEDBAD /* LayoutTests.cpp */,
-				1196E3FF1D45ACFD00BEDBAD /* LayoutTests.h */,
-				11533B8C1C39096800933145 /* MultiTouchTest.cpp */,
-				11533B8D1C39096800933145 /* MultiTouchTest.h */,
-				114F64AC1BE09841000CE3EE /* ScrollTests.cpp */,
-				114F64AD1BE09841000CE3EE /* ScrollTests.h */,
-				114F64AB1BE09841000CE3EE /* ViewTestsApp.cpp */,
+				11A390121E7E3A4A008C452D /* BasicViewTests.cpp */,
+				11A390131E7E3A4A008C452D /* BasicViewTests.h */,
+				11A390141E7E3A4A008C452D /* CompositingTest.cpp */,
+				11A390151E7E3A4A008C452D /* CompositingTest.h */,
+				11A390161E7E3A4A008C452D /* ControlsTest.cpp */,
+				11A390171E7E3A4A008C452D /* ControlsTest.h */,
+				11A390181E7E3A4A008C452D /* FilterTest.cpp */,
+				11A390191E7E3A4A008C452D /* FilterTest.h */,
+				11A3901A1E7E3A4A008C452D /* LayoutTests.cpp */,
+				11A3901B1E7E3A4A008C452D /* LayoutTests.h */,
+				11A3901C1E7E3A4A008C452D /* MultiTouchTest.cpp */,
+				11A3901D1E7E3A4A008C452D /* MultiTouchTest.h */,
+				11A3901E1E7E3A4A008C452D /* ScrollTests.cpp */,
+				11A3901F1E7E3A4A008C452D /* ScrollTests.h */,
+				11A390201E7E3A4A008C452D /* ViewTestsApp.cpp */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -162,11 +162,11 @@
 			name = "Other Frameworks";
 			sourceTree = "<group>";
 		};
-		114F64B41BE09A4E000CE3EE /* Products */ = {
+		11A390071E7E3A16008C452D /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				114F64BA1BE09A4E000CE3EE /* libcinder-view.a */,
-				114F64BC1BE09A4E000CE3EE /* libcinder-view.a */,
+				11A3900C1E7E3A16008C452D /* libcinder-view.a */,
+				11A3900E1E7E3A16008C452D /* libcinder-view.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -241,7 +241,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				114F651F1BE0AB6E000CE3EE /* PBXTargetDependency */,
+				11A3902A1E7E3A7D008C452D /* PBXTargetDependency */,
 			);
 			name = ViewTests;
 			productInstallPath = "$(HOME)/Applications";
@@ -270,7 +270,7 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = 114F64B41BE09A4E000CE3EE /* Products */;
+					ProductGroup = 11A390071E7E3A16008C452D /* Products */;
 					ProjectRef = 114F64B31BE09A4E000CE3EE /* cinder-view.xcodeproj */;
 				},
 			);
@@ -282,18 +282,18 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		114F64BA1BE09A4E000CE3EE /* libcinder-view.a */ = {
+		11A3900C1E7E3A16008C452D /* libcinder-view.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = "libcinder-view.a";
-			remoteRef = 114F64B91BE09A4E000CE3EE /* PBXContainerItemProxy */;
+			remoteRef = 11A3900B1E7E3A16008C452D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		114F64BC1BE09A4E000CE3EE /* libcinder-view.a */ = {
+		11A3900E1E7E3A16008C452D /* libcinder-view.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
 			path = "libcinder-view.a";
-			remoteRef = 114F64BB1BE09A4E000CE3EE /* PBXContainerItemProxy */;
+			remoteRef = 11A3900D1E7E3A16008C452D /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -313,24 +313,24 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				114F64B01BE09841000CE3EE /* ViewTestsApp.cpp in Sources */,
-				1196E4001D45ACFD00BEDBAD /* LayoutTests.cpp in Sources */,
-				11533B8E1C39096800933145 /* MultiTouchTest.cpp in Sources */,
-				114F65311BE0B1D4000CE3EE /* ControlsTest.cpp in Sources */,
-				114F64B11BE09841000CE3EE /* ScrollTests.cpp in Sources */,
-				114F64B21BE09841000CE3EE /* BasicViewTests.cpp in Sources */,
-				1134430B1C73F7350033C5B0 /* FilterTest.cpp in Sources */,
-				11A00A6C1C09108200DCA5A7 /* CompositingTest.cpp in Sources */,
+				11A390281E7E3A4A008C452D /* ViewTestsApp.cpp in Sources */,
+				11A390251E7E3A4A008C452D /* LayoutTests.cpp in Sources */,
+				11A390271E7E3A4A008C452D /* ScrollTests.cpp in Sources */,
+				11A390261E7E3A4A008C452D /* MultiTouchTest.cpp in Sources */,
+				11A390231E7E3A4A008C452D /* ControlsTest.cpp in Sources */,
+				11A390241E7E3A4A008C452D /* FilterTest.cpp in Sources */,
+				11A390221E7E3A4A008C452D /* CompositingTest.cpp in Sources */,
+				11A390211E7E3A4A008C452D /* BasicViewTests.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		114F651F1BE0AB6E000CE3EE /* PBXTargetDependency */ = {
+		11A3902A1E7E3A7D008C452D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "cinder-view-mac";
-			targetProxy = 114F651E1BE0AB6E000CE3EE /* PBXContainerItemProxy */;
+			targetProxy = 11A390291E7E3A7D008C452D /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -355,7 +355,7 @@
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"$(ROOT_REPO_PATH)/lib/macosx/$(CONFIGURATION)/libcinder-view.a",
-					"$(CINDER_PATH)/lib/libcinder_d.a",
+					"\"$(CINDER_PATH)/lib/macosx/$(CONFIGURATION)/libcinder.a\"",
 				);
 				PRODUCT_NAME = ViewTests;
 				SYMROOT = ./build;
@@ -381,7 +381,7 @@
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"$(ROOT_REPO_PATH)/lib/macosx/$(CONFIGURATION)/libcinder-view.a",
-					"$(CINDER_PATH)/lib/libcinder.a",
+					"\"$(CINDER_PATH)/lib/macosx/$(CONFIGURATION)/libcinder.a\"",
 				);
 				PRODUCT_NAME = ViewTests;
 				STRIP_INSTALLED_PRODUCT = YES;
@@ -394,14 +394,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CINDER_PATH = "$(ROOT_REPO_PATH)/../../cinder";
+				CINDER_PATH = "$(ROOT_REPO_PATH)/../..";
 				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
 				CLANG_CXX_LIBRARY = "libc++";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "$(CINDER_PATH)/include";
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
-				ROOT_REPO_PATH = ../..;
+				ROOT_REPO_PATH = ../../..;
 				SDKROOT = macosx;
 				USER_HEADER_SEARCH_PATHS = "../src $(ROOT_REPO_PATH)/src $(CINDER_PATH)/include";
 			};
@@ -411,14 +411,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CINDER_PATH = "$(ROOT_REPO_PATH)/../../cinder";
+				CINDER_PATH = "$(ROOT_REPO_PATH)/../..";
 				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
 				CLANG_CXX_LIBRARY = "libc++";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = "$(CINDER_PATH)/include";
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
-				ROOT_REPO_PATH = ../..;
+				ROOT_REPO_PATH = ../../..;
 				SDKROOT = macosx;
 				USER_HEADER_SEARCH_PATHS = "../src $(ROOT_REPO_PATH)/src $(CINDER_PATH)/include";
 			};
