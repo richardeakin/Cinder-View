@@ -38,11 +38,11 @@ typedef std::shared_ptr<class FilterDropShadow>		FilterDropShadowRef;
 //! Performs filter effects as post-process operation.
 class CI_UI_API Filter {
   public:
-	  virtual ~Filter();
+	virtual ~Filter();
 
   protected:
 	//! Passed during initialize() to configure render targets
-	struct PassInfo {
+	struct CI_UI_API PassInfo {
 	  public:
 		void	setCount( size_t count );
 		size_t	getCount() const			{ return mCount; }
@@ -58,7 +58,7 @@ class CI_UI_API Filter {
 	};
 
 	//! Provided during process() that contains information about the current processing pass
-	class Pass {
+	class CI_UI_API Pass {
 	  public:
 		~Pass();
 

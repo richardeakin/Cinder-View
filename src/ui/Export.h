@@ -19,12 +19,12 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVE
 POSSIBILITY OF SUCH DAMAGE.
 */
 
-#if defined( CINDER_DLL )
-	#if defined( CINDER_UI_EXPORT )
-		#define CI_UI_API __declspec(dllexport)
-	#else
-		#define CI_UI_API __declspec(dllimport)
-	#endif
+#pragma once
+
+#if defined( CINDER_UI_SHARED_BUILD )
+	#define CI_UI_API __declspec(dllexport)
+#elif defined( CINDER_UI_SHARED )
+	#define CI_UI_API __declspec(dllimport)
 #else
 	#define CI_UI_API
 #endif
