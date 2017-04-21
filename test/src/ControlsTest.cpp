@@ -56,7 +56,16 @@ ControlsTest::ControlsTest()
 //		CI_LOG_V( "mVSlider value: " << mVSlider->getValue() );
 	} );
 
-	addSubviews( { mButton, mImageButton, mToggle, mHSlider, mVSlider } );
+    mTextField = make_shared<ui::TextField>();
+
+	addSubviews( { 
+        mButton,
+        mImageButton,
+        mToggle,
+        mHSlider,
+        mVSlider,
+        mTextField
+    } );
 }
 
 void ControlsTest::layout()
@@ -76,6 +85,9 @@ void ControlsTest::layout()
 
 	Rectf sliderVBounds = Rectf( padding, sliderHBounds.y2 + 10, padding + 30, sliderHBounds.y2 + 210 );
 	mVSlider->setBounds( sliderVBounds );
+
+    Rectf textFieldBounds = Rectf( padding, sliderVBounds.y2 + 20, 300, sliderVBounds.y2 + 60 );
+    mTextField->setBounds( textFieldBounds );
 }
 
 bool ControlsTest::keyDown( app::KeyEvent &event )

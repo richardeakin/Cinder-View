@@ -4,6 +4,7 @@
 
 #include "ui/Slider.h"
 #include "ui/Button.h"
+#include "ui/TextField.h"
 
 #include "cinder/gl/TextureFont.h"
 
@@ -19,4 +20,5 @@ private:
 	ui::HSliderRef			mHSlider;
 	ui::VSliderRef			mVSlider;
 	ui::ButtonRef			mButton, mImageButton, mToggle;
+    ui::TextFieldRef        mTextField;
 };
