@@ -69,6 +69,12 @@
     <ClCompile Include="..\..\src\fmt\format.cc">
       <Filter>src\fmt</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\ui\TextField.cpp">
+      <Filter>src\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ui\GestureTracker.cpp">
+      <Filter>src\ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\ui\Button.h">
@@ -133,6 +139,12 @@
     </ClInclude>
     <ClInclude Include="..\..\src\fmt\format.h">
       <Filter>src\fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ui\TextField.h">
+      <Filter>src\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ui\GestureTracker.h">
+      <Filter>src\ui</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

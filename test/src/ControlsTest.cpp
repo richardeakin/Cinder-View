@@ -56,7 +56,8 @@ ControlsTest::ControlsTest()
 //		CI_LOG_V( "mVSlider value: " << mVSlider->getValue() );
 	} );
 
-    mTextField = make_shared<ui::TextField>();
+	mTextField = make_shared<ui::TextField>();
+	mTextField->setTextColor( Color( 0.5f, 1, 1 ), ui::TextField::State::SELECTED );
 
 	addSubviews( { 
         mButton,

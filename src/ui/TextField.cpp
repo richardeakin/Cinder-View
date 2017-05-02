@@ -34,16 +34,43 @@ TextField::TextField( const ci::Rectf &bounds )
     mInputString = "Hey hey";
 }
 
+void TextField::setBorderColor( const ci::ColorA &color, State state )
+{
+	switch( state ) {
+		case State::NORMAL:		mBorderColorNormal = color; return;
+		case State::SELECTED:	mBorderColorSelected = color; return;
+		//case State::PRESSED:	mColorPressed = color; return;
+		default: CI_ASSERT_NOT_REACHABLE();
+	}
+}
+
+void TextField::setTextColor( const ci::ColorA &color, State state )
+{
+	switch( state ) {
+		case State::NORMAL:		mTextColorNormal = color; return;
+		case State::SELECTED:	mTextColorSelected = color; return;
+		//case State::PRESSED:	mColorPressed = color; return;
+		default: CI_ASSERT_NOT_REACHABLE();
+	}
+}
+
 void TextField::draw( Renderer *ren )
 {
     const float padding = 6;
 
-    ren->setColor( mTextColor );
-    mText->drawString( mInputString, vec2( padding, getCenterLocal().y + mText->getDescent() ) );
+    // draw text
+    {
+        auto color = mSelected ? mTextColorSelected : mTextColorNormal;
+        ren->setColor( color );
+        mText->drawString( mInputString, vec2( padding, getCenterLocal().y + mText->getDescent() ) );
+    }
 
-    auto color = mSelected ? mBorderColorSelected : mBorderColorNormal;
-    ren->setColor( color );
-    ren->drawStrokedRect( getBoundsLocal(), 2 );
+    // draw border
+    {
+        auto color = mSelected ? mBorderColorSelected : mBorderColorNormal;
+        ren->setColor( color );
+        ren->drawStrokedRect( getBoundsLocal(), 2 );
+    }
 }
 
 bool TextField::touchesBegan( ci::app::TouchEvent &event )

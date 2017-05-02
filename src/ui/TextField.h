@@ -28,6 +28,7 @@ namespace ui {
 
 typedef std::shared_ptr<class TextField>    TextFieldRef;
 
+// TODO: use this to 
 enum class TextMode {
     NUMERIC,
     ASCII
@@ -35,28 +36,32 @@ enum class TextMode {
 
 class TextField : public Control {
   public:
+	enum class State { NORMAL, SELECTED /*, PRESSED */ };
 
-      TextField( const ci::Rectf &bounds = ci::Rectf::zero() );
+	TextField( const ci::Rectf &bounds = ci::Rectf::zero() );
 
+	void setBorderColor( const ci::ColorA &color, State state = State::NORMAL );
+	void setTextColor( const ci::ColorA &color, State state = State::NORMAL );
 
   private:
 
-    void draw( Renderer *ren )	override;
+	void draw( Renderer *ren )	override;
 
-    // TODO: selecting text enabled should be handled with responder chain
-    bool touchesBegan( ci::app::TouchEvent &event )	override;
+	// TODO: selecting text enabled should be handled with responder chain
+	bool touchesBegan( ci::app::TouchEvent &event )	override;
 
-    bool keyDown( ci::app::KeyEvent &event ) override;
+	bool keyDown( ci::app::KeyEvent &event ) override;
 
-    TextRef		mText;
-    std::string mInputString;
+	TextRef		mText;
+	std::string mInputString;
 
-    ci::ColorA	mBorderColorNormal = ci::ColorA::gray( 1, 0.4f );
-    ci::ColorA	mBorderColorSelected = ci::ColorA::gray( 1, 0.6f );
-    ci::ColorA	mTextColor = ci::ColorA::gray( 1, 0.6f );
+	ci::ColorA	mBorderColorNormal = ci::ColorA::gray( 1, 0.4f );
+	ci::ColorA	mBorderColorSelected = ci::ColorA::gray( 1, 0.6f );
+	ci::ColorA	mTextColorNormal = ci::ColorA::gray( 1, 0.6f );
+	ci::ColorA	mTextColorSelected = ci::ColorA::white();
 
-    // temporary: while there is no responder chain
-    bool    mSelected = false;
+	// temporary: while there is no responder chain
+	bool    mSelected = false;
 };
 
 } // namespace ui
