@@ -34,7 +34,7 @@ enum class TextMode {
     ASCII
 };
 
-class TextField : public Control {
+class CI_UI_API TextField : public Control {
   public:
 	enum class State { NORMAL, SELECTED /*, PRESSED */ };
 
