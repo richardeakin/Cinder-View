@@ -95,7 +95,10 @@ void Suite::selectTest( const string &key )
 
 void Suite::select( size_t index )
 {
-	mSelector->select( index );
+	if( index == mSelector->getSelectedIndex() )
+		reload();
+	else
+		mSelector->select( index );
 }
 
 void Suite::setDrawUiEnabled( bool enable )
