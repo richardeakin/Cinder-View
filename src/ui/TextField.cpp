@@ -20,6 +20,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include "ui/TextField.h"
+#include "cinder/Log.h"
 
 using namespace ci;
 using namespace std;
@@ -82,15 +83,23 @@ bool TextField::touchesBegan( ci::app::TouchEvent &event )
 
 bool TextField::keyDown( ci::app::KeyEvent &event )
 {   
+	//CI_LOG_I( "char: " << ( event.getChar() ? event.getChar() : 0 ) << ", char utf32: " << event.getCharUtf32() << ", code: " << event.getCode() 
+	//	<< ", shift down: " << event.isShiftDown() << ", alt down: " << event.isAltDown() << ", ctrl down: " << event.isControlDown()
+	//	<< ", meta down: " << event.isMetaDown() << ", accel down: " << event.isAccelDown() << ", native code: " << event.getNativeKeyCode() );
+
     if( event.getCode() == app::KeyEvent::KEY_BACKSPACE ) {
+		//CI_LOG_I( "\t- delete, string length: " << mInputString.size() );
+
         if( ! mInputString.empty() )
             mInputString.pop_back();
     }
-    else {
+    else if( event.getChar() ) {
         auto c = event.getChar();
         // TODO: add numerical only mode
         //if( mMode == Format::NUMERICAL && ! isdigit( c ) )
         //    return;
+
+		//CI_LOG_I( "\t- adding char: " << c );
 
         mInputString.push_back( c );
     }
