@@ -22,6 +22,10 @@
 */
 
 #include "ui/GestureTracker.h"
+#include "cinder/Log.h"
+
+#define LOG_TRACKER( stream )	CI_LOG_I( stream )
+//#define LOG_TRACKER( stream )	( (void)( 0 ) )
 
 using namespace ci;
 using namespace std;
@@ -102,18 +106,44 @@ double SwipeTracker::getLastTouchTime() const
 // TapTracker
 // ----------------------------------------------------------------------------------------------------
 
-void TapTracker::processTouchesBegan( app::TouchEvent &event )
+// TODO list:
+// - [X] measure time between began and ended to make sure it counts as a tap
+// - [ ] measure time between successive taps to make sure it counts as a double or triple tap
+// - [ ] need a way to clear out expired taps / touches. considering doing it from the update() loop
+// - [ ] in multi-touch app, how to block against two fingers down at (close) to same time
+
+void TapTracker::processTouchesBegan( app::TouchEvent &event, double currentTime )
 {
 	if( mTouchIsDown )
 		return;
 
+	// ignore all but the first tap since multi-finger taps aren't yet supported
+	const auto &firstTouch = event.getTouches().front();
+	mStoredTouches[firstTouch.getId()] = { currentTime };
+
 	mTouchIsDown = true;
 }
 
-void TapTracker::processTouchesEnded( app::TouchEvent &event )
+void TapTracker::processTouchesEnded( app::TouchEvent &event, double currentTime )
 {
-	mTouchIsDown = false;
-	mCurrentTapCount += 1;
+	for( const auto &touch : event.getTouches() ) {
+		auto storedIt = mStoredTouches.find( touch.getId() );
+		if( storedIt != mStoredTouches.end() ) {
+			double tapDuration = currentTime - storedIt->second.eventSeconds;
+			LOG_TRACKER( "touch id: " << storedIt->first << ", tap duration: " << tapDuration );
+
+			if( tapDuration < mMaxDurationConsideredTap ) {
+				mCurrentTapCount += 1;
+				LOG_TRACKER( "\t- tap" );
+			}
+
+			mTouchIsDown = false;
+			mStoredTouches.erase( storedIt );
+		}
+	}
+
+
+	LOG_TRACKER( "tap count: " << mCurrentTapCount );
 }
 
 } // namespace ui

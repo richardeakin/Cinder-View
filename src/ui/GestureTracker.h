@@ -21,8 +21,12 @@
  POSSIBILITY OF SUCH DAMAGE.
 */
 
-// Note: these 'trackers' are not yet in any unified form. For now I'm just adding what useful in moving forward,
-// and planning to rewrite this part when there is more gesture functionality to work with.
+// Notes:
+// First off, these 'trackers' are not yet in any unified form. For now I'm just adding what useful in moving forward,
+// and planning to rewrite this part when there is more gesture functionality to work with. Current thoughts:
+// - Makes sense to pass in a Responder to the tracker (which is itself a View but we don't need all the View stuff).
+// - need a way to insert these into touches stream within the graph. UIKit does this by keeping a list of UIGesterRecognizers per view.
+// - if we want to be able to add these to arbitrary views, they should be callback (signal) based.
 
 #pragma once
 
@@ -30,9 +34,11 @@
 #include "cinder/app/TouchEvent.h"
 
 #include <list>
+#include <map>
 
 namespace ui {
 
+//! Swipe gesture tracker. Currently only one finger taps. TODO: multi-finger swipe support.
 class CI_UI_API SwipeTracker {
   public:
 
@@ -60,20 +66,31 @@ class CI_UI_API SwipeTracker {
 	size_t					mMaxStoredTouches = 10;
 };
 
+//! Tap gesture tracker. Supports multiple consecutive taps. Currently only one finger taps. TODO: multi-finger tap support.
 class CI_UI_API TapTracker {
   public:
-	void processTouchesBegan( ci::app::TouchEvent &event );
-	void processTouchesEnded( ci::app::TouchEvent &event );
+	void processTouchesBegan( ci::app::TouchEvent &event, double currentTime );
+	void processTouchesEnded( ci::app::TouchEvent &event, double currentTime );
 
-	int	getNumTapsRequired() const	{ return mNumTapsRequired; }
-	
-	// TODO: implement
 	//void setNumTapsRequired( int count )	{ mNumTapsRequired = count; }
+	//int	getNumTapsRequired() const	{ return mNumTapsRequired; }
+
+	int	getCurrentTapCount() const	{ return mCurrentTapCount; }
 
   private:
-	int		mNumTapsRequired = 2;
+	struct StoredTouch {
+		//ci::vec2	position;
+		double		eventSeconds;
+	};
+
+	std::map<uint32_t, StoredTouch>	mStoredTouches;
+
+	//int		mNumTapsRequired = 2;
 	int		mCurrentTapCount = 0;
 	bool	mTouchIsDown = false;
+	double	mMaxDurationBetweenTaps = 0.2f;
+	double	mMaxDurationConsideredTap = 0.1f;
+	double	mTimeLastTap = -1;
 };
 
 } // namespace ui

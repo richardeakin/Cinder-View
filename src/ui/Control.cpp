@@ -23,6 +23,7 @@
 
 #include "ui/Control.h"
 #include "ui/Layout.h"
+#include "ui/Graph.h"
 #include "cinder/Log.h"
 #include "fmt/format.h"
 #include <array>
@@ -113,7 +114,7 @@ std::string	NumberBox::getTitleLabel() const
 bool NumberBox::touchesBegan( app::TouchEvent &event )
 {
 	setTouchCanceled( false );
-	mTapTracker.processTouchesBegan( event );
+	mTapTracker.processTouchesBegan( event, getGraph()->getElapsedSeconds() );
 
 	auto &firstTouch = event.getTouches().front();
 	mDragStartPos = toLocal( firstTouch.getPos() );
@@ -142,7 +143,7 @@ bool NumberBox::touchesMoved( app::TouchEvent &event )
 bool NumberBox::touchesEnded( app::TouchEvent &event )
 {
 	setTouchCanceled( false );
-	mTapTracker.processTouchesEnded( event );
+	mTapTracker.processTouchesEnded( event, getGraph()->getElapsedSeconds() );
 
 	auto &firstTouch = event.getTouches().front();
 	vec2 pos = toLocal( firstTouch.getPos() );
@@ -153,7 +154,6 @@ bool NumberBox::touchesEnded( app::TouchEvent &event )
 	firstTouch.setHandled();
 	return true;
 }
-
 
 // Summing the delta change in both axes, so that dragging:
 // - right increases, left decreases
