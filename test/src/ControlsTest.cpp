@@ -56,21 +56,32 @@ ControlsTest::ControlsTest()
 //		CI_LOG_V( "mVSlider value: " << mVSlider->getValue() );
 	} );
 
+	auto nbox = make_shared<ui::NumberBox>( Rectf( 400, 360, 480, 400 ) );
+	nbox->setTitle( "val" );
+	//nbox->setBackgroundEnabled( false );
+
+	auto nbox3 = make_shared<ui::NumberBox3>( Rectf( 400, 410, 580, 450 ) );
+	ui::NumberBox3* nbox3Ptr = nbox3.get();
+	//	nbox3->getSignalValueChanged().connect( [nbox3Ptr] { CI_LOG_I( "nbox3 value: " << nbox3Ptr->getValue(); ); } );
+
 	mTextField = make_shared<ui::TextField>();
 	mTextField->setTextColor( Color( 0.5f, 1, 1 ), ui::TextField::State::SELECTED );
 
 	addSubviews( { 
-        mButton,
-        mImageButton,
-        mToggle,
-        mHSlider,
-        mVSlider,
-        mTextField
-    } );
+		mButton,
+		mImageButton,
+		mToggle,
+		mHSlider,
+		mVSlider,
+		nbox,
+		nbox3,
+		mTextField
+	} );
 }
 
 void ControlsTest::layout()
 {
+	// TODO: move these all to a container view and use a Layout
 	const float padding = 40.0f;
 
 	Rectf buttonBounds( padding, padding, padding + 80, padding + 30 );

@@ -24,14 +24,16 @@
 #pragma once
 
 #include "ui/View.h"
+#include "ui/Label.h"
 
 namespace ui {
 
-typedef std::shared_ptr<class Control>	ControlRef;
+typedef std::shared_ptr<class Control>		ControlRef;
+typedef std::shared_ptr<class NumberBox>	NumberBoxRef;
 
 //! Base class for all Controls, which usually are meant to be interacted with by a user.
 class CI_UI_API Control : public View {
-public:
+  public:
 	Control( const ci::Rectf &bounds = ci::Rectf::zero() )	: View( bounds ) {}
 
 	void setTouchCanceled( bool cancel )	{ mTouchCanceled = cancel; }
@@ -43,14 +45,121 @@ public:
 	//! Signal that is emitted whenever a Control's value changes
 	ci::signals::Signal<void ()>&	getSignalValueChanged()	{ return mSignalValueChanged; }
 
-protected:
+  protected:
 	bool hitTestInsideCancelPadding( const ci::vec2 &localPos ) const;
 
-private:
+  private:
 	ci::Rectf	mCancelPadding = ci::Rectf( 40, 40, 40, 40 );
 	bool		mTouchCanceled = false;
 
 	ci::signals::Signal<void ()>	mSignalValueChanged;
 };
+
+class CI_UI_API NumberBox : public Control {
+  public:
+	NumberBox( const ci::Rectf &bounds = ci::Rectf::zero() );
+
+	//! Sets the minimum value, defaults to smallest (negative) possible float
+	void setMin( float min );
+	//! Sets the maximum value, defaults to largest possible float
+	void setMax( float max );
+
+	float getMin() const	{ return mMin; }
+	float getMax() const	{ return mMax; }
+
+	//! Sets the amount that the value is changed per pixel step when dragged. Default is 1.
+	void setStep( float step )	{ mStep = step; }
+	//! Returns the amount that the value is changed per pixel step when dragged.
+	float getStep() const	{ return mStep; }
+
+	void				setTitle( const std::string &title )	{ mTitle = title; }
+	const std::string&	getTitle() const						{ return mTitle; }
+
+	float getValue() const	{ return mValue; }
+
+	void setValue( float value, bool emitChanged = true );
+
+	void setBorderColor( const ci::ColorA &color )	{ mBorderColor = color; }
+	void setTitleColor( const ci::ColorA &color )	{ mTitleColor = color; }
+
+	void setSnapToIntEnabled( bool enable )	{ mSnapToInt = enable; }
+	bool isSnapToIntEnabled() const			{ return mSnapToInt; }
+
+  protected:
+	void draw( Renderer *ren )	override;
+
+	bool touchesBegan( ci::app::TouchEvent &event )	override;
+	bool touchesMoved( ci::app::TouchEvent &event )	override;
+	bool touchesEnded( ci::app::TouchEvent &event )	override;
+
+	std::string	getTitleLabel() const;
+
+	void updateValue( const ci::vec2 &pos );
+
+  private:
+	float	mValue = 0;
+	float	mMin;
+	float	mMax;
+	float	mStep = 1;
+
+	ci::vec2	mDragStartPos;
+	float		mDragStartValue = 0;
+	bool        mSnapToInt = false;
+	ci::ColorA	mBorderColor = ci::ColorA::gray( 1, 0.4f );
+	ci::ColorA	mTitleColor = ci::ColorA::gray( 1, 0.6f );
+	std::string	mTitle;
+	TextRef		mTextLabel;
+};
+
+template <typename T>
+class CI_UI_API NumberBoxT : public Control {
+  public:
+	NumberBoxT( const ci::Rectf &bounds = ci::Rectf::zero() );
+
+	//!
+	void setValue( const T &value );
+	//!
+	const T&	getValue() const	{ return mValue; }
+
+	//! Returns the number of components
+	size_t getSize() const	{ return mValue.size(); }
+
+
+	//! Sets the minimum value, defaults to smallest (negative) possible float
+	void setMin( float min );
+	//! Sets the maximum value, defaults to largest possible float
+	void setMax( float max );
+	//! Sets the amount that the value is changed per pixel step when dragged. Default is 1.
+	void setStep( float step );
+	//!
+	void setBorderColor( const ci::ColorA &color );
+
+	enum TitlePosition { TOP, LEFT,	RIGHT };
+
+	void				setTitle( const std::string &title, TitlePosition position = TitlePosition::TOP );
+	const std::string&	getTitle() const;
+
+  private:
+	void onValueChanged();
+
+	ui::LabelRef				mTitleLabel;
+	ui::ViewRef					mControlContainer;
+	std::vector<NumberBoxRef>	mNumberBoxes;
+	T							mValue;
+
+	ci::ColorA					mTitleColor	= ci::ColorA::gray( 1, 0.6f );
+	TitlePosition				mTitlePosition = TitlePosition::TOP; // TODO: use this, currently only supporting TOP
+
+};
+
+typedef NumberBoxT<float>		NumberBox1;
+typedef NumberBoxT<ci::vec2>	NumberBox2;
+typedef NumberBoxT<ci::vec3>	NumberBox3;
+typedef NumberBoxT<ci::vec4>	NumberBox4;
+
+typedef std::shared_ptr<NumberBox1>	NumberBox1Ref;
+typedef std::shared_ptr<NumberBox2>	NumberBox2Ref;
+typedef std::shared_ptr<NumberBox3>	NumberBox3Ref;
+typedef std::shared_ptr<NumberBox4>	NumberBox4Ref;
 
 } // namespace ui
