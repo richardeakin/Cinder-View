@@ -20,9 +20,8 @@
 */
 
 #include "ui/ScrollView.h"
+#include "ui/Graph.h"
 #include "cinder/Log.h"
-
-#include "cinder/app/App.h" // TODO: remove me. currently used for app::getElapsedSeconds(), but will get this from Graph instead
 
 using namespace ci;
 using namespace std;
@@ -189,8 +188,7 @@ void ScrollView::updateOffset( const ci::vec2 &currentPos, const ci::vec2 &previ
 void ScrollView::updateDeceleratingOffset()
 {
 	// apply velocity to content offset
-	const float targetFrameRate = app::getFrameRate(); // TODO: need to get time + framerate from a source that is independant of app (something akin to a Context)
-	float deltaTime = 1.0f / targetFrameRate;
+	float deltaTime = 1.0f / (float)getGraph()->getTargetFrameRate();
 	vec2 contentOffset = mContentOffset() - mSwipeVelocity * deltaTime;
 
 	const Rectf &boundaries = getDeceleratingBoundaries();
@@ -246,7 +244,7 @@ bool ScrollView::touchesBegan( app::TouchEvent &event )
 	auto &firstTouch = event.getTouches().front();
 	vec2 pos = toLocal( firstTouch.getPos() );
 	mSwipeTracker->clear();
-	mSwipeTracker->storeTouchPos( pos, app::getElapsedSeconds() );
+	mSwipeTracker->storeTouchPos( pos, getGraph()->getElapsedSeconds() );
 
 	mDragging = false; // will set to true once touchesMoved() is fired
 
@@ -259,7 +257,7 @@ bool ScrollView::touchesMoved( app::TouchEvent &event )
 	vec2 pos = toLocal( event.getTouches().front().getPos() );
 	vec2 lastPos = mSwipeTracker->getLastTouchPos();
 	updateOffset( pos, lastPos );
-	mSwipeTracker->storeTouchPos( pos, app::getElapsedSeconds() );
+	mSwipeTracker->storeTouchPos( pos, getGraph()->getElapsedSeconds() );
 	
 	if( ! mDragging ) {
 		mDragging = true;
@@ -277,7 +275,7 @@ bool ScrollView::touchesEnded( app::TouchEvent &event )
 	vec2 pos = toLocal( event.getTouches().front().getPos() );
 	vec2 lastPos = mSwipeTracker->getLastTouchPos();
 	updateOffset( pos, lastPos );
-	mSwipeTracker->storeTouchPos( pos, app::getElapsedSeconds() );
+	mSwipeTracker->storeTouchPos( pos, getGraph()->getElapsedSeconds() );
 
 	mSwipeVelocity = mSwipeTracker->calcSwipeVelocity();
 

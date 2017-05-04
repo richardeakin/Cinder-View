@@ -100,6 +100,11 @@ class CI_UI_API Graph : public View {
 	//! Returns the size used for clipping operations. Defaults to the size of the window
 	ci::ivec2 getClippingSize() const;
 
+	//!
+	double	getTargetFrameRate() const;
+	//!
+	double	getElapsedSeconds() const;
+
   protected:
 	void layout() override;
 
