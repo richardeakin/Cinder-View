@@ -22,13 +22,12 @@
 #pragma once
 
 #include "ui/View.h"
+#include "ui/GestureTracker.h"
 
 namespace ui {
 
 typedef std::shared_ptr<class ScrollView>			ScrollViewRef;
 typedef std::shared_ptr<class PagingScrollView>		PagingScrollViewRef;
-
-class SwipeTracker;
 
 class CI_UI_API ScrollView : public View {
   public:
@@ -232,34 +231,6 @@ class CI_UI_API PagingScrollView : public ScrollView {
 	bool			mPageIsChangingAnimated = false;
 
 	ci::signals::Signal<void ()>	mSignalPageWillChange, mSignalPageDidChange;
-};
-
-// TODO: should probably move this to some sort of GestureTrackers.h, but it isn't very well thought out.
-class CI_UI_API SwipeTracker {
-public:
-
-	void clear();
-	void storeTouchPos( const ci::vec2 &pos, double currentTime );
-	ci::vec2 calcSwipeVelocity();
-	ci::vec2 calcSwipeDistance();
-
-	ci::vec2 getFirstTouchPos() const	{ return mFirstTouch.position; }
-	//! Returns the positions of the last recorded touch, or vec2( 0 ) if none have yet been recorded.
-	ci::vec2 getLastTouchPos() const;
-	//! Returns the time of the last recorded touch, or -1 if none have yet been recorded.
-	double getLastTouchTime() const;
-	//! Returns the number of stored touches.
-	size_t getNumStoredTouches() const	{ return mStoredTouches.size(); }
-
-private:
-	struct StoredTouch {
-		ci::vec2	position;
-		double		eventSeconds;
-	};
-
-	std::list<StoredTouch>	mStoredTouches;
-	StoredTouch				mFirstTouch;
-	size_t					mMaxStoredTouches = 10;
 };
 
 } // namespace ui
