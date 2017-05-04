@@ -25,6 +25,7 @@
 
 #include "ui/View.h"
 #include "ui/Label.h"
+#include "ui/GestureTracker.h"
 
 namespace ui {
 
@@ -109,6 +110,7 @@ class CI_UI_API NumberBox : public Control {
 	ci::ColorA	mTitleColor = ci::ColorA::gray( 1, 0.6f );
 	std::string	mTitle;
 	TextRef		mTextLabel;
+	TapTracker	mTapTracker;
 };
 
 template <typename T>

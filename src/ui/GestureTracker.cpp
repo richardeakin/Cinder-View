@@ -98,4 +98,22 @@ double SwipeTracker::getLastTouchTime() const
 	return mStoredTouches.back().eventSeconds;
 }
 
+// ----------------------------------------------------------------------------------------------------
+// TapTracker
+// ----------------------------------------------------------------------------------------------------
+
+void TapTracker::processTouchesBegan( app::TouchEvent &event )
+{
+	if( mTouchIsDown )
+		return;
+
+	mTouchIsDown = true;
+}
+
+void TapTracker::processTouchesEnded( app::TouchEvent &event )
+{
+	mTouchIsDown = false;
+	mCurrentTapCount += 1;
+}
+
 } // namespace ui

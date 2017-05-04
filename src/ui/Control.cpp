@@ -113,6 +113,8 @@ std::string	NumberBox::getTitleLabel() const
 bool NumberBox::touchesBegan( app::TouchEvent &event )
 {
 	setTouchCanceled( false );
+	mTapTracker.processTouchesBegan( event );
+
 	auto &firstTouch = event.getTouches().front();
 	mDragStartPos = toLocal( firstTouch.getPos() );
 	mDragStartValue = mValue;
@@ -140,6 +142,7 @@ bool NumberBox::touchesMoved( app::TouchEvent &event )
 bool NumberBox::touchesEnded( app::TouchEvent &event )
 {
 	setTouchCanceled( false );
+	mTapTracker.processTouchesEnded( event );
 
 	auto &firstTouch = event.getTouches().front();
 	vec2 pos = toLocal( firstTouch.getPos() );

@@ -21,10 +21,13 @@
  POSSIBILITY OF SUCH DAMAGE.
 */
 
+// Note: these 'trackers' are not yet in any unified form. For now I'm just adding what useful in moving forward,
+// and planning to rewrite this part when there is more gesture functionality to work with.
+
 #pragma once
 
 #include "ui/Export.h"
-#include "cinder/Vector.h"
+#include "cinder/app/TouchEvent.h"
 
 #include <list>
 
@@ -55,6 +58,22 @@ class CI_UI_API SwipeTracker {
 	std::list<StoredTouch>	mStoredTouches;
 	StoredTouch				mFirstTouch;
 	size_t					mMaxStoredTouches = 10;
+};
+
+class CI_UI_API TapTracker {
+  public:
+	void processTouchesBegan( ci::app::TouchEvent &event );
+	void processTouchesEnded( ci::app::TouchEvent &event );
+
+	int	getNumTapsRequired() const	{ return mNumTapsRequired; }
+	
+	// TODO: implement
+	//void setNumTapsRequired( int count )	{ mNumTapsRequired = count; }
+
+  private:
+	int		mNumTapsRequired = 2;
+	int		mCurrentTapCount = 0;
+	bool	mTouchIsDown = false;
 };
 
 } // namespace ui
