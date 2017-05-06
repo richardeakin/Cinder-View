@@ -173,6 +173,8 @@ class CI_UI_API SliderBase : public Control {
 	void updateValue( const ci::vec2 &pos );
 
   private:
+	void onDoubleTap();
+
 	float	mValue = 0;
 	float	mMin = 0;
 	float	mMax = 1;
@@ -184,6 +186,7 @@ class CI_UI_API SliderBase : public Control {
 	ci::ColorA	mTitleColor = ci::ColorA::gray( 1, 0.6f );
 	std::string	mTitle;
 	TextRef		mTextLabel;
+	TapTracker	mTapTracker;
 };
 
 class CI_UI_API HSlider : public SliderBase {
@@ -313,7 +316,6 @@ class CI_UI_API NumberBox : public Control {
 	std::string	mTitle;
 	TextRef		mTextLabel;
 	TapTracker	mTapTracker;
-	ci::signals::ConnectionList mConnections;
 };
 
 template <typename T>

@@ -98,6 +98,7 @@ class CI_UI_API TapTracker {
 	int		mNumTapsRequired = 2;
 	double	mMaxDurationBetweenTaps = 0.2f;
 	double	mMaxDurationConsideredTap = 0.2f;
+	//double	mMinDurationBetweenTouches = 0.05f; // TODO: probably need to limit how fast something can be considered a tap
 
 	// state:
 	std::map<uint32_t, StoredTouch>	mStoredTouches;

@@ -106,12 +106,6 @@ double SwipeTracker::getLastTouchTime() const
 // TapTracker
 // ----------------------------------------------------------------------------------------------------
 
-// TODO list:
-// - [X] measure time between began and ended to make sure it counts as a tap
-// - [X] measure time between successive taps to make sure it counts as a double or triple tap
-// - [X] need a way to clear out expired taps / touches. right now doing it on the next touches began
-// - [ ] in multi-touch app, how to block against two fingers down at (close) to same time
-
 TapTracker::TapTracker()
 {
 	clear();
@@ -146,7 +140,7 @@ void TapTracker::processTouchesBegan( app::TouchEvent &event, double currentTime
 	// ignore all but the first tap since multi-finger taps aren't yet supported
 	const auto &firstTouch = event.getTouches().front();
 	mStoredTouches[firstTouch.getId()] = { currentTime };
-	LOG_TRACKER( "stored touch: " << firstTouch.getId() << ", current tap count: " << mCurrentTapCount );
+	LOG_TRACKER( "num touches: " << event.getTouches().size() << ", stored touch: " << firstTouch.getId() << ", current tap count: " << mCurrentTapCount );
 
 	mTouchIsDown = true;
 }
@@ -179,7 +173,7 @@ void TapTracker::processTouchesEnded( app::TouchEvent &event, double currentTime
 		}
 	}
 
-	LOG_TRACKER( "tap count: " << mCurrentTapCount );
+	LOG_TRACKER( "num touches: " << event.getTouches().size() << ", tap count: " << mCurrentTapCount );
 	if( mCurrentTapCount >= mNumTapsRequired ) {
 		mSignalGestureDetected.emit();
 		clear();
