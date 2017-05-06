@@ -47,7 +47,7 @@ class CI_UI_API SuiteView : public ui::View {
 //! Class for managing a selection of Views with some basic Controls and automatic layout. Useful for test or sample sets.
 class CI_UI_API Suite {
   public:
-	Suite();
+	Suite( const ui::Graph::EventOptions &eventOptions = {} );
 
 	//! Registers a subclass of SuiteView with an associated \a key that will be displayed in a VSelector on screen.
 	template<typename Y>

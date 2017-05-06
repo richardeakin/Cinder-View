@@ -40,6 +40,7 @@ ControlsTest::ControlsTest()
 	mToggle->setLabel( "toggle" );
 	mToggle->setTitle( "Larry" );
 	mToggle->setTitle( "Curly", ui::Button::State::ENABLED );
+	mToggle->setColor( Color( 0.2f, 0.5f, 0.5f ), ui::Button::State::ENABLED );
 	mToggle->getSignalPressed().connect( [] { CI_LOG_V( "toggle pressed" ); } );
 	mToggle->getSignalReleased().connect( [] { CI_LOG_V( "toggle released" ); } );
 

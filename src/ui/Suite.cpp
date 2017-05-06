@@ -39,12 +39,12 @@ const float PADDING         = 6;
 // Suite
 // ----------------------------------------------------------------------------------------------------
 
-Suite::Suite()
+Suite::Suite( const ui::Graph::EventOptions &eventOptions )
 {
 	mGraph = make_shared<ui::Graph>();
 	mGraph->setLabel( "Suite root" );
 	mGraph->setFillParentEnabled();
-	mGraph->connectEvents();
+	mGraph->connectEvents( eventOptions );
 
 	mSelector = make_shared<ui::VSelector>();
 	mSelector->getBackground()->setColor( ColorA::gray( 0, 0.3f ) );
