@@ -93,7 +93,7 @@ void NumberBox::setValue( float value, bool emitChanged )
 
 void NumberBox::onDoubleTap()
 {
-	CI_LOG_I( "num taps: " << mTapTracker.getCurrentTapCount() );
+	CI_LOG_I( "bang" );
 	getBackground()->setColor( Color( 0, 0.5f, 0.5f ) );
 }
 

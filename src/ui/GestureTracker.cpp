@@ -24,8 +24,8 @@
 #include "ui/GestureTracker.h"
 #include "cinder/Log.h"
 
-#define LOG_TRACKER( stream )	CI_LOG_I( stream )
-//#define LOG_TRACKER( stream )	( (void)( 0 ) )
+//#define LOG_TRACKER( stream )	CI_LOG_I( stream )
+#define LOG_TRACKER( stream )	( (void)( 0 ) )
 
 using namespace ci;
 using namespace std;
@@ -108,8 +108,8 @@ double SwipeTracker::getLastTouchTime() const
 
 // TODO list:
 // - [X] measure time between began and ended to make sure it counts as a tap
-// - [ ] measure time between successive taps to make sure it counts as a double or triple tap
-// - [ ] need a way to clear out expired taps / touches. considering doing it from the update() loop
+// - [X] measure time between successive taps to make sure it counts as a double or triple tap
+// - [X] need a way to clear out expired taps / touches. right now doing it on the next touches began
 // - [ ] in multi-touch app, how to block against two fingers down at (close) to same time
 
 TapTracker::TapTracker()
@@ -125,13 +125,21 @@ void TapTracker::clear()
 	mTimeLastTap = -1;
 }
 
+/*
+int	TapTracker::getCurrentTapCount() const
+{ 
+	if( mCurrentTapCount > 0 && currentTime - mTimeLastTap > mMaxDurationBetweenTaps ) {
+	}
+}
+*/
+
 void TapTracker::processTouchesBegan( app::TouchEvent &event, double currentTime )
 {
 	if( mTouchIsDown )
 		return;
 
 	if( mCurrentTapCount > 0 && currentTime - mTimeLastTap > mMaxDurationBetweenTaps ) {
-		LOG_TRACKER( "\t- time between taps too long (" << currentTime - mTimeLastTap << "s), clearing current." );
+		LOG_TRACKER( "\t- time between taps too long (" << currentTime - mTimeLastTap << "s), clearing." );
 		clear();
 	}
 
@@ -151,7 +159,13 @@ void TapTracker::processTouchesEnded( app::TouchEvent &event, double currentTime
 			double tapDuration = currentTime - storedIt->second.eventSeconds;
 			LOG_TRACKER( "touch id: " << storedIt->first << ", tap duration: " << tapDuration );
 
-			if( tapDuration < mMaxDurationConsideredTap ) {
+			if( tapDuration > mMaxDurationConsideredTap ) {
+				// If a stored touch begin takes too long to complete, reset
+				LOG_TRACKER( "\t- tap duration too long (" << tapDuration << "s), clearing." );
+				clear();
+				return;
+			}
+			else {
 				mCurrentTapCount += 1;
 				mTimeLastTap = currentTime;
 				LOG_TRACKER( "\t- tap at: " << mTimeLastTap << "s" );
@@ -159,9 +173,11 @@ void TapTracker::processTouchesEnded( app::TouchEvent &event, double currentTime
 
 			mTouchIsDown = false;
 			mStoredTouches.erase( storedIt );
+
+			// only supporting single finger taps for now, so break after the first one is processed
+			break;
 		}
 	}
-
 
 	LOG_TRACKER( "tap count: " << mCurrentTapCount );
 	if( mCurrentTapCount >= mNumTapsRequired ) {

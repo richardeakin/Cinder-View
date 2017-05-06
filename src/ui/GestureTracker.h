@@ -73,18 +73,18 @@ class CI_UI_API TapTracker {
 	TapTracker();
 
 	//! Re-initialize state.
-	void clear();
+	void	clear();
 
-	void processTouchesBegan( ci::app::TouchEvent &event, double currentTime );
-	void processTouchesEnded( ci::app::TouchEvent &event, double currentTime );
+	void	processTouchesBegan( ci::app::TouchEvent &event, double currentTime );
+	void	processTouchesEnded( ci::app::TouchEvent &event, double currentTime );
 
-	//void setNumTapsRequired( int count )	{ mNumTapsRequired = count; }
-	//int	getNumTapsRequired() const	{ return mNumTapsRequired; }
+	void	setNumTapsRequired( int count )	{ mNumTapsRequired = count; }
+	int		getNumTapsRequired() const			{ return mNumTapsRequired; }
 
-	// TODO: consider calculating this dynamically, filtering out expired taps.
-	// - would require that mStoredTouches be mutable.
-	// - also possible: store them as a vector<touch id, event time>, and don't need to filter out until next touches began.
-	int	getCurrentTapCount() const	{ return mCurrentTapCount; }
+	//! Returns the current number of successful taps.
+	// TODO: for this to be correct, we'd need to know the current time in order to cancel expired taps
+	// - will have this if gesture trackers have access to the Graph.
+	//int	getCurrentTapCount() const;
 
 	ci::signals::Signal<void ()>&	getSignalGestureDetected()	{ return mSignalGestureDetected; }
 
