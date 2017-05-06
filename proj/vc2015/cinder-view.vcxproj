@@ -36,7 +36,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\fmt\format.cc" />
-    <ClCompile Include="..\..\src\ui\Button.cpp" />
     <ClCompile Include="..\..\src\ui\Control.cpp" />
     <ClCompile Include="..\..\src\ui\Filter.cpp" />
     <ClCompile Include="..\..\src\ui\GestureTracker.cpp" />
@@ -49,8 +48,6 @@
     <ClCompile Include="..\..\src\ui\Layout.cpp" />
     <ClCompile Include="..\..\src\ui\Renderer.cpp" />
     <ClCompile Include="..\..\src\ui\ScrollView.cpp" />
-    <ClCompile Include="..\..\src\ui\Selector.cpp" />
-    <ClCompile Include="..\..\src\ui\Slider.cpp" />
     <ClCompile Include="..\..\src\ui\Suite.cpp" />
     <ClCompile Include="..\..\src\ui\TextField.cpp" />
     <ClCompile Include="..\..\src\ui\TextManager.cpp" />
@@ -59,7 +56,6 @@
   <ItemGroup>
     <ClInclude Include="..\..\src\fmt\format.h" />
     <ClInclude Include="..\..\src\mason\Factory.h" />
-    <ClInclude Include="..\..\src\ui\Button.h" />
     <ClInclude Include="..\..\src\ui\Control.h" />
     <ClInclude Include="..\..\src\ui\Export.h" />
     <ClInclude Include="..\..\src\ui\Filter.h" />
@@ -73,8 +69,6 @@
     <ClInclude Include="..\..\src\ui\Layout.h" />
     <ClInclude Include="..\..\src\ui\Renderer.h" />
     <ClInclude Include="..\..\src\ui\ScrollView.h" />
-    <ClInclude Include="..\..\src\ui\Selector.h" />
-    <ClInclude Include="..\..\src\ui\Slider.h" />
     <ClInclude Include="..\..\src\ui\Suite.h" />
     <ClInclude Include="..\..\src\ui\TextField.h" />
     <ClInclude Include="..\..\src\ui\TextManager.h" />

@@ -2,8 +2,6 @@
 
 #include "ui/Suite.h"
 
-#include "ui/Slider.h"
-#include "ui/Button.h"
 #include "ui/TextField.h"
 
 #include "cinder/gl/TextureFont.h"

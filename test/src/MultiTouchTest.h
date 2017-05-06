@@ -3,8 +3,6 @@
 #include "cinder/Tween.h"
 
 #include "ui/Suite.h"
-#include "ui/Slider.h"
-#include "ui/Button.h"
 
 #include "cinder/gl/gl.h"
 

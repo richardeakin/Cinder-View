@@ -1,6 +1,6 @@
 #include "ScrollTests.h"
 #include "ui/ImageView.h"
-#include "ui/Button.h"
+#include "ui/Label.h"
 
 #include "cinder/app/App.h"
 #include "cinder/gl/gl.h"

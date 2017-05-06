@@ -21,11 +21,8 @@
 
 #pragma once
 
-#include "ui/View.h"
-#include "ui/Button.h"
-#include "ui/Selector.h"
-#include "ui/Slider.h"
 #include "ui/Graph.h"
+#include "ui/Control.h"
 
 #include "mason/Factory.h"
 

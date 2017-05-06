@@ -49,6 +49,520 @@ bool Control::hitTestInsideCancelPadding( const vec2 &localPos ) const
 }
 
 // ----------------------------------------------------------------------------------------------------
+// Button
+// ----------------------------------------------------------------------------------------------------
+
+Button::Button( const Rectf &bounds )
+	: Control( bounds )
+{
+	mTextTitle = TextManager::loadText( FontFace::NORMAL );
+}
+
+const ColorA& Button::getColorForState( Button::State state ) const
+{
+	switch( state ) {
+		case State::NORMAL:		return mColorNormal;
+		case State::ENABLED:	return mColorEnabled;
+		case State::PRESSED:	return mColorPressed;
+		default:				break;
+	}
+
+	return mColorNormal;
+}
+
+ImageRef Button::getImageForState( State state ) const
+{
+	switch( state ) {
+		case State::NORMAL:		return mImageNormal;
+		case State::ENABLED:	return mImageEnabled;
+		case State::PRESSED:	return mImagePressed;
+		default:				break;
+	}
+
+	return mImageNormal;
+}
+
+const string& Button::getTitleForState( State state ) const
+{
+	if( state == State::ENABLED && ! mTitleEnabled.empty() )
+		return mTitleEnabled;
+	else
+		return mTitleNormal;
+}
+
+const ColorA& Button::getTitleColorForState( State state ) const
+{
+	if( state == State::ENABLED && mHasColorTitleEnabled )
+		return mColorTitleEnabled;
+	else
+		return mColorTitleNormal;
+}
+
+void Button::draw( Renderer *ren )
+{
+	auto image = getImage();
+	if( image ) {
+		// draw image
+		ren->draw( image, getBoundsLocal() );
+	}
+	else {
+		// draw background solid color
+		ren->setColor( getColor() );
+		ren->drawSolidRect( getBoundsLocal() );
+
+		// draw title
+		const float padding = 6;
+		ren->setColor( getTitleColor() );
+		mTextTitle->drawString( getTitle(), vec2( padding, getCenterLocal().y + mTextTitle->getDescent() ) );
+	}
+}
+
+void Button::setEnabled( bool enabled )
+{
+	if( mEnabled == enabled )
+		return;
+
+	mEnabled = enabled;
+	mState = enabled ? State::ENABLED : State::NORMAL;
+
+	getSignalValueChanged().emit();
+}
+
+void Button::setTitle( const string &title, State state )
+{
+	if( state == State::NORMAL )
+		mTitleNormal = title;
+	else
+		mTitleEnabled = title;
+}
+
+void Button::setTitleColor( const ci::ColorA &color, State state )
+{
+	if( state == State::ENABLED ) {
+		mColorTitleEnabled = color;
+		mHasColorTitleEnabled = true;
+	}
+	else
+		mColorTitleNormal = color;
+}
+
+void Button::setColor( const ci::ColorA &color, State state )
+{
+	switch( state ) {
+		case State::NORMAL:		mColorNormal = color; return;
+		case State::ENABLED:	mColorEnabled = color; return;
+		case State::PRESSED:	mColorPressed = color; return;
+		default: CI_ASSERT_NOT_REACHABLE();
+	}
+}
+
+void Button::setImage( const ui::ImageRef &image, State state )
+{
+	switch( state ) {
+		case State::NORMAL:		mImageNormal = image; return;
+		case State::ENABLED:	mImageEnabled = image; return;
+		case State::PRESSED:	mImagePressed = image; return;
+		default: CI_ASSERT_NOT_REACHABLE();
+	}
+}
+
+ImageRef Button::getImage() const
+{
+	switch( getState() ) {
+		case State::NORMAL:
+		return mImageNormal;
+		case State::ENABLED: {
+			if( mImageEnabled )
+				return mImageEnabled;
+		}
+							 break;
+		case State::PRESSED: {
+			if( mImagePressed )
+				return mImagePressed;
+		}
+							 break;
+		default:
+		break;
+	}
+
+	return mImageNormal;
+}
+
+bool Button::touchesBegan( app::TouchEvent &event )
+{
+	mState = State::PRESSED;
+	setTouchCanceled( false );
+
+	mSignalPressed.emit();
+	event.getTouches().front().setHandled();
+	return true;
+}
+
+bool Button::touchesMoved( app::TouchEvent &event )
+{
+	if( isTouchCanceled() )
+		return false;
+
+	vec2 pos = toLocal( event.getTouches().front().getPos() );
+	if( ! hitTestInsideCancelPadding( pos ) ) {
+		setTouchCanceled( true );
+		mState = State::NORMAL;
+	}
+
+	return true;
+}
+
+bool Button::touchesEnded( app::TouchEvent &event )
+{
+	if( isTouchCanceled() )
+		return false;
+
+	vec2 pos = toLocal( event.getTouches().front().getPos() );
+	if( ! hitTestInsideCancelPadding( pos ) ) {
+		setTouchCanceled( true );
+		mState = State::NORMAL;
+	}
+	else {
+		bool enable = isToggle() ? ! isEnabled() : false;
+		setEnabled( enable );
+
+		mSignalReleased.emit();
+	}
+
+	return true;
+}
+
+// ----------------------------------------------------------------------------------------------------
+// CheckBox
+// ----------------------------------------------------------------------------------------------------
+
+CheckBox::CheckBox( const Rectf &bounds )
+	: Button( bounds )
+{
+	setAsToggle();
+}
+
+void CheckBox::draw( Renderer *ren )
+{
+	// draw background solid color
+	//	ren->setColor( getColor() );
+	//	ren->drawSolidRect( getBoundsLocal() );
+
+	const float padding = 6;
+	float r = glm::max( getHeight() - padding * 2, 2.0f );
+
+	auto checkBorder = Rectf( padding, padding, padding + r, padding + r );
+	auto checkFilled = Rectf( padding * 2, padding * 2, r, r );
+
+	ren->setColor( Color( 1, 1, 1 ) );
+	ren->drawStrokedRect( checkBorder, 2 );
+
+	if( isEnabled() ) {
+		ren->drawSolidRect( checkFilled );
+	}
+
+	// draw title
+	ren->setColor( getTitleColor() );
+	const float offsetY = 4;
+	mTextTitle->drawString( getTitle(), vec2( r + padding * 2, getCenterLocal().y + mTextTitle->getDescent() + offsetY ) );
+}
+
+// ----------------------------------------------------------------------------------------------------
+// SliderBase
+// ----------------------------------------------------------------------------------------------------
+
+SliderBase::SliderBase( const Rectf &bounds )
+	: Control( bounds )
+{
+	mTextLabel = TextManager::loadText( FontFace::NORMAL );
+
+	// set a default background color
+	getBackground()->setColor( Color::black() );
+}
+
+void SliderBase::setMin( float min )
+{
+	mMin = min;
+	if( mValue < min )
+		mValue = min;
+
+	updateSliderPos();
+}
+
+void SliderBase::setMax( float max )
+{
+	mMax = max;
+	if( mValue > max )
+		mValue = max;
+
+	updateSliderPos();
+}
+
+void SliderBase::setValue( float value, bool emitChanged )
+{
+	mValue = value;
+	if( mSnapToInt )
+		mValue = roundf( mValue );
+
+	updateSliderPos();
+
+	if( emitChanged )
+		getSignalValueChanged().emit();
+}
+
+void SliderBase::draw( Renderer *ren )
+{
+	const float sliderRadius = mValueThickness / 2;
+	const Rectf valRect = getValueRect( mSliderPos, sliderRadius );
+	const float padding = 6;
+
+	ren->setColor( mValueColor );
+	ren->drawSolidRect( valRect );
+
+	ren->setColor( mTitleColor );
+	mTextLabel->drawString( getTitleLabel(), vec2( padding, getCenterLocal().y + mTextLabel->getDescent() ) );
+}
+
+std::string	SliderBase::getTitleLabel() const
+{
+	std::string result = mTitle;
+	if( ! result.empty() )
+		result += ": ";
+
+	result += fmt::format( "{}", getValue() );
+	return result;
+}
+
+bool SliderBase::touchesBegan( app::TouchEvent &event )
+{
+	setTouchCanceled( false );
+	auto &firstTouch = event.getTouches().front();
+	vec2 pos = toLocal( firstTouch.getPos() );
+
+	LOG_TOUCHES( "[" << getName() << "] pos: " << pos << ", num touches: " << event.getTouches().size() );
+
+	updateValue( pos );
+	firstTouch.setHandled();
+	return true;
+}
+
+bool SliderBase::touchesMoved( app::TouchEvent &event )
+{
+	if( isTouchCanceled() )
+		return false;
+
+	auto &firstTouch = event.getTouches().front();
+	vec2 pos = toLocal( firstTouch.getPos() );
+	if( ! hitTestInsideCancelPadding( pos ) ) {
+		LOG_TOUCHES( "[" << getName() << "] CANCELED| pos: " << pos << ", num touches: " << event.getTouches().size() );
+		setTouchCanceled( true );
+		return false;
+	}
+
+	LOG_TOUCHES( "[" << getName() << "] pos: " << pos << ", num touches: " << event.getTouches().size() );
+
+	updateValue( pos );
+	firstTouch.setHandled();
+	return true;
+}
+
+bool SliderBase::touchesEnded( app::TouchEvent &event )
+{
+	if( isTouchCanceled() )
+		return false;
+
+	auto &firstTouch = event.getTouches().front();
+	vec2 pos = toLocal( firstTouch.getPos() );
+	if( ! hitTestInsideCancelPadding( pos ) ) {
+		LOG_TOUCHES( "[" << getName() << "] CANCELED| pos: " << pos << ", num touches: " << event.getTouches().size() );
+		setTouchCanceled( true );
+		return false;
+	}
+
+	LOG_TOUCHES( "[" << getName() << "] pos: " << pos << ", num touches: " << event.getTouches().size() );
+
+	updateValue( pos );
+	firstTouch.setHandled();
+	return true;
+}
+
+void SliderBase::updateSliderPos()
+{
+	float range = mMax - mMin;
+	if( fabs( range ) <= 0.00001f )
+		mSliderPos = 0;
+	else
+		mSliderPos = constrain<float>( ( mValue - mMin ) / range, 0, 1 );
+}
+
+void SliderBase::updateValue( const ci::vec2 &pos )
+{
+	mSliderPos = constrain<float>( getValuePercentage( pos ), 0, 1 );
+
+	float prevValue = mValue;
+	mValue = ( mMax - mMin ) * mSliderPos + mMin;
+	if( mSnapToInt )
+		mValue = roundf( mValue );
+
+	if( mValue != prevValue )
+		getSignalValueChanged().emit();
+}
+
+// ----------------------------------------------------------------------------------------------------
+// HSlider
+// ----------------------------------------------------------------------------------------------------
+
+float HSlider::getValuePercentage( const ci::vec2 &pos )
+{
+	return getWidth() < 0.00001f ? 0 : pos.x / getWidth();
+}
+
+Rectf HSlider::getValueRect( float sliderPos, float sliderRadius ) const
+{
+	float offset = sliderPos * getWidth();
+	return Rectf( offset - sliderRadius, 0, offset + sliderRadius, getHeight() );
+
+}
+
+
+// ----------------------------------------------------------------------------------------------------
+// VSlider
+// ----------------------------------------------------------------------------------------------------
+
+float VSlider::getValuePercentage( const ci::vec2 &pos )
+{
+	return getHeight() < 0.00001f ? 0 : ( 1 - pos.y / getHeight() );
+}
+
+Rectf VSlider::getValueRect( float sliderPos, float sliderRadius ) const
+{
+	float offset = ( 1 - sliderPos ) * getHeight();
+	return Rectf( 0, offset - sliderRadius, getWidth(), offset + sliderRadius );
+}
+
+// ----------------------------------------------------------------------------------------------------
+// SelectorBase
+// ----------------------------------------------------------------------------------------------------
+
+SelectorBase::SelectorBase( const Rectf &bounds )
+	: Control( bounds )
+{
+	setBlendMode( BlendMode::PREMULT_ALPHA );
+
+	mTextLabel = TextManager::loadText( FontFace::NORMAL );
+}
+
+void SelectorBase::draw( Renderer *ren )
+{
+	const float padding = 10;
+
+	float sectionHeight = getHeight() / (float)mSegments.size();
+	Rectf section( 0, 0, getWidth(), sectionHeight );
+
+	ren->setColor( mUnselectedColor );
+	for( size_t i = 0; i < mSegments.size(); i++ ) {
+		if( i != mSelectedIndex ) {
+			ren->drawStrokedRect( section );
+			mTextLabel->drawString( mSegments[i], vec2( section.x1 + padding, section.getCenter().y + mTextLabel->getDescent() ) );
+		}
+		section += vec2( 0.0f, sectionHeight );
+	}
+
+	ren->setColor( mSelectedColor );
+
+	section.y1 = mSelectedIndex * sectionHeight;
+	section.y2 = section.y1 + sectionHeight;
+	ren->drawStrokedRect( section );
+
+	if( ! mSegments.empty() ) {
+		mTextLabel->drawString( mSegments[mSelectedIndex], vec2( section.x1 + padding, section.getCenter().y + mTextLabel->getDescent() ) );
+	}
+
+	if( ! mTitle.empty() ) {
+		ren->setColor( mTitleColor );
+		mTextLabel->drawString( mTitle, vec2( padding, - mTextLabel->getDescent() ) );
+	}
+}
+
+
+bool SelectorBase::touchesBegan( app::TouchEvent &event )
+{
+	setTouchCanceled( false );
+	auto &firstTouch = event.getTouches().front();
+	vec2 pos = toLocal( firstTouch.getPos() );
+	updateSelection( pos );
+	firstTouch.setHandled();
+	return true;
+}
+
+bool SelectorBase::touchesMoved( app::TouchEvent &event )
+{
+	if( isTouchCanceled() )
+		return false;
+
+	vec2 pos = toLocal( event.getTouches().front().getPos() );
+	if( ! hitTestInsideCancelPadding( pos ) ) {
+		setTouchCanceled( true );
+		return false;
+	}
+
+	updateSelection( pos );
+	return true;
+}
+
+bool SelectorBase::touchesEnded( app::TouchEvent &event )
+{
+	if( isTouchCanceled() )
+		return false;
+
+	vec2 pos = toLocal( event.getTouches().front().getPos() );
+	if( ! hitTestInsideCancelPadding( pos ) ) {
+		setTouchCanceled( true );
+		return false;
+	}
+
+	updateSelection( pos );
+	return true;
+}
+
+void SelectorBase::updateSelection( const vec2 &pos )
+{
+	int offset = int( pos.y - getPos().y );
+	int sectionHeight = int( getHeight() / (float)mSegments.size() );
+	size_t selectedIndex = std::min<size_t>( offset / sectionHeight, mSegments.size() - 1 );
+
+	if( mSelectedIndex != selectedIndex ) {
+		mSelectedIndex = selectedIndex;
+		getSignalValueChanged().emit();
+	}
+}
+
+const std::string& SelectorBase::getSelectedLabel() const
+{
+	return mSegments.at( mSelectedIndex );
+}
+
+void SelectorBase::select( size_t index )
+{
+	CI_ASSERT( index < mSegments.size() );
+
+	if( mSelectedIndex != index ) {
+		mSelectedIndex = index;
+		getSignalValueChanged().emit();
+	}
+}
+
+void SelectorBase::select( const string &label )
+{
+	for( size_t i = 0; i < mSegments.size(); i++ ) {
+		if( mSegments[i] == label )
+			select( i );
+	}
+
+	CI_LOG_E( "unknown label: " << label );
+}
+
+// ----------------------------------------------------------------------------------------------------
 // NumberBox
 // ----------------------------------------------------------------------------------------------------
 

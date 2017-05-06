@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\ui\Button.cpp">
-      <Filter>src\ui</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\ui\Control.cpp">
       <Filter>src\ui</Filter>
     </ClCompile>
@@ -43,12 +40,6 @@
       <Filter>src\ui</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\ui\ScrollView.cpp">
-      <Filter>src\ui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\ui\Selector.cpp">
-      <Filter>src\ui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\ui\Slider.cpp">
       <Filter>src\ui</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\ui\Suite.cpp">
@@ -77,9 +68,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\ui\Button.h">
-      <Filter>src\ui</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\ui\Control.h">
       <Filter>src\ui</Filter>
     </ClInclude>
@@ -105,12 +93,6 @@
       <Filter>src\ui</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\ui\ScrollView.h">
-      <Filter>src\ui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\ui\Selector.h">
-      <Filter>src\ui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\ui\Slider.h">
       <Filter>src\ui</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\ui\Suite.h">

@@ -30,6 +30,11 @@
 namespace ui {
 
 typedef std::shared_ptr<class Control>		ControlRef;
+typedef std::shared_ptr<class Button>		ButtonRef;
+typedef std::shared_ptr<class CheckBox>		CheckBoxRef;
+typedef std::shared_ptr<class HSlider>		HSliderRef;
+typedef std::shared_ptr<class VSlider>		VSliderRef;
+typedef std::shared_ptr<class VSelector>	VSelectorRef;
 typedef std::shared_ptr<class NumberBox>	NumberBoxRef;
 
 //! Base class for all Controls, which usually are meant to be interacted with by a user.
@@ -54,6 +59,201 @@ class CI_UI_API Control : public View {
 	bool		mTouchCanceled = false;
 
 	ci::signals::Signal<void ()>	mSignalValueChanged;
+};
+
+class CI_UI_API Button : public Control {
+  public:
+	enum class State { NORMAL, ENABLED, PRESSED };
+
+	Button( const ci::Rectf &bounds = ci::Rectf::zero() );
+
+	void setEnabled( bool enabled = true );
+	bool isEnabled() const					{ return mEnabled; }
+	bool getValue() const					{ return isEnabled(); }
+
+	void setAsToggle( bool toggle = true )	{ mIsToggle = toggle; }
+	bool isToggle() const					{ return mIsToggle; }
+
+	State	getState() const	{ return mState; }
+
+	void setTitle( const std::string &title, State state = State::NORMAL );
+	void setTitleColor( const ci::ColorA &color, State state = State::NORMAL );
+	void setColor( const ci::ColorA &color, State state = State::NORMAL );
+
+	//! Sets an Image to represent the Button. If added then title won't be used.
+	//! TODO: only State::Normal is supported right now, add enabled and pressed too
+	void setImage( const ui::ImageRef &image, State state = State::NORMAL );
+
+	const ci::ColorA&	getColorForState( State state ) const;
+	const std::string&	getTitleForState( State state ) const;
+	const ci::ColorA&	getTitleColorForState( State state ) const;
+	ImageRef			getImageForState( State state ) const;
+
+	const ci::ColorA&	getColor() const		{ return getColorForState( getState() ); }
+	const std::string&	getTitle() const		{ return getTitleForState( getState() ); }
+	const ci::ColorA&	getTitleColor() const	{ return getTitleColorForState( getState() ); }
+	//! Returns the image that will be used to draw for the current state, if any. If there is an image for State::Normal but not the current button state, then it will be used.
+	ImageRef			getImage() const;
+
+	ci::signals::Signal<void ()>&	getSignalPressed()	{ return mSignalPressed; }
+	ci::signals::Signal<void ()>&	getSignalReleased()	{ return mSignalReleased; }
+
+  protected:
+	void draw( Renderer *ren )	override;
+
+	bool touchesBegan( ci::app::TouchEvent &event )	override;
+	bool touchesMoved( ci::app::TouchEvent &event )	override;
+	bool touchesEnded( ci::app::TouchEvent &event )	override;
+
+	bool        mEnabled = false;
+	bool        mIsToggle = false;
+	State       mState = State::NORMAL;
+
+	ci::ColorA	mColorNormal = ci::ColorA::gray( 0.5f );
+	ci::ColorA	mColorEnabled = ci::ColorA::gray( 0.38f );
+	ci::ColorA	mColorPressed = ci::ColorA::gray( 0.3f );
+	ci::ColorA	mColorTitleNormal = ci::ColorA::gray( 0.2f, 0.6f );
+	ci::ColorA	mColorTitleEnabled = ci::ColorA::gray( 0.2f, 0.6f );
+	bool		mHasColorTitleEnabled = false; // keep track of when user hasn't set the title color for enabled, will use normal color otherwise
+
+	TextRef			mTextTitle;
+	std::string		mTitleNormal, mTitleEnabled;
+
+	ImageRef   mImageNormal, mImageEnabled, mImagePressed;
+
+	ci::signals::Signal<void ()>	mSignalPressed, mSignalReleased; // TODO: look at other frameworks (like html5, dart) and see what they name these, and how they organize the events
+};
+
+//! Toggle Button with text off to the right side.
+class CI_UI_API CheckBox : public Button {
+  public:
+	CheckBox( const ci::Rectf &bounds = ci::Rectf::zero() );
+
+  protected:
+	void draw( Renderer *ren )	override;
+
+};
+
+class CI_UI_API SliderBase : public Control {
+  public:
+	SliderBase( const ci::Rectf &bounds = ci::Rectf::zero() );
+
+	void setMin( float min );
+	void setMax( float max );
+
+	float getMin() const	{ return mMin; }
+	float getMax() const	{ return mMax; }
+
+	void				setTitle( const std::string &title )	{ mTitle = title; }
+	const std::string&	getTitle() const						{ return mTitle; }
+
+	float getValue() const	{ return mValue; }
+
+	void setValue( float value, bool emitChanged = true );
+
+	void setValueColor( const ci::ColorA &color )	{ mValueColor = color; }
+	void setTitleColor( const ci::ColorA &color )	{ mTitleColor = color; }
+
+	void setSnapToIntEnabled( bool enable )	{ mSnapToInt = enable; }
+	bool isSnapToIntEnabled() const			{ return mSnapToInt; }
+
+  protected:
+	void draw( Renderer *ren )	override;
+
+	bool touchesBegan( ci::app::TouchEvent &event )	override;
+	bool touchesMoved( ci::app::TouchEvent &event )	override;
+	bool touchesEnded( ci::app::TouchEvent &event )	override;
+
+	virtual float getValuePercentage( const ci::vec2 &pos )							= 0;
+	virtual ci::Rectf	getValueRect( float sliderPos, float sliderRadius ) const	= 0;
+
+	std::string	getTitleLabel() const;
+
+	void updateSliderPos();
+	void updateValue( const ci::vec2 &pos );
+
+  private:
+	float	mValue = 0;
+	float	mMin = 0;
+	float	mMax = 1;
+
+	float		mSliderPos = 0;
+	float		mValueThickness = 2;
+	bool        mSnapToInt = false;
+	ci::ColorA	mValueColor = ci::ColorA::gray( 1, 0.4f );
+	ci::ColorA	mTitleColor = ci::ColorA::gray( 1, 0.6f );
+	std::string	mTitle;
+	TextRef		mTextLabel;
+};
+
+class CI_UI_API HSlider : public SliderBase {
+  public:
+	HSlider( const ci::Rectf &bounds = ci::Rectf::zero() ) : SliderBase( bounds )	{}
+
+  protected:
+	ci::Rectf	getValueRect( float sliderPos, float sliderRadius ) const	override;
+	float		getValuePercentage( const ci::vec2 &pos )					override;
+};
+
+class CI_UI_API VSlider : public SliderBase {
+  public:
+	VSlider( const ci::Rectf &bounds = ci::Rectf::zero() ) : SliderBase( bounds )	{}
+
+  protected:
+	ci::Rectf	getValueRect( float sliderPos, float sliderRadius ) const	override;
+	float		getValuePercentage( const ci::vec2 &pos )					override;
+};
+
+class CI_UI_API SelectorBase : public Control {
+  public:
+	SelectorBase( const ci::Rectf &bounds = ci::Rectf::zero() );
+
+	const std::vector<std::string>&	getSegmentLabels() const			{ return mSegments; }
+	std::vector<std::string>&		getSegmentLabels()					{ return mSegments; }
+
+	void	setSegmentLabels( const std::vector<std::string> &segments )	{ mSegments = segments; }
+
+	size_t				getSelectedIndex() const	{ return mSelectedIndex; }
+	const std::string&	getSelectedLabel() const;
+
+	const std::string&	getTitle() const						{ return mTitle; }
+	void				setTitle( const std::string &title )	{ mTitle = title; }
+
+	void				setSelectedColor( const ci::ColorA &color )		{ mSelectedColor = color; }
+	const ci::ColorA&	getSelectedColor() const						{ return mSelectedColor; }
+	void				setUnselectedColor( const ci::ColorA &color )	{ mUnselectedColor = color; }
+	const ci::ColorA&	getUnselectedColor() const						{ return mUnselectedColor; }
+	void				setTitleColor( const ci::ColorA &color )		{ mTitleColor = color; }
+	const ci::ColorA&	getTitleColor() const							{ return mTitleColor; }
+
+	//! Causes value changed signal to be fired if the selection changes.
+	void select( size_t index );
+	//! Causes value changed signal to be fired if the selection changes.
+	void select( const std::string &label );
+
+  protected:
+	void draw( Renderer *ren )	override;
+
+	bool touchesBegan( ci::app::TouchEvent &event )	override;
+	bool touchesMoved( ci::app::TouchEvent &event )	override;
+	bool touchesEnded( ci::app::TouchEvent &event )	override;
+
+	void updateSelection( const ci::vec2 &pos );
+
+	std::vector<std::string>	mSegments;
+	size_t						mSelectedIndex = 0;
+	ci::ColorA					mSelectedColor = ci::ColorA::gray( 1, 0.9f );
+	ci::ColorA					mUnselectedColor = ci::ColorA::gray( 1, 0.5f );
+	ci::ColorA					mTitleColor = ci::ColorA::gray( 0.75f, 0.5f );
+	std::string					mTitle;
+	TextRef						mTextLabel;
+};
+
+class CI_UI_API VSelector : public SelectorBase {
+  public:
+	VSelector( const ci::Rectf &bounds = ci::Rectf::zero() ) : SelectorBase( bounds )	{}
+
+  protected:
 };
 
 class CI_UI_API NumberBox : public Control {
