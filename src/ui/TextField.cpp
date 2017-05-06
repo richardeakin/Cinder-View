@@ -28,11 +28,11 @@ using namespace std;
 namespace ui {
 
 TextField::TextField( const ci::Rectf &bounds )
-    : Control( bounds )
+	: Control( bounds )
 {
-    mText = TextManager::loadText( FontFace::NORMAL );
+	mText = TextManager::loadText( FontFace::NORMAL );
 
-    mInputString = "Hey hey";
+	mInputString = "Hey hey";
 }
 
 void TextField::setBorderColor( const ci::ColorA &color, State state )
@@ -57,54 +57,60 @@ void TextField::setTextColor( const ci::ColorA &color, State state )
 
 void TextField::draw( Renderer *ren )
 {
-    const float padding = 6;
+	const float padding = 6;
 
-    // draw text
-    {
-        auto color = mSelected ? mTextColorSelected : mTextColorNormal;
-        ren->setColor( color );
-        mText->drawString( mInputString, vec2( padding, getCenterLocal().y + mText->getDescent() ) );
-    }
+	// draw text
+	{
+		auto color = mSelected ? mTextColorSelected : mTextColorNormal;
+		ren->setColor( color );
+		mText->drawString( mInputString, vec2( padding, getCenterLocal().y + mText->getDescent() ) );
+	}
 
-    // draw border
-    {
-        auto color = mSelected ? mBorderColorSelected : mBorderColorNormal;
-        ren->setColor( color );
-        ren->drawStrokedRect( getBoundsLocal(), 2 );
-    }
+	// draw border
+	{
+		auto color = mSelected ? mBorderColorSelected : mBorderColorNormal;
+		ren->setColor( color );
+		ren->drawStrokedRect( getBoundsLocal(), 2 );
+	}
 }
 
 bool TextField::touchesBegan( ci::app::TouchEvent &event )
 {
-    mSelected = true;
+	mSelected = true;
 
-    return true;
+	return true;
 }
 
 bool TextField::keyDown( ci::app::KeyEvent &event )
 {   
+	if( ! mSelected )
+		return false;
+
 	//CI_LOG_I( "char: " << ( event.getChar() ? event.getChar() : 0 ) << ", char utf32: " << event.getCharUtf32() << ", code: " << event.getCode() 
 	//	<< ", shift down: " << event.isShiftDown() << ", alt down: " << event.isAltDown() << ", ctrl down: " << event.isControlDown()
 	//	<< ", meta down: " << event.isMetaDown() << ", accel down: " << event.isAccelDown() << ", native code: " << event.getNativeKeyCode() );
 
-    if( event.getCode() == app::KeyEvent::KEY_BACKSPACE ) {
+	if( event.getCode() == app::KeyEvent::KEY_BACKSPACE ) {
 		//CI_LOG_I( "\t- delete, string length: " << mInputString.size() );
 
-        if( ! mInputString.empty() )
-            mInputString.pop_back();
-    }
-    else if( event.getChar() ) {
-        auto c = event.getChar();
-        // TODO: add numerical only mode
-        //if( mMode == Format::NUMERICAL && ! isdigit( c ) )
-        //    return;
+		if( ! mInputString.empty() )
+			mInputString.pop_back();
+
+		return true;
+	}
+	else if( event.getChar() ) {
+		auto c = event.getChar();
+		// TODO: add numerical only mode
+		//if( mMode == Format::NUMERICAL && ! isdigit( c ) )
+		//    return;
 
 		//CI_LOG_I( "\t- adding char: " << c );
 
-        mInputString.push_back( c );
-    }
+		mInputString.push_back( c );
+		return true;
+	}
 
-    return true;
+	return false;
 }
 
 } // namespace ui
