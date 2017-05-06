@@ -112,14 +112,33 @@ double SwipeTracker::getLastTouchTime() const
 // - [ ] need a way to clear out expired taps / touches. considering doing it from the update() loop
 // - [ ] in multi-touch app, how to block against two fingers down at (close) to same time
 
+TapTracker::TapTracker()
+{
+	clear();
+}
+
+void TapTracker::clear()
+{
+	mStoredTouches.clear();
+	mCurrentTapCount = 0;
+	mTouchIsDown = false;
+	mTimeLastTap = -1;
+}
+
 void TapTracker::processTouchesBegan( app::TouchEvent &event, double currentTime )
 {
 	if( mTouchIsDown )
 		return;
 
+	if( mCurrentTapCount > 0 && currentTime - mTimeLastTap > mMaxDurationBetweenTaps ) {
+		LOG_TRACKER( "\t- time between taps too long (" << currentTime - mTimeLastTap << "s), clearing current." );
+		clear();
+	}
+
 	// ignore all but the first tap since multi-finger taps aren't yet supported
 	const auto &firstTouch = event.getTouches().front();
 	mStoredTouches[firstTouch.getId()] = { currentTime };
+	LOG_TRACKER( "stored touch: " << firstTouch.getId() << ", current tap count: " << mCurrentTapCount );
 
 	mTouchIsDown = true;
 }
@@ -134,7 +153,8 @@ void TapTracker::processTouchesEnded( app::TouchEvent &event, double currentTime
 
 			if( tapDuration < mMaxDurationConsideredTap ) {
 				mCurrentTapCount += 1;
-				LOG_TRACKER( "\t- tap" );
+				mTimeLastTap = currentTime;
+				LOG_TRACKER( "\t- tap at: " << mTimeLastTap << "s" );
 			}
 
 			mTouchIsDown = false;
@@ -144,6 +164,10 @@ void TapTracker::processTouchesEnded( app::TouchEvent &event, double currentTime
 
 
 	LOG_TRACKER( "tap count: " << mCurrentTapCount );
+	if( mCurrentTapCount >= mNumTapsRequired ) {
+		mSignalGestureDetected.emit();
+		clear();
+	}
 }
 
 } // namespace ui

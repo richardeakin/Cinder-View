@@ -61,6 +61,8 @@ NumberBox::NumberBox( const Rectf &bounds )
 
 	mTextLabel = TextManager::loadText( FontFace::NORMAL );
 
+	mConnections += mTapTracker.getSignalGestureDetected().connect( signals::slot( this, &NumberBox::onDoubleTap ) );
+
 	// set a default background color
 	getBackground()->setColor( Color::black() );
 }
@@ -87,6 +89,12 @@ void NumberBox::setValue( float value, bool emitChanged )
 
 	if( emitChanged )
 		getSignalValueChanged().emit();
+}
+
+void NumberBox::onDoubleTap()
+{
+	CI_LOG_I( "num taps: " << mTapTracker.getCurrentTapCount() );
+	getBackground()->setColor( Color( 0, 0.5f, 0.5f ) );
 }
 
 void NumberBox::draw( Renderer *ren )

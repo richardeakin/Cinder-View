@@ -98,6 +98,8 @@ class CI_UI_API NumberBox : public Control {
 	void updateValue( const ci::vec2 &pos );
 
   private:
+	void onDoubleTap();
+
 	float	mValue = 0;
 	float	mMin;
 	float	mMax;
@@ -111,6 +113,7 @@ class CI_UI_API NumberBox : public Control {
 	std::string	mTitle;
 	TextRef		mTextLabel;
 	TapTracker	mTapTracker;
+	ci::signals::ConnectionList mConnections;
 };
 
 template <typename T>

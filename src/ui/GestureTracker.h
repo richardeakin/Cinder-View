@@ -32,6 +32,7 @@
 
 #include "ui/Export.h"
 #include "cinder/app/TouchEvent.h"
+#include "cinder/Signals.h"
 
 #include <list>
 #include <map>
@@ -69,13 +70,23 @@ class CI_UI_API SwipeTracker {
 //! Tap gesture tracker. Supports multiple consecutive taps. Currently only one finger taps. TODO: multi-finger tap support.
 class CI_UI_API TapTracker {
   public:
+	TapTracker();
+
+	//! Re-initialize state.
+	void clear();
+
 	void processTouchesBegan( ci::app::TouchEvent &event, double currentTime );
 	void processTouchesEnded( ci::app::TouchEvent &event, double currentTime );
 
 	//void setNumTapsRequired( int count )	{ mNumTapsRequired = count; }
 	//int	getNumTapsRequired() const	{ return mNumTapsRequired; }
 
+	// TODO: consider calculating this dynamically, filtering out expired taps.
+	// - would require that mStoredTouches be mutable.
+	// - also possible: store them as a vector<touch id, event time>, and don't need to filter out until next touches began.
 	int	getCurrentTapCount() const	{ return mCurrentTapCount; }
+
+	ci::signals::Signal<void ()>&	getSignalGestureDetected()	{ return mSignalGestureDetected; }
 
   private:
 	struct StoredTouch {
@@ -83,14 +94,19 @@ class CI_UI_API TapTracker {
 		double		eventSeconds;
 	};
 
-	std::map<uint32_t, StoredTouch>	mStoredTouches;
-
-	//int		mNumTapsRequired = 2;
-	int		mCurrentTapCount = 0;
-	bool	mTouchIsDown = false;
+	// params:
+	int		mNumTapsRequired = 2;
 	double	mMaxDurationBetweenTaps = 0.2f;
-	double	mMaxDurationConsideredTap = 0.1f;
-	double	mTimeLastTap = -1;
+	double	mMaxDurationConsideredTap = 0.2f;
+
+	// state:
+	std::map<uint32_t, StoredTouch>	mStoredTouches;
+	int		mCurrentTapCount;
+	bool	mTouchIsDown;
+	double	mTimeLastTap;
+
+	ci::signals::Signal<void ()>	mSignalGestureDetected;
+
 };
 
 } // namespace ui
