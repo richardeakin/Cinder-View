@@ -47,7 +47,6 @@ class CI_UI_API TextField : public Control {
 	void	setPlaceholderText( const std::string &text );
 
   private:
-
 	void draw( Renderer *ren )	override;
 
 	bool	willBecomeFirstResponder() override;
@@ -59,6 +58,7 @@ class CI_UI_API TextField : public Control {
 	TextRef		mText;
 	std::string mInputString;
 	std::string mPlaceholderString;
+	int			mCursorPos = -1; // position of next character input
 
 	ci::ColorA	mBorderColorNormal = ci::ColorA::gray( 1, 0.4f );
 	ci::ColorA	mBorderColorSelected = ci::ColorA::gray( 1, 0.6f );

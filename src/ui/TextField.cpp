@@ -78,6 +78,23 @@ void TextField::draw( Renderer *ren )
 		mText->drawString( mPlaceholderString, vec2( padding, getCenterLocal().y + mText->getDescent() ) );
 	}
 
+	if( isFirstResponder() ) {
+		// draw cursor position
+		const float cursorThickness = 1;
+		const float nextCharOffset = 6;
+		vec2 cursorLoc = { 0, 0 };
+		if( mCursorPos > 0 ) {
+			// measure where the cursor should be drawn (where the next character will be inserted)
+			string stringUntilCursor = mInputString.substr( 0, mCursorPos );
+			cursorLoc = mText->measureString( stringUntilCursor );
+		}
+
+		cursorLoc.x += nextCharOffset;
+		Rectf cursorRect = { cursorLoc.x - cursorThickness / 2, 0, cursorLoc.x + cursorThickness / 2, getHeight() };
+		ren->setColor( mBorderColorSelected );
+		ren->drawSolidRect( cursorRect );
+	}
+
 	// draw border
 	{
 		auto color = isFirstResponder() ? mBorderColorSelected : mBorderColorNormal;
@@ -89,6 +106,10 @@ void TextField::draw( Renderer *ren )
 bool TextField::willBecomeFirstResponder()
 {
 	CI_LOG_I( getName() );
+	if( mCursorPos < 0 ) {
+		// set cursor position to one character after the current input string
+		mCursorPos = mInputString.size();
+	}
 	return true;
 }
 
@@ -107,9 +128,30 @@ bool TextField::keyDown( ci::app::KeyEvent &event )
 	if( event.getCode() == app::KeyEvent::KEY_BACKSPACE ) {
 		//CI_LOG_I( "\t- delete, string length: " << mInputString.size() );
 
-		if( ! mInputString.empty() )
-			mInputString.pop_back();
+		if( mCursorPos > 0 && mCursorPos - 1 < mInputString.size() ) {
+			mInputString.erase( mCursorPos - 1, 1 );
+			mCursorPos -= 1;
+		}
 
+		CI_LOG_I( "(backspace) string size: " << mInputString.size() << ", cursor pos: " << mCursorPos );
+
+		return true;
+	}
+	else if( event.getCode() == app::KeyEvent::KEY_RIGHT ) {
+		// move cursor to the right, if possible
+		if( mCursorPos < mInputString.size() ) {
+			mCursorPos += 1;
+		}
+
+		CI_LOG_I( "(right) string size: " << mInputString.size() << ", cursor pos: " << mCursorPos );
+	}
+	else if( event.getCode() == app::KeyEvent::KEY_LEFT ) {
+		// move cursor to the right, if possible
+		if( mCursorPos > 0 ) {
+			mCursorPos -= 1;
+		}
+
+		CI_LOG_I( "(left) string size: " << mInputString.size() << ", cursor pos: " << mCursorPos );
 		return true;
 	}
 	else if( event.getChar() ) {
@@ -120,7 +162,11 @@ bool TextField::keyDown( ci::app::KeyEvent &event )
 
 		//CI_LOG_I( "\t- adding char: " << c );
 
-		mInputString.push_back( c );
+		mInputString.insert( mCursorPos, 1, c );
+		//mInputString.push_back( c );
+		mCursorPos += 1;
+		CI_LOG_I( "(enter char) string size: " << mInputString.size() << ", cursor pos: " << mCursorPos );
+
 		return true;
 	}
 
