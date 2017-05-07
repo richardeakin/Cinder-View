@@ -58,7 +58,7 @@ class CI_UI_API TextField : public Control {
 	TextRef		mText;
 	std::string mInputString;
 	std::string mPlaceholderString;
-	int			mCursorPos = -1; // position of next character input
+	int			mCursorPos = -1; // position of next character input. -1 indicates it's never been set and will be at the end of the text once we're first responder
 
 	ci::ColorA	mBorderColorNormal = ci::ColorA::gray( 1, 0.4f );
 	ci::ColorA	mBorderColorSelected = ci::ColorA::gray( 1, 0.6f );

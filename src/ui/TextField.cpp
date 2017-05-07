@@ -83,11 +83,9 @@ void TextField::draw( Renderer *ren )
 		const float cursorThickness = 1;
 		const float nextCharOffset = 6;
 		vec2 cursorLoc = { 0, 0 };
-		if( mCursorPos > 0 ) {
-			// measure where the cursor should be drawn (where the next character will be inserted)
-			string stringUntilCursor = mInputString.substr( 0, mCursorPos );
-			cursorLoc = mText->measureString( stringUntilCursor );
-		}
+		// measure where the cursor should be drawn (where the next character will be inserted)
+		string stringUntilCursor = mInputString.substr( 0, mCursorPos );
+		cursorLoc = mText->measureString( stringUntilCursor );
 
 		cursorLoc.x += nextCharOffset;
 		Rectf cursorRect = { cursorLoc.x - cursorThickness / 2, 0, cursorLoc.x + cursorThickness / 2, getHeight() };
@@ -126,15 +124,21 @@ bool TextField::keyDown( ci::app::KeyEvent &event )
 	//	<< ", meta down: " << event.isMetaDown() << ", accel down: " << event.isAccelDown() << ", native code: " << event.getNativeKeyCode() );
 
 	if( event.getCode() == app::KeyEvent::KEY_BACKSPACE ) {
-		//CI_LOG_I( "\t- delete, string length: " << mInputString.size() );
-
+		// delete character before cursor, if possible
 		if( mCursorPos > 0 && mCursorPos - 1 < mInputString.size() ) {
 			mInputString.erase( mCursorPos - 1, 1 );
 			mCursorPos -= 1;
 		}
 
 		CI_LOG_I( "(backspace) string size: " << mInputString.size() << ", cursor pos: " << mCursorPos );
-
+		return true;
+	}
+	else if( event.getCode() == app::KeyEvent::KEY_DELETE ) {
+		// delete character after cursor, if possible
+		if( mCursorPos < mInputString.size() ) {
+			mInputString.erase( mCursorPos, 1 );
+		}
+		CI_LOG_I( "(delete) string size: " << mInputString.size() << ", cursor pos: " << mCursorPos );
 		return true;
 	}
 	else if( event.getCode() == app::KeyEvent::KEY_RIGHT ) {
