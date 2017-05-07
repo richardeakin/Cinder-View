@@ -57,6 +57,17 @@ ControlsTest::ControlsTest()
 //		CI_LOG_V( "mVSlider value: " << mVSlider->getValue() );
 	} );
 
+	mTextField1 = make_shared<ui::TextField>();
+	mTextField1->setPlaceholderText( "textfield 1" );
+	mTextField1->setTextColor( Color( 0.5f, 1, 1 ), ui::TextField::State::SELECTED );
+
+	mTextField2 = make_shared<ui::TextField>();
+	mTextField2->setPlaceholderText( "textfield 2" );
+	mTextField2->setTextColor( Color( 0.5f, 1, 1 ), ui::TextField::State::SELECTED );
+
+	mTextField1->setNextResponder( mTextField2 );
+	mTextField2->setNextResponder( mTextField1 );
+
 	auto nbox = make_shared<ui::NumberBox>( Rectf( 400, 360, 480, 400 ) );
 	nbox->setTitle( "val" );
 	//nbox->setBackgroundEnabled( false );
@@ -64,9 +75,6 @@ ControlsTest::ControlsTest()
 	auto nbox3 = make_shared<ui::NumberBox3>( Rectf( 400, 410, 580, 450 ) );
 	ui::NumberBox3* nbox3Ptr = nbox3.get();
 	//	nbox3->getSignalValueChanged().connect( [nbox3Ptr] { CI_LOG_I( "nbox3 value: " << nbox3Ptr->getValue(); ); } );
-
-	mTextField = make_shared<ui::TextField>();
-	mTextField->setTextColor( Color( 0.5f, 1, 1 ), ui::TextField::State::SELECTED );
 
 	addSubviews( { 
 		mButton,
@@ -76,7 +84,8 @@ ControlsTest::ControlsTest()
 		mVSlider,
 		nbox,
 		nbox3,
-		mTextField
+		mTextField1,
+		mTextField2
 	} );
 }
 
@@ -100,7 +109,10 @@ void ControlsTest::layout()
 	mVSlider->setBounds( sliderVBounds );
 
     Rectf textFieldBounds = Rectf( padding, sliderVBounds.y2 + 20, 300, sliderVBounds.y2 + 60 );
-    mTextField->setBounds( textFieldBounds );
+    mTextField1->setBounds( textFieldBounds );
+
+	textFieldBounds += vec2( 0, textFieldBounds.getHeight() + 20 );
+	mTextField2->setBounds( textFieldBounds );
 }
 
 bool ControlsTest::keyDown( app::KeyEvent &event )

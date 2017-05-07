@@ -219,9 +219,21 @@ void Graph::propagateTouchesBegan( app::TouchEvent &event )
 	for( const auto &touch : event.getTouches() )
 		mActiveTouches[touch.getId()] = touch;
 
-	auto thisRef = shared_from_this();
+	auto previousFirstResponder = mFirstResponder;
+	mFirstResponder = nullptr;
 	size_t numTouchesHandled = 0;
+	auto thisRef = shared_from_this();
 	propagateTouchesBegan( thisRef, event, numTouchesHandled );
+
+	CI_LOG_I( "first responder: " << ( ! mFirstResponder ? "(none)" : mFirstResponder->getName() ) );
+	if( mFirstResponder ) {
+		if( previousFirstResponder ) {
+			previousFirstResponder->mIsFirstResponder = false;
+			previousFirstResponder->resignFirstResponder();
+		}
+		mFirstResponder->mIsFirstResponder = true;
+		mFirstResponder->becomeFirstResponder();
+	}
 }
 
 void Graph::propagateTouchesBegan( ViewRef &view, app::TouchEvent &event, size_t &numTouchesHandled )
@@ -238,6 +250,9 @@ void Graph::propagateTouchesBegan( ViewRef &view, app::TouchEvent &event, size_t
 		vec2 pos = view->toLocal( touch.getPos() );
 		if( view->hitTest( pos ) ) {
 			touchesInside.push_back( touch );
+			
+			if( view->getAcceptsFirstResponder() )
+				mFirstResponder = view;
 		}
 	}
 
@@ -397,16 +412,29 @@ void Graph::propagateTouchesEnded( app::TouchEvent &event )
 
 void Graph::propagateKeyDown( ci::app::KeyEvent &event )
 {
-	auto thisRef = shared_from_this();
-	propagateKeyDown( thisRef, event );
+	if( mFirstResponder ) {
+		if( mFirstResponder->keyDown( event ) )
+			event.setHandled();
+	}
+	//auto thisRef = shared_from_this();
+	//propagateKeyDown( thisRef, event );
 }
 
 void Graph::propagateKeyUp( ci::app::KeyEvent &event )
 {
-	auto thisRef = shared_from_this();
-	propagateKeyUp( thisRef, event );
+	if( mFirstResponder ) {
+		if( mFirstResponder->keyUp( event ) )
+			event.setHandled();
+	}
+	//auto thisRef = shared_from_this();
+	//propagateKeyUp( thisRef, event );
 }
 
+// TODO: send keys to first responder
+// - need some way to support both first responder and hotkeys?
+// - unless now is the time to implement hotkey support alongside text input?
+// - do we need raw text keys all the time as well, down the graph?
+//    - probably not, any view that needs keyDown can declare it as accepting first responder
 void Graph::propagateKeyDown( ViewRef &view, ci::app::KeyEvent &event )
 {
 	if( view->isHidden() || ! view->isInteractive() )

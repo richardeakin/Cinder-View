@@ -43,25 +43,27 @@ class CI_UI_API TextField : public Control {
 	void setBorderColor( const ci::ColorA &color, State state = State::NORMAL );
 	void setTextColor( const ci::ColorA &color, State state = State::NORMAL );
 
+	void	setText( const std::string &text )				{ mInputString = text; }
+	void	setPlaceholderText( const std::string &text );
+
   private:
 
 	void draw( Renderer *ren )	override;
 
-	// TODO: selecting text enabled should be handled with responder chain
-	bool touchesBegan( ci::app::TouchEvent &event )	override;
+	bool	becomeFirstResponder() override;
+	bool	resignFirstResponder() override;
 
-	bool keyDown( ci::app::KeyEvent &event ) override;
+	bool	keyDown( ci::app::KeyEvent &event ) override;
+
 
 	TextRef		mText;
 	std::string mInputString;
+	std::string mPlaceholderString;
 
 	ci::ColorA	mBorderColorNormal = ci::ColorA::gray( 1, 0.4f );
 	ci::ColorA	mBorderColorSelected = ci::ColorA::gray( 1, 0.6f );
 	ci::ColorA	mTextColorNormal = ci::ColorA::gray( 1, 0.6f );
 	ci::ColorA	mTextColorSelected = ci::ColorA::white();
-
-	// temporary: while there is no responder chain
-	bool    mSelected = false;
 };
 
 } // namespace ui

@@ -30,9 +30,9 @@ namespace ui {
 TextField::TextField( const ci::Rectf &bounds )
 	: Control( bounds )
 {
-	mText = TextManager::loadText( FontFace::NORMAL );
+	setAcceptsFirstResponder( true );
 
-	mInputString = "Hey hey";
+	mText = TextManager::loadText( FontFace::NORMAL );
 }
 
 void TextField::setBorderColor( const ci::ColorA &color, State state )
@@ -55,37 +55,51 @@ void TextField::setTextColor( const ci::ColorA &color, State state )
 	}
 }
 
+void TextField::setPlaceholderText( const std::string &text )
+{
+	mPlaceholderString = text;
+	if( getLabel().empty() )
+		setLabel( text );
+}
+
 void TextField::draw( Renderer *ren )
 {
 	const float padding = 6;
 
 	// draw text
-	{
-		auto color = mSelected ? mTextColorSelected : mTextColorNormal;
+	if( ! mInputString.empty() ) {
+		auto color = isFirstResponder() ? mTextColorSelected : mTextColorNormal;
 		ren->setColor( color );
 		mText->drawString( mInputString, vec2( padding, getCenterLocal().y + mText->getDescent() ) );
+	}
+	else if( ! isFirstResponder() && ! mPlaceholderString.empty() ) {
+		auto color = Color::gray( 0.5f ); // TODO: make color a property
+		ren->setColor( color );
+		mText->drawString( mPlaceholderString, vec2( padding, getCenterLocal().y + mText->getDescent() ) );
 	}
 
 	// draw border
 	{
-		auto color = mSelected ? mBorderColorSelected : mBorderColorNormal;
+		auto color = isFirstResponder() ? mBorderColorSelected : mBorderColorNormal;
 		ren->setColor( color );
 		ren->drawStrokedRect( getBoundsLocal(), 2 );
 	}
 }
 
-bool TextField::touchesBegan( ci::app::TouchEvent &event )
+bool TextField::becomeFirstResponder()
 {
-	mSelected = true;
+	CI_LOG_I( getName() );
+	return true;
+}
 
+bool TextField::resignFirstResponder()
+{
+	CI_LOG_I( getName() );
 	return true;
 }
 
 bool TextField::keyDown( ci::app::KeyEvent &event )
 {   
-	if( ! mSelected )
-		return false;
-
 	//CI_LOG_I( "char: " << ( event.getChar() ? event.getChar() : 0 ) << ", char utf32: " << event.getCharUtf32() << ", code: " << event.getCode() 
 	//	<< ", shift down: " << event.isShiftDown() << ", alt down: " << event.isAltDown() << ", ctrl down: " << event.isControlDown()
 	//	<< ", meta down: " << event.isMetaDown() << ", accel down: " << event.isAccelDown() << ", native code: " << event.getNativeKeyCode() );
@@ -97,6 +111,14 @@ bool TextField::keyDown( ci::app::KeyEvent &event )
 			mInputString.pop_back();
 
 		return true;
+	}
+	else if( event.getCode() == app::KeyEvent::KEY_TAB ) {
+		if( event.isShiftDown() ) {
+			CI_LOG_I( "TODO: previous responder" );
+		}
+		else {
+			CI_LOG_I( "TODO: next responder" );
+		}
 	}
 	else if( event.getChar() ) {
 		auto c = event.getChar();
