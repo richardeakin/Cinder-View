@@ -50,8 +50,8 @@ class CI_UI_API TextField : public Control {
 
 	void draw( Renderer *ren )	override;
 
-	bool	becomeFirstResponder() override;
-	bool	resignFirstResponder() override;
+	bool	willBecomeFirstResponder() override;
+	bool	willResignFirstResponder() override;
 
 	bool	keyDown( ci::app::KeyEvent &event ) override;
 

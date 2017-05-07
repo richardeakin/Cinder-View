@@ -58,11 +58,17 @@ class CI_UI_API Responder {
 	//!
 	void	setNextResponder( const ViewRef &view )		{ mNextResponder = view; }
 
+	//!
+	bool	becomeFirstResponder();
+	//!
+	bool	resignFirstResponder();
+
   protected:
+	// TODO: rename these with 'can' or 'should' suffix? To indicate they are asking whether this is possible or not
 	//! Return false if you cannot become first responder.
-	virtual bool	becomeFirstResponder()	{ return true; }
+	virtual bool	willBecomeFirstResponder()	{ return true; }
 	//! Return true if you won't resign first responder.
-	virtual bool	resignFirstResponder()	{ return true; }
+	virtual bool	willResignFirstResponder()	{ return true; }
 
 	// Override to handle UI events. Return true if any touch was handled, false otherwise.
 	virtual bool touchesBegan( ci::app::TouchEvent &event )	{ return false; }

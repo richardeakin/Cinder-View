@@ -129,7 +129,7 @@ class CI_UI_API Graph : public View {
 
 	std::list<LayerRef>	    mLayers;
 	std::list<ViewRef>	    mViewsWithTouches;
-	ViewRef					mFirstResponder;
+	ViewRef					mFirstResponder, mPreviousFirstResponder;
 
 	friend class Layer;
 };

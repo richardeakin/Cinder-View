@@ -86,13 +86,13 @@ void TextField::draw( Renderer *ren )
 	}
 }
 
-bool TextField::becomeFirstResponder()
+bool TextField::willBecomeFirstResponder()
 {
 	CI_LOG_I( getName() );
 	return true;
 }
 
-bool TextField::resignFirstResponder()
+bool TextField::willResignFirstResponder()
 {
 	CI_LOG_I( getName() );
 	return true;
@@ -111,14 +111,6 @@ bool TextField::keyDown( ci::app::KeyEvent &event )
 			mInputString.pop_back();
 
 		return true;
-	}
-	else if( event.getCode() == app::KeyEvent::KEY_TAB ) {
-		if( event.isShiftDown() ) {
-			CI_LOG_I( "TODO: previous responder" );
-		}
-		else {
-			CI_LOG_I( "TODO: next responder" );
-		}
 	}
 	else if( event.getChar() ) {
 		auto c = event.getChar();

@@ -38,6 +38,34 @@ namespace ui {
 
 const float BOUNDS_EPSILON = 0.00001f;
 
+// ----------------------------------------------------------------------------------------------------
+// Responder
+// ----------------------------------------------------------------------------------------------------
+
+bool Responder::becomeFirstResponder()
+{
+	bool result = willBecomeFirstResponder();
+	if( result ) {
+		mIsFirstResponder = true;
+	}
+	return result;
+}
+
+bool Responder::resignFirstResponder()
+{ 
+	bool result = willResignFirstResponder();
+	if( result ) {
+		mIsFirstResponder = false;
+		if( mNextResponder )
+			mNextResponder->becomeFirstResponder(); // TODO: this should happen in a loop until someone becomes next
+	}
+	return result;
+}
+
+// ----------------------------------------------------------------------------------------------------
+// View
+// ----------------------------------------------------------------------------------------------------
+
 View::View( const ci::Rectf &bounds )
 	: mPos( bounds.getUpperLeft() ), mSize( vec2( bounds.x2 - bounds.x1, bounds.y2 - bounds.y1 ) )
 {
