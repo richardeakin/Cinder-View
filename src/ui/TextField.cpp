@@ -160,14 +160,10 @@ bool TextField::keyDown( ci::app::KeyEvent &event )
 	}
 	else if( event.getChar() ) {
 		auto c = event.getChar();
-		// TODO: add numerical only mode
-		//if( mMode == Format::NUMERICAL && ! isdigit( c ) )
-		//    return;
-
-		//CI_LOG_I( "\t- adding char: " << c );
+		if( mInputMode == InputMode::NUMERIC && ! isdigit( c ) && c != '.' )
+		    return false;
 
 		mInputString.insert( mCursorPos, 1, c );
-		//mInputString.push_back( c );
 		mCursorPos += 1;
 		CI_LOG_I( "(enter char) string size: " << mInputString.size() << ", cursor pos: " << mCursorPos );
 

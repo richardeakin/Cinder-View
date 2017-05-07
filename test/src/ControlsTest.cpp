@@ -63,6 +63,7 @@ ControlsTest::ControlsTest()
 
 	mTextField2 = make_shared<ui::TextField>();
 	mTextField2->setPlaceholderText( "textfield 2" );
+	mTextField2->setInputMode( ui::TextField::InputMode::NUMERIC );
 	mTextField2->setTextColor( Color( 0.5f, 1, 1 ), ui::TextField::State::SELECTED );
 
 	mTextField1->setNextResponder( mTextField2 );
