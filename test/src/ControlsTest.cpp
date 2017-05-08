@@ -57,14 +57,18 @@ ControlsTest::ControlsTest()
 //		CI_LOG_V( "mVSlider value: " << mVSlider->getValue() );
 	} );
 
+	auto selectedColor = Color( 0.5f, 1, 1 );
+
 	mTextField1 = make_shared<ui::TextField>();
 	mTextField1->setPlaceholderText( "textfield 1" );
-	mTextField1->setTextColor( Color( 0.5f, 1, 1 ), ui::TextField::State::SELECTED );
+	mTextField1->setTextColor( selectedColor, ui::TextField::State::SELECTED );
+	mTextField1->setBorderColor( selectedColor, ui::TextField::State::SELECTED );
 
 	mTextField2 = make_shared<ui::TextField>();
 	mTextField2->setPlaceholderText( "textfield 2" );
 	mTextField2->setInputMode( ui::TextField::InputMode::NUMERIC );
-	mTextField2->setTextColor( Color( 0.5f, 1, 1 ), ui::TextField::State::SELECTED );
+	mTextField2->setTextColor( selectedColor, ui::TextField::State::SELECTED );
+	mTextField2->setBorderColor( selectedColor, ui::TextField::State::SELECTED );
 
 	mTextField1->setNextResponder( mTextField2 );
 	mTextField2->setNextResponder( mTextField1 );

@@ -227,7 +227,7 @@ void Graph::propagateTouchesBegan( app::TouchEvent &event )
 
 	CI_LOG_I( "first responder: " << ( ! mFirstResponder ? "(none)" : mFirstResponder->getName() ) );
 	if( mFirstResponder ) {
-		if( previousFirstResponder ) {
+		if( previousFirstResponder && previousFirstResponder != mFirstResponder ) {
 			mPreviousFirstResponder = previousFirstResponder;
 			mPreviousFirstResponder->resignFirstResponder();
 		}
@@ -409,29 +409,31 @@ void Graph::propagateTouchesEnded( app::TouchEvent &event )
 	mCurrentTouchEvent.getTouches().clear();
 }
 
-// TODO: handle tab / shift-tab right here for navigating responder chain?
 void Graph::propagateKeyDown( ci::app::KeyEvent &event )
 {
 	if( mFirstResponder ) {
-		// TODO: support responders allowing tab keys
+		// tab / shift-tab to navigate next and previous responders
 		if( event.getCode() == app::KeyEvent::KEY_TAB ) {
 			if( event.isShiftDown() ) {
-				CI_LOG_I( "TODO: previous responder" );
-
 				// FIXME: this isn't good enough, only goes back one level
 				// - this also needs to resign the current responder
 				if( mPreviousFirstResponder ) {
 					mFirstResponder->resignFirstResponder();
 					mPreviousFirstResponder->becomeFirstResponder();
+					mFirstResponder = mPreviousFirstResponder;
+					mPreviousFirstResponder = nullptr; // don't know where to store this, yet
 				}
 			}
 			else {
 				mFirstResponder->resignFirstResponder();
+				mPreviousFirstResponder = mFirstResponder;
+				mFirstResponder = mFirstResponder->getNextResponder();
 			}
 		}
-
-		if( mFirstResponder->keyDown( event ) )
-			event.setHandled();
+		else {
+			if( mFirstResponder->keyDown( event ) )
+				event.setHandled();
+		}
 	}
 	//auto thisRef = shared_from_this();
 	//propagateKeyDown( thisRef, event );
