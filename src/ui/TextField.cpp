@@ -20,7 +20,11 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 
 #include "ui/TextField.h"
+#include "ui/Graph.h"
 #include "cinder/Log.h"
+
+//#define LOG_TEXT( stream )	CI_LOG_I( stream )
+#define LOG_TEXT( stream )	( (void)( 0 ) )
 
 using namespace ci;
 using namespace std;
@@ -31,6 +35,7 @@ TextField::TextField( const ci::Rectf &bounds )
 	: Control( bounds )
 {
 	setAcceptsFirstResponder( true );
+	setClipEnabled( true );
 
 	mText = TextManager::loadText( FontFace::NORMAL );
 }
@@ -86,11 +91,17 @@ void TextField::draw( Renderer *ren )
 		// measure where the cursor should be drawn (where the next character will be inserted)
 		string stringUntilCursor = mInputString.substr( 0, mCursorPos );
 		cursorLoc = mText->measureString( stringUntilCursor );
-
 		cursorLoc.x += nextCharOffset;
 		Rectf cursorRect = { cursorLoc.x - cursorThickness / 2, 0, cursorLoc.x + cursorThickness / 2, getHeight() };
-		ren->setColor( mBorderColorSelected );
+
+		ColorA cursorColor = mBorderColorSelected;
+		cursorColor.a *= (float)( 1.0 - glm::pow( cos( getGraph()->getElapsedSeconds() * 2 ), 4 ) );
+
+		// TODO: does this need more care to be correctly composited?
+		ren->pushBlendMode( ui::BlendMode::PREMULT_ALPHA );
+		ren->setColor( cursorColor );
 		ren->drawSolidRect( cursorRect );
+		ren->popBlendMode();
 	}
 
 	// draw border
@@ -103,7 +114,7 @@ void TextField::draw( Renderer *ren )
 
 bool TextField::willBecomeFirstResponder()
 {
-	CI_LOG_I( getName() );
+	LOG_TEXT( getName() );
 	if( mCursorPos < 0 ) {
 		// set cursor position to one character after the current input string
 		mCursorPos = mInputString.size();
@@ -113,13 +124,13 @@ bool TextField::willBecomeFirstResponder()
 
 bool TextField::willResignFirstResponder()
 {
-	CI_LOG_I( getName() );
+	LOG_TEXT( getName() );
 	return true;
 }
 
 bool TextField::keyDown( ci::app::KeyEvent &event )
 {   
-	//CI_LOG_I( "char: " << ( event.getChar() ? event.getChar() : 0 ) << ", char utf32: " << event.getCharUtf32() << ", code: " << event.getCode() 
+	//LOG_TEXT( "char: " << ( event.getChar() ? event.getChar() : 0 ) << ", char utf32: " << event.getCharUtf32() << ", code: " << event.getCode() 
 	//	<< ", shift down: " << event.isShiftDown() << ", alt down: " << event.isAltDown() << ", ctrl down: " << event.isControlDown()
 	//	<< ", meta down: " << event.isMetaDown() << ", accel down: " << event.isAccelDown() << ", native code: " << event.getNativeKeyCode() );
 
@@ -130,7 +141,7 @@ bool TextField::keyDown( ci::app::KeyEvent &event )
 			mCursorPos -= 1;
 		}
 
-		CI_LOG_I( "(backspace) string size: " << mInputString.size() << ", cursor pos: " << mCursorPos );
+		LOG_TEXT( "(backspace) string size: " << mInputString.size() << ", cursor pos: " << mCursorPos );
 		return true;
 	}
 	else if( event.getCode() == app::KeyEvent::KEY_DELETE ) {
@@ -138,7 +149,7 @@ bool TextField::keyDown( ci::app::KeyEvent &event )
 		if( mCursorPos < mInputString.size() ) {
 			mInputString.erase( mCursorPos, 1 );
 		}
-		CI_LOG_I( "(delete) string size: " << mInputString.size() << ", cursor pos: " << mCursorPos );
+		LOG_TEXT( "(delete) string size: " << mInputString.size() << ", cursor pos: " << mCursorPos );
 		return true;
 	}
 	else if( event.getCode() == app::KeyEvent::KEY_RIGHT ) {
@@ -147,7 +158,7 @@ bool TextField::keyDown( ci::app::KeyEvent &event )
 			mCursorPos += 1;
 		}
 
-		CI_LOG_I( "(right) string size: " << mInputString.size() << ", cursor pos: " << mCursorPos );
+		LOG_TEXT( "(right) string size: " << mInputString.size() << ", cursor pos: " << mCursorPos );
 	}
 	else if( event.getCode() == app::KeyEvent::KEY_LEFT ) {
 		// move cursor to the right, if possible
@@ -155,7 +166,7 @@ bool TextField::keyDown( ci::app::KeyEvent &event )
 			mCursorPos -= 1;
 		}
 
-		CI_LOG_I( "(left) string size: " << mInputString.size() << ", cursor pos: " << mCursorPos );
+		LOG_TEXT( "(left) string size: " << mInputString.size() << ", cursor pos: " << mCursorPos );
 		return true;
 	}
 	else if( event.getChar() ) {
@@ -165,7 +176,7 @@ bool TextField::keyDown( ci::app::KeyEvent &event )
 
 		mInputString.insert( mCursorPos, 1, c );
 		mCursorPos += 1;
-		CI_LOG_I( "(enter char) string size: " << mInputString.size() << ", cursor pos: " << mCursorPos );
+		LOG_TEXT( "(enter char) string size: " << mInputString.size() << ", cursor pos: " << mCursorPos );
 
 		return true;
 	}
