@@ -36,6 +36,7 @@ typedef std::shared_ptr<class HSlider>		HSliderRef;
 typedef std::shared_ptr<class VSlider>		VSliderRef;
 typedef std::shared_ptr<class VSelector>	VSelectorRef;
 typedef std::shared_ptr<class NumberBox>	NumberBoxRef;
+typedef std::shared_ptr<class TextField>	TextFieldRef;
 
 //! Base class for all Controls, which usually are meant to be interacted with by a user.
 class CI_UI_API Control : public View {
@@ -276,7 +277,7 @@ class CI_UI_API NumberBox : public Control {
 	//! Returns the amount that the value is changed per pixel step when dragged.
 	float getStep() const	{ return mStep; }
 
-	void				setTitle( const std::string &title )	{ mTitle = title; }
+	void				setTitle( const std::string &title );
 	const std::string&	getTitle() const						{ return mTitle; }
 
 	float getValue() const	{ return mValue; }
@@ -290,6 +291,7 @@ class CI_UI_API NumberBox : public Control {
 	bool isSnapToIntEnabled() const			{ return mSnapToInt; }
 
   protected:
+	void layout() override;
 	void draw( Renderer *ren )	override;
 
 	bool touchesBegan( ci::app::TouchEvent &event )	override;
@@ -316,6 +318,7 @@ class CI_UI_API NumberBox : public Control {
 	std::string	mTitle;
 	TextRef		mTextLabel;
 	TapTracker	mTapTracker;
+	ui::TextFieldRef	mTextField; // TODO NEXT: create and hide this, enable it on double tap
 };
 
 template <typename T>

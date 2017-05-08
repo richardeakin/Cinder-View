@@ -24,6 +24,7 @@
 #include "ui/Control.h"
 #include "ui/Layout.h"
 #include "ui/Graph.h"
+#include "ui/TextField.h"
 #include "cinder/Log.h"
 #include "fmt/format.h"
 #include <array>
@@ -581,11 +582,17 @@ void SelectorBase::select( const string &label )
 NumberBox::NumberBox( const Rectf &bounds )
 	: Control( bounds ), mMin( std::numeric_limits<float>::lowest() ), mMax( std::numeric_limits<float>::max() )
 {
+	// TODO: NumberBox isn't first responder, but its TextInputView is
+	//setAcceptsFirstResponder( true );
+
 	// TODO: add this to ui::Control to indicate that this control doesn't use touch cancelling
 	// - otherwise the public isCancelled() will be called which is no good
 	//setTouchCancellingEnabled( false );
 
 	mTextLabel = TextManager::loadText( FontFace::NORMAL );
+	mTextField = make_shared<TextField>();
+	mTextField->setHidden();
+	addSubview( mTextField );
 
 	mTapTracker.getSignalGestureDetected().connect( signals::slot( this, &NumberBox::onDoubleTap ) );
 
@@ -617,10 +624,16 @@ void NumberBox::setValue( float value, bool emitChanged )
 		getSignalValueChanged().emit();
 }
 
-void NumberBox::onDoubleTap()
+void NumberBox::setTitle( const std::string &title )
+{ 
+	mTitle = title;
+	setNeedsLayout();
+}
+
+void NumberBox::layout()
 {
-	CI_LOG_I( "bang" );
-	getBackground()->setColor( Color( 0, 0.5f, 0.5f ) );
+	// TODO: offset by title
+	mTextField->setSize( getSize() );
 }
 
 void NumberBox::draw( Renderer *ren )
@@ -643,6 +656,13 @@ std::string	NumberBox::getTitleLabel() const
 
 	result += fmt::format( "{}", getValue() );
 	return result;
+}
+
+void NumberBox::onDoubleTap()
+{
+	CI_LOG_I( "bang" );
+	getBackground()->setColor( Color( 0.1f, 0.3f, 0.3f ) );
+	mTextField->setHidden( false );
 }
 
 bool NumberBox::touchesBegan( app::TouchEvent &event )
