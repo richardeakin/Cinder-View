@@ -83,8 +83,8 @@ void TextField::draw( Renderer *ren )
 		mText->drawString( mPlaceholderString, vec2( padding, getCenterLocal().y + mText->getDescent() ) );
 	}
 
+	// draw cursor bar
 	if( isFirstResponder() ) {
-		// draw cursor position
 		const float cursorThickness = 1;
 		const float nextCharOffset = 6;
 		vec2 cursorLoc = { 0, 0 };
@@ -105,7 +105,7 @@ void TextField::draw( Renderer *ren )
 	}
 
 	// draw border
-	{
+	if( mBorderMode != BorderMode::DISABLED ) {
 		auto color = isFirstResponder() ? mBorderColorSelected : mBorderColorNormal;
 		ren->setColor( color );
 		ren->drawStrokedRect( getBoundsLocal(), 2 );
@@ -117,7 +117,7 @@ bool TextField::willBecomeFirstResponder()
 	LOG_TEXT( getName() );
 	if( mCursorPos < 0 ) {
 		// set cursor position to one character after the current input string
-		mCursorPos = mInputString.size();
+		mCursorPos = (int)mInputString.size();
 	}
 	return true;
 }

@@ -591,6 +591,8 @@ NumberBox::NumberBox( const Rectf &bounds )
 
 	mTextLabel = TextManager::loadText( FontFace::NORMAL );
 	mTextField = make_shared<TextField>();
+	mTextField->setInputMode( TextField::InputMode::NUMERIC );
+	mTextField->setBorderMode( TextField::BorderMode::DISABLED );
 	mTextField->setHidden();
 	addSubview( mTextField );
 
@@ -632,17 +634,23 @@ void NumberBox::setTitle( const std::string &title )
 
 void NumberBox::layout()
 {
-	// TODO: offset by title
-	mTextField->setSize( getSize() );
+	Rectf textFieldBounds = getBoundsLocal();
+	if( ! mTitle.empty() ) {
+		// TODO: use getTitleLabel() instead
+		string title = mTitle += ": ";
+		// offset the TextField bounds by the title label
+		vec2 titleSize = mTextLabel->measureString( title );
+		textFieldBounds.x1 += mPadding + titleSize.x;
+	}
+
+	mTextField->setBounds( textFieldBounds );
 }
 
 void NumberBox::draw( Renderer *ren )
 {
-	const float padding = 6;
-
 	// TODO: add option to draw to right, like CheckBox
 	ren->setColor( mTitleColor );
-	mTextLabel->drawString( getTitleLabel(), vec2( padding, getCenterLocal().y + mTextLabel->getDescent() ) );
+	mTextLabel->drawString( getTitleLabel(), vec2( mPadding, getCenterLocal().y + mTextLabel->getDescent() ) );
 
 	ren->setColor( mBorderColor );
 	ren->drawStrokedRect( getBoundsLocal(), 2 );
@@ -663,6 +671,11 @@ void NumberBox::onDoubleTap()
 	CI_LOG_I( "bang" );
 	getBackground()->setColor( Color( 0.1f, 0.3f, 0.3f ) );
 	mTextField->setHidden( false );
+	
+	// FIXME: it makes sense to call this here, but the graph doesn't know to update its own Responder ViewRef
+	// - all the setting should be done in graph, and View::becomeFirstResponder() is convenience to calling getGraph()->setFirstResponder( view );
+	//mTextField->becomeFirstResponder();
+	getGraph()->setFirstResponder( mTextField );
 }
 
 bool NumberBox::touchesBegan( app::TouchEvent &event )

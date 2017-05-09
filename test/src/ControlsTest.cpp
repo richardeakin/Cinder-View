@@ -73,7 +73,7 @@ ControlsTest::ControlsTest()
 	mTextField1->setNextResponder( mTextField2 );
 	mTextField2->setNextResponder( mTextField1 );
 
-	auto nbox = make_shared<ui::NumberBox>( Rectf( 400, 360, 480, 400 ) );
+	auto nbox = make_shared<ui::NumberBox>( Rectf( 400, 360, 500, 400 ) );
 	nbox->setTitle( "val" );
 	//nbox->setBackgroundEnabled( false );
 

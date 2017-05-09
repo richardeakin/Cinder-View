@@ -66,6 +66,13 @@ class CI_UI_API Graph : public View {
 	void propagateKeyDown( ci::app::KeyEvent &event );
 	void propagateKeyUp( ci::app::KeyEvent &event );
 
+	//! Sets the View that current receives Responder events (ex. keys)
+	void setFirstResponder( const ViewRef &view );
+	//! Resigns the current View that receives Responder events, assigning the next Responder in chain if one exists.
+	void resignFirstResponder();
+	//! Resigns current View that receives Responder events. Typically done when Esc key is hit and there is a Responder.
+	void removeAllResponders();	
+
 	struct EventOptions {
 		EventOptions() {}
 
@@ -113,8 +120,10 @@ class CI_UI_API Graph : public View {
 
 	void propagateTouchesBegan( ViewRef &view, ci::app::TouchEvent &event, size_t &numTouchesHandled );
 
+#if 0
 	void propagateKeyDown( ViewRef &view, ci::app::KeyEvent &event );
 	void propagateKeyUp( ViewRef &view, ci::app::KeyEvent &event );
+#endif
 
 	RendererRef         mRenderer;
 	ci::app::WindowRef  mWindow;

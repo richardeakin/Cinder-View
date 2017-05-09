@@ -38,6 +38,7 @@ class CI_UI_API TextField : public Control {
   public:
 	enum class State { NORMAL, SELECTED /*, PRESSED */ };
 	enum class InputMode { TEXT, NUMERIC };
+	enum class BorderMode { LINE, DISABLED };
 
 	TextField( const ci::Rectf &bounds = ci::Rectf::zero() );
 
@@ -47,8 +48,10 @@ class CI_UI_API TextField : public Control {
 	void	setText( const std::string &text )				{ mInputString = text; }
 	void	setPlaceholderText( const std::string &text );
 
-	void		setInputMode( InputMode mode )	{ mInputMode = mode; }
-	InputMode	getInputMode() const			{ return mInputMode; }
+	void		setInputMode( InputMode mode )		{ mInputMode = mode; }
+	InputMode	getInputMode() const				{ return mInputMode; }
+	void		setBorderMode( BorderMode mode )	{ mBorderMode = mode; }
+	BorderMode	getBorderMode() const				{ return mBorderMode; }
 
   private:
 	void	draw( Renderer *ren )	override;
@@ -64,6 +67,7 @@ class CI_UI_API TextField : public Control {
 	int			mCursorPos = -1; // position of next character input. -1 indicates it's never been set and will be at the end of the text once we're first responder
 
 	InputMode	mInputMode = InputMode::TEXT;
+	BorderMode  mBorderMode = BorderMode::LINE;
 	ci::ColorA	mBorderColorNormal = ci::ColorA::gray( 1, 0.4f );
 	ci::ColorA	mBorderColorSelected = ci::ColorA::gray( 1, 0.6f );
 	ci::ColorA	mTextColorNormal = ci::ColorA::gray( 1, 0.6f );

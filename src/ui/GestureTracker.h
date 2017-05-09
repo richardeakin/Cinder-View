@@ -75,6 +75,7 @@ class CI_UI_API TapTracker {
 	//! Re-initialize state.
 	void	clear();
 
+	// TODO: use Event::Touch's time instead?
 	void	processTouchesBegan( ci::app::TouchEvent &event, double currentTime );
 	void	processTouchesEnded( ci::app::TouchEvent &event, double currentTime );
 

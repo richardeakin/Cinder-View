@@ -42,7 +42,7 @@ const float BOUNDS_EPSILON = 0.00001f;
 // Responder
 // ----------------------------------------------------------------------------------------------------
 
-bool Responder::becomeFirstResponder()
+bool View::becomeFirstResponder()
 {
 	bool result = willBecomeFirstResponder();
 	if( result ) {
@@ -51,7 +51,7 @@ bool Responder::becomeFirstResponder()
 	return result;
 }
 
-bool Responder::resignFirstResponder()
+bool View::resignFirstResponder()
 { 
 	bool result = willResignFirstResponder();
 	if( result ) {

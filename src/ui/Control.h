@@ -313,6 +313,7 @@ class CI_UI_API NumberBox : public Control {
 	ci::vec2	mDragStartPos;
 	float		mDragStartValue = 0;
 	bool        mSnapToInt = false;
+	float		mPadding = 6;
 	ci::ColorA	mBorderColor = ci::ColorA::gray( 1, 0.4f );
 	ci::ColorA	mTitleColor = ci::ColorA::gray( 1, 0.6f );
 	std::string	mTitle;

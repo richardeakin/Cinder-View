@@ -449,11 +449,30 @@ void Graph::propagateKeyUp( ci::app::KeyEvent &event )
 	//propagateKeyUp( thisRef, event );
 }
 
-// TODO: send keys to first responder
-// - need some way to support both first responder and hotkeys?
-// - unless now is the time to implement hotkey support alongside text input?
-// - do we need raw text keys all the time as well, down the graph?
-//    - probably not, any view that needs keyDown can declare it as accepting first responder
+// TODO: refactor, this is pretty kludgy in that it was moved from the ad-hoc Responder class that will soon be removed.
+// - if someone calls mView->becomeFirstResponder, graph doesn't know and that won't work
+void Graph::setFirstResponder( const ViewRef &view )
+{
+	if( view->becomeFirstResponder() ) {
+		if( mFirstResponder )
+			mFirstResponder->resignFirstResponder();
+
+		mPreviousFirstResponder = mFirstResponder;
+		mFirstResponder = view;
+	}
+}
+
+void Graph::resignFirstResponder()
+{
+	// TODO
+}
+
+void Graph::removeAllResponders()
+{
+	// TODO
+}
+
+#if 0
 void Graph::propagateKeyDown( ViewRef &view, ci::app::KeyEvent &event )
 {
 	if( view->isHidden() || ! view->isInteractive() )
@@ -485,5 +504,5 @@ void Graph::propagateKeyUp( ViewRef &view, ci::app::KeyEvent &event )
 		event.setHandled();
 	}
 }
-
+#endif
 } // namespace ui
