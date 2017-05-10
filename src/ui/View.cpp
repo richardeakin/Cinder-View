@@ -44,22 +44,23 @@ const float BOUNDS_EPSILON = 0.00001f;
 
 bool View::becomeFirstResponder()
 {
-	bool result = willBecomeFirstResponder();
-	if( result ) {
-		mIsFirstResponder = true;
-	}
-	return result;
+	getGraph()->setFirstResponder( shared_from_this() );
+	return true; // TODO: not sure if this needs to return a value or not
 }
 
+// TODO: route this through to Graph
 bool View::resignFirstResponder()
-{ 
-	bool result = willResignFirstResponder();
-	if( result ) {
-		mIsFirstResponder = false;
-		if( mNextResponder )
-			mNextResponder->becomeFirstResponder(); // TODO: this should happen in a loop until someone becomes next
-	}
-	return result;
+{
+	mIsFirstResponder = false;
+	return true;
+
+	//bool result = willResignFirstResponder();
+	//if( result ) {
+	//	mIsFirstResponder = false;
+	//	if( mNextResponder )
+	//		mNextResponder->becomeFirstResponder(); // TODO: this should happen in a loop until someone becomes next
+	//}
+	//return result;
 }
 
 // ----------------------------------------------------------------------------------------------------

@@ -59,10 +59,6 @@ class CI_UI_API Responder {
 	void	setNextResponder( const ViewRef &view )		{ mNextResponder = view; }
 	//!
 	ViewRef	getNextResponder() const		{ return mNextResponder; }
-	//!
-	bool	becomeFirstResponder();
-	//!
-	bool	resignFirstResponder();
 
   protected:
 	// TODO: rename these with 'can' or 'should' suffix? To indicate they are asking whether this is possible or not
@@ -79,7 +75,8 @@ class CI_UI_API Responder {
 	virtual bool keyDown( ci::app::KeyEvent &event )	{ return false; }
 	virtual bool keyUp( ci::app::KeyEvent &event )		{ return false; }
 
-private:
+	Graph*                  mGraph = nullptr; // TEMPORARY
+
 	bool		mAcceptsFirstResponder = false;
 	bool		mIsFirstResponder = false;
 	ViewRef		mNextResponder;
@@ -143,6 +140,13 @@ class CI_UI_API View : public Responder, std::enable_shared_from_this<View> {
 
 	void				setLayout( const LayoutRef &layout );
 	LayoutRef			getLayout() const	{ return mLayout; }
+
+	// Responder --------
+
+	//!
+	bool	becomeFirstResponder();
+	//!
+	bool	resignFirstResponder();
 
 	//! Sets a label that can be used to identify this View
 	void				setLabel( const std::string &label )	{ mLabel = label; }
@@ -243,7 +247,7 @@ class CI_UI_API View : public Responder, std::enable_shared_from_this<View> {
 	bool                    mMarkedForRemoval = false;
 
 	View*					mParent = nullptr;
-	Graph*                  mGraph = nullptr;
+	//Graph*                  mGraph = nullptr;
 	std::vector<ViewRef>	mSubviews;
 	RectViewRef				mBackground;
 	LayerRef				mLayer;

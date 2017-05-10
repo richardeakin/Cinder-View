@@ -66,12 +66,18 @@ ControlsTest::ControlsTest()
 
 	mTextField2 = make_shared<ui::TextField>();
 	mTextField2->setPlaceholderText( "textfield 2" );
-	mTextField2->setInputMode( ui::TextField::InputMode::NUMERIC );
 	mTextField2->setTextColor( selectedColor, ui::TextField::State::SELECTED );
 	mTextField2->setBorderColor( selectedColor, ui::TextField::State::SELECTED );
 
+	mTextField3 = make_shared<ui::TextField>();
+	mTextField3->setPlaceholderText( "textfield 3" );
+	mTextField3->setInputMode( ui::TextField::InputMode::NUMERIC );
+	mTextField3->setTextColor( selectedColor, ui::TextField::State::SELECTED );
+	mTextField3->setBorderColor( selectedColor, ui::TextField::State::SELECTED );
+
 	mTextField1->setNextResponder( mTextField2 );
-	mTextField2->setNextResponder( mTextField1 );
+	mTextField2->setNextResponder( mTextField3 );
+	mTextField3->setNextResponder( mTextField1 );
 
 	auto nbox = make_shared<ui::NumberBox>( Rectf( 400, 360, 500, 400 ) );
 	nbox->setTitle( "val" );
@@ -81,16 +87,18 @@ ControlsTest::ControlsTest()
 	ui::NumberBox3* nbox3Ptr = nbox3.get();
 	//	nbox3->getSignalValueChanged().connect( [nbox3Ptr] { CI_LOG_I( "nbox3 value: " << nbox3Ptr->getValue(); ); } );
 
+	// TODO NEXT: get this working.
+	// nbox3 container view should get skipped, and then link up all of its internal NumberBoxes
+	nbox->setNextResponder( nbox3 );
+	nbox3->setNextResponder( nbox );
+
 	addSubviews( { 
 		mButton,
 		mImageButton,
 		mToggle,
-		mHSlider,
-		mVSlider,
-		nbox,
-		nbox3,
-		mTextField1,
-		mTextField2
+		mHSlider, mVSlider,
+		nbox, nbox3,
+		mTextField1, mTextField2, mTextField3
 	} );
 }
 
@@ -113,11 +121,14 @@ void ControlsTest::layout()
 	Rectf sliderVBounds = Rectf( padding, sliderHBounds.y2 + 10, padding + 30, sliderHBounds.y2 + 210 );
 	mVSlider->setBounds( sliderVBounds );
 
-    Rectf textFieldBounds = Rectf( padding, sliderVBounds.y2 + 20, 300, sliderVBounds.y2 + 60 );
+    Rectf textFieldBounds = Rectf( padding, sliderVBounds.y2 + 10, 300, sliderVBounds.y2 + 60 );
     mTextField1->setBounds( textFieldBounds );
 
-	textFieldBounds += vec2( 0, textFieldBounds.getHeight() + 20 );
+	textFieldBounds += vec2( 0, textFieldBounds.getHeight() + 10 );
 	mTextField2->setBounds( textFieldBounds );
+
+	textFieldBounds += vec2( 0, textFieldBounds.getHeight() + 10 );
+	mTextField3->setBounds( textFieldBounds );
 }
 
 bool ControlsTest::keyDown( app::KeyEvent &event )

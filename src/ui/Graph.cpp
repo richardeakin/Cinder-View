@@ -226,12 +226,12 @@ void Graph::propagateTouchesBegan( app::TouchEvent &event )
 	propagateTouchesBegan( thisRef, event, numTouchesHandled );
 
 	CI_LOG_I( "first responder: " << ( ! mFirstResponder ? "(none)" : mFirstResponder->getName() ) );
+	if( previousFirstResponder && previousFirstResponder != mFirstResponder ) {
+		mPreviousFirstResponder = previousFirstResponder;
+		mPreviousFirstResponder->resignFirstResponder();
+	}
 	if( mFirstResponder ) {
-		if( previousFirstResponder && previousFirstResponder != mFirstResponder ) {
-			mPreviousFirstResponder = previousFirstResponder;
-			mPreviousFirstResponder->resignFirstResponder();
-		}
-		mFirstResponder->becomeFirstResponder();
+		setFirstResponder( mFirstResponder );
 	}
 }
 
@@ -417,17 +417,15 @@ void Graph::propagateKeyDown( ci::app::KeyEvent &event )
 			if( event.isShiftDown() ) {
 				// FIXME: this isn't good enough, only goes back one level
 				// - this also needs to resign the current responder
+
 				if( mPreviousFirstResponder ) {
-					mFirstResponder->resignFirstResponder();
-					mPreviousFirstResponder->becomeFirstResponder();
-					mFirstResponder = mPreviousFirstResponder;
-					mPreviousFirstResponder = nullptr; // don't know where to store this, yet
+					setFirstResponder( mPreviousFirstResponder );
 				}
 			}
 			else {
-				mFirstResponder->resignFirstResponder();
-				mPreviousFirstResponder = mFirstResponder;
-				mFirstResponder = mFirstResponder->getNextResponder();
+				if( mFirstResponder->getNextResponder() ) {
+					setFirstResponder( mFirstResponder->getNextResponder() );
+				}
 			}
 		}
 		else {
@@ -450,16 +448,25 @@ void Graph::propagateKeyUp( ci::app::KeyEvent &event )
 }
 
 // TODO: refactor, this is pretty kludgy in that it was moved from the ad-hoc Responder class that will soon be removed.
-// - if someone calls mView->becomeFirstResponder, graph doesn't know and that won't work
 void Graph::setFirstResponder( const ViewRef &view )
 {
-	if( view->becomeFirstResponder() ) {
-		if( mFirstResponder )
-			mFirstResponder->resignFirstResponder();
+	CI_LOG_I( "view: " << view->getName() << ", current first responder: " << ( mFirstResponder ? mFirstResponder->getName() : "(none)" ) );
+	if( view->willBecomeFirstResponder() ) {
+		if( mFirstResponder && mFirstResponder != view ) {
+			CI_LOG_I( "\t\t- resigning first responder." );
+			mFirstResponder->willResignFirstResponder(); // TODO: should this return false here if mFirstResponder returns false?
+			mFirstResponder->mIsFirstResponder = false;
+		}
 
-		mPreviousFirstResponder = mFirstResponder;
+		CI_LOG_I( "\t- assigning view as first responder: " << view->getName() );
+
+		auto previousFirstResponder = mFirstResponder;
 		mFirstResponder = view;
+		view->mIsFirstResponder = true;
+		mPreviousFirstResponder = previousFirstResponder;
 	}
+
+	// TODO: if willBecomeFirstResponder returns false, try the next responder
 }
 
 void Graph::resignFirstResponder()
