@@ -23,8 +23,8 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "ui/Graph.h"
 #include "cinder/Log.h"
 
-//#define LOG_TEXT( stream )	CI_LOG_I( stream )
-#define LOG_TEXT( stream )	( (void)( 0 ) )
+#define LOG_TEXT( stream )	CI_LOG_I( stream )
+//#define LOG_TEXT( stream )	( (void)( 0 ) )
 
 using namespace ci;
 using namespace std;
@@ -119,12 +119,17 @@ bool TextField::willBecomeFirstResponder()
 		// set cursor position to one character after the current input string
 		mCursorPos = (int)mInputString.size();
 	}
+
+	// store the input string, in case input is canceled and we need to revert.
+	mInputStringBeforeInput = mInputString;
+
 	return true;
 }
 
 bool TextField::willResignFirstResponder()
 {
 	LOG_TEXT( getName() );
+	mSignalTextInputCompleted.emit();
 	return true;
 }
 
@@ -134,23 +139,35 @@ bool TextField::keyDown( ci::app::KeyEvent &event )
 	//	<< ", shift down: " << event.isShiftDown() << ", alt down: " << event.isAltDown() << ", ctrl down: " << event.isControlDown()
 	//	<< ", meta down: " << event.isMetaDown() << ", accel down: " << event.isAccelDown() << ", native code: " << event.getNativeKeyCode() );
 
-	if( event.getCode() == app::KeyEvent::KEY_BACKSPACE ) {
+	bool handled = true;
+	if( event.getCode() == app::KeyEvent::KEY_RETURN ) {
+		// text completed
+		LOG_TEXT( "(enter) text completed." );
+		mSignalTextInputCompleted.emit();
+	}
+	else if( event.getCode() == app::KeyEvent::KEY_ESCAPE ) {
+		// cancel entered text (revert to previous)
+		LOG_TEXT( "(escape) text canceled." );
+		mInputString = mInputStringBeforeInput;
+		mSignalTextInputCanceled.emit();
+		// TODO: update cursor pos?
+	}
+	else if( event.getCode() == app::KeyEvent::KEY_BACKSPACE ) {
 		// delete character before cursor, if possible
 		if( mCursorPos > 0 && mCursorPos - 1 < mInputString.size() ) {
 			mInputString.erase( mCursorPos - 1, 1 );
 			mCursorPos -= 1;
+			getSignalValueChanged().emit();
 		}
-
 		LOG_TEXT( "(backspace) string size: " << mInputString.size() << ", cursor pos: " << mCursorPos );
-		return true;
 	}
 	else if( event.getCode() == app::KeyEvent::KEY_DELETE ) {
 		// delete character after cursor, if possible
 		if( mCursorPos < mInputString.size() ) {
 			mInputString.erase( mCursorPos, 1 );
+			getSignalValueChanged().emit();
 		}
 		LOG_TEXT( "(delete) string size: " << mInputString.size() << ", cursor pos: " << mCursorPos );
-		return true;
 	}
 	else if( event.getCode() == app::KeyEvent::KEY_RIGHT ) {
 		// move cursor to the right, if possible
@@ -167,21 +184,38 @@ bool TextField::keyDown( ci::app::KeyEvent &event )
 		}
 
 		LOG_TEXT( "(left) string size: " << mInputString.size() << ", cursor pos: " << mCursorPos );
-		return true;
 	}
 	else if( event.getChar() ) {
-		auto c = event.getChar();
-		if( mInputMode == InputMode::NUMERIC && ! isdigit( c ) && c != '.' )
-		    return false;
+		if( ! checkCharIsValid( event.getChar() ) ) {
+			LOG_TEXT( "(enter char) rejecting char: " << event.getChar() );
+		    handled = false;
+		}
+		else {
+			mInputString.insert( mCursorPos, 1, event.getChar() );
+			mCursorPos += 1;
+			LOG_TEXT( "(enter char) string size: " << mInputString.size() << ", cursor pos: " << mCursorPos );
+			getSignalValueChanged().emit();
+		}
+	}
+	else
+		handled = false;
 
-		mInputString.insert( mCursorPos, 1, c );
-		mCursorPos += 1;
-		LOG_TEXT( "(enter char) string size: " << mInputString.size() << ", cursor pos: " << mCursorPos );
+	return handled;
+}
 
-		return true;
+bool TextField::checkCharIsValid( char c ) const
+{
+	if( mInputMode == InputMode::NUMERIC ) {
+		if( c == '.' ) {
+			// not valid if there is already a decimal in the input string
+			if( mInputString.find( '.' ) != string::npos )
+				return false;
+		}
+		else if( ! isdigit( c ) )
+			return false;
 	}
 
-	return false;
+	return true;
 }
 
 } // namespace ui

@@ -582,9 +582,6 @@ void SelectorBase::select( const string &label )
 NumberBox::NumberBox( const Rectf &bounds )
 	: Control( bounds ), mMin( std::numeric_limits<float>::lowest() ), mMax( std::numeric_limits<float>::max() )
 {
-	// TODO: NumberBox isn't first responder, but its TextInputView is
-	//setAcceptsFirstResponder( true );
-
 	// TODO: add this to ui::Control to indicate that this control doesn't use touch cancelling
 	// - otherwise the public isCancelled() will be called which is no good
 	//setTouchCancellingEnabled( false );
@@ -595,8 +592,12 @@ NumberBox::NumberBox( const Rectf &bounds )
 	mTextField->setBorderMode( TextField::BorderMode::DISABLED );
 	mTextField->setHidden();
 	addSubview( mTextField );
+	setNextResponder( mTextField );
 
 	mTapTracker.getSignalGestureDetected().connect( signals::slot( this, &NumberBox::onDoubleTap ) );
+	mTextField->getSignalValueChanged().connect( signals::slot( this, &NumberBox::onTextInputUpdated ) );
+	mTextField->getSignalTextInputCompleted().connect( signals::slot( this, &NumberBox::onTextInputCompleted ) );
+	mTextField->getSignalTextInputCanceled().connect( signals::slot( this, &NumberBox::onTextInputCompleted ) );
 
 	// set a default background color
 	getBackground()->setColor( Color::black() );
@@ -637,7 +638,7 @@ void NumberBox::layout()
 	Rectf textFieldBounds = getBoundsLocal();
 	if( ! mTitle.empty() ) {
 		// TODO: use getTitleLabel() instead
-		string title = mTitle += ": ";
+		string title = mTitle + ": ";
 		// offset the TextField bounds by the title label
 		vec2 titleSize = mTextLabel->measureString( title );
 		textFieldBounds.x1 += mPadding + titleSize.x;
@@ -662,20 +663,43 @@ std::string	NumberBox::getTitleLabel() const
 	if( ! result.empty() )
 		result += ": ";
 
-	result += fmt::format( "{}", getValue() );
+	// If we're in text entry mode, the TextField will display the value. Otherwise, append it here.
+	if( mTextField->isHidden() ) {
+		result += getValueAsString();
+	}
 	return result;
+}
+
+std::string	NumberBox::getValueAsString() const
+{
+	return fmt::format( "{}", getValue() );
 }
 
 void NumberBox::onDoubleTap()
 {
 	CI_LOG_I( "bang" );
-	getBackground()->setColor( Color( 0.1f, 0.3f, 0.3f ) );
+	mTextField->getBackground()->setColor( Color( 0.1f, 0.3f, 0.3f ) );
+	mTextField->setText( getValueAsString() );
 	mTextField->setHidden( false );
 	
-	// FIXME: it makes sense to call this here, but the graph doesn't know to update its own Responder ViewRef
-	// - all the setting should be done in graph, and View::becomeFirstResponder() is convenience to calling getGraph()->setFirstResponder( view );
-	//mTextField->becomeFirstResponder();
-	getGraph()->setFirstResponder( mTextField );
+	mTextField->becomeFirstResponder();
+}
+
+void NumberBox::onTextInputUpdated()
+{
+	CI_LOG_I( "text: " << mTextField->getText() );
+	float updatedValue = stof( mTextField->getText() );
+	setValue( updatedValue );
+}
+
+void NumberBox::onTextInputCompleted()
+{
+	CI_LOG_I( "text: " << mTextField );
+	float updatedValue = stof( mTextField->getText() );
+	setValue( updatedValue );
+
+	// text input is finished so hide the TextField
+	mTextField->setHidden( true );
 }
 
 bool NumberBox::touchesBegan( app::TouchEvent &event )

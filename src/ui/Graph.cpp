@@ -465,8 +465,13 @@ void Graph::setFirstResponder( const ViewRef &view )
 		view->mIsFirstResponder = true;
 		mPreviousFirstResponder = previousFirstResponder;
 	}
-
-	// TODO: if willBecomeFirstResponder returns false, try the next responder
+	else {
+		// if view declines to become first responder, try the next in the chain.
+		CI_LOG_I( "\t- view declined first responder: " << view->getName() );
+		if( view->getNextResponder() ) {
+			setFirstResponder( view->getNextResponder() );
+		}
+	}
 }
 
 void Graph::resignFirstResponder()

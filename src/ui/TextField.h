@@ -45,13 +45,18 @@ class CI_UI_API TextField : public Control {
 	void setBorderColor( const ci::ColorA &color, State state = State::NORMAL );
 	void setTextColor( const ci::ColorA &color, State state = State::NORMAL );
 
-	void	setText( const std::string &text )				{ mInputString = text; }
-	void	setPlaceholderText( const std::string &text );
+	void				setText( const std::string &text )				{ mInputString = text; }
+	const std::string&	getText() const									{ return mInputString; }
+	void				setPlaceholderText( const std::string &text );
+	const std::string&	getPlaceholderText() const						{ return mPlaceholderString; }
 
 	void		setInputMode( InputMode mode )		{ mInputMode = mode; }
 	InputMode	getInputMode() const				{ return mInputMode; }
 	void		setBorderMode( BorderMode mode )	{ mBorderMode = mode; }
 	BorderMode	getBorderMode() const				{ return mBorderMode; }
+
+	ci::signals::Signal<void ()>&	getSignalTextInputCompleted()	{ return mSignalTextInputCompleted; }
+	ci::signals::Signal<void ()>&	getSignalTextInputCanceled()	{ return mSignalTextInputCanceled; }
 
   private:
 	void	draw( Renderer *ren )	override;
@@ -60,9 +65,10 @@ class CI_UI_API TextField : public Control {
 	bool	willResignFirstResponder() override;
 
 	bool	keyDown( ci::app::KeyEvent &event ) override;
+	bool	checkCharIsValid( char c ) const;
 
 	TextRef		mText;
-	std::string mInputString;
+	std::string mInputString, mInputStringBeforeInput;
 	std::string mPlaceholderString;
 	int			mCursorPos = -1; // position of next character input. -1 indicates it's never been set and will be at the end of the text once we're first responder
 
@@ -72,6 +78,8 @@ class CI_UI_API TextField : public Control {
 	ci::ColorA	mBorderColorSelected = ci::ColorA::gray( 1, 0.6f );
 	ci::ColorA	mTextColorNormal = ci::ColorA::gray( 1, 0.6f );
 	ci::ColorA	mTextColorSelected = ci::ColorA::white();
+
+	ci::signals::Signal<void ()>	mSignalTextInputCompleted, mSignalTextInputCanceled;
 };
 
 } // namespace ui

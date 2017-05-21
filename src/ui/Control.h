@@ -304,6 +304,9 @@ class CI_UI_API NumberBox : public Control {
 
   private:
 	void onDoubleTap();
+	void onTextInputUpdated();
+	void onTextInputCompleted();
+	std::string	getValueAsString() const;
 
 	float	mValue = 0;
 	float	mMin;

@@ -79,25 +79,27 @@ ControlsTest::ControlsTest()
 	mTextField2->setNextResponder( mTextField3 );
 	mTextField3->setNextResponder( mTextField1 );
 
-	auto nbox = make_shared<ui::NumberBox>( Rectf( 400, 360, 500, 400 ) );
-	nbox->setTitle( "val" );
+	auto nboxA = make_shared<ui::NumberBox>( Rectf( 400, 360, 500, 400 ) );
+	nboxA->setTitle( "valA" );
 	//nbox->setBackgroundEnabled( false );
+
+	auto nboxB = make_shared<ui::NumberBox>( Rectf( 510, 360, 610, 400 ) );
+	nboxB->setTitle( "valB" );
 
 	auto nbox3 = make_shared<ui::NumberBox3>( Rectf( 400, 410, 580, 450 ) );
 	ui::NumberBox3* nbox3Ptr = nbox3.get();
 	//	nbox3->getSignalValueChanged().connect( [nbox3Ptr] { CI_LOG_I( "nbox3 value: " << nbox3Ptr->getValue(); ); } );
 
-	// TODO NEXT: get this working.
-	// nbox3 container view should get skipped, and then link up all of its internal NumberBoxes
-	nbox->setNextResponder( nbox3 );
-	nbox3->setNextResponder( nbox );
+	nboxA->setNextResponder( nboxB );
+	nboxB->setNextResponder( nbox3 );
+	nbox3->setNextResponder( nboxA );
 
 	addSubviews( { 
 		mButton,
 		mImageButton,
 		mToggle,
 		mHSlider, mVSlider,
-		nbox, nbox3,
+		nboxA, nboxB, nbox3,
 		mTextField1, mTextField2, mTextField3
 	} );
 }
