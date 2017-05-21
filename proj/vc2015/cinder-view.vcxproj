@@ -205,7 +205,7 @@
       </SDLCheck>
       <AdditionalIncludeDirectories>$(REPO_PATH)\src;$(CINDER_PATH)\include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
       <ProgramDataBaseFileName>$(REPO_PATH)\lib\msw\$(PlatformTarget)\$(Configuration)\$(PlatformToolset)\cinder-view.pdb</ProgramDataBaseFileName>
@@ -227,7 +227,7 @@
       </SDLCheck>
       <AdditionalIncludeDirectories>$(REPO_PATH)\src;$(CINDER_PATH)\include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <PreprocessorDefinitions>CINDER_SHARED;CINDER_UI_SHARED_BUILD;FMT_EXPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>CINDER_SHARED;CINDER_UI_SHARED_BUILD;FMT_EXPORT;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
       <ProgramDataBaseFileName>$(REPO_PATH)\lib\msw\$(PlatformTarget)\$(Configuration)\$(PlatformToolset)\cinder-view.pdb</ProgramDataBaseFileName>
@@ -251,7 +251,7 @@
       </SDLCheck>
       <AdditionalIncludeDirectories>$(REPO_PATH)\src;$(CINDER_PATH)\include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
       <ProgramDataBaseFileName>$(REPO_PATH)\lib\msw\$(PlatformTarget)\$(Configuration)\$(PlatformToolset)\cinder-view.pdb</ProgramDataBaseFileName>
@@ -273,7 +273,7 @@
       </SDLCheck>
       <AdditionalIncludeDirectories>$(REPO_PATH)\src;$(CINDER_PATH)\include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <PreprocessorDefinitions>CINDER_SHARED;CINDER_UI_SHARED_BUILD;FMT_EXPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>CINDER_SHARED;CINDER_UI_SHARED_BUILD;FMT_EXPORT;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
       <ProgramDataBaseFileName>$(REPO_PATH)\lib\msw\$(PlatformTarget)\$(Configuration)\$(PlatformToolset)\cinder-view.pdb</ProgramDataBaseFileName>
