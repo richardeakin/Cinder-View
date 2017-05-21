@@ -333,7 +333,7 @@ class CI_UI_API NumberBoxT : public Control {
 	const T&	getValue() const	{ return mValue; }
 
 	//! Returns the number of components
-	size_t getSize() const	{ return mValue.size(); }
+	size_t getSize() const	{ return mValue.length(); }
 
 
 	//! Sets the minimum value, defaults to smallest (negative) possible float
