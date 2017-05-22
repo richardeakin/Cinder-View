@@ -47,41 +47,7 @@ typedef std::shared_ptr<class RectView>			RectViewRef;
 typedef std::shared_ptr<class StrokedRectView>	StrokedRectViewRef;
 class Graph;
 
-class CI_UI_API Responder {
-  public:
-	//!
-	void	setAcceptsFirstResponder( bool b = true )	{ mAcceptsFirstResponder = b; }
-	//!
-	bool	getAcceptsFirstResponder() const			{ return mAcceptsFirstResponder; }
-	//!
-	void	setNextResponder( const ViewRef &view )		{ mNextResponder = view; }
-	//!
-	ViewRef	getNextResponder() const		{ return mNextResponder; }
-
-  protected:
-	// TODO: rename these with 'can' or 'should' suffix? To indicate they are asking whether this is possible or not
-	//! Return false if you cannot become first responder.
-	virtual bool	willBecomeFirstResponder()	{ return true; }
-	//! Return true if you won't resign first responder.
-	virtual bool	willResignFirstResponder()	{ return true; }
-
-	// Override to handle UI events. Return true if any touch was handled, false otherwise.
-	virtual bool touchesBegan( ci::app::TouchEvent &event )	{ return false; }
-	virtual bool touchesMoved( ci::app::TouchEvent &event )	{ return false; }
-	virtual bool touchesEnded( ci::app::TouchEvent &event )	{ return false; }
-
-	virtual bool keyDown( ci::app::KeyEvent &event )	{ return false; }
-	virtual bool keyUp( ci::app::KeyEvent &event )		{ return false; }
-
-	Graph*                  mGraph = nullptr; // TEMPORARY
-
-	bool		mAcceptsFirstResponder = false;
-	ViewRef		mNextResponder;
-
-	friend class Graph;
-};
-
-class CI_UI_API View : public Responder, std::enable_shared_from_this<View> {
+class CI_UI_API View : std::enable_shared_from_this<View> {
   public:
 	View( const ci::Rectf &bounds = ci::Rectf::zero() );
 	virtual ~View();
@@ -145,6 +111,14 @@ class CI_UI_API View : public Responder, std::enable_shared_from_this<View> {
 	bool	becomeFirstResponder();
 	//!
 	bool	resignFirstResponder();
+	//!
+	void	setAcceptsFirstResponder( bool b = true )	{ mAcceptsFirstResponder = b; }
+	//!
+	bool	getAcceptsFirstResponder() const			{ return mAcceptsFirstResponder; }
+	//!
+	void	setNextResponder( const ViewRef &view )		{ mNextResponder = view; }
+	//!
+	ViewRef	getNextResponder() const		{ return mNextResponder; }
 
 	//! Sets a label that can be used to identify this View
 	void				setLabel( const std::string &label )	{ mLabel = label; }
@@ -209,6 +183,21 @@ class CI_UI_API View : public Responder, std::enable_shared_from_this<View> {
 	//! Returns the bounds required for rendering this View to a FrameBuffer. \default is this View's local bounds. Override if this View needs a larger sized or FrameBuffer.
 	virtual ci::Rectf   getBoundsForFrameBuffer() const;
 
+	// Responder ------------------
+	// TODO: rename these with 'can' or 'should' suffix? To indicate they are asking whether this is possible or not
+	//! Return false if you cannot become first responder.
+	virtual bool	willBecomeFirstResponder()	{ return true; }
+	//! Return true if you won't resign first responder.
+	virtual bool	willResignFirstResponder()	{ return true; }
+
+	// Override to handle UI events. Return true if any touch was handled, false otherwise.
+	virtual bool touchesBegan( ci::app::TouchEvent &event )	{ return false; }
+	virtual bool touchesMoved( ci::app::TouchEvent &event )	{ return false; }
+	virtual bool touchesEnded( ci::app::TouchEvent &event )	{ return false; }
+
+	virtual bool keyDown( ci::app::KeyEvent &event )	{ return false; }
+	virtual bool keyUp( ci::app::KeyEvent &event )		{ return false; }
+
   private:
 	View( const View& )				= delete;
 	View& operator=( const View& )	= delete;
@@ -245,12 +234,15 @@ class CI_UI_API View : public Responder, std::enable_shared_from_this<View> {
 	bool                    mMarkedForRemoval = false;
 
 	View*					mParent = nullptr;
-	//Graph*                  mGraph = nullptr;
+	Graph*                  mGraph = nullptr;
 	std::vector<ViewRef>	mSubviews;
 	RectViewRef				mBackground;
 	LayerRef				mLayer;
 	std::vector<FilterRef>  mFilters;
 	LayoutRef				mLayout;
+
+	bool					mAcceptsFirstResponder = false;
+	ViewRef					mNextResponder;
 
 	friend class Layer;
 	friend class Graph;
