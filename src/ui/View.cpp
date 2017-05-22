@@ -48,19 +48,18 @@ bool View::becomeFirstResponder()
 	return true; // TODO: not sure if this needs to return a value or not
 }
 
-// TODO: route this through to Graph
 bool View::resignFirstResponder()
 {
-	mIsFirstResponder = false;
-	return true;
+	if( ! isFirstResponder() )
+		return false;
 
-	//bool result = willResignFirstResponder();
-	//if( result ) {
-	//	mIsFirstResponder = false;
-	//	if( mNextResponder )
-	//		mNextResponder->becomeFirstResponder(); // TODO: this should happen in a loop until someone becomes next
-	//}
-	//return result;
+	getGraph()->resignFirstResponder();
+	return true; // TODO: same as above return
+}
+
+bool View::isFirstResponder() const
+{ 
+	return this == getGraph()->getFirstResponder().get();
 }
 
 // ----------------------------------------------------------------------------------------------------

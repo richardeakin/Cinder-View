@@ -68,10 +68,14 @@ class CI_UI_API Graph : public View {
 
 	//! Sets the View that current receives Responder events (ex. keys)
 	void setFirstResponder( const ViewRef &view );
-	//! Resigns the current View that receives Responder events, assigning the next Responder in chain if one exists.
+	//! Moves to the next responder in the responder chain if there is one, resigning any current responder.
+	void moveToNextResponder();
+	//! Moves to the previous responder in the responder chain if there is one, resigning any current responder.
+	void moveToPreviousResponder();
+	//! Resigns current View that receives Responder events, ex. when Esc or Return keys are hit.
 	void resignFirstResponder();
-	//! Resigns current View that receives Responder events. Typically done when Esc key is hit and there is a Responder.
-	void removeAllResponders();	
+	//! Returns the View that currently receives first responder status
+	 const ViewRef&	getFirstResponder() const	{ return mFirstResponder; }
 
 	struct EventOptions {
 		EventOptions() {}

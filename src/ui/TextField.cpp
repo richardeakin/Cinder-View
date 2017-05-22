@@ -144,13 +144,15 @@ bool TextField::keyDown( ci::app::KeyEvent &event )
 		// text completed
 		LOG_TEXT( "(enter) text completed." );
 		mSignalTextInputCompleted.emit();
+		resignFirstResponder();
 	}
 	else if( event.getCode() == app::KeyEvent::KEY_ESCAPE ) {
-		// cancel entered text (revert to previous)
+		// cancel input text, reverting it to previous when we became first responder
 		LOG_TEXT( "(escape) text canceled." );
 		mInputString = mInputStringBeforeInput;
+		mCursorPos = std::min( mCursorPos, (int)mInputString.size() );
 		mSignalTextInputCanceled.emit();
-		// TODO: update cursor pos?
+		resignFirstResponder();
 	}
 	else if( event.getCode() == app::KeyEvent::KEY_BACKSPACE ) {
 		// delete character before cursor, if possible

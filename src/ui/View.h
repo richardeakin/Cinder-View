@@ -54,8 +54,6 @@ class CI_UI_API Responder {
 	//!
 	bool	getAcceptsFirstResponder() const			{ return mAcceptsFirstResponder; }
 	//!
-	bool	isFirstResponder() const	{ return mIsFirstResponder; }
-	//!
 	void	setNextResponder( const ViewRef &view )		{ mNextResponder = view; }
 	//!
 	ViewRef	getNextResponder() const		{ return mNextResponder; }
@@ -78,7 +76,6 @@ class CI_UI_API Responder {
 	Graph*                  mGraph = nullptr; // TEMPORARY
 
 	bool		mAcceptsFirstResponder = false;
-	bool		mIsFirstResponder = false;
 	ViewRef		mNextResponder;
 
 	friend class Graph;
@@ -142,7 +139,8 @@ class CI_UI_API View : public Responder, std::enable_shared_from_this<View> {
 	LayoutRef			getLayout() const	{ return mLayout; }
 
 	// Responder --------
-
+	//!
+	bool	isFirstResponder() const;
 	//!
 	bool	becomeFirstResponder();
 	//!

@@ -415,17 +415,10 @@ void Graph::propagateKeyDown( ci::app::KeyEvent &event )
 		// tab / shift-tab to navigate next and previous responders
 		if( event.getCode() == app::KeyEvent::KEY_TAB ) {
 			if( event.isShiftDown() ) {
-				// FIXME: this isn't good enough, only goes back one level
-				// - this also needs to resign the current responder
-
-				if( mPreviousFirstResponder ) {
-					setFirstResponder( mPreviousFirstResponder );
-				}
+				moveToPreviousResponder();
 			}
 			else {
-				if( mFirstResponder->getNextResponder() ) {
-					setFirstResponder( mFirstResponder->getNextResponder() );
-				}
+				moveToNextResponder();
 			}
 		}
 		else {
@@ -455,14 +448,10 @@ void Graph::setFirstResponder( const ViewRef &view )
 		if( mFirstResponder && mFirstResponder != view ) {
 			CI_LOG_I( "\t\t- resigning first responder." );
 			mFirstResponder->willResignFirstResponder(); // TODO: should this return false here if mFirstResponder returns false?
-			mFirstResponder->mIsFirstResponder = false;
 		}
-
-		CI_LOG_I( "\t- assigning view as first responder: " << view->getName() );
 
 		auto previousFirstResponder = mFirstResponder;
 		mFirstResponder = view;
-		view->mIsFirstResponder = true;
 		mPreviousFirstResponder = previousFirstResponder;
 	}
 	else {
@@ -474,14 +463,45 @@ void Graph::setFirstResponder( const ViewRef &view )
 	}
 }
 
-void Graph::resignFirstResponder()
+void Graph::moveToNextResponder()
 {
-	// TODO
+	CI_LOG_I( "current first responder: " << ( mFirstResponder ? mFirstResponder->getName() : "(none)" ) );
+	if( ! mFirstResponder )
+		return;
+
+	auto nextResponder = mFirstResponder->getNextResponder();
+	if( nextResponder ) {
+		setFirstResponder( nextResponder );
+	}
+	else {
+		CI_LOG_I( "\t- no next responder, resigning current." );
+		mPreviousFirstResponder = mFirstResponder;
+		mFirstResponder->willResignFirstResponder();
+		mFirstResponder = nullptr;
+	}
 }
 
-void Graph::removeAllResponders()
+void Graph::moveToPreviousResponder()
 {
-	// TODO
+	CI_LOG_I( "current first responder: " << ( mFirstResponder ? mFirstResponder->getName() : "(none)" ) << ", previous first responder: " <<  ( mPreviousFirstResponder ? mPreviousFirstResponder->getName() : "(none)" ) );
+	
+	// FIXME: this isn't good enough, only goes back one level
+	// - this also needs to resign the current responder
+	if( mPreviousFirstResponder ) {
+		setFirstResponder( mPreviousFirstResponder );
+	}
+}
+
+void Graph::resignFirstResponder()
+{
+	CI_LOG_I( "current first responder: " << ( mFirstResponder ? mFirstResponder->getName() : "(none)" ) );
+	if( ! mFirstResponder )
+		return;
+
+	CI_LOG_I( "\t- resigning current responder." );
+	mPreviousFirstResponder = mFirstResponder;
+	mFirstResponder->willResignFirstResponder();
+	mFirstResponder = nullptr;
 }
 
 #if 0
