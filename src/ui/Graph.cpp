@@ -469,15 +469,21 @@ void Graph::moveToNextResponder()
 	if( ! mFirstResponder )
 		return;
 
+	// find the next responder, searching up the parent chain as needed
 	auto nextResponder = mFirstResponder->getNextResponder();
+	auto parent = mFirstResponder->getParent();
+	while( ! nextResponder && parent ) {
+		nextResponder = parent->getNextResponder();
+		if( ! nextResponder )
+			parent = parent->getParent();
+	}
+
 	if( nextResponder ) {
 		setFirstResponder( nextResponder );
 	}
 	else {
 		CI_LOG_I( "\t- no next responder, resigning current." );
-		mPreviousFirstResponder = mFirstResponder;
-		mFirstResponder->willResignFirstResponder();
-		mFirstResponder = nullptr;
+		resignFirstResponder();
 	}
 }
 
