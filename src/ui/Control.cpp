@@ -1086,7 +1086,7 @@ void NumberBoxT<T>::setStep( float step )
 template <typename T>
 void NumberBoxT<T>::setValue( const T &value )
 {
-	for( size_t i = 0; i < getSize(); i++ ) {
+	for( int i = 0; i < getSize(); i++ ) {
 		mValue[i] = value[i];
 		mNumberBoxes[i]->setValue( value[i] );
 	}
@@ -1104,7 +1104,7 @@ void NumberBoxT<T>::setBorderColor( const ci::ColorA &color )
 template <typename T>
 void NumberBoxT<T>::onValueChanged()
 {
-	for( size_t i = 0; i < getSize(); i++ )
+	for( int i = 0; i < getSize(); i++ )
 		mValue[i] = mNumberBoxes[i]->getValue();
 
 	getSignalValueChanged().emit();
@@ -1112,7 +1112,7 @@ void NumberBoxT<T>::onValueChanged()
 
 // Specializing float type:
 template<>
-size_t NumberBoxT<float>::getSize() const
+int NumberBoxT<float>::getSize() const
 {
 	return 1;
 }
