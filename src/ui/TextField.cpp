@@ -23,8 +23,8 @@ POSSIBILITY OF SUCH DAMAGE.
 #include "ui/Graph.h"
 #include "cinder/Log.h"
 
-#define LOG_TEXT( stream )	CI_LOG_I( stream )
-//#define LOG_TEXT( stream )	( (void)( 0 ) )
+//#define LOG_TEXT( stream )	CI_LOG_I( stream )
+#define LOG_TEXT( stream )	( (void)( 0 ) )
 
 using namespace ci;
 using namespace std;

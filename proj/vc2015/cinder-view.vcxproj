@@ -57,6 +57,7 @@
     <ClInclude Include="..\..\src\fmt\format.h" />
     <ClInclude Include="..\..\src\mason\Factory.h" />
     <ClInclude Include="..\..\src\ui\Control.h" />
+    <ClInclude Include="..\..\src\ui\Debug.h" />
     <ClInclude Include="..\..\src\ui\Export.h" />
     <ClInclude Include="..\..\src\ui\Filter.h" />
     <ClInclude Include="..\..\src\ui\GestureTracker.h" />

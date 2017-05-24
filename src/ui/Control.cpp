@@ -25,12 +25,9 @@
 #include "ui/Layout.h"
 #include "ui/Graph.h"
 #include "ui/TextField.h"
-#include "cinder/Log.h"
+#include "ui/Debug.h"
 #include "fmt/format.h"
 #include <array>
-
-//#define LOG_TOUCHES( stream )	CI_LOG_I( stream )
-#define LOG_TOUCHES( stream )	( (void)( 0 ) )
 
 using namespace ci;
 using namespace std;
@@ -350,7 +347,7 @@ bool SliderBase::touchesBegan( app::TouchEvent &event )
 	auto &firstTouch = event.getTouches().front();
 	vec2 pos = toLocal( firstTouch.getPos() );
 
-	LOG_TOUCHES( "[" << getName() << "] pos: " << pos << ", num touches: " << event.getTouches().size() );
+	UI_LOG_TOUCHES( "[" << getName() << "] pos: " << pos << ", num touches: " << event.getTouches().size() );
 
 	updateValue( pos );
 	firstTouch.setHandled();
@@ -365,12 +362,12 @@ bool SliderBase::touchesMoved( app::TouchEvent &event )
 	auto &firstTouch = event.getTouches().front();
 	vec2 pos = toLocal( firstTouch.getPos() );
 	if( ! hitTestInsideCancelPadding( pos ) ) {
-		LOG_TOUCHES( "[" << getName() << "] CANCELED| pos: " << pos << ", num touches: " << event.getTouches().size() );
+		UI_LOG_TOUCHES( "[" << getName() << "] CANCELED| pos: " << pos << ", num touches: " << event.getTouches().size() );
 		setTouchCanceled( true );
 		return false;
 	}
 
-	LOG_TOUCHES( "[" << getName() << "] pos: " << pos << ", num touches: " << event.getTouches().size() );
+	UI_LOG_TOUCHES( "[" << getName() << "] pos: " << pos << ", num touches: " << event.getTouches().size() );
 
 	updateValue( pos );
 	firstTouch.setHandled();
@@ -387,12 +384,12 @@ bool SliderBase::touchesEnded( app::TouchEvent &event )
 	auto &firstTouch = event.getTouches().front();
 	vec2 pos = toLocal( firstTouch.getPos() );
 	if( ! hitTestInsideCancelPadding( pos ) ) {
-		LOG_TOUCHES( "[" << getName() << "] CANCELED| pos: " << pos << ", num touches: " << event.getTouches().size() );
+		UI_LOG_TOUCHES( "[" << getName() << "] CANCELED| pos: " << pos << ", num touches: " << event.getTouches().size() );
 		setTouchCanceled( true );
 		return false;
 	}
 
-	LOG_TOUCHES( "[" << getName() << "] pos: " << pos << ", num touches: " << event.getTouches().size() );
+	UI_LOG_TOUCHES( "[" << getName() << "] pos: " << pos << ", num touches: " << event.getTouches().size() );
 
 	updateValue( pos );
 	firstTouch.setHandled();
@@ -694,7 +691,7 @@ void NumberBox::onDoubleTap()
 
 void NumberBox::onTextInputBegin()
 {
-	CI_LOG_I( "(" << getName() << ") text: " << mTextField );
+	UI_LOG_RESPONDER( "(" << getName() << ") text: " << mTextField );
 
 	mTextField->setText( getValueAsString() );	
 	mTextField->setHidden( false );
@@ -702,14 +699,14 @@ void NumberBox::onTextInputBegin()
 
 void NumberBox::onTextInputUpdated()
 {
-	CI_LOG_I( "(" << getName() << ") text: " << mTextField );
+	UI_LOG_RESPONDER( "(" << getName() << ") text: " << mTextField );
 	float updatedValue = stof( mTextField->getText() );
 	setValue( updatedValue );
 }
 
 void NumberBox::onTextInputCompleted()
 {
-	CI_LOG_I( "(" << getName() << ") text: " << mTextField );
+	UI_LOG_RESPONDER( "(" << getName() << ") text: " << mTextField );
 	float updatedValue = stof( mTextField->getText() );
 	setValue( updatedValue );
 
@@ -726,7 +723,7 @@ bool NumberBox::touchesBegan( app::TouchEvent &event )
 	mDragStartPos = toLocal( firstTouch.getPos() );
 	mDragStartValue = mValue;
 
-	LOG_TOUCHES( "[" << getName() << "] pos: " << mDragStartPos << ", num touches: " << event.getTouches().size() );
+	UI_LOG_RESPONDER( "[" << getName() << "] pos: " << mDragStartPos << ", num touches: " << event.getTouches().size() );
 
 	firstTouch.setHandled();
 	return true;
@@ -739,7 +736,7 @@ bool NumberBox::touchesMoved( app::TouchEvent &event )
 	auto &firstTouch = event.getTouches().front();
 	vec2 pos = toLocal( firstTouch.getPos() );
 
-	LOG_TOUCHES( "[" << getName() << "] pos: " << pos << ", num touches: " << event.getTouches().size() );
+	UI_LOG_RESPONDER( "[" << getName() << "] pos: " << pos << ", num touches: " << event.getTouches().size() );
 
 	updateValue( pos );
 	firstTouch.setHandled();
@@ -754,7 +751,7 @@ bool NumberBox::touchesEnded( app::TouchEvent &event )
 	auto &firstTouch = event.getTouches().front();
 	vec2 pos = toLocal( firstTouch.getPos() );
 
-	LOG_TOUCHES( "[" << getName() << "] pos: " << pos << ", num touches: " << event.getTouches().size() );
+	UI_LOG_RESPONDER( "[" << getName() << "] pos: " << pos << ", num touches: " << event.getTouches().size() );
 
 	updateValue( pos );
 	firstTouch.setHandled();

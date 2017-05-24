@@ -24,10 +24,7 @@
 #include "ui/Graph.h"
 
 #include "cinder/app/AppBase.h"
-#include "cinder/Log.h"
-
-//#define LOG_TOUCHES( stream )	CI_LOG_I( stream )
-#define LOG_TOUCHES( stream )	( (void)( 0 ) )
+#include "ui/Debug.h"
 
 using namespace ci;
 using namespace std;
@@ -224,7 +221,7 @@ void Graph::propagateTouchesBegan( app::TouchEvent &event )
 	auto thisRef = shared_from_this();
 	propagateTouchesBegan( thisRef, event, numTouchesHandled, firstResponder );
 
-	CI_LOG_I( "mFirstResponder: " << ( ! mFirstResponder ? "(none)" : mFirstResponder->getName() )
+	UI_LOG_RESPONDER( "mFirstResponder: " << ( ! mFirstResponder ? "(none)" : mFirstResponder->getName() )
 		<< ", firstResponder, : " << ( ! firstResponder ? "(none)" : firstResponder->getName() ) );
 	
 	if( mFirstResponder && mFirstResponder != firstResponder ) {
@@ -241,7 +238,7 @@ void Graph::propagateTouchesBegan( ViewRef &view, app::TouchEvent &event, size_t
 	if( view->isHidden() || ! view->isInteractive() )
 		return;
 
-	LOG_TOUCHES( view->getName() << " | num touches A: " << event.getTouches().size() );
+	UI_LOG_TOUCHES( view->getName() << " | num touches A: " << event.getTouches().size() );
 
 	vector<app::TouchEvent::Touch> touchesInside;
 	touchesInside.reserve( event.getTouches().size() );
@@ -256,7 +253,7 @@ void Graph::propagateTouchesBegan( ViewRef &view, app::TouchEvent &event, size_t
 		}
 	}
 
-	LOG_TOUCHES( view->getName() << " | num touchesInsde: " << touchesInside.size() );
+	UI_LOG_TOUCHES( view->getName() << " | num touchesInsde: " << touchesInside.size() );
 
 	if( touchesInside.empty() )
 		return;
@@ -285,20 +282,20 @@ void Graph::propagateTouchesBegan( ViewRef &view, app::TouchEvent &event, size_t
 			}
 		}
 
-		LOG_TOUCHES( view->getName() << " | numTouchesHandled: " << numTouchesHandled );
+		UI_LOG_TOUCHES( view->getName() << " | numTouchesHandled: " << numTouchesHandled );
 
 		// Remove active touches. Note: I'm having to do this outside of the above loop because I can't invalidate the vector::iterator
 		touches.erase(
 				remove_if( touches.begin(), touches.end(),
 				           [&view]( const app::TouchEvent::Touch &touch ) {
 					           if( touch.isHandled() ) {
-						           LOG_TOUCHES( view->getName() << " | handled touch: " << touch.getId() );
+						           UI_LOG_TOUCHES( view->getName() << " | handled touch: " << touch.getId() );
 					           }
 					           return touch.isHandled();
 				           } ),
 				touches.end() );
 
-		LOG_TOUCHES( view->getName() << " | num touches C: " << event.getTouches().size() );
+		UI_LOG_TOUCHES( view->getName() << " | num touches C: " << event.getTouches().size() );
 		
 		if( numTouchesHandledThisView != 0 && find( mViewsWithTouches.begin(), mViewsWithTouches.end(), view ) == mViewsWithTouches.end() ) {
 			mViewsWithTouches.push_back( view );
@@ -308,7 +305,7 @@ void Graph::propagateTouchesBegan( ViewRef &view, app::TouchEvent &event, size_t
 			event.setHandled();
 		}
 
-		LOG_TOUCHES( "handled: " << event.isHandled() );
+		UI_LOG_TOUCHES( "handled: " << event.isHandled() );
 	}
 }
 
@@ -321,7 +318,7 @@ void Graph::propagateTouchesMoved( app::TouchEvent &event )
 //	size_t numTouchesHandled = 0;
 
 	for( auto &view : mViewsWithTouches ) {
-//		LOG_TOUCHES( view->getName() << " | num touches A: " << event.getTouches().size() );
+//		UI_LOG_TOUCHES( view->getName() << " | num touches A: " << event.getTouches().size() );
 
 		CI_ASSERT( ! view->mActiveTouches.empty() );
 		// Update active touches
@@ -335,7 +332,7 @@ void Graph::propagateTouchesMoved( app::TouchEvent &event )
 			touchesContinued.push_back( touch );
 		}
 
-//		LOG_TOUCHES( view->getName() << " | num touchesContinued: " << touchesContinued.size() );
+//		UI_LOG_TOUCHES( view->getName() << " | num touchesContinued: " << touchesContinued.size() );
 
 		if( ! touchesContinued.empty() ) {
 			event.getTouches() = touchesContinued;
@@ -354,7 +351,7 @@ void Graph::propagateTouchesMoved( app::TouchEvent &event )
 //	if( numTouchesHandled == mCurrentTouchEvent.getTouches().size() ) {
 //		event.setHandled();
 //	}
-//	LOG_TOUCHES( "handled: " << event.isHandled() );
+//	UI_LOG_TOUCHES( "handled: " << event.isHandled() );
 }
 
 void Graph::propagateTouchesEnded( app::TouchEvent &event )
@@ -364,7 +361,7 @@ void Graph::propagateTouchesEnded( app::TouchEvent &event )
 
 	for( auto viewIt = mViewsWithTouches.begin(); viewIt != mViewsWithTouches.end(); /* */ ) {
 		auto &view = *viewIt;
-		LOG_TOUCHES( view->getName() << " | num active touches: " << view->mActiveTouches.size() );
+		UI_LOG_TOUCHES( view->getName() << " | num active touches: " << view->mActiveTouches.size() );
 
 		CI_ASSERT( ! view->mActiveTouches.empty() );
 		// Update active touches
@@ -378,7 +375,7 @@ void Graph::propagateTouchesEnded( app::TouchEvent &event )
 			touchesEnded.push_back( touch );
 		}
 
-		LOG_TOUCHES( view->getName() << " | num touchesEnded: " << touchesEnded.size() );
+		UI_LOG_TOUCHES( view->getName() << " | num touchesEnded: " << touchesEnded.size() );
 
 		if( ! touchesEnded.empty() ) {
 			event.getTouches() = touchesEnded;
@@ -404,7 +401,7 @@ void Graph::propagateTouchesEnded( app::TouchEvent &event )
 		if( numRemoved == 0 ) {
 			CI_LOG_W( "stray touch attempted to be removed" );
 		}
-		LOG_TOUCHES( "touch: " << touch.getId() << ", num removed: " << numRemoved );
+		UI_LOG_TOUCHES( "touch: " << touch.getId() << ", num removed: " << numRemoved );
 	}
 
 	mCurrentTouchEvent.getTouches().clear();
@@ -444,10 +441,10 @@ void Graph::propagateKeyUp( ci::app::KeyEvent &event )
 // TODO: refactor, this is pretty kludgy in that it was moved from the ad-hoc Responder class that will soon be removed.
 void Graph::setFirstResponder( const ViewRef &view )
 {
-	CI_LOG_I( "view: " << view->getName() << ", current first responder: " << ( mFirstResponder ? mFirstResponder->getName() : "(none)" ) );
+	UI_LOG_RESPONDER( "view: " << view->getName() << ", current first responder: " << ( mFirstResponder ? mFirstResponder->getName() : "(none)" ) );
 	if( view->willBecomeFirstResponder() ) {
 		if( mFirstResponder && mFirstResponder != view ) {
-			CI_LOG_I( "\t\t- resigning first responder." );
+			UI_LOG_RESPONDER( "\t\t- resigning first responder." );
 			mFirstResponder->willResignFirstResponder(); // TODO: should this return false here if mFirstResponder returns false?
 		}
 
@@ -466,14 +463,14 @@ void Graph::setFirstResponder( const ViewRef &view )
 
 void Graph::moveToNextResponder()
 {
-	CI_LOG_I( "current first responder: " << ( mFirstResponder ? mFirstResponder->getName() : "(none)" ) );
+	UI_LOG_RESPONDER( "current first responder: " << ( mFirstResponder ? mFirstResponder->getName() : "(none)" ) );
 	if( ! mFirstResponder )
 		return;
 
 	// find the next responder willing to accept responder status
 	auto nextResponder = mFirstResponder->getNextResponder();
 	while( nextResponder ) {
-		CI_LOG_I( "\t- next responder: " << nextResponder->getName() << ", accepts first responder: " << nextResponder->getAcceptsFirstResponder() );
+		UI_LOG_RESPONDER( "\t- next responder: " << nextResponder->getName() << ", accepts first responder: " << nextResponder->getAcceptsFirstResponder() );
 
 		if( nextResponder->getAcceptsFirstResponder() )
 			break;
@@ -485,7 +482,7 @@ void Graph::moveToNextResponder()
 		setFirstResponder( nextResponder );
 	}
 	else {
-		CI_LOG_I( "\t- no next responder, resigning current." );
+		UI_LOG_RESPONDER( "\t- no next responder, resigning current." );
 		resignFirstResponder();
 	}
 }
@@ -503,11 +500,11 @@ void Graph::moveToPreviousResponder()
 
 void Graph::resignFirstResponder()
 {
-	CI_LOG_I( "current first responder: " << ( mFirstResponder ? mFirstResponder->getName() : "(none)" ) );
+	UI_LOG_RESPONDER( "current first responder: " << ( mFirstResponder ? mFirstResponder->getName() : "(none)" ) );
 	if( ! mFirstResponder )
 		return;
 
-	CI_LOG_I( "\t- resigning current responder." );
+	UI_LOG_RESPONDER( "\t- resigning current responder." );
 	mPreviousFirstResponder = mFirstResponder;
 	mFirstResponder->willResignFirstResponder();
 	mFirstResponder = nullptr;

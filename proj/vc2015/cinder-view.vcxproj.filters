@@ -128,5 +128,8 @@
     <ClInclude Include="..\..\src\ui\GestureTracker.h">
       <Filter>src\ui</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\ui\Debug.h">
+      <Filter>src\ui</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
