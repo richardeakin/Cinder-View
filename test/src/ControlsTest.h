@@ -2,8 +2,6 @@
 
 #include "ui/Suite.h"
 
-#include "ui/TextField.h"
-
 #include "cinder/gl/TextureFont.h"
 
 class ControlsTest : public ui::SuiteView {

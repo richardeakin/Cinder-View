@@ -29,6 +29,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 #define UI_LOG_TOUCHES_ENABLED			0	//! log touch events
 #define UI_LOG_RESPONDER_ENABLED		0	//! log Responder chain
+#define UI_LOG_TEXT_ENABLED				0	//! log text
 
 #if UI_LOG_TOUCHES_ENABLED
 	#define UI_LOG_TOUCHES( args ) CI_LOG_I( args )
@@ -40,4 +41,10 @@ POSSIBILITY OF SUCH DAMAGE.
 	#define UI_LOG_RESPONDER( args ) CI_LOG_I( args )
 #else
 	#define UI_LOG_RESPONDER( args ) (void)(0)
+#endif
+
+#if UI_LOG_TEXT_ENABLED
+	#define UI_LOG_TEXT( args ) CI_LOG_I( args )
+#else
+	#define UI_LOG_TEXT( args ) (void)(0)
 #endif

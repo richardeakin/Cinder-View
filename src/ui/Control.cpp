@@ -24,7 +24,6 @@
 #include "ui/Control.h"
 #include "ui/Layout.h"
 #include "ui/Graph.h"
-#include "ui/TextField.h"
 #include "ui/Debug.h"
 #include "fmt/format.h"
 #include <array>
@@ -263,6 +262,203 @@ void CheckBox::draw( Renderer *ren )
 	ren->setColor( getTitleColor() );
 	const float offsetY = 4;
 	mTextTitle->drawString( getTitle(), vec2( r + padding * 2, getCenterLocal().y + mTextTitle->getDescent() + offsetY ) );
+}
+
+// ----------------------------------------------------------------------------------------------------
+// TextField
+// ----------------------------------------------------------------------------------------------------
+
+TextField::TextField( const ci::Rectf &bounds )
+	: Control( bounds )
+{
+	setAcceptsFirstResponder( true );
+	setClipEnabled( true );
+
+	mText = TextManager::loadText( FontFace::NORMAL );
+}
+
+void TextField::setBorderColor( const ci::ColorA &color, State state )
+{
+	switch( state ) {
+		case State::NORMAL:		mBorderColorNormal = color; return;
+		case State::SELECTED:	mBorderColorSelected = color; return;
+			//case State::PRESSED:	mColorPressed = color; return;
+		default: CI_ASSERT_NOT_REACHABLE();
+	}
+}
+
+void TextField::setTextColor( const ci::ColorA &color, State state )
+{
+	switch( state ) {
+		case State::NORMAL:		mTextColorNormal = color; return;
+		case State::SELECTED:	mTextColorSelected = color; return;
+			//case State::PRESSED:	mColorPressed = color; return;
+		default: CI_ASSERT_NOT_REACHABLE();
+	}
+}
+
+void TextField::setPlaceholderText( const std::string &text )
+{
+	mPlaceholderString = text;
+	if( getLabel().empty() )
+		setLabel( "TextField ('" + text + "')" );
+}
+
+void TextField::draw( Renderer *ren )
+{
+	const float padding = 6;
+
+	// draw text
+	if( ! mInputString.empty() ) {
+		auto color = isFirstResponder() ? mTextColorSelected : mTextColorNormal;
+		ren->setColor( color );
+		mText->drawString( mInputString, vec2( padding, getCenterLocal().y + mText->getDescent() ) );
+	}
+	else if( ! isFirstResponder() && ! mPlaceholderString.empty() ) {
+		auto color = Color::gray( 0.5f ); // TODO: make color a property
+		ren->setColor( color );
+		mText->drawString( mPlaceholderString, vec2( padding, getCenterLocal().y + mText->getDescent() ) );
+	}
+
+	// draw cursor bar
+	if( isFirstResponder() ) {
+		const float cursorThickness = 1;
+		const float nextCharOffset = 6;
+		vec2 cursorLoc = { 0, 0 };
+		// measure where the cursor should be drawn (where the next character will be inserted)
+		string stringUntilCursor = mInputString.substr( 0, mCursorPos );
+		cursorLoc = mText->measureString( stringUntilCursor );
+		cursorLoc.x += nextCharOffset;
+		Rectf cursorRect = { cursorLoc.x - cursorThickness / 2, 0, cursorLoc.x + cursorThickness / 2, getHeight() };
+
+		ColorA cursorColor = mBorderColorSelected;
+		cursorColor.a *= (float)( 1.0 - glm::pow( cos( getGraph()->getElapsedSeconds() * 2 ), 4 ) );
+
+		// TODO: does this need more care to be correctly composited?
+		ren->pushBlendMode( ui::BlendMode::PREMULT_ALPHA );
+		ren->setColor( cursorColor );
+		ren->drawSolidRect( cursorRect );
+		ren->popBlendMode();
+	}
+
+	// draw border
+	if( mBorderMode != BorderMode::DISABLED ) {
+		auto color = isFirstResponder() ? mBorderColorSelected : mBorderColorNormal;
+		ren->setColor( color );
+		ren->drawStrokedRect( getBoundsLocal(), 2 );
+	}
+}
+
+bool TextField::willBecomeFirstResponder()
+{
+	UI_LOG_TEXT( getName() );
+
+	// emit begin signal first, which might be used to update the initial string
+	mSignalTextInputBegin.emit();
+
+	// If the current cursor position is invalid, place it at the end of the current input string
+	// TODO: place it according to touch pos
+	if( mCursorPos < 0 || mCursorPos > (int)mInputString.size() ) {
+		mCursorPos = (int)mInputString.size();
+	}
+
+	// store the input string, in case input is canceled and we need to revert.
+	mInputStringBeforeInput = mInputString;
+	return true;
+}
+
+bool TextField::willResignFirstResponder()
+{
+	UI_LOG_TEXT( getName() );
+	mSignalTextInputCompleted.emit();
+	return true;
+}
+
+bool TextField::keyDown( ci::app::KeyEvent &event )
+{   
+	//UI_LOG_TEXT( "char: " << ( event.getChar() ? event.getChar() : 0 ) << ", char utf32: " << event.getCharUtf32() << ", code: " << event.getCode() 
+	//	<< ", shift down: " << event.isShiftDown() << ", alt down: " << event.isAltDown() << ", ctrl down: " << event.isControlDown()
+	//	<< ", meta down: " << event.isMetaDown() << ", accel down: " << event.isAccelDown() << ", native code: " << event.getNativeKeyCode() );
+
+	bool handled = true;
+	if( event.getCode() == app::KeyEvent::KEY_RETURN ) {
+		// text completed
+		UI_LOG_TEXT( "(enter) text completed." );
+		mSignalTextInputCompleted.emit();
+		resignFirstResponder();
+	}
+	else if( event.getCode() == app::KeyEvent::KEY_ESCAPE ) {
+		// cancel input text, reverting it to previous when we became first responder
+		UI_LOG_TEXT( "(escape) text canceled." );
+		mInputString = mInputStringBeforeInput;
+		mCursorPos = std::min( mCursorPos, (int)mInputString.size() );
+		mSignalTextInputCanceled.emit();
+		resignFirstResponder();
+	}
+	else if( event.getCode() == app::KeyEvent::KEY_BACKSPACE ) {
+		// delete character before cursor, if possible
+		if( mCursorPos > 0 && mCursorPos - 1 < mInputString.size() ) {
+			mInputString.erase( mCursorPos - 1, 1 );
+			mCursorPos -= 1;
+			getSignalValueChanged().emit();
+		}
+		UI_LOG_TEXT( "(backspace) string size: " << mInputString.size() << ", cursor pos: " << mCursorPos );
+	}
+	else if( event.getCode() == app::KeyEvent::KEY_DELETE ) {
+		// delete character after cursor, if possible
+		if( mCursorPos < mInputString.size() ) {
+			mInputString.erase( mCursorPos, 1 );
+			getSignalValueChanged().emit();
+		}
+		UI_LOG_TEXT( "(delete) string size: " << mInputString.size() << ", cursor pos: " << mCursorPos );
+	}
+	else if( event.getCode() == app::KeyEvent::KEY_RIGHT ) {
+		// move cursor to the right, if possible
+		if( mCursorPos < mInputString.size() ) {
+			mCursorPos += 1;
+		}
+
+		UI_LOG_TEXT( "(right) string size: " << mInputString.size() << ", cursor pos: " << mCursorPos );
+	}
+	else if( event.getCode() == app::KeyEvent::KEY_LEFT ) {
+		// move cursor to the right, if possible
+		if( mCursorPos > 0 ) {
+			mCursorPos -= 1;
+		}
+
+		UI_LOG_TEXT( "(left) string size: " << mInputString.size() << ", cursor pos: " << mCursorPos );
+	}
+	else if( event.getChar() ) {
+		if( ! checkCharIsValid( event.getChar() ) ) {
+			UI_LOG_TEXT( "(enter char) rejecting char: " << event.getChar() );
+			handled = false;
+		}
+		else {
+			mInputString.insert( mCursorPos, 1, event.getChar() );
+			mCursorPos += 1;
+			UI_LOG_TEXT( "(enter char) string size: " << mInputString.size() << ", cursor pos: " << mCursorPos );
+			getSignalValueChanged().emit();
+		}
+	}
+	else
+		handled = false;
+
+	return handled;
+}
+
+bool TextField::checkCharIsValid( char c ) const
+{
+	if( mInputMode == InputMode::NUMERIC ) {
+		if( c == '.' ) {
+			// not valid if there is already a decimal in the input string
+			if( mInputString.find( '.' ) != string::npos )
+				return false;
+		}
+		else if( ! isdigit( c ) )
+			return false;
+	}
+
+	return true;
 }
 
 // ----------------------------------------------------------------------------------------------------
