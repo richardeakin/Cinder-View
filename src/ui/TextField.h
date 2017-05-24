@@ -55,6 +55,7 @@ class CI_UI_API TextField : public Control {
 	void		setBorderMode( BorderMode mode )	{ mBorderMode = mode; }
 	BorderMode	getBorderMode() const				{ return mBorderMode; }
 
+	ci::signals::Signal<void ()>&	getSignalmSignalTextInputBegin()	{ return mSignalTextInputBegin; }
 	ci::signals::Signal<void ()>&	getSignalTextInputCompleted()	{ return mSignalTextInputCompleted; }
 	ci::signals::Signal<void ()>&	getSignalTextInputCanceled()	{ return mSignalTextInputCanceled; }
 
@@ -79,7 +80,7 @@ class CI_UI_API TextField : public Control {
 	ci::ColorA	mTextColorNormal = ci::ColorA::gray( 1, 0.6f );
 	ci::ColorA	mTextColorSelected = ci::ColorA::white();
 
-	ci::signals::Signal<void ()>	mSignalTextInputCompleted, mSignalTextInputCanceled;
+	ci::signals::Signal<void ()>	mSignalTextInputBegin, mSignalTextInputCompleted, mSignalTextInputCanceled;
 };
 
 } // namespace ui

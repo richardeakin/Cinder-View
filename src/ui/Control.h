@@ -290,6 +290,8 @@ class CI_UI_API NumberBox : public Control {
 	void setSnapToIntEnabled( bool enable )	{ mSnapToInt = enable; }
 	bool isSnapToIntEnabled() const			{ return mSnapToInt; }
 
+	void setNextResponder( const ViewRef &view ) override;
+
   protected:
 	void layout() override;
 	void draw( Renderer *ren )	override;
@@ -302,11 +304,9 @@ class CI_UI_API NumberBox : public Control {
 
 	void updateValue( const ci::vec2 &pos );
 
-
-	ViewRef	getNextResponder() const override;
-
   private:
 	void onDoubleTap();
+	void onTextInputBegin();
 	void onTextInputUpdated();
 	void onTextInputCompleted();
 	std::string	getValueAsString() const;

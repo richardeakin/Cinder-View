@@ -592,10 +592,11 @@ NumberBox::NumberBox( const Rectf &bounds )
 	mTextField->setBorderMode( TextField::BorderMode::DISABLED );
 	mTextField->setHidden();
 	addSubview( mTextField );
-	setNextResponder( mTextField );
+	View::setNextResponder( mTextField );
 
 	mTapTracker.getSignalGestureDetected().connect( signals::slot( this, &NumberBox::onDoubleTap ) );
 	mTextField->getSignalValueChanged().connect( signals::slot( this, &NumberBox::onTextInputUpdated ) );
+	mTextField->getSignalmSignalTextInputBegin().connect( signals::slot( this, &NumberBox::onTextInputBegin ) );
 	mTextField->getSignalTextInputCompleted().connect( signals::slot( this, &NumberBox::onTextInputCompleted ) );
 	mTextField->getSignalTextInputCanceled().connect( signals::slot( this, &NumberBox::onTextInputCompleted ) );
 
@@ -632,6 +633,8 @@ void NumberBox::setTitle( const std::string &title )
 	mTitle = title;
 	if( getLabel().empty() )
 		setLabel( "NumberBox ('" + title + "')" );
+
+	mTextField->setLabel( "TextField (" + getLabel() + ")" );
 
 	setNeedsLayout();
 }
@@ -678,26 +681,23 @@ std::string	NumberBox::getValueAsString() const
 	return fmt::format( "{}", getValue() );
 }
 
-ViewRef	NumberBox::getNextResponder() const
+void NumberBox::setNextResponder( const ViewRef &view )
 {
-	// TODO: is this a hack? or explain
-	CI_LOG_I( "(" << getName() << ") mTextField hidden: " << mTextField->isHidden() );
-	if( mTextField->isHidden() ) {
-		mTextField->setHidden( false );
-		mTextField->setText( getValueAsString() );
-		return mTextField;
-	}
-	else
-		return View::getNextResponder();
+	// responder chain goes: NumberBox -> mTextField -> view
+	mTextField->setNextResponder( view );
 }
 
 void NumberBox::onDoubleTap()
 {
-	//mTextField->getBackground()->setColor( Color( 0.1f, 0.3f, 0.3f ) );
-	mTextField->setText( getValueAsString() );
-	mTextField->setHidden( false );
-	
 	mTextField->becomeFirstResponder();
+}
+
+void NumberBox::onTextInputBegin()
+{
+	CI_LOG_I( "(" << getName() << ") text: " << mTextField );
+
+	mTextField->setText( getValueAsString() );	
+	mTextField->setHidden( false );
 }
 
 void NumberBox::onTextInputUpdated()
@@ -791,7 +791,6 @@ NumberBoxT<T>::NumberBoxT( const Rectf &bounds )
 	const array<string, 4> titles = { "x", "y", "z", "w" };
 
 	mControlContainer = make_shared<ui::View>();
-	//nbox->setSize( 0, 30 );
 
 	addSubview( mControlContainer );
 
@@ -839,6 +838,7 @@ NumberBoxT<T>::NumberBoxT( const Rectf &bounds )
 template <typename T>
 void NumberBoxT<T>::setNextResponder( const ViewRef &view )
 { 
+	// responder chain goes: NumBerBoxT -> last NumberBox -> view
 	mNumberBoxes.back()->setNextResponder( view );
 }
 

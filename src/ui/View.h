@@ -115,10 +115,10 @@ class CI_UI_API View : std::enable_shared_from_this<View> {
 	void	setAcceptsFirstResponder( bool b = true )	{ mAcceptsFirstResponder = b; }
 	//!
 	bool	getAcceptsFirstResponder() const			{ return mAcceptsFirstResponder; }
-	//!
+	//! Sets the next responder in the responder chain. Can be overridden if a View needs to insert its own subviews into the chain.
 	virtual void	setNextResponder( const ViewRef &view )		{ mNextResponder = view; }
-	//! Returns the next responder in the responder chain. TODO: explain the order and logic
-	virtual ViewRef	getNextResponder() const;
+	//! Returns the next responder in the responder chain, either one set by user with setNextResponder() or the parent View.
+	ViewRef	getNextResponder() const;
 
 	//! Sets a label that can be used to identify this View
 	void				setLabel( const std::string &label )	{ mLabel = label; }

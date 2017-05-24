@@ -121,7 +121,7 @@ bool TextField::willBecomeFirstResponder()
 
 	// store the input string, in case input is canceled and we need to revert.
 	mInputStringBeforeInput = mInputString;
-
+	mSignalTextInputBegin.emit();
 	return true;
 }
 
