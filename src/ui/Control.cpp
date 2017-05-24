@@ -630,6 +630,9 @@ void NumberBox::setValue( float value, bool emitChanged )
 void NumberBox::setTitle( const std::string &title )
 { 
 	mTitle = title;
+	if( getLabel().empty() )
+		setLabel( "NumberBox ('" + title + "')" );
+
 	setNeedsLayout();
 }
 
@@ -687,14 +690,14 @@ void NumberBox::onDoubleTap()
 
 void NumberBox::onTextInputUpdated()
 {
-	CI_LOG_I( "text: " << mTextField->getText() );
+	CI_LOG_I( "(" << getName() << ") text: " << mTextField );
 	float updatedValue = stof( mTextField->getText() );
 	setValue( updatedValue );
 }
 
 void NumberBox::onTextInputCompleted()
 {
-	CI_LOG_I( "text: " << mTextField );
+	CI_LOG_I( "(" << getName() << ") text: " << mTextField );
 	float updatedValue = stof( mTextField->getText() );
 	setValue( updatedValue );
 
@@ -786,6 +789,13 @@ NumberBoxT<T>::NumberBoxT( const Rectf &bounds )
 		nbox->setBackgroundEnabled( false );
 		nbox->getSignalValueChanged().connect( signals::slot( this, &NumberBoxT::onValueChanged ) );
 
+		// link up responder chain
+		if( i == 0 ) {
+			setNextResponder( nbox );
+		}
+		else {
+			mNumberBoxes.back()->setNextResponder( nbox );
+		}
 
 		mNumberBoxes.push_back( nbox );
 		mControlContainer->addSubview( nbox );

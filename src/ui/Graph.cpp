@@ -219,23 +219,24 @@ void Graph::propagateTouchesBegan( app::TouchEvent &event )
 	for( const auto &touch : event.getTouches() )
 		mActiveTouches[touch.getId()] = touch;
 
-	auto previousFirstResponder = mFirstResponder;
-	mFirstResponder = nullptr;
 	size_t numTouchesHandled = 0;
+	ViewRef firstResponder;
 	auto thisRef = shared_from_this();
-	propagateTouchesBegan( thisRef, event, numTouchesHandled );
+	propagateTouchesBegan( thisRef, event, numTouchesHandled, firstResponder );
 
-	CI_LOG_I( "first responder: " << ( ! mFirstResponder ? "(none)" : mFirstResponder->getName() ) );
-	if( previousFirstResponder && previousFirstResponder != mFirstResponder ) {
-		mPreviousFirstResponder = previousFirstResponder;
-		mPreviousFirstResponder->resignFirstResponder();
+	CI_LOG_I( "mFirstResponder: " << ( ! mFirstResponder ? "(none)" : mFirstResponder->getName() )
+		<< ", firstResponder, : " << ( ! firstResponder ? "(none)" : firstResponder->getName() ) );
+	
+	if( mFirstResponder && mFirstResponder != firstResponder ) {
+		Graph::resignFirstResponder(); // TODO: consider renaming this, as View also has a non-virtual resignFirstResponder() method.
 	}
-	if( mFirstResponder ) {
-		setFirstResponder( mFirstResponder );
+
+	if( firstResponder ) {
+		setFirstResponder( firstResponder );
 	}
 }
 
-void Graph::propagateTouchesBegan( ViewRef &view, app::TouchEvent &event, size_t &numTouchesHandled )
+void Graph::propagateTouchesBegan( ViewRef &view, app::TouchEvent &event, size_t &numTouchesHandled, ViewRef &firstResponder )
 {
 	if( view->isHidden() || ! view->isInteractive() )
 		return;
@@ -251,7 +252,7 @@ void Graph::propagateTouchesBegan( ViewRef &view, app::TouchEvent &event, size_t
 			touchesInside.push_back( touch );
 			
 			if( view->getAcceptsFirstResponder() )
-				mFirstResponder = view;
+				firstResponder = view;
 		}
 	}
 
@@ -265,7 +266,7 @@ void Graph::propagateTouchesBegan( ViewRef &view, app::TouchEvent &event, size_t
 	auto subviews = view->mSubviews;
 	for( auto rIt = subviews.rbegin(); rIt != subviews.rend(); ++rIt ) {
 		event.getTouches() = touchesInside; // TODO: find a way to avoid making this copy per subview
-		propagateTouchesBegan( *rIt, event, numTouchesHandled );
+		propagateTouchesBegan( *rIt, event, numTouchesHandled, firstResponder );
 		if( event.isHandled() )
 			return;
 	}
@@ -469,13 +470,15 @@ void Graph::moveToNextResponder()
 	if( ! mFirstResponder )
 		return;
 
-	// find the next responder, searching up the parent chain as needed
+	// find the next responder willing to accept responder status
 	auto nextResponder = mFirstResponder->getNextResponder();
-	auto parent = mFirstResponder->getParent();
-	while( ! nextResponder && parent ) {
-		nextResponder = parent->getNextResponder();
-		if( ! nextResponder )
-			parent = parent->getParent();
+	while( nextResponder ) {
+		CI_LOG_I( "\t- next responder: " << nextResponder->getName() << ", accepts first responder: " << nextResponder->getAcceptsFirstResponder() );
+
+		if( nextResponder->getAcceptsFirstResponder() )
+			break;
+
+		nextResponder = nextResponder->getNextResponder();
 	}
 
 	if( nextResponder ) {

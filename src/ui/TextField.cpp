@@ -64,7 +64,7 @@ void TextField::setPlaceholderText( const std::string &text )
 {
 	mPlaceholderString = text;
 	if( getLabel().empty() )
-		setLabel( text );
+		setLabel( "TextField ('" + text + "')" );
 }
 
 void TextField::draw( Renderer *ren )
@@ -115,8 +115,7 @@ void TextField::draw( Renderer *ren )
 bool TextField::willBecomeFirstResponder()
 {
 	LOG_TEXT( getName() );
-	if( mCursorPos < 0 ) {
-		// set cursor position to one character after the current input string
+	if( mCursorPos < 0 || mCursorPos >= (int)mInputString.size() ) {
 		mCursorPos = (int)mInputString.size();
 	}
 

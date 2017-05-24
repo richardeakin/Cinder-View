@@ -122,7 +122,7 @@ class CI_UI_API Graph : public View {
   private:
 	LayerRef makeLayer( View *rootView );
 
-	void propagateTouchesBegan( ViewRef &view, ci::app::TouchEvent &event, size_t &numTouchesHandled );
+	void propagateTouchesBegan( ViewRef &view, ci::app::TouchEvent &event, size_t &numTouchesHandled, ViewRef &firstResponder );
 
 #if 0
 	void propagateKeyDown( ViewRef &view, ci::app::KeyEvent &event );

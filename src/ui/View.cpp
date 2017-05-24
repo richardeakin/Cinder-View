@@ -62,6 +62,16 @@ bool View::isFirstResponder() const
 	return this == getGraph()->getFirstResponder().get();
 }
 
+ViewRef	View::getNextResponder() const
+{
+	if( mNextResponder )
+		return mNextResponder;
+	else if( mParent )
+		return mParent->shared_from_this();
+	else
+		return nullptr;
+}
+
 // ----------------------------------------------------------------------------------------------------
 // View
 // ----------------------------------------------------------------------------------------------------
