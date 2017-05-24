@@ -302,6 +302,9 @@ class CI_UI_API NumberBox : public Control {
 
 	void updateValue( const ci::vec2 &pos );
 
+
+	ViewRef	getNextResponder() const override;
+
   private:
 	void onDoubleTap();
 	void onTextInputUpdated();
@@ -352,6 +355,10 @@ class CI_UI_API NumberBoxT : public Control {
 
 	void				setTitle( const std::string &title, TitlePosition position = TitlePosition::TOP );
 	const std::string&	getTitle() const;
+
+	void setNextResponder( const ViewRef &view ) override;
+
+  protected:
 
   private:
 	void onValueChanged();

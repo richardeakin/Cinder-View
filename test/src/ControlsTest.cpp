@@ -87,8 +87,8 @@ ControlsTest::ControlsTest()
 	nboxB->setTitle( "valB" );
 
 	auto nbox3 = make_shared<ui::NumberBox3>( Rectf( 400, 410, 580, 450 ) );
-	ui::NumberBox3* nbox3Ptr = nbox3.get();
-	//	nbox3->getSignalValueChanged().connect( [nbox3Ptr] { CI_LOG_I( "nbox3 value: " << nbox3Ptr->getValue(); ); } );
+	nbox3->setTitle( "nbox3" );
+//	nbox3->getSignalValueChanged().connect( [&nbox3] { CI_LOG_I( "nbox3 value: " << nbox3->getValue(); ); } );
 
 	nboxA->setNextResponder( nboxB );
 	nboxB->setNextResponder( nbox3 );

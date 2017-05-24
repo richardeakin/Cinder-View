@@ -116,7 +116,7 @@ class CI_UI_API View : std::enable_shared_from_this<View> {
 	//!
 	bool	getAcceptsFirstResponder() const			{ return mAcceptsFirstResponder; }
 	//!
-	void	setNextResponder( const ViewRef &view )		{ mNextResponder = view; }
+	virtual void	setNextResponder( const ViewRef &view )		{ mNextResponder = view; }
 	//! Returns the next responder in the responder chain. TODO: explain the order and logic
 	virtual ViewRef	getNextResponder() const;
 

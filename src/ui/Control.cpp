@@ -678,10 +678,22 @@ std::string	NumberBox::getValueAsString() const
 	return fmt::format( "{}", getValue() );
 }
 
+ViewRef	NumberBox::getNextResponder() const
+{
+	// TODO: is this a hack? or explain
+	CI_LOG_I( "(" << getName() << ") mTextField hidden: " << mTextField->isHidden() );
+	if( mTextField->isHidden() ) {
+		mTextField->setHidden( false );
+		mTextField->setText( getValueAsString() );
+		return mTextField;
+	}
+	else
+		return View::getNextResponder();
+}
+
 void NumberBox::onDoubleTap()
 {
-	CI_LOG_I( "bang" );
-	mTextField->getBackground()->setColor( Color( 0.1f, 0.3f, 0.3f ) );
+	//mTextField->getBackground()->setColor( Color( 0.1f, 0.3f, 0.3f ) );
 	mTextField->setText( getValueAsString() );
 	mTextField->setHidden( false );
 	
@@ -791,7 +803,7 @@ NumberBoxT<T>::NumberBoxT( const Rectf &bounds )
 
 		// link up responder chain
 		if( i == 0 ) {
-			setNextResponder( nbox );
+			View::setNextResponder( nbox );
 		}
 		else {
 			mNumberBoxes.back()->setNextResponder( nbox );
@@ -822,6 +834,12 @@ NumberBoxT<T>::NumberBoxT( const Rectf &bounds )
 
 	// set a default background color
 	getBackground()->setColor( Color::black() );
+}
+
+template <typename T>
+void NumberBoxT<T>::setNextResponder( const ViewRef &view )
+{ 
+	mNumberBoxes.back()->setNextResponder( view );
 }
 
 template <typename T>
