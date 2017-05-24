@@ -115,13 +115,18 @@ void TextField::draw( Renderer *ren )
 bool TextField::willBecomeFirstResponder()
 {
 	LOG_TEXT( getName() );
-	if( mCursorPos < 0 || mCursorPos >= (int)mInputString.size() ) {
+
+	// emit begin signal first, which might be used to update the initial string
+	mSignalTextInputBegin.emit();
+
+	// If the current cursor position is invalid, place it at the end of the current input string
+	// TODO: place it according to touch pos
+	if( mCursorPos < 0 || mCursorPos > (int)mInputString.size() ) {
 		mCursorPos = (int)mInputString.size();
 	}
 
 	// store the input string, in case input is canceled and we need to revert.
 	mInputStringBeforeInput = mInputString;
-	mSignalTextInputBegin.emit();
 	return true;
 }
 
