@@ -361,6 +361,7 @@ class CI_UI_API NumberBox : public Control {
 	void onTextInputUpdated();
 	void onTextInputCompleted();
 	std::string	getValueAsString() const;
+	void updateValueFromTextField();
 
 	float	mValue = 0;
 	float	mMin;

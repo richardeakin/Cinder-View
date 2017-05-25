@@ -454,6 +454,11 @@ bool TextField::checkCharIsValid( char c ) const
 			if( mInputString.find( '.' ) != string::npos )
 				return false;
 		}
+		else if( c == '-' ) {
+			// reject minus sign if it isn't at the beginning
+			if( mCursorPos != 0 )
+				return false;
+		}
 		else if( ! isdigit( c ) )
 			return false;
 	}
@@ -874,6 +879,24 @@ std::string	NumberBox::getValueAsString() const
 	return fmt::format( "{}", getValue() );
 }
 
+void NumberBox::updateValueFromTextField()
+{
+	float value = 0;
+	if( ! mTextField->getText().empty() ) {
+		// TODO: remove try catch and don't call stof() unless we know it is a number
+		// - don't want these tripping exception breakpoints
+		// - might want to do a custom stof that returns false if it couldn't convert
+		try {
+			value = stof( mTextField->getText() );
+		}
+		catch( std::exception &exc ) {
+			CI_LOG_W( "couldn't convert string '" << mTextField->getText() << "' to float" );
+		}
+	}
+
+	setValue( value );
+}
+
 void NumberBox::setNextResponder( const ViewRef &view )
 {
 	// responder chain goes: NumberBox -> mTextField -> view
@@ -895,16 +918,14 @@ void NumberBox::onTextInputBegin()
 
 void NumberBox::onTextInputUpdated()
 {
-	UI_LOG_RESPONDER( "(" << getName() << ") text: " << mTextField );
-	float updatedValue = stof( mTextField->getText() );
-	setValue( updatedValue );
+	UI_LOG_RESPONDER( "(" << getName() << ") text: " << mTextField->getText() );
+	updateValueFromTextField();
 }
 
 void NumberBox::onTextInputCompleted()
 {
-	UI_LOG_RESPONDER( "(" << getName() << ") text: " << mTextField );
-	float updatedValue = stof( mTextField->getText() );
-	setValue( updatedValue );
+	UI_LOG_RESPONDER( "(" << getName() << ") text: " << mTextField->getText() );
+	updateValueFromTextField();
 
 	// text input is finished so hide the TextField
 	mTextField->setHidden( true );
@@ -919,8 +940,6 @@ bool NumberBox::touchesBegan( app::TouchEvent &event )
 	mDragStartPos = toLocal( firstTouch.getPos() );
 	mDragStartValue = mValue;
 
-	UI_LOG_RESPONDER( "[" << getName() << "] pos: " << mDragStartPos << ", num touches: " << event.getTouches().size() );
-
 	firstTouch.setHandled();
 	return true;
 }
@@ -931,8 +950,6 @@ bool NumberBox::touchesMoved( app::TouchEvent &event )
 
 	auto &firstTouch = event.getTouches().front();
 	vec2 pos = toLocal( firstTouch.getPos() );
-
-	UI_LOG_RESPONDER( "[" << getName() << "] pos: " << pos << ", num touches: " << event.getTouches().size() );
 
 	updateValue( pos );
 	firstTouch.setHandled();
@@ -946,8 +963,6 @@ bool NumberBox::touchesEnded( app::TouchEvent &event )
 
 	auto &firstTouch = event.getTouches().front();
 	vec2 pos = toLocal( firstTouch.getPos() );
-
-	UI_LOG_RESPONDER( "[" << getName() << "] pos: " << pos << ", num touches: " << event.getTouches().size() );
 
 	updateValue( pos );
 	firstTouch.setHandled();
