@@ -36,6 +36,8 @@ class Suite;
 //! View type that can be registered with and managed by Suite.
 class CI_UI_API SuiteView : public ui::View {
   public:
+	SuiteView( const ci::Rectf &bounds = ci::Rectf::zero() );
+
 	Suite*  getSuite() const   { return mSuite; }
 
   private:
