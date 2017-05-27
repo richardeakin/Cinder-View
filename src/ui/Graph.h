@@ -137,7 +137,7 @@ class CI_UI_API Graph : public View {
 	ci::ivec2			mClippingSize;
 	bool				mClippingSizeSet = false;
 
-	std::vector<ci::signals::Connection>	mEventConnections;
+	ci::signals::ConnectionList				mEventConnections;
 	ci::vec2								mPrevMousePos;
 
 	std::list<LayerRef>	    mLayers;
