@@ -30,36 +30,21 @@ using namespace std;
 
 namespace ui {
 
-const float Z_PLACEMENT = -2.0f;
-const float RAY_PADDING = 0.27f;
+// ----------------------------------------------------------------------------------------------------
+// Interface3dBaseView
+// ----------------------------------------------------------------------------------------------------
 
-CoordinateAxisView::CoordinateAxisView( const ci::Rectf &bounds )
-	: View( bounds )
-{
-}
-
-void CoordinateAxisView::layout()
+void Interface3dBaseView::layout()
 {
 	vec2 size = getSize();
 	if( size.x < 1.0f || size.y < 1.0f )
 		return;
 
-	mCoordFrameCam.setPerspective( 40, size.x / size.y, 0.05f, 100.0f );
-	mCoordFrameCam.lookAt( vec3( 0 ), vec3( 0, 0, Z_PLACEMENT ) );
-
-	if( size.x > size.y ) {
-		vec3 topPos = mCoordFrameCam.generateRay( 0, RAY_PADDING, mCoordFrameCam.getAspectRatio() ).calcPosition( Z_PLACEMENT );
-		vec3 bottomPos = mCoordFrameCam.generateRay( 0, 1 - RAY_PADDING, mCoordFrameCam.getAspectRatio() ).calcPosition( Z_PLACEMENT );
-		mArrowLength = topPos.y - bottomPos.y;
-	}
-	else {
-		vec3 rightPos = mCoordFrameCam.generateRay( 1 - RAY_PADDING, 0, mCoordFrameCam.getAspectRatio() ).calcPosition( Z_PLACEMENT );
-		vec3 leftPos = mCoordFrameCam.generateRay( RAY_PADDING, 0, mCoordFrameCam.getAspectRatio() ).calcPosition( Z_PLACEMENT );
-		mArrowLength = leftPos.x - rightPos.x;
-	}
+	mCam.setPerspective( 40, size.x / size.y, 0.05f, 100.0f );
+	mCam.lookAt( vec3( 0 ), mPlacement );
 }
 
-void CoordinateAxisView::draw( Renderer *ren )
+void Interface3dBaseView::draw( Renderer *ren )
 {
 	Rectf worldBounds = getWorldBounds();
 	ivec2 pos = worldBounds.getLowerLeft();
@@ -71,13 +56,44 @@ void CoordinateAxisView::draw( Renderer *ren )
 		return;
 
 	gl::ScopedViewport scopedViewport( pos, size );
+	draw3d();
+}
 
+// ----------------------------------------------------------------------------------------------------
+// CoordinateAxisView
+// ----------------------------------------------------------------------------------------------------
+
+CoordinateAxisView::CoordinateAxisView( const ci::Rectf &bounds )
+	: Interface3dBaseView( bounds )
+{
+}
+
+void CoordinateAxisView::layout()
+{
+	Interface3dBaseView::layout();
+
+	const float rayPadding = 0.27f;
+
+	if( getWidth() > getHeight() ) {
+		vec3 topPos = mCam.generateRay( 0, rayPadding, mCam.getAspectRatio() ).calcPosition( mPlacement.z );
+		vec3 bottomPos = mCam.generateRay( 0, 1 - rayPadding, mCam.getAspectRatio() ).calcPosition( mPlacement.z );
+		mArrowLength = topPos.y - bottomPos.y;
+	}
+	else {
+		vec3 rightPos = mCam.generateRay( 1 - rayPadding, 0, mCam.getAspectRatio() ).calcPosition( mPlacement.z );
+		vec3 leftPos = mCam.generateRay( rayPadding, 0, mCam.getAspectRatio() ).calcPosition( mPlacement.z );
+		mArrowLength = leftPos.x - rightPos.x;
+	}
+}
+
+void CoordinateAxisView::draw3d()
+{
 	gl::ScopedGlslProg glslScope( gl::getStockShader( gl::ShaderDef().lambert().color() ) );
 	gl::ScopedDepth depthScope( true );
 	gl::ScopedMatrices matricesScope;
 
-	gl::setMatrices( mCoordFrameCam );
-	gl::translate( vec3( 0, 0, Z_PLACEMENT ) );
+	gl::setMatrices( mCam );
+	gl::translate( mPlacement );
 	gl::multModelMatrix( mat4( inverse( mOrientation ) ) );
 
 	float headRadius = mArrowLength * 0.114f;

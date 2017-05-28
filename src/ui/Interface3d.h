@@ -29,8 +29,25 @@ namespace ui {
 
 typedef std::shared_ptr<class CoordinateAxisView>		CoordinateAxisViewRef;
 
+class Interface3dBaseView : public View {
+  public:
+	Interface3dBaseView( const ci::Rectf &bounds = ci::Rectf::zero() )
+		: View( bounds )
+	{}
+
+  protected:
+	void draw( Renderer *ren ) override;
+	void layout() override;
+
+	//! Subclasses implement this to draw their 3d content
+	virtual void draw3d() = 0;
+
+	ci::CameraPersp mCam;
+	ci::vec3		mPlacement = ci::vec3( 0, 0, -2 );
+};
+
 //! Draws a 3d coordinate axis of a Camera's Orientation
-class CI_UI_API CoordinateAxisView : public View {
+class CI_UI_API CoordinateAxisView : public Interface3dBaseView {
   public:
 	CoordinateAxisView( const ci::Rectf &bounds = ci::Rectf::zero() );
 
@@ -38,10 +55,9 @@ class CI_UI_API CoordinateAxisView : public View {
 
 protected:
 	void layout()	override;
-	void draw( Renderer *ren ) override;
+	void draw3d()	override;
 
 private:
-	ci::CameraPersp mCoordFrameCam;
 	ci::quat		mOrientation;
 	float			mArrowLength = 0;
 };
