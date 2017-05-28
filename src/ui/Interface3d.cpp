@@ -56,6 +56,12 @@ void Interface3dBaseView::draw( Renderer *ren )
 		return;
 
 	gl::ScopedViewport scopedViewport( pos, size );
+	gl::ScopedDepth depthScope( true );
+	gl::ScopedMatrices matricesScope;
+
+	gl::setMatrices( mCam );
+	gl::translate( mPlacement );
+
 	draw3d();
 }
 
@@ -63,12 +69,12 @@ void Interface3dBaseView::draw( Renderer *ren )
 // CoordinateAxisView
 // ----------------------------------------------------------------------------------------------------
 
-CoordinateAxisView::CoordinateAxisView( const ci::Rectf &bounds )
+Orientation3dView::Orientation3dView( const ci::Rectf &bounds )
 	: Interface3dBaseView( bounds )
 {
 }
 
-void CoordinateAxisView::layout()
+void Orientation3dView::layout()
 {
 	Interface3dBaseView::layout();
 
@@ -86,19 +92,58 @@ void CoordinateAxisView::layout()
 	}
 }
 
-void CoordinateAxisView::draw3d()
+void Orientation3dView::draw3d()
 {
 	gl::ScopedGlslProg glslScope( gl::getStockShader( gl::ShaderDef().lambert().color() ) );
-	gl::ScopedDepth depthScope( true );
-	gl::ScopedMatrices matricesScope;
 
-	gl::setMatrices( mCam );
-	gl::translate( mPlacement );
 	gl::multModelMatrix( mat4( inverse( mOrientation ) ) );
 
 	float headRadius = mArrowLength * 0.114f;
 	float headLength = mArrowLength * 0.13f;
 	gl::drawCoordinateFrame( mArrowLength, headLength, headRadius );
+}
+
+// ----------------------------------------------------------------------------------------------------
+// Direction3dView
+// ----------------------------------------------------------------------------------------------------
+
+Direction3dView::Direction3dView( const ci::Rectf &bounds )
+	: Interface3dBaseView( bounds )
+{
+	auto wireArrow = geom::WireCylinder().height( 8 ) & ( geom::WireCone().height( 3 ).base( 2.5f ) >> geom::Translate( vec3( 0, 8, 0 ) ) );
+	wireArrow = wireArrow >> geom::Translate( vec3( 0, -11.0f / 2.0f, 0 ) );
+
+	mBatchArrow = gl::Batch::create( wireArrow, gl::getStockShader( gl::ShaderDef().color() ) );
+	mPlacement = vec3( 0, 0, -25 );
+}
+
+void Direction3dView::layout()
+{
+	Interface3dBaseView::layout();
+
+	// TODO: probably need something slightly different since arrow will spin around origin
+	const float rayPadding = 0.27f;
+	if( getWidth() > getHeight() ) {
+		vec3 topPos = mCam.generateRay( 0, rayPadding, mCam.getAspectRatio() ).calcPosition( mPlacement.z );
+		vec3 bottomPos = mCam.generateRay( 0, 1 - rayPadding, mCam.getAspectRatio() ).calcPosition( mPlacement.z );
+		mArrowLength = topPos.y - bottomPos.y;
+	}
+	else {
+		vec3 rightPos = mCam.generateRay( 1 - rayPadding, 0, mCam.getAspectRatio() ).calcPosition( mPlacement.z );
+		vec3 leftPos = mCam.generateRay( rayPadding, 0, mCam.getAspectRatio() ).calcPosition( mPlacement.z );
+		mArrowLength = leftPos.x - rightPos.x;
+	}
+}
+
+void Direction3dView::draw3d()
+{
+	// create a difference quat between up (arrow Batch's default) and where we want to be pointing
+	auto rot = glm::rotation( vec3( 0, 1, 0 ), mDirection );
+	gl::rotate( rot );
+
+	gl::ScopedColor colorScope( mColor );
+
+	mBatchArrow->draw();
 }
 
 } // namespace ui

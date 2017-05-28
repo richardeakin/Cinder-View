@@ -27,7 +27,8 @@
 
 namespace ui {
 
-typedef std::shared_ptr<class CoordinateAxisView>		CoordinateAxisViewRef;
+typedef std::shared_ptr<class Orientation3dView>	Orientation3dViewRef;
+typedef std::shared_ptr<class Direction3dView>		Direction3dViewRef;
 
 class Interface3dBaseView : public View {
   public:
@@ -46,20 +47,40 @@ class Interface3dBaseView : public View {
 	ci::vec3		mPlacement = ci::vec3( 0, 0, -2 );
 };
 
-//! Draws a 3d coordinate axis of a Camera's Orientation
-class CI_UI_API CoordinateAxisView : public Interface3dBaseView {
+//! Draws a 3d coordinate axis of a an orientation quat
+class CI_UI_API Orientation3dView : public Interface3dBaseView {
   public:
-	CoordinateAxisView( const ci::Rectf &bounds = ci::Rectf::zero() );
+	Orientation3dView( const ci::Rectf &bounds = ci::Rectf::zero() );
 
 	void	setOrientation( const ci::quat &orientation )	{ mOrientation = orientation; }
 
-protected:
+  protected:
 	void layout()	override;
 	void draw3d()	override;
 
-private:
+  private:
 	ci::quat		mOrientation;
 	float			mArrowLength = 0;
+};
+
+//! Draws a direction (vec3) with an arrow.
+class Direction3dView : public Interface3dBaseView {
+  public:
+	Direction3dView( const ci::Rectf &bounds = ci::Rectf::zero() );
+
+	void	setDirection( const ci::vec3 &dir )	{ mDirection = dir; }
+
+	void	setColor( const ci::Color &color )	{ mColor = color; }
+
+  protected:
+	void layout()	override;
+	void draw3d()	override;
+
+  private:
+	ci::gl::BatchRef	mBatchArrow;
+	ci::vec3			mDirection		= ci::vec3( 0, 1, 0 );
+	ci::Color			mColor			= ci::Color::white();
+	float				mArrowLength	= 0;
 };
 
 } // namespace ui
