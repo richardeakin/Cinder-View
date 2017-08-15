@@ -173,6 +173,7 @@ bool View::isClipEnabled() const
 void View::addSubview( const ViewRef &view )
 {
 	CI_ASSERT( view );
+	CI_ASSERT( view.get() != this );
 
 	// first set the parent to be us, which will remove it from any existing parent (including this view).
 	view->setParent( this );
@@ -190,7 +191,9 @@ void View::addSubviews( const vector<ViewRef> &views )
 
 void View::insertSubview( const ViewRef &view, size_t index )
 {
-	CI_ASSERT( view && index <= mSubviews.size() );
+	CI_ASSERT( view );
+	CI_ASSERT( view.get() != this );
+	CI_ASSERT( index <= mSubviews.size() );
 
 	// first set the parent to be us, which will remove it from any existing parent (including this view).
 	view->setParent( this );
@@ -331,6 +334,7 @@ void View::layoutImpl()
 
 	layout();
 	mNeedsLayout = false;
+	mSignalViewDidLayout.emit();
 }
 
 void View::updateImpl()

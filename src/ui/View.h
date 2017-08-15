@@ -172,6 +172,11 @@ class CI_UI_API View : std::enable_shared_from_this<View> {
 	void	setNeedsLayout();
 	//! Returns whether this View needs to have its layout() method called before the next update().
 	bool	needsLayout() const	{ return mNeedsLayout; }
+
+	//! Signal emitted after this View has had it's layout() method called.
+	ci::signals::Signal<void ()>&	getSignalViewDidLayout()	{ return mSignalViewDidLayout; }
+
+
 	//! This is done when the world position should be recalculated but calling layout isn't necessary (ex. when ScrollView offset moves)
 	void	setWorldPosDirty();
 
@@ -243,6 +248,8 @@ class CI_UI_API View : std::enable_shared_from_this<View> {
 
 	bool					mAcceptsFirstResponder = false;
 	ViewRef					mNextResponder;
+
+	ci::signals::Signal<void ()>	mSignalViewDidLayout;
 
 	friend class Layer;
 	friend class Graph;
