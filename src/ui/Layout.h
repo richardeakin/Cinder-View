@@ -42,7 +42,19 @@ class CI_UI_API Layout {
 
 	virtual void layout( View *view )	{}
 
-  private:
+	//! Sets the margin around the bounds of the Layout object
+	void			setMargin( const ci::Rectf &margin ) { mMargin = margin; }
+	//! Sets the margin around the bounds of the Layout object (all sides are the same)
+	void			setMargin( float margin )	{ setMargin( ci::Rectf( margin, margin, margin, margin ) ); }
+	//! Returns the margin around the bounds of the Layout object
+	const ci::Rectf&	getMargin() const	{ return mMargin; }
+
+	//! Sets the padding between successive Views.
+	void			setPadding( float padding ) { mPadding = padding; }
+
+  protected:
+	ci::Rectf	mMargin = ci::Rectf( 0, 0, 0, 0 );
+	float		mPadding = 0;
 };
 
 /// The direction of data flow for a layout.
@@ -81,20 +93,11 @@ public:
 	//! Returns the mode used for laying out views
 	Mode			getMode() const		{ return mMode; }
 
-	//! Sets the margin around the bounds of the Layout object
-	void			setMargin( const ci::Rectf &margin ) { mMargin = margin; }
-	//! Sets the padding between successive Views.
-	void			setPadding( float padding ) { mPadding = padding; }
-
 	void layout( View *view ) override;
 protected:
 	Orientation	mOrientation;
 	Alignment	mAlignment;
 	Mode		mMode;
-	//! Spacing surrounding the subviews.
-	ci::Rectf	mMargin = ci::Rectf( 0, 0, 0, 0 );
-	//! Spacing between the subviews. Used by the linear layout mode.
-	float		mPadding = 0;
 };
 
 class CI_UI_API VerticalLayout : public LinearLayout {
