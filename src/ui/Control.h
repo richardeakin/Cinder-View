@@ -341,6 +341,11 @@ class CI_UI_API NumberBox : public Control {
 	void setSnapToIntEnabled( bool enable )	{ mSnapToInt = enable; }
 	bool isSnapToIntEnabled() const			{ return mSnapToInt; }
 
+	//! Specifies the number of digits that will be used when formatting the decimal portion of the value as a string.
+	void setNumDigits( size_t numDigits );
+	//! Returns the number of digits that will be used when formatting the decimal portion of the value as a string.
+	size_t	getNumDigits() const	{ return mNumDigits; }
+
 	void setNextResponder( const ViewRef &view ) override;
 
   protected:
@@ -377,7 +382,10 @@ class CI_UI_API NumberBox : public Control {
 	std::string	mTitle;
 	TextRef		mTextLabel;
 	TapTracker	mTapTracker;
-	ui::TextFieldRef	mTextField; // TODO NEXT: create and hide this, enable it on double tap
+
+	size_t				mNumDigits;
+	std::string			mFormatStr;
+	ui::TextFieldRef	mTextField;
 };
 
 template <typename T>

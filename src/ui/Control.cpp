@@ -784,6 +784,8 @@ NumberBox::NumberBox( const Rectf &bounds )
 	// - otherwise the public isCancelled() will be called which is no good
 	//setTouchCancellingEnabled( false );
 
+	setNumDigits( 3 );
+
 	mTextLabel = TextManager::loadText( FontFace::NORMAL );
 	mTextField = make_shared<TextField>();
 	mTextField->setInputMode( TextField::InputMode::NUMERIC );
@@ -876,7 +878,13 @@ std::string	NumberBox::getTitleLabel() const
 
 std::string	NumberBox::getValueAsString() const
 {
-	return fmt::format( "{}", getValue() );
+	return fmt::format( mFormatStr, getValue() );
+}
+
+void NumberBox::setNumDigits( size_t numDigits )
+{
+	mNumDigits = numDigits;
+	mFormatStr = "{0:." + to_string( numDigits ) + "f}";
 }
 
 void NumberBox::updateValueFromTextField()
