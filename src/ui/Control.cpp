@@ -784,6 +784,9 @@ NumberBox::NumberBox( const Rectf &bounds )
 	// - otherwise the public isCancelled() will be called which is no good
 	//setTouchCancellingEnabled( false );
 
+	// TODO: can avoid this by clipping the actual text string
+	setClipEnabled( true ); 
+
 	setNumDigits( 3 );
 
 	mTextLabel = TextManager::loadText( FontFace::NORMAL );
