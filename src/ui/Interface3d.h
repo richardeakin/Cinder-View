@@ -64,7 +64,7 @@ class CI_UI_API Orientation3dView : public Interface3dBaseView {
 };
 
 //! Draws a direction (vec3) with an arrow.
-class Direction3dView : public Interface3dBaseView {
+class CI_UI_API Direction3dView : public Interface3dBaseView {
   public:
 	Direction3dView( const ci::Rectf &bounds = ci::Rectf::zero() );
 
