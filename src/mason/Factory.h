@@ -67,7 +67,7 @@ class Factory {
 		//! returns a shared_ptr of a newly constructed T object
 		std::shared_ptr<T> operator()( const Args&... args )
 		{
-			return std::make_shared<Y>( args... );
+			return std::shared_ptr<T>( new Y( args... ) );
 		}
 	};
 
