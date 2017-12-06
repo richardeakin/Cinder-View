@@ -47,7 +47,7 @@ typedef std::shared_ptr<class RectView>			RectViewRef;
 typedef std::shared_ptr<class StrokedRectView>	StrokedRectViewRef;
 class Graph;
 
-class CI_UI_API View : std::enable_shared_from_this<View> {
+class CI_UI_API View : public std::enable_shared_from_this<View> {
   public:
 	View( const ci::Rectf &bounds = ci::Rectf::zero() );
 	virtual ~View();
