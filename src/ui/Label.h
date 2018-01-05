@@ -46,19 +46,26 @@ public:
 
 	void				setAlignment( TextAlignment alignment )	{ mAlignment = alignment; }
 
+	void				setPadding( const ci::Rectf &padding );
+	void				setShrinkToFitEnabled( bool enable = true );
+	bool				isShrinkToFitEnabled() const	{ return mShrinkToFit; }
+
 protected:
 	void draw( Renderer *ren ) override;
 
 private:
 	ci::vec2	getBaseLine() const;
 	void		measureTextSize();
-	
+	void		shrinkToFit();
+
+
 	TextRef			mFont;
 	std::string		mText;
 	ci::vec2		mTextSize;
 	ci::ColorA		mTextColor = ci::ColorA::black();
 	ci::Rectf		mPadding = ci::Rectf( 4, 4, 4, 4 );
 	TextAlignment	mAlignment = TextAlignment::LEFT;
+	bool			mShrinkToFit = false;
 };
 
 //! Manages a grid of text entries, useful for building things like info panels. Non-interactive by default.
