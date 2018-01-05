@@ -2,9 +2,6 @@
 
 #include "ui/Suite.h"
 
-#include "ui/Slider.h"
-#include "ui/Button.h"
-
 #include "cinder/gl/TextureFont.h"
 
 class ControlsTest : public ui::SuiteView {
@@ -19,4 +16,5 @@ private:
 	ui::HSliderRef			mHSlider;
 	ui::VSliderRef			mVSlider;
 	ui::ButtonRef			mButton, mImageButton, mToggle;
+    ui::TextFieldRef        mTextField1, mTextField2, mTextField3;
 };

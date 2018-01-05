@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "ui/Button.h"
 #include "ui/Control.h"
 #include "ui/Filter.h"
 #include "ui/Graph.h"
@@ -32,7 +31,6 @@
 #include "ui/Layer.h"
 #include "ui/Renderer.h"
 #include "ui/ScrollView.h"
-#include "ui/Selector.h"
-#include "ui/Slider.h"
 #include "ui/Suite.h"
+#include "ui/TextManager.h"
 #include "ui/View.h"

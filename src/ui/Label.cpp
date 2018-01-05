@@ -50,6 +50,8 @@ void Label::setFont( float fontSize, FontFace fontFace )
 {
 	mFont = TextManager::loadText( fontFace, fontSize );
 	measureTextSize();
+	if( mShrinkToFit )
+		shrinkToFit();
 }
 
 void Label::setText( const std::string &text )
@@ -59,6 +61,25 @@ void Label::setText( const std::string &text )
 
 	mText = text;
 	measureTextSize();
+	if( mShrinkToFit )
+		shrinkToFit();
+}
+
+void Label::setPadding( const ci::Rectf &padding )
+{
+	mPadding = padding;
+	if( mShrinkToFit )
+		shrinkToFit();
+}
+
+void Label::setShrinkToFitEnabled( bool enable )
+{
+	if( mShrinkToFit = enable )
+		return;
+
+	mShrinkToFit = enable;
+	if( mShrinkToFit )
+		shrinkToFit();
 }
 
 void Label::draw( Renderer *ren )
@@ -93,6 +114,12 @@ vec2 Label::getBaseLine() const
 void Label::measureTextSize()
 {
 	mTextSize = mFont->measureString( mText );
+}
+
+void Label::shrinkToFit()
+{
+	vec2 size = mTextSize + mPadding.getUpperLeft() + mPadding.getLowerRight();
+	setSize( size );
 }
 
 // ----------------------------------------------------------------------------------------------------

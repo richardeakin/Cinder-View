@@ -38,6 +38,44 @@ namespace ui {
 
 const float BOUNDS_EPSILON = 0.00001f;
 
+// ----------------------------------------------------------------------------------------------------
+// Responder
+// ----------------------------------------------------------------------------------------------------
+
+bool View::becomeFirstResponder()
+{
+	getGraph()->setFirstResponder( shared_from_this() );
+	return true; // TODO: not sure if this needs to return a value or not
+}
+
+bool View::resignFirstResponder()
+{
+	if( ! isFirstResponder() )
+		return false;
+
+	getGraph()->resignFirstResponder();
+	return true; // TODO: same as above return
+}
+
+bool View::isFirstResponder() const
+{ 
+	return this == getGraph()->getFirstResponder().get();
+}
+
+ViewRef	View::getNextResponder() const
+{
+	if( mNextResponder )
+		return mNextResponder;
+	else if( mParent )
+		return mParent->shared_from_this();
+	else
+		return nullptr;
+}
+
+// ----------------------------------------------------------------------------------------------------
+// View
+// ----------------------------------------------------------------------------------------------------
+
 View::View( const ci::Rectf &bounds )
 	: mPos( bounds.getUpperLeft() ), mSize( vec2( bounds.x2 - bounds.x1, bounds.y2 - bounds.y1 ) )
 {
@@ -135,6 +173,7 @@ bool View::isClipEnabled() const
 void View::addSubview( const ViewRef &view )
 {
 	CI_ASSERT( view );
+	CI_ASSERT( view.get() != this );
 
 	// first set the parent to be us, which will remove it from any existing parent (including this view).
 	view->setParent( this );
@@ -152,7 +191,9 @@ void View::addSubviews( const vector<ViewRef> &views )
 
 void View::insertSubview( const ViewRef &view, size_t index )
 {
-	CI_ASSERT( view && index <= mSubviews.size() );
+	CI_ASSERT( view );
+	CI_ASSERT( view.get() != this );
+	CI_ASSERT( index <= mSubviews.size() );
 
 	// first set the parent to be us, which will remove it from any existing parent (including this view).
 	view->setParent( this );
@@ -293,6 +334,7 @@ void View::layoutImpl()
 
 	layout();
 	mNeedsLayout = false;
+	mSignalViewDidLayout.emit();
 }
 
 void View::updateImpl()

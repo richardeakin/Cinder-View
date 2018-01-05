@@ -41,6 +41,7 @@
 
 namespace ui {
 
+typedef std::shared_ptr<class Responder>		ResponderRef;
 typedef std::shared_ptr<class View>				ViewRef;
 typedef std::shared_ptr<class RectView>			RectViewRef;
 typedef std::shared_ptr<class StrokedRectView>	StrokedRectViewRef;
@@ -71,7 +72,7 @@ class CI_UI_API View : public std::enable_shared_from_this<View> {
 	float					getAlphaCombined() const;
 	//! Returns the bounds of this View, relative to its parent (or self if there is no parent).
 	ci::Rectf				getBounds() const;
-	//! Returns the bounds of thie View, relative to itself (origin = [0,0]).
+	//! Returns the bounds of this View, relative to itself (origin = [0,0]).
 	ci::Rectf				getBoundsLocal() const;
 	const ci::vec2&			getPos() const			{ return mPos; }
 	const ci::vec2&			getSize() const			{ return mSize; }
@@ -102,6 +103,22 @@ class CI_UI_API View : public std::enable_shared_from_this<View> {
 
 	void				setLayout( const LayoutRef &layout );
 	LayoutRef			getLayout() const	{ return mLayout; }
+
+	// Responder --------
+	//!
+	bool	isFirstResponder() const;
+	//!
+	bool	becomeFirstResponder();
+	//!
+	bool	resignFirstResponder();
+	//!
+	void	setAcceptsFirstResponder( bool b = true )	{ mAcceptsFirstResponder = b; }
+	//!
+	bool	getAcceptsFirstResponder() const			{ return mAcceptsFirstResponder; }
+	//! Sets the next responder in the responder chain. Can be overridden if a View needs to insert its own subviews into the chain.
+	virtual void	setNextResponder( const ViewRef &view )		{ mNextResponder = view; }
+	//! Returns the next responder in the responder chain, either one set by user with setNextResponder() or the parent View.
+	ViewRef	getNextResponder() const;
 
 	//! Sets a label that can be used to identify this View
 	void				setLabel( const std::string &label )	{ mLabel = label; }
@@ -155,6 +172,11 @@ class CI_UI_API View : public std::enable_shared_from_this<View> {
 	void	setNeedsLayout();
 	//! Returns whether this View needs to have its layout() method called before the next update().
 	bool	needsLayout() const	{ return mNeedsLayout; }
+
+	//! Signal emitted after this View has had it's layout() method called.
+	ci::signals::Signal<void ()>&	getSignalViewDidLayout()	{ return mSignalViewDidLayout; }
+
+
 	//! This is done when the world position should be recalculated but calling layout isn't necessary (ex. when ScrollView offset moves)
 	void	setWorldPosDirty();
 
@@ -165,6 +187,13 @@ class CI_UI_API View : public std::enable_shared_from_this<View> {
 
 	//! Returns the bounds required for rendering this View to a FrameBuffer. \default is this View's local bounds. Override if this View needs a larger sized or FrameBuffer.
 	virtual ci::Rectf   getBoundsForFrameBuffer() const;
+
+	// Responder ------------------
+	// TODO: rename these with 'can' or 'should' suffix? To indicate they are asking whether this is possible or not
+	//! Return false if you cannot become first responder.
+	virtual bool	willBecomeFirstResponder()	{ return true; }
+	//! Return true if you won't resign first responder.
+	virtual bool	willResignFirstResponder()	{ return true; }
 
 	// Override to handle UI events. Return true if any touch was handled, false otherwise.
 	virtual bool touchesBegan( ci::app::TouchEvent &event )	{ return false; }
@@ -217,6 +246,11 @@ class CI_UI_API View : public std::enable_shared_from_this<View> {
 	std::vector<FilterRef>  mFilters;
 	LayoutRef				mLayout;
 
+	bool					mAcceptsFirstResponder = false;
+	ViewRef					mNextResponder;
+
+	ci::signals::Signal<void ()>	mSignalViewDidLayout;
+
 	friend class Layer;
 	friend class Graph;
 };
@@ -224,9 +258,9 @@ class CI_UI_API View : public std::enable_shared_from_this<View> {
 CI_UI_API std::ostream& operator<<( std::ostream &os, const View &rhs );
 CI_UI_API std::ostream& operator<<( std::ostream &os, const ViewRef &rhs );
 
-//! Returns a string representation of the View hierchy starting at \a view (for debugging purposes).
+//! Returns a string representation of the View hierarchy starting at \a view (for debugging purposes).
 CI_UI_API std::string printHierarchyToString( const ViewRef &view );
-//! Traverses the View hierchy of \a view, top to bottom.
+//! Traverses the View hierarchy of \a view, top to bottom.
 CI_UI_API void traverse( const ViewRef &view, const std::function<void( const ViewRef & )> &applyFn );
 
 template<typename ViewT, typename... Args>

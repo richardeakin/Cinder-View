@@ -66,6 +66,17 @@ class CI_UI_API Graph : public View {
 	void propagateKeyDown( ci::app::KeyEvent &event );
 	void propagateKeyUp( ci::app::KeyEvent &event );
 
+	//! Sets the View that current receives Responder events (ex. keys)
+	void setFirstResponder( const ViewRef &view );
+	//! Moves to the next responder in the responder chain if there is one, resigning any current responder.
+	void moveToNextResponder();
+	//! Moves to the previous responder in the responder chain if there is one, resigning any current responder.
+	void moveToPreviousResponder();
+	//! Resigns current View that receives Responder events, ex. when Esc or Return keys are hit.
+	void resignFirstResponder();
+	//! Returns the View that currently receives first responder status
+	 const ViewRef&	getFirstResponder() const	{ return mFirstResponder; }
+
 	struct EventOptions {
 		EventOptions() {}
 
@@ -100,16 +111,23 @@ class CI_UI_API Graph : public View {
 	//! Returns the size used for clipping operations. Defaults to the size of the window
 	ci::ivec2 getClippingSize() const;
 
+	//!
+	double	getTargetFrameRate() const;
+	//!
+	double	getElapsedSeconds() const;
+
   protected:
 	void layout() override;
 
   private:
 	LayerRef makeLayer( View *rootView );
 
-	void propagateTouchesBegan( ViewRef &view, ci::app::TouchEvent &event, size_t &numTouchesHandled );
+	void propagateTouchesBegan( ViewRef &view, ci::app::TouchEvent &event, size_t &numTouchesHandled, ViewRef &firstResponder );
 
+#if 0
 	void propagateKeyDown( ViewRef &view, ci::app::KeyEvent &event );
 	void propagateKeyUp( ViewRef &view, ci::app::KeyEvent &event );
+#endif
 
 	RendererRef         mRenderer;
 	ci::app::WindowRef  mWindow;
@@ -119,11 +137,12 @@ class CI_UI_API Graph : public View {
 	ci::ivec2			mClippingSize;
 	bool				mClippingSizeSet = false;
 
-	std::vector<ci::signals::Connection>	mEventConnections;
+	ci::signals::ConnectionList				mEventConnections;
 	ci::vec2								mPrevMousePos;
 
 	std::list<LayerRef>	    mLayers;
 	std::list<ViewRef>	    mViewsWithTouches;
+	ViewRef					mFirstResponder, mPreviousFirstResponder;
 
 	friend class Layer;
 };

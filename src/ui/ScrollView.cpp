@@ -20,9 +20,8 @@
 */
 
 #include "ui/ScrollView.h"
+#include "ui/Graph.h"
 #include "cinder/Log.h"
-
-#include "cinder/app/App.h" // TODO: remove me. currently used for app::getElapsedSeconds(), but will get this from Graph instead
 
 using namespace ci;
 using namespace std;
@@ -31,76 +30,6 @@ using namespace std;
 #define LOG_SCROLL( stream )	( (void)( 0 ) )
 
 namespace ui {
-
-// ----------------------------------------------------------------------------------------------------
-// SwipeTracker
-// ----------------------------------------------------------------------------------------------------
-
-void SwipeTracker::clear()
-{
-	mStoredTouches.clear();
-}
-
-void SwipeTracker::storeTouchPos( const ci::vec2 &pos, double currentTime )
-{
-	if( mStoredTouches.size() >= mMaxStoredTouches )
-		mStoredTouches.pop_front();
-
-	StoredTouch touch;
-	touch.position = pos;
-	touch.eventSeconds = currentTime;
-	mStoredTouches.push_back( touch );
-
-	if( mStoredTouches.size() == 1 )
-		mFirstTouch = mStoredTouches.front();
-}
-
-
-vec2 SwipeTracker::calcSwipeVelocity()
-{
-	if( mStoredTouches.size() < 2 )
-		return vec2( 0 );
-
-	vec2 touchVelocity = vec2( 0 );
-	int samples = 0;
-	auto lastIt = --mStoredTouches.end();
-	for( auto it = mStoredTouches.begin(); it != lastIt; ++it ) {
-		auto nextIt = it;
-		++nextIt;
-		double dt = nextIt->eventSeconds - it->eventSeconds;
-		if( dt > 0.001 ) {
-			touchVelocity += ( nextIt->position - it->position ) / float( dt );
-			samples += 1;
-		}
-	}
-
-	if( samples > 0 ) {
-		touchVelocity /= float( samples );
-	}
-
-	return touchVelocity;
-}
-
-vec2 SwipeTracker::calcSwipeDistance()
-{
-	return getLastTouchPos() - getFirstTouchPos();
-}
-
-vec2 SwipeTracker::getLastTouchPos() const
-{
-	if( mStoredTouches.empty() )
-		return vec2( 0 );
-
-	return mStoredTouches.back().position;
-}
-
-double SwipeTracker::getLastTouchTime() const
-{
-	if( mStoredTouches.empty() )
-		return -1;
-
-	return mStoredTouches.back().eventSeconds;
-}
 
 // ----------------------------------------------------------------------------------------------------
 // ScrollView::ContentView
@@ -191,6 +120,11 @@ void ScrollView::setContentOffset( const ci::vec2 &offset )
 
 void ScrollView::calcContentSize()
 {
+	if( mContentView->getLayout() ) {
+		LOG_SCROLL( "(using Layout)" );
+		mContentView->getLayout()->layout( mContentView.get() );
+	}
+
 	vec2 size = vec2( 0 );
 	for( const auto &view : mContentView->getSubviews() ) {
 		auto viewBounds = view->getBounds();
@@ -259,8 +193,7 @@ void ScrollView::updateOffset( const ci::vec2 &currentPos, const ci::vec2 &previ
 void ScrollView::updateDeceleratingOffset()
 {
 	// apply velocity to content offset
-	const float targetFrameRate = app::getFrameRate(); // TODO: need to get time + framerate from a source that is independant of app (something akin to a Context)
-	float deltaTime = 1.0f / targetFrameRate;
+	float deltaTime = 1.0f / (float)getGraph()->getTargetFrameRate();
 	vec2 contentOffset = mContentOffset() - mSwipeVelocity * deltaTime;
 
 	const Rectf &boundaries = getDeceleratingBoundaries();
@@ -316,7 +249,7 @@ bool ScrollView::touchesBegan( app::TouchEvent &event )
 	auto &firstTouch = event.getTouches().front();
 	vec2 pos = toLocal( firstTouch.getPos() );
 	mSwipeTracker->clear();
-	mSwipeTracker->storeTouchPos( pos, app::getElapsedSeconds() );
+	mSwipeTracker->storeTouchPos( pos, getGraph()->getElapsedSeconds() );
 
 	mDragging = false; // will set to true once touchesMoved() is fired
 
@@ -329,7 +262,7 @@ bool ScrollView::touchesMoved( app::TouchEvent &event )
 	vec2 pos = toLocal( event.getTouches().front().getPos() );
 	vec2 lastPos = mSwipeTracker->getLastTouchPos();
 	updateOffset( pos, lastPos );
-	mSwipeTracker->storeTouchPos( pos, app::getElapsedSeconds() );
+	mSwipeTracker->storeTouchPos( pos, getGraph()->getElapsedSeconds() );
 	
 	if( ! mDragging ) {
 		mDragging = true;
@@ -347,7 +280,7 @@ bool ScrollView::touchesEnded( app::TouchEvent &event )
 	vec2 pos = toLocal( event.getTouches().front().getPos() );
 	vec2 lastPos = mSwipeTracker->getLastTouchPos();
 	updateOffset( pos, lastPos );
-	mSwipeTracker->storeTouchPos( pos, app::getElapsedSeconds() );
+	mSwipeTracker->storeTouchPos( pos, getGraph()->getElapsedSeconds() );
 
 	mSwipeVelocity = mSwipeTracker->calcSwipeVelocity();
 

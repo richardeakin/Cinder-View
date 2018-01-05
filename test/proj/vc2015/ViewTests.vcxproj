@@ -223,7 +223,7 @@
     </Link>
     <PostBuildEvent>
       <Command>xcopy /y /d "$(CINDER_PATH)\lib\msw\$(PlatformTarget)\$(Configuration)\$(PlatformToolset)\cinder.dll" "$(OutDir)"
-xcopy /y /d "$(REPO_PATH)\lib\msw\$(PlatformTarget)\$(Configuration)\$(PlatformToolset)\cinder-view.dll" "$(OutDir)"</Command>
+if not exist "$(OutDir)cinder-view.dll" mklink /h  "$(OutDir)cinder-view.dll" "$(REPO_PATH)\lib\msw\$(PlatformTarget)\$(Configuration)\$(PlatformToolset)\cinder-view.dll"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -287,7 +287,7 @@ xcopy /y /d "$(REPO_PATH)\lib\msw\$(PlatformTarget)\$(Configuration)\$(PlatformT
     </Link>
     <PostBuildEvent>
       <Command>xcopy /y /d "$(CINDER_PATH)\lib\msw\$(PlatformTarget)\$(Configuration)\$(PlatformToolset)\cinder.dll" "$(OutDir)"
-xcopy /y /d "$(REPO_PATH)\lib\msw\$(PlatformTarget)\$(Configuration)\$(PlatformToolset)\cinder-view.dll" "$(OutDir)"</Command>
+if not exist "$(OutDir)cinder-view.dll" mklink /h  "$(OutDir)cinder-view.dll" "$(REPO_PATH)\lib\msw\$(PlatformTarget)\$(Configuration)\$(PlatformToolset)\cinder-view.dll"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -354,7 +354,7 @@ xcopy /y /d "$(REPO_PATH)\lib\msw\$(PlatformTarget)\$(Configuration)\$(PlatformT
     </Link>
     <PostBuildEvent>
       <Command>xcopy /y /d "$(CINDER_PATH)\lib\msw\$(PlatformTarget)\$(Configuration)\$(PlatformToolset)\cinder.dll" "$(OutDir)"
-xcopy /y /d "$(REPO_PATH)\lib\msw\$(PlatformTarget)\$(Configuration)\$(PlatformToolset)\cinder-view.dll" "$(OutDir)"</Command>
+if not exist "$(OutDir)cinder-view.dll" mklink /h  "$(OutDir)cinder-view.dll" "$(REPO_PATH)\lib\msw\$(PlatformTarget)\$(Configuration)\$(PlatformToolset)\cinder-view.dll"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -421,7 +421,7 @@ xcopy /y /d "$(REPO_PATH)\lib\msw\$(PlatformTarget)\$(Configuration)\$(PlatformT
     </Link>
     <PostBuildEvent>
       <Command>xcopy /y /d "$(CINDER_PATH)\lib\msw\$(PlatformTarget)\$(Configuration)\$(PlatformToolset)\cinder.dll" "$(OutDir)"
-xcopy /y /d "$(REPO_PATH)\lib\msw\$(PlatformTarget)\$(Configuration)\$(PlatformToolset)\cinder-view.dll" "$(OutDir)"</Command>
+if not exist "$(OutDir)cinder-view.dll" mklink /h  "$(OutDir)cinder-view.dll" "$(REPO_PATH)\lib\msw\$(PlatformTarget)\$(Configuration)\$(PlatformToolset)\cinder-view.dll"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

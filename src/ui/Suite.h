@@ -21,11 +21,8 @@
 
 #pragma once
 
-#include "ui/View.h"
-#include "ui/Button.h"
-#include "ui/Selector.h"
-#include "ui/Slider.h"
 #include "ui/Graph.h"
+#include "ui/Control.h"
 
 #include "mason/Factory.h"
 
@@ -39,6 +36,8 @@ class Suite;
 //! View type that can be registered with and managed by Suite.
 class CI_UI_API SuiteView : public ui::View {
   public:
+	SuiteView( const ci::Rectf &bounds = ci::Rectf::zero() );
+
 	Suite*  getSuite() const   { return mSuite; }
 
   private:
@@ -50,7 +49,7 @@ class CI_UI_API SuiteView : public ui::View {
 //! Class for managing a selection of Views with some basic Controls and automatic layout. Useful for test or sample sets.
 class CI_UI_API Suite {
   public:
-	Suite();
+	Suite( const ui::Graph::EventOptions &eventOptions = {} );
 
 	//! Registers a subclass of SuiteView with an associated \a key that will be displayed in a VSelector on screen.
 	template<typename Y>

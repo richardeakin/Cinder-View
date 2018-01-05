@@ -20,6 +20,8 @@ using namespace ci;
 using namespace ci::app;
 using namespace std;
 
+#define MULTITOUCH_ENABLED 0
+
 const vec2 INFO_ROW_SIZE    = vec2( 250, 20 );
 const float PADDING         = 6;
 
@@ -44,7 +46,11 @@ class ViewTestsApp : public App {
 
 void ViewTestsApp::setup()
 {
-	mTestSuite = make_shared<ui::Suite>();
+	ui::Graph::EventOptions eventOptions;
+#if MULTITOUCH_ENABLED
+	eventOptions.mouse( false );
+#endif
+	mTestSuite = make_shared<ui::Suite>( eventOptions );
 
 	mTestSuite->registerSuiteView<BasicViewTests>( "basic" );
 	mTestSuite->registerSuiteView<CompositingTest>( "compositing" );
@@ -59,7 +65,7 @@ void ViewTestsApp::setup()
 		CI_LOG_I( "selected test index: " << mTestSuite->getCurrentIndex() << ", key: " << mTestSuite->getCurrentKey() );
 	} );
 
-	mTestSuite->select( 1 );
+	mTestSuite->select( 2 );
 
 	mInfoLabel = make_shared<ui::LabelGrid>();
 	mInfoLabel->setTextColor( Color::white() );
@@ -155,12 +161,14 @@ void prepareSettings( app::App::Settings *settings )
 	//settings->setWindowPos( 0, 0 );
 	settings->setWindowSize( 1000, 650 );
 
-	//settings->setMultiTouchEnabled();
-
 	// move app to secondary display
 	if( Display::getDisplays().size() > 1 ) {
 		settings->setDisplay( Display::getDisplays()[1] );
 	}
+
+#if MULTITOUCH_ENABLED
+	settings->setMultiTouchEnabled();
+#endif
 }
 
 CINDER_APP( ViewTestsApp, RendererGl( RendererGl::Options().msaa( 8 ) ), prepareSettings )
