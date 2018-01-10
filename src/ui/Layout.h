@@ -74,7 +74,7 @@ enum class Alignment : uint8_t {
 class CI_UI_API LinearLayout : public Layout {
 public:
 	enum class Mode : uint8_t {
-		INCREMENT = 0, //! Each successive View is placed after the previous one + margin
+		INCREMENT = 0, //! Each successive View is placed after the previous one + padding
 		FILL, //! Spreads and expands subviews, overriding each subview's size.
 		DISTRIBUTE, //! Spreads subviews equally based on their center. Ignores padding.
 		NUM_MODES

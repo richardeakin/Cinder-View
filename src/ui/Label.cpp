@@ -107,7 +107,8 @@ vec2 Label::getBaseLine() const
 		default: CI_ASSERT_NOT_REACHABLE();
 	}
 
-	vec2 result( x, getCenterLocal().y + mFont->getDescent() );
+	vec2 result( x, getCenterLocal().y + mFont->getDescent() + mPadding.y1 ); // TODO: shouldn't padding.y1 be used here?
+	//vec2 result( x, getCenterLocal().y + mFont->getDescent() );
 	return result;
 }
 
