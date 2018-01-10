@@ -88,9 +88,10 @@ class CI_UI_API View : public std::enable_shared_from_this<View> {
 	ci::Anim<ci::vec2>*		animSize()			{ return &mSize; }
 
 	std::vector<ViewRef>&	getSubviews()		{ return mSubviews; }
-	ViewRef&				getSubview( size_t index );
 	const ViewRef&			getSubview( size_t index ) const;
+	ViewRef&				getSubview( size_t index );
 	const View*				getParent() const	{ return mParent; }
+	View*					getParent()			{ return mParent; }
 
 	//!
 	const Graph*            getGraph() const    { return mGraph; }
