@@ -87,6 +87,7 @@ class CI_UI_API View : public std::enable_shared_from_this<View> {
 	ci::Anim<ci::vec2>*		animPos()			{ return &mPos; }
 	ci::Anim<ci::vec2>*		animSize()			{ return &mSize; }
 
+	const std::vector<ViewRef>&	getSubviews() const		{ return mSubviews; }
 	std::vector<ViewRef>&	getSubviews()		{ return mSubviews; }
 	const ViewRef&			getSubview( size_t index ) const;
 	ViewRef&				getSubview( size_t index );
@@ -259,6 +260,8 @@ class CI_UI_API View : public std::enable_shared_from_this<View> {
 CI_UI_API std::ostream& operator<<( std::ostream &os, const View &rhs );
 CI_UI_API std::ostream& operator<<( std::ostream &os, const ViewRef &rhs );
 
+//! Returns a string representation of the View hierarchy starting at \a view (for debugging purposes).
+CI_UI_API std::string printHierarchyToString( const View &view );
 //! Returns a string representation of the View hierarchy starting at \a view (for debugging purposes).
 CI_UI_API std::string printHierarchyToString( const ViewRef &view );
 //! Traverses the View hierarchy of \a view, top to bottom.

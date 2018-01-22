@@ -538,15 +538,15 @@ std::ostream& operator<<( std::ostream &os, const ViewRef &rhs )
 
 namespace {
 
-void printRecursive( ostream &os, const ViewRef &view, size_t depth )
+void printRecursive( ostream &os, const View &view, size_t depth )
 {
 	for( size_t i = 0; i < depth; i++ )
 		os << "-- ";
 
 	os << view << endl;
 
-	for( const auto &subview : view->getSubviews() )
-		printRecursive( os, subview, depth + 1 );
+	for( const auto &subview : view.getSubviews() )
+		printRecursive( os, *subview, depth + 1 );
 }
 
 void traverseRecursive( const ViewRef &view, const std::function<void( const ViewRef & )>&applyFn )
@@ -558,12 +558,17 @@ void traverseRecursive( const ViewRef &view, const std::function<void( const Vie
 
 } // anonymous namespace
 
-std::string printHierarchyToString( const ViewRef &view )
+std::string printHierarchyToString( const View &view )
 {
 	stringstream str;
 	printRecursive( str, view, 0 );
 
 	return str.str();
+}
+
+std::string printHierarchyToString( const ViewRef &view )
+{
+	return printHierarchyToString( *view );
 }
 
 void traverse( const ViewRef &view, const std::function<void( const ViewRef & )> &applyFn )
