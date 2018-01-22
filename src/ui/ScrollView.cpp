@@ -53,6 +53,7 @@ ScrollView::ScrollView( const ci::Rectf &bounds )
 	setClipEnabled();
 
 	mContentView = make_shared<ContentView>( this );
+	mContentView->setLabel( "ScrollView-ContentView" );
 	addSubview( mContentView );
 
 	mSwipeTracker = make_unique<SwipeTracker>();
