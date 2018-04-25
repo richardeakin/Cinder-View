@@ -10,9 +10,9 @@ if( NOT TARGET Cinder-View )
 	ci_log_v( "VIEW_LIB_PATH: ${VIEW_LIB_PATH}" )
 
 	list( APPEND VIEW_SOURCES
-		${VIEW_SOURCE_PATH}/ui/Button.cpp
 		${VIEW_SOURCE_PATH}/ui/Control.cpp
 		${VIEW_SOURCE_PATH}/ui/Filter.cpp
+		${VIEW_SOURCE_PATH}/ui/GestureTracker.cpp
 		${VIEW_SOURCE_PATH}/ui/Graph.cpp
 		${VIEW_SOURCE_PATH}/ui/Image.cpp
 		${VIEW_SOURCE_PATH}/ui/ImageView.cpp
@@ -22,10 +22,9 @@ if( NOT TARGET Cinder-View )
 		${VIEW_SOURCE_PATH}/ui/Layout.cpp
 		${VIEW_SOURCE_PATH}/ui/Renderer.cpp
 		${VIEW_SOURCE_PATH}/ui/ScrollView.cpp
-		${VIEW_SOURCE_PATH}/ui/Selector.cpp
-		${VIEW_SOURCE_PATH}/ui/Slider.cpp
 		${VIEW_SOURCE_PATH}/ui/Suite.cpp
 		${VIEW_SOURCE_PATH}/ui/TextManager.cpp
+		${VIEW_SOURCE_PATH}/ui/TextField.cpp
 		${VIEW_SOURCE_PATH}/ui/View.cpp
 	)
 
