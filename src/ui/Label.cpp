@@ -74,7 +74,7 @@ void Label::setPadding( const ci::Rectf &padding )
 
 void Label::setShrinkToFitEnabled( bool enable )
 {
-	if( mShrinkToFit = enable )
+	if( mShrinkToFit == enable )
 		return;
 
 	mShrinkToFit = enable;
