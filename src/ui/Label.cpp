@@ -46,6 +46,12 @@ Label::Label( const Rectf &bounds )
 	setBlendMode( BlendMode::PREMULT_ALPHA );
 }
 
+void Label::setFont( const std::string &key )
+{
+	// TODO: not sure yet if loading fonts by key is best.
+	// - probably need to be able to specify name some way or another
+}
+
 void Label::setFont( float fontSize, FontFace fontFace )
 {
 	mFont = TextManager::loadText( fontFace, fontSize );
@@ -65,6 +71,40 @@ void Label::setText( const std::string &text )
 		shrinkToFit();
 }
 
+void Label::setSize( const ci::vec2 &size )
+{
+	//vec2 textSize = setTextSizeAdjusted( size );
+	//View::setSize( textSize );
+
+	View::setSize( size );
+}
+
+//ci::vec2 Label::setTextSizeAdjusted( ci::vec2 textSize )
+//{
+//	if( mWrapEnabled )
+//		textSize.y = 0;
+//	else {
+//		auto font = getFont();
+//		if( font ) {
+//			float textWidth = getFont()->measureWidth( getText() );
+//			textSize.x = textWidth;
+//		}
+//		else {
+//			CI_LOG_W( "no Font" );
+//		}
+//	}
+//
+//	mTextBox.setSize( textSize );
+//	mTextBoxShadow.setSize( textSize );
+//
+//	if( mWrapEnabled ) {
+//		// adjust our height according to how the SdfTextBox laid out its lines		 
+//		textSize.y = mTextBox.getBounds().getHeight();
+//	}
+//
+//	return textSize;
+//}
+
 void Label::setPadding( const ci::Rectf &padding )
 {
 	mPadding = padding;
@@ -80,6 +120,11 @@ void Label::setShrinkToFitEnabled( bool enable )
 	mShrinkToFit = enable;
 	if( mShrinkToFit )
 		shrinkToFit();
+}
+
+void Label::setWrapEnabled( bool enable )
+{
+	// TODO: implement wrap
 }
 
 void Label::draw( Renderer *ren )
@@ -158,7 +203,7 @@ LabelRef LabelGrid::makeOrFindCell( const ci::ivec2 &location )
 
 	Cell &cell= mCells.back();
 	cell.mLocation = location;
-	cell.mLabel = make_shared<Label>();
+	cell.mLabel = make_shared<ui::Label>();
 	cell.mLabel->setClipEnabled();
 
 	// TODO: make settable per row / column / cell

@@ -40,6 +40,10 @@ public:
 	void				setTextColor( const ci::ColorA &color )	{ mTextColor = color; }
 	const ci::ColorA&	getTextColor() const					{ return mTextColor; }
 
+	// TODO: need method for setting font by string
+	// - will ask ui::TextManager if it is loaded or perhaps provide path to file?
+	void                setFont( const std::string &key );
+
 	void				setFont( float fontSize, FontFace fontFace );
 	void				setFontSize( float fontSize )		{ setFont( fontSize, mFont->getFace() ); }
 	void				setFontFace( FontFace face )		{ setFont( mFont->getSize(), face ); }
@@ -50,21 +54,31 @@ public:
 	void				setShrinkToFitEnabled( bool enable = true );
 	bool				isShrinkToFitEnabled() const	{ return mShrinkToFit; }
 
+	// TODO: these need to be implemented
+	void				setWrapEnabled( bool enable = true );
+	bool				isWrapEnabled() const	{ return mWrapEnabled; }
+	void				setLineSpace( float lineSpace ) {}
+	//! Updates rectangular region that text should be laid out in.
+	void				setSize( const ci::vec2 &size ) override;
+	//! note: not const because SdfText::getBounds() isn't const
+	ci::vec2			getTextSize() const	{ return mTextSize; }
+
 protected:
 	void draw( Renderer *ren ) override;
 
 private:
 	ci::vec2	getBaseLine() const;
 	void		measureTextSize();
-	void		shrinkToFit();
-
+	void		shrinkToFit(); 
 
 	TextRef			mFont;
 	std::string		mText;
 	ci::vec2		mTextSize;
 	ci::ColorA		mTextColor = ci::ColorA::black();
 	ci::Rectf		mPadding = ci::Rectf( 4, 4, 4, 4 );
+
 	TextAlignment	mAlignment = TextAlignment::LEFT;
+	bool			mWrapEnabled = true;
 	bool			mShrinkToFit = false;
 };
 
