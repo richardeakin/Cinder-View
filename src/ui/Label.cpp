@@ -55,9 +55,7 @@ void Label::setFont( const std::string &key )
 void Label::setFont( float fontSize, FontFace fontFace )
 {
 	mFont = TextManager::loadText( fontFace, fontSize );
-	measureTextSize();
-	if( mShrinkToFit )
-		shrinkToFit();
+	adjustSizeIfNeeded();
 }
 
 void Label::setText( const std::string &text )
@@ -66,50 +64,19 @@ void Label::setText( const std::string &text )
 		return;
 
 	mText = text;
-	measureTextSize();
-	if( mShrinkToFit )
-		shrinkToFit();
+	adjustSizeIfNeeded();
 }
 
 void Label::setSize( const ci::vec2 &size )
 {
-	//vec2 textSize = setTextSizeAdjusted( size );
-	//View::setSize( textSize );
-
 	View::setSize( size );
+	adjustSizeIfNeeded();
 }
-
-//ci::vec2 Label::setTextSizeAdjusted( ci::vec2 textSize )
-//{
-//	if( mWrapEnabled )
-//		textSize.y = 0;
-//	else {
-//		auto font = getFont();
-//		if( font ) {
-//			float textWidth = getFont()->measureWidth( getText() );
-//			textSize.x = textWidth;
-//		}
-//		else {
-//			CI_LOG_W( "no Font" );
-//		}
-//	}
-//
-//	mTextBox.setSize( textSize );
-//	mTextBoxShadow.setSize( textSize );
-//
-//	if( mWrapEnabled ) {
-//		// adjust our height according to how the SdfTextBox laid out its lines		 
-//		textSize.y = mTextBox.getBounds().getHeight();
-//	}
-//
-//	return textSize;
-//}
 
 void Label::setPadding( const ci::Rectf &padding )
 {
 	mPadding = padding;
-	if( mShrinkToFit )
-		shrinkToFit();
+	adjustSizeIfNeeded();
 }
 
 void Label::setShrinkToFitEnabled( bool enable )
@@ -118,13 +85,21 @@ void Label::setShrinkToFitEnabled( bool enable )
 		return;
 
 	mShrinkToFit = enable;
-	if( mShrinkToFit )
-		shrinkToFit();
+	adjustSizeIfNeeded();
 }
 
 void Label::setWrapEnabled( bool enable )
 {
-	// TODO: implement wrap
+	if( mWrapEnabled = enable )
+		return;
+
+	mWrapEnabled = enable;
+	adjustSizeIfNeeded();
+}
+
+void Label::layout()
+{
+
 }
 
 void Label::draw( Renderer *ren )
@@ -133,7 +108,14 @@ void Label::draw( Renderer *ren )
 		return;
 
 	ren->setColor( mTextColor );
-	mFont->drawString( mText, getBaseLine() );
+
+	auto baseline = getBaseLine();
+	if( mWrapEnabled ) {
+		mFont->drawStringWrapped( mText, Rectf( baseline, getSize() ) );
+	}
+	else {
+		mFont->drawString( mText, baseline );
+	}
 }
 
 vec2 Label::getBaseLine() const
@@ -152,20 +134,47 @@ vec2 Label::getBaseLine() const
 		default: CI_ASSERT_NOT_REACHABLE();
 	}
 
-	vec2 result( x, getCenterLocal().y + mFont->getDescent() + mPadding.y1 ); // TODO: shouldn't padding.y1 be used here?
-	//vec2 result( x, getCenterLocal().y + mFont->getDescent() );
+	// TODO: consider an option for text vertical alignment
+	//vec2 result( x, getCenterLocal().y + mFont->getDescent() + mPadding.y1 );
+	vec2 result( x, mFont->getAscent() + mPadding.y1 );
 	return result;
+}
+
+void Label::adjustSizeIfNeeded()
+{
+	// TODO: only call setSize() if a param needs it
+
+	vec2 sizeBefore = vec2( 0 );
+
+	measureTextSize();
+	if( mShrinkToFit ) {
+		vec2 size = mTextSize;
+		size += mPadding.getUpperLeft() + mPadding.getLowerRight();
+		View::setSize( size ); // avoid cyclical Label::setSize() call
+	}
+
+	CI_LOG_I( "this: " << getLabel() << ", wrap: " << mWrapEnabled << ", shrink: " << mShrinkToFit
+		<< ", size before: " << sizeBefore << ", size: " << getSize() << ", mTextSize: " << mTextSize );
 }
 
 void Label::measureTextSize()
 {
-	mTextSize = mFont->measureString( mText );
-}
+	if( mText.empty() ) {
+		mTextSize = vec2( 0 );
+		return;
+	}
 
-void Label::shrinkToFit()
-{
-	vec2 size = mTextSize + mPadding.getUpperLeft() + mPadding.getLowerRight();
-	setSize( size );
+	if( mWrapEnabled ) {
+		auto fitRect = getBoundsLocal();
+		fitRect.x1 += mPadding.x1;
+		fitRect.x2 -= mPadding.x2;
+		mTextSize = mFont->measureStringWrapped( mText, fitRect );
+	}
+	else {
+		mTextSize = mFont->measureString( mText );
+	}
+
+	//CI_LOG_I( "this: " << getLabel() << ", mTextSize: " << mTextSize );
 }
 
 // ----------------------------------------------------------------------------------------------------

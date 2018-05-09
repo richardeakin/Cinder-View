@@ -25,6 +25,7 @@
 
 #include "ui/Export.h"
 #include "cinder/Vector.h"
+#include "cinder/Rect.h"
 
 #include <atomic>
 #include <mutex>
@@ -64,7 +65,9 @@ public:
 	float		getDescent() const;
 
 	ci::vec2	measureString( const std::string &str ) const;
+	ci::vec2	measureStringWrapped( const std::string &str, const ci::Rectf &fitRect ) const;
 	void		drawString( const std::string &str, const ci::vec2 &baseline );
+	void		drawStringWrapped( const std::string &str, const ci::Rectf &fitRect );
 
 private:
 	Text();

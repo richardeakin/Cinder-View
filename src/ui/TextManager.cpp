@@ -165,12 +165,33 @@ vec2 Text::measureString( const std::string &str ) const
 	return mTextureFont->measureString( str );
 }
 
+vec2 Text::measureStringWrapped( const std::string &str, const ci::Rectf &fitRect ) const
+{
+	if( ! mIsReady )
+		return vec2( 0 );
+
+#if 0
+	// TODO: get this PR'ed and merged into cinder. not yet available on non-Cocoa platforms
+	return mTextureFont->measureStringWrapped( str, fitRect );
+#else
+	return mTextureFont->measureString( str );
+#endif
+}
+
 void Text::drawString( const string &str, const vec2 &baseline )
 {
 	if( ! mIsReady )
 		return;
 
 	mTextureFont->drawString( str, baseline );
+}
+
+void Text::drawStringWrapped( const std::string &str, const ci::Rectf &fitRect )
+{
+	if( ! mIsReady )
+		return;
+
+	mTextureFont->drawStringWrapped( str, fitRect );
 }
 
 } // namespace ui

@@ -54,26 +54,26 @@ public:
 	void				setShrinkToFitEnabled( bool enable = true );
 	bool				isShrinkToFitEnabled() const	{ return mShrinkToFit; }
 
-	// TODO: these need to be implemented
 	void				setWrapEnabled( bool enable = true );
 	bool				isWrapEnabled() const	{ return mWrapEnabled; }
-	void				setLineSpace( float lineSpace ) {}
+	//void				setLineSpace( float lineSpace ) {}
 	//! Updates rectangular region that text should be laid out in.
 	void				setSize( const ci::vec2 &size ) override;
 	//! note: not const because SdfText::getBounds() isn't const
 	ci::vec2			getTextSize() const	{ return mTextSize; }
 
 protected:
+	void layout() override;
 	void draw( Renderer *ren ) override;
 
 private:
 	ci::vec2	getBaseLine() const;
+	void		adjustSizeIfNeeded();
 	void		measureTextSize();
-	void		shrinkToFit(); 
 
-	TextRef			mFont;
+	TextRef			mFont; // TODO: should this be named mText, and below named mTextString? Or think of different name for ui::Text
 	std::string		mText;
-	ci::vec2		mTextSize;
+	ci::vec2		mTextSize; // TODO: move this to ui::Text
 	ci::ColorA		mTextColor = ci::ColorA::black();
 	ci::Rectf		mPadding = ci::Rectf( 4, 4, 4, 4 );
 
