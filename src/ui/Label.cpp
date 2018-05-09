@@ -55,7 +55,7 @@ void Label::setFont( const std::string &key )
 void Label::setFont( float fontSize, FontFace fontFace )
 {
 	mFont = TextManager::loadText( fontFace, fontSize );
-	adjustSizeIfNeeded();
+	markTextLayoutDirty();
 }
 
 void Label::setText( const std::string &text )
@@ -64,19 +64,19 @@ void Label::setText( const std::string &text )
 		return;
 
 	mText = text;
-	adjustSizeIfNeeded();
+	markTextLayoutDirty();
 }
 
 void Label::setSize( const ci::vec2 &size )
 {
 	View::setSize( size );
-	adjustSizeIfNeeded();
+	markTextLayoutDirty();
 }
 
 void Label::setPadding( const ci::Rectf &padding )
 {
 	mPadding = padding;
-	adjustSizeIfNeeded();
+	markTextLayoutDirty();
 }
 
 void Label::setShrinkToFitEnabled( bool enable )
@@ -85,7 +85,7 @@ void Label::setShrinkToFitEnabled( bool enable )
 		return;
 
 	mShrinkToFit = enable;
-	adjustSizeIfNeeded();
+	markTextLayoutDirty();
 }
 
 void Label::setWrapEnabled( bool enable )
@@ -94,12 +94,14 @@ void Label::setWrapEnabled( bool enable )
 		return;
 
 	mWrapEnabled = enable;
-	adjustSizeIfNeeded();
+	markTextLayoutDirty();
 }
 
 void Label::layout()
 {
-
+	if( mTextLayoutDirty ) {
+		layoutForText();
+	}
 }
 
 void Label::draw( Renderer *ren )
@@ -111,7 +113,7 @@ void Label::draw( Renderer *ren )
 
 	auto baseline = getBaseLine();
 	if( mWrapEnabled ) {
-		mFont->drawStringWrapped( mText, Rectf( baseline, getSize() ) );
+		mFont->drawStringWrapped( mText, Rectf( baseline, mTextSize ) );
 	}
 	else {
 		mFont->drawString( mText, baseline );
@@ -140,11 +142,18 @@ vec2 Label::getBaseLine() const
 	return result;
 }
 
-void Label::adjustSizeIfNeeded()
+void Label::markTextLayoutDirty()
 {
-	// TODO: only call setSize() if a param needs it
+	if( mText.empty() )
+		return;
 
-	vec2 sizeBefore = vec2( 0 );
+	mTextLayoutDirty = true;
+	setNeedsLayout();
+}
+
+void Label::layoutForText()
+{
+	vec2 sizeBefore = getSize();
 
 	measureTextSize();
 	if( mShrinkToFit ) {
@@ -155,6 +164,8 @@ void Label::adjustSizeIfNeeded()
 
 	CI_LOG_I( "this: " << getLabel() << ", wrap: " << mWrapEnabled << ", shrink: " << mShrinkToFit
 		<< ", size before: " << sizeBefore << ", size: " << getSize() << ", mTextSize: " << mTextSize );
+
+	mTextLayoutDirty = false;
 }
 
 void Label::measureTextSize()
@@ -168,13 +179,13 @@ void Label::measureTextSize()
 		auto fitRect = getBoundsLocal();
 		fitRect.x1 += mPadding.x1;
 		fitRect.x2 -= mPadding.x2;
-		mTextSize = mFont->measureStringWrapped( mText, fitRect );
+		mTextSize = mFont->measureStringWrapped( mText, fitRect );		
 	}
 	else {
 		mTextSize = mFont->measureString( mText );
 	}
 
-	//CI_LOG_I( "this: " << getLabel() << ", mTextSize: " << mTextSize );
+	CI_LOG_I( "this: " << getLabel() << ", size: " << getSize() << ",  mTextSize: " << mTextSize );
 }
 
 // ----------------------------------------------------------------------------------------------------

@@ -170,11 +170,13 @@ vec2 Text::measureStringWrapped( const std::string &str, const ci::Rectf &fitRec
 	if( ! mIsReady )
 		return vec2( 0 );
 
-#if 0
+#if 1
 	// TODO: get this PR'ed and merged into cinder. not yet available on non-Cocoa platforms
 	return mTextureFont->measureStringWrapped( str, fitRect );
 #else
-	return mTextureFont->measureString( str );
+	//vec2 result = mTextureFont->measureString( str );
+	//result.x = fitRect.x2;
+	return fitRect.getSize();
 #endif
 }
 

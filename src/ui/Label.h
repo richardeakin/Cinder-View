@@ -62,13 +62,15 @@ public:
 	//! note: not const because SdfText::getBounds() isn't const
 	ci::vec2			getTextSize() const	{ return mTextSize; }
 
+	//! Called automatically from View::layout() as needed, can be called earlier to adjust size properties before then.
+	void				layoutForText();
 protected:
 	void layout() override;
 	void draw( Renderer *ren ) override;
 
 private:
 	ci::vec2	getBaseLine() const;
-	void		adjustSizeIfNeeded();
+	void		markTextLayoutDirty();
 	void		measureTextSize();
 
 	TextRef			mFont; // TODO: should this be named mText, and below named mTextString? Or think of different name for ui::Text
@@ -80,6 +82,7 @@ private:
 	TextAlignment	mAlignment = TextAlignment::LEFT;
 	bool			mWrapEnabled = true;
 	bool			mShrinkToFit = false;
+	bool			mTextLayoutDirty = false;
 };
 
 //! Manages a grid of text entries, useful for building things like info panels. Non-interactive by default.
