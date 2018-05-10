@@ -13,9 +13,9 @@ ControlsTest::ControlsTest()
 	: SuiteView()
 {
 	mButton = make_shared<ui::Button>();
-	mButton->setTitle( "color button" );
-	mButton->getSignalPressed().connect( [] { CI_LOG_V( "Bob pressed" ); } );
-	mButton->getSignalReleased().connect( [] { CI_LOG_V( "Bob released" ); } );
+	mButton->setTitle( "Button" );
+	mButton->getSignalPressed().connect( [] { CI_LOG_I( "mButton pressed" ); } );
+	mButton->getSignalReleased().connect( [] { CI_LOG_I( "mButton released" ); } );
 
 	mImageButton = make_shared<ui::Button>();
 	mImageButton->setLabel( "image button" );
@@ -38,13 +38,13 @@ ControlsTest::ControlsTest()
 	mToggle = make_shared<ui::Button>();
 	mToggle->setAsToggle();
 	mToggle->setLabel( "toggle" );
-	mToggle->setTitle( "Larry" );
-	mToggle->setTitle( "Curly", ui::Button::State::ENABLED );
+	mToggle->setTitle( "disabled" );
+	mToggle->setTitle( "enabled", ui::Button::State::ENABLED );
 	mToggle->setColor( Color( 0.2f, 0.5f, 0.5f ), ui::Button::State::ENABLED );
 	mToggle->getSignalPressed().connect( [] { CI_LOG_V( "toggle pressed" ); } );
 	mToggle->getSignalReleased().connect( [] { CI_LOG_V( "toggle released" ); } );
 
-	// temp - adding constrols to this test
+	// temp - adding controls to this test
 	mHSlider = make_shared<ui::HSlider>();
 	mHSlider->getBackground()->setColor( ColorA( "green", 0.5f ) );
 	mHSlider->getSignalValueChanged().connect( [this] {
