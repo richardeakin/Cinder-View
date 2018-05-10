@@ -80,7 +80,7 @@ private:
 	ci::Rectf		mPadding = ci::Rectf( 4, 4, 4, 4 );
 
 	TextAlignment	mAlignment = TextAlignment::LEFT;
-	bool			mWrapEnabled = true;
+	bool			mWrapEnabled = false;
 	bool			mShrinkToFit = false;
 	bool			mTextLayoutDirty = false;
 };

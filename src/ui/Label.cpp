@@ -113,7 +113,12 @@ void Label::draw( Renderer *ren )
 
 	auto baseline = getBaseLine();
 	if( mWrapEnabled ) {
-		mFont->drawStringWrapped( mText, Rectf( baseline, mTextSize ) );
+		auto fitRect = getBoundsLocal();
+		fitRect.x1 += mPadding.x1;
+		fitRect.y1 += mPadding.y1 + baseline.y; // TODO: figure out how wrap and baseline should work together
+		fitRect.x2 -= mPadding.x2;
+		fitRect.y2 -= mPadding.y2;
+		mFont->drawStringWrapped( mText, fitRect );
 	}
 	else {
 		mFont->drawString( mText, baseline );
@@ -138,7 +143,7 @@ vec2 Label::getBaseLine() const
 
 	// TODO: consider an option for text vertical alignment
 	//vec2 result( x, getCenterLocal().y + mFont->getDescent() + mPadding.y1 );
-	vec2 result( x, mFont->getAscent() + mPadding.y1 );
+	vec2 result( x, mFont->getAscent() + mPadding.y1 ); // TODO: was only using this for when baseline is used in wrapped class, but may not do that
 	return result;
 }
 
