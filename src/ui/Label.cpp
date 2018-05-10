@@ -167,8 +167,8 @@ void Label::layoutForText()
 		View::setSize( size ); // avoid cyclical Label::setSize() call
 	}
 
-	CI_LOG_I( "this: " << getLabel() << ", wrap: " << mWrapEnabled << ", shrink: " << mShrinkToFit
-		<< ", size before: " << sizeBefore << ", size: " << getSize() << ", mTextSize: " << mTextSize );
+	//CI_LOG_I( "this: " << getLabel() << ", wrap: " << mWrapEnabled << ", shrink: " << mShrinkToFit
+	//	<< ", size before: " << sizeBefore << ", size: " << getSize() << ", mTextSize: " << mTextSize );
 
 	mTextLayoutDirty = false;
 }
@@ -190,7 +190,7 @@ void Label::measureTextSize()
 		mTextSize = mFont->measureString( mText );
 	}
 
-	CI_LOG_I( "this: " << getLabel() << ", size: " << getSize() << ",  mTextSize: " << mTextSize );
+	//CI_LOG_I( "this: " << getLabel() << ", size: " << getSize() << ",  mTextSize: " << mTextSize );
 }
 
 // ----------------------------------------------------------------------------------------------------
