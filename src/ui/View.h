@@ -283,6 +283,8 @@ class CI_UI_API RectView : public View {
 
 	void					setColor( const ci::ColorA &color )	{ mColor = color; }
 	const ci::ColorA&		getColor() const					{ return mColor; }
+	ci::Anim<ci::ColorA>*	animColor()							{ return &mColor; }
+	//! note: deprecated, use animColor() instead
 	ci::Anim<ci::ColorA>*	getColorAnim()						{ return &mColor; }
 
   protected:
