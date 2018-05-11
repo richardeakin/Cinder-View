@@ -212,7 +212,7 @@ class CI_UI_API PagingScrollView : public ScrollView {
 	void				onDecelerationEnded() override;
 	const ci::Rectf&	getDeceleratingBoundaries() const	override;
 
-	void layoutPages();
+	void layoutPages( bool updateBoundaries );
 	void layoutPage( size_t index );
 	void calcDeceleratingBoundaries();
 	void handlePageUpdate( bool animate );

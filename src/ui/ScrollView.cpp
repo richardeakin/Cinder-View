@@ -160,6 +160,7 @@ void ScrollView::calcOffsetBoundaries()
 
 void ScrollView::layout()
 {
+	calcContentSize();
 	calcOffsetBoundaries();
 }
 
@@ -399,7 +400,7 @@ void PagingScrollView::setAxis( Axis axis )
 		setVerticalScrollingEnabled( true );
 	}
 
-	layoutPages();
+	layoutPages( true );
 }
 
 void PagingScrollView::setLayoutMode( LayoutMode mode )
@@ -408,18 +409,18 @@ void PagingScrollView::setLayoutMode( LayoutMode mode )
 		return;
 
 	mLayoutMode = mode;
-	layoutPages();
+	layoutPages( true );
 }
 
 void PagingScrollView::setPageMargin( const vec2 &margin )
 {
 	mPageMargin = margin;
-	layoutPages();
+	layoutPages( true );
 }
 
 void PagingScrollView::layout()
 {
-	layoutPages();
+	layoutPages( false );
 	ScrollView::layout();
 }
 
@@ -458,14 +459,17 @@ bool PagingScrollView::touchesEnded( app::TouchEvent &event )
 	return handled;
 }
 
-void PagingScrollView::layoutPages()
+void PagingScrollView::layoutPages( bool updateBoundaries )
 {
 	for( size_t i = 0; i < getNumPages(); i++ ) {
 		layoutPage( i );
 	}
 
-	calcContentSize();
-	calcOffsetBoundaries();
+	if( updateBoundaries ) {
+		calcContentSize();
+		calcOffsetBoundaries();
+	}
+
 	calcDeceleratingBoundaries();
 }
 
