@@ -37,8 +37,9 @@ public:
 	void				setText( const std::string &text );
 	const std::string&	getText() const						{ return mText; }
 
-	void				setTextColor( const ci::ColorA &color )	{ mTextColor = color; }
-	const ci::ColorA&	getTextColor() const					{ return mTextColor; }
+	void					setTextColor( const ci::ColorA &color )	{ mTextColor = color; }
+	const ci::ColorA&		getTextColor() const					{ return mTextColor; }
+	ci::Anim<ci::ColorA>*	animTextColor() { return &mTextColor; }
 
 	// TODO: need method for setting font by string
 	// - will ask ui::TextManager if it is loaded or perhaps provide path to file?
@@ -76,8 +77,9 @@ private:
 	TextRef			mFont; // TODO: should this be named mText, and below named mTextString? Or think of different name for ui::Text
 	std::string		mText;
 	ci::vec2		mTextSize; // TODO: move this to ui::Text
-	ci::ColorA		mTextColor = ci::ColorA::black();
 	ci::Rectf		mPadding = ci::Rectf( 4, 4, 4, 4 );
+
+	ci::Anim<ci::ColorA> mTextColor = { ci::ColorA::black() };
 
 	TextAlignment	mAlignment = TextAlignment::LEFT;
 	bool			mWrapEnabled = false;
