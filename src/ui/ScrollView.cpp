@@ -26,8 +26,11 @@
 using namespace ci;
 using namespace std;
 
-//#define LOG_SCROLL( stream )	CI_LOG_I( stream )
-#define LOG_SCROLL( stream )	( (void)( 0 ) )
+//#define LOG_SCROLL_CONTENT( stream )	CI_LOG_I( stream )
+#define LOG_SCROLL_CONTENT( stream )	( (void)( 0 ) )
+
+//#define LOG_SCROLL_TRACKING( stream )	CI_LOG_I( stream )
+#define LOG_SCROLL_TRACKING( stream )	( (void)( 0 ) )
 
 namespace ui {
 
@@ -122,40 +125,40 @@ void ScrollView::setContentOffset( const ci::vec2 &offset )
 void ScrollView::calcContentSize()
 {
 	if( mContentView->getLayout() ) {
-		LOG_SCROLL( "(using Layout)" );
+		LOG_SCROLL_CONTENT( "(using Layout)" );
 		mContentView->getLayout()->layout( mContentView.get() );
 	}
 
 	vec2 size = vec2( 0 );
 	for( const auto &view : mContentView->getSubviews() ) {
 		auto viewBounds = view->getBounds();
-		LOG_SCROLL( "view: " << view );
-		LOG_SCROLL( "\t- size before: " << size );
+		LOG_SCROLL_CONTENT( "view: " << view );
+		LOG_SCROLL_CONTENT( "\t- size before: " << size );
 		if( size.x < viewBounds.x2 )
 			size.x = viewBounds.x2;
 		if( size.y < viewBounds.y2 )
 			size.y = viewBounds.y2;
 
-		LOG_SCROLL( "\t- size after: " << size );
+		LOG_SCROLL_CONTENT( "\t- size after: " << size );
 	}
 
 	mContentSize = size; // TODO: can remove mContentSize and just use mContentView->getSize() instead?
 	mContentView->setSize( size ); // TODO: should this trigger layout or not?
 
-	LOG_SCROLL( "content size: " << mContentSize );
+	LOG_SCROLL_CONTENT( "content size: " << mContentSize );
 }
 
 void ScrollView::calcOffsetBoundaries()
 {
 	mOffsetBoundaries = Rectf( 0, 0, mContentSize.x - getWidth(), mContentSize.y - getHeight() );
-	LOG_SCROLL( "mOffsetBoundaries (before): " << mOffsetBoundaries );
+	LOG_SCROLL_CONTENT( "mOffsetBoundaries (before): " << mOffsetBoundaries );
 
 	if( mOffsetBoundaries.x2 < 0 )
 		mOffsetBoundaries.x2 = 0;
 	if( mOffsetBoundaries.y2 < 0 )
 		mOffsetBoundaries.y2 = 0;
 
-	LOG_SCROLL( "mContentSize: " << mContentSize << ", mOffsetBoundaries: " << mOffsetBoundaries << ", getSize(): " << getSize() );
+	LOG_SCROLL_CONTENT( "mContentSize: " << mContentSize << ", mOffsetBoundaries: " << mOffsetBoundaries << ", getSize(): " << getSize() );
 }
 
 void ScrollView::layout()
@@ -189,7 +192,7 @@ void ScrollView::updateOffset( const ci::vec2 &currentPos, const ci::vec2 &previ
 	// restrict the target offset to content boundaries.
 	mTargetOffset = mOffsetBoundaries.closestPoint( mContentOffset );
 
-	LOG_SCROLL( "mContentOffset: " << mContentOffset() << ", mTargetOffset: " << mTargetOffset );
+	LOG_SCROLL_TRACKING( "mContentOffset: " << mContentOffset() << ", mTargetOffset: " << mTargetOffset );
 }
 
 void ScrollView::updateDeceleratingOffset()
@@ -250,6 +253,8 @@ bool ScrollView::touchesBegan( app::TouchEvent &event )
 {
 	auto &firstTouch = event.getTouches().front();
 	vec2 pos = toLocal( firstTouch.getPos() );
+	LOG_SCROLL_TRACKING( "pos:" << pos );
+
 	mSwipeTracker->clear();
 	mSwipeTracker->storeTouchPos( pos, getGraph()->getElapsedSeconds() );
 
@@ -281,6 +286,8 @@ bool ScrollView::touchesEnded( app::TouchEvent &event )
 {
 	vec2 pos = toLocal( event.getTouches().front().getPos() );
 	vec2 lastPos = mSwipeTracker->getLastTouchPos();
+	LOG_SCROLL_TRACKING( "pos:" << pos );
+
 	updateOffset( pos, lastPos );
 	mSwipeTracker->storeTouchPos( pos, getGraph()->getElapsedSeconds() );
 
@@ -508,7 +515,7 @@ void PagingScrollView::layoutPage( size_t index )
 		}
 	}
 
-	LOG_SCROLL( "index: " << index << ", bounds: " << getContentView()->getBounds() );
+	LOG_SCROLL_CONTENT( "index: " << index << ", bounds: " << getContentView()->getBounds() );
 }
 
 vec2 PagingScrollView::getTargetOffsetForPage( size_t index ) const
@@ -561,7 +568,7 @@ void PagingScrollView::handlePageUpdate( bool animate )
 		mSignalPageDidChange.emit();
 	}
 
-	LOG_SCROLL( "current page: " << mCurrentPageIndex );
+	LOG_SCROLL_CONTENT( "current page: " << mCurrentPageIndex );
 }
 
 bool PagingScrollView::isOnFirstPage() const
