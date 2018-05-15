@@ -144,7 +144,6 @@ void ScrollView::calcContentSize()
 		LOG_SCROLL_CONTENT( "\t- size after: " << size );
 	}
 
-	mContentSize = size; // TODO: can remove mContentSize and just use mContentView->getSize() instead?
 	mContentView->setSize( size ); // TODO: should this trigger layout or not?
 
 	LOG_SCROLL_CONTENT( "content size: " << mContentSize );
@@ -152,7 +151,8 @@ void ScrollView::calcContentSize()
 
 void ScrollView::calcOffsetBoundaries()
 {
-	mOffsetBoundaries = Rectf( 0, 0, mContentSize.x - getWidth(), mContentSize.y - getHeight() );
+	const auto &contentSize = mContentView->getSize();
+	mOffsetBoundaries = Rectf( 0, 0, contentSize.x - getWidth(), contentSize.y - getHeight() );
 	LOG_SCROLL_CONTENT( "mOffsetBoundaries (before): " << mOffsetBoundaries );
 
 	if( mOffsetBoundaries.x2 < 0 )
@@ -160,7 +160,7 @@ void ScrollView::calcOffsetBoundaries()
 	if( mOffsetBoundaries.y2 < 0 )
 		mOffsetBoundaries.y2 = 0;
 
-	LOG_SCROLL_CONTENT( "mContentSize: " << mContentSize << ", mOffsetBoundaries: " << mOffsetBoundaries << ", getSize(): " << getSize() );
+	LOG_SCROLL_CONTENT( "mContentSize: " << contentSize << ", mOffsetBoundaries: " << mOffsetBoundaries << ", getSize(): " << getSize() );
 }
 
 void ScrollView::layout()

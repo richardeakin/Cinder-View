@@ -135,7 +135,6 @@ class CI_UI_API ScrollView : public View {
 	class ContentView;
 	std::shared_ptr<ContentView>	mContentView;
   	ci::Anim<ci::vec2>				mContentOffset;
-	ci::vec2						mContentSize;
 
 	ci::Rectf				mOffsetBoundaries = ci::Rectf::zero();
 
