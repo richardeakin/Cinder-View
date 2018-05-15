@@ -84,16 +84,16 @@ ScrollTests::ScrollTests()
 	mScrollViewFree->addSubview( scrollBorder );
 
 	// add some content views:
-	auto custom = make_shared<CustomView>( Rectf( 40, 60, 180, 160 ) );
+	auto custom = make_shared<CustomView>( Rectf( 40, 30, 180, 130 ) );
 
-	auto button = make_shared<ui::Button>( Rectf( 200, 60, 300, 100 ) );
+	auto button = make_shared<ui::Button>( Rectf( 200, 30, 300, 70 ) );
 	button->setTitle( "tap me" );
 	button->setTitleColor( Color( 0, 0.2f, 0.8f ) );
 	button->setColor( Color( 0.6f, 0.6f, 0.8f ), ui::Button::State::PRESSED );
 	button->getSignalPressed().connect( [] { CI_LOG_V( "button pressed" ); } );
 	button->getSignalReleased().connect( [] { CI_LOG_V( "button released" ); } );
 
-	auto imageView = make_shared<ui::ImageView>( Rectf( 40, 200, 600, 600 ) );
+	auto imageView = make_shared<ui::ImageView>( Rectf( 40, 150, 600, 600 ) );
 	imageView->getBackground()->setColor( Color( 0, 0.2f, 0 ) );
 
 	fs::path imageFilePath = app::getAssetPath( "images/monkey_hitchhike.jpg" );

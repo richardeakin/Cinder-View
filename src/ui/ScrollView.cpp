@@ -124,12 +124,14 @@ void ScrollView::setContentOffset( const ci::vec2 &offset )
 
 void ScrollView::calcContentSize()
 {
+	// Start with the size of the ScrollView, then increase content size as necessary.
+	mContentView->setSize( getSize() );
 	if( mContentView->getLayout() ) {
 		LOG_SCROLL_CONTENT( "(using Layout)" );
 		mContentView->getLayout()->layout( mContentView.get() );
 	}
 
-	vec2 size = vec2( 0 );
+	vec2 size = mContentView->getSize();
 	for( const auto &view : mContentView->getSubviews() ) {
 		auto viewBounds = view->getBounds();
 		LOG_SCROLL_CONTENT( "view: " << view );
