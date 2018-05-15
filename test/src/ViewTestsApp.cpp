@@ -20,15 +20,16 @@ using namespace ci;
 using namespace ci::app;
 using namespace std;
 
-#define MULTITOUCH_ENABLED 0
-
-const vec2 INFO_ROW_SIZE    = vec2( 250, 20 );
-const float PADDING         = 6;
+const bool MULTITOUCH_ENABLED	= 0;
+const int DEFAULT_TEST			= 5;
+const vec2 WINDOW_SIZE			= vec2( 1220, 720 );
+const vec2 INFO_ROW_SIZE		= vec2( 250, 20 );
 
 class ViewTestsApp : public App {
   public:
 	void setup() override;
 	void keyDown( KeyEvent event ) override;
+	void resize() override;
 	void update() override;
 	void draw() override;
 
@@ -65,7 +66,7 @@ void ViewTestsApp::setup()
 		CI_LOG_I( "selected test index: " << mTestSuite->getCurrentIndex() << ", key: " << mTestSuite->getCurrentKey() );
 	} );
 
-	mTestSuite->select( 2 );
+	mTestSuite->select( DEFAULT_TEST );
 
 	mInfoLabel = make_shared<ui::LabelGrid>();
 	mInfoLabel->setTextColor( Color::white() );
@@ -77,23 +78,28 @@ void ViewTestsApp::setup()
 void ViewTestsApp::keyDown( app::KeyEvent event )
 {
 	if( event.isControlDown() ) {
-		if( event.getChar() == 'r' ) {
-			CI_LOG_I( "reloading.." );
-			mTestSuite->reload();
+		switch( event.getCode() ) {
+			case app::KeyEvent::KEY_r:
+				CI_LOG_I( "reloading.." );
+				mTestSuite->reload();
+			break;
+			case app::KeyEvent::KEY_v:
+				CI_LOG_I( "TestSuite View hierarchy\n: " << ui::printHierarchyToString( mTestSuite->getGraph() ) );
+			break;
+			case app::KeyEvent::KEY_l:
+				mDrawLayerBorders = ! mDrawLayerBorders;
+			break;
+			case app::KeyEvent::KEY_k:
+				mDrawViewBorders = ! mDrawViewBorders;
+			break;
 		}
 	}
 
-	switch( event.getCode() ) {
-		case app::KeyEvent::KEY_p:
-			CI_LOG_I( "TestSuite View hierarchy\n: " << ui::printHierarchyToString( mTestSuite->getGraph() ) );
-		break;
-		case app::KeyEvent::KEY_l:
-			mDrawLayerBorders = ! mDrawLayerBorders;
-		break;
-		case app::KeyEvent::KEY_v:
-			mDrawViewBorders = ! mDrawViewBorders;
-		break;
-	}
+}
+
+void ViewTestsApp::resize()
+{
+	resizeInfoLabel();
 }
 
 void ViewTestsApp::update()
@@ -115,10 +121,12 @@ void ViewTestsApp::updateUI()
 
 void ViewTestsApp::resizeInfoLabel()
 {
+	const float padding = 6;
+
 	const int numRows = mInfoLabel->getNumRows();
 	vec2 windowSize = vec2( app::getWindow()->getSize() );
 	vec2 labelSize = { INFO_ROW_SIZE.x, INFO_ROW_SIZE.y * numRows };
-	mInfoLabel->setBounds( { windowSize - labelSize - PADDING, windowSize - PADDING } ); // anchor bottom right
+	mInfoLabel->setBounds( { windowSize - labelSize - padding, windowSize - padding } ); // anchor bottom right
 }
 
 void ViewTestsApp::draw()
@@ -159,7 +167,7 @@ void ViewTestsApp::drawLayerBorders()
 void prepareSettings( app::App::Settings *settings )
 {
 	//settings->setWindowPos( 0, 0 );
-	settings->setWindowSize( 1000, 650 );
+	settings->setWindowSize( WINDOW_SIZE.x, WINDOW_SIZE.y );
 
 	// move app to secondary display
 	if( Display::getDisplays().size() > 1 ) {
