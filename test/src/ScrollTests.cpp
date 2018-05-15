@@ -73,14 +73,15 @@ ScrollTests::ScrollTests()
 	: SuiteView()
 {
 	// Free scrolling ScrollView
-	mScrollView = make_shared<ui::ScrollView>();
+	mScrollViewFree = make_shared<ui::ScrollView>();
 //	mScrollView->setClipEnabled( false );
-	mScrollView->getContentView()->getBackground()->setColor( Color( 0.15f, 0, 0 ) );
+	mScrollViewFree->setLabel( "ScrollView (free)" );
+	mScrollViewFree->getContentView()->getBackground()->setColor( Color( 0.15f, 0, 0 ) );
 
 	auto scrollBorder = make_shared<ui::StrokedRectView>();
 	scrollBorder->setFillParentEnabled();
 	scrollBorder->setColor( ColorA( 0.9f, 0.5f, 0.0f, 0.7f ) );
-	mScrollView->addSubview( scrollBorder );
+	mScrollViewFree->addSubview( scrollBorder );
 
 	// add some content views:
 	auto custom = make_shared<CustomView>( Rectf( 40, 60, 180, 160 ) );
@@ -107,10 +108,11 @@ ScrollTests::ScrollTests()
 		CI_LOG_EXCEPTION( "failed to load image at path: " << imageFilePath, exc );
 	}
 
-	mScrollView->addContentViews( { custom, imageView, button } );
+	mScrollViewFree->addContentViews( { custom, imageView, button } );
 
 	// Horizontal paging ScrollView
 	mHorizontalPager = make_shared<ui::PagingScrollView>();
+	mHorizontalPager->setLabel( "PagingScrollView (horizontal)" );
 	mHorizontalPager->setPageMargin( vec2( 4, 0 ) );
 	mHorizontalPager->getBackground()->setColor( Color( 0.8f, 0.4f, 0 ) );
 	const size_t numHorizontalPages = 4;
@@ -125,6 +127,7 @@ ScrollTests::ScrollTests()
 
 	// Vertical paging ScrollView
 	mVerticalPager = make_shared<ui::PagingScrollView>();
+	mVerticalPager->setLabel( "PagingScrollView (vertical)" );
 	mVerticalPager->setAxis( ui::PagingScrollView::Axis::VERTICAL );
 	mVerticalPager->setPageMargin( vec2( 0, 4 ) );
 	mVerticalPager->getBackground()->setColor( Color( 0.8f, 0.4f, 0 ) );
@@ -138,36 +141,102 @@ ScrollTests::ScrollTests()
 		mVerticalPager->addContentView( label );
 	}
 
-	addSubviews( { mScrollView, mHorizontalPager, mVerticalPager } );
+	mScrollViewNested = make_shared<ui::ScrollView>();
+	mScrollViewNested->setLabel( "ScrollView (nested)" );
+	mScrollViewNested->setHorizontalScrollingEnabled( false );
+	mScrollViewNested->getContentView()->getBackground()->setColor( Color( 0.15f, 0, 0 ) );
+
+	mScrollViewNested->getBackground()->setColor( Color( 0, 0, 0 ) );
+
+	{
+		auto scrollview = make_shared<ui::ScrollView>( Rectf( 40, 100, 3000, 130 ) );
+		scrollview->setLabel( "ScrollView (nested child)" );
+		scrollview->setVerticalScrollingEnabled( false );
+
+		auto label = make_shared<ui::Label>( Rectf( 0, 0, 240, 130 ) );
+		label->setFontSize( 36 );
+		label->setShrinkToFitEnabled();
+		label->setText( "blah blah blah blah blah" );
+		label->setTextColor( Color::white() );
+		label->getBackground()->setColor( Color( 0, 0, 1 ) );
+		scrollview->addContentView( label );
+
+		mScrollViewNested->addContentView( scrollview );
+	}
+
+	mScrollViewWithLayout = make_shared<ui::ScrollView>();
+	mScrollViewWithLayout->setLabel( "ScrollView (with layout)" );
+	mScrollViewWithLayout->setHorizontalScrollingEnabled( false );
+	mScrollViewWithLayout->getContentView()->getBackground()->setColor( Color( 0.15f, 0, 0 ) );
+	mScrollViewWithLayout->getBackground()->setColor( Color( 0, 0, 0 ) );
+
+	{
+		auto layout = make_shared<ui::VerticalLayout>();
+		layout->setPadding( 6 );
+		layout->setAlignment( ui::Alignment::FILL );
+		mScrollViewWithLayout->getContentView()->setLayout( layout );
+	}
+
+	for( size_t i = 0; i < 10; i++ ) {
+		auto label = make_shared<ui::Label>( Rectf( 0, 0, 140, 30 ) );
+		label->setFontSize( 24 );
+		label->setText( "label " + to_string( i ) );
+		label->setTextColor( Color::white() );
+		label->getBackground()->setColor( Color( CM_HSV, 0.5f + (float)i * 0.4f / (float)10, 1.0f, 0.75f ) );
+		mScrollViewWithLayout->addContentView( label );
+	}
+
+	addSubview( mScrollViewFree );
+	addSubview( mHorizontalPager );
+	addSubview( mVerticalPager );
+	addSubview( mScrollViewNested );
+	addSubview( mScrollViewWithLayout );
 }
 
 void ScrollTests::layout()
 {
-	auto rect = Rectf( PADDING, PADDING, getWidth() / 2.0f - PADDING, getHeight() - PADDING );
-	mScrollView->setBounds( rect );
+	vec2 pos = vec2( PADDING );
+	vec2 size = getSize() / 4.0f;
 
-	auto halfRect = Rectf( ( getWidth() + PADDING ) / 2.0f, PADDING, getWidth() - PADDING, ( getHeight() - PADDING ) / 2.0f );
-	mHorizontalPager->setBounds( halfRect );
+	mScrollViewFree->setPos( pos );
+	mScrollViewFree->setSize( size );
 
-	halfRect += vec2( 0, PADDING + halfRect.getHeight() );
-	mVerticalPager->setBounds( halfRect );
+	pos.x += size.x + PADDING;
+	mHorizontalPager->setPos( pos );
+	mHorizontalPager->setSize( size );
+
+	pos.x += size.x + PADDING;
+	mVerticalPager->setPos( pos );
+	mVerticalPager->setSize( size );
+
+	pos.x = PADDING;
+	pos.y += size.y + PADDING;
+	mScrollViewNested->setPos( pos );
+	mScrollViewNested->setSize( size );
+
+	pos.x += size.x + PADDING;
+	mScrollViewWithLayout->setPos( pos );
+	mScrollViewWithLayout->setSize( size );
 }
 
 
 bool ScrollTests::keyDown( app::KeyEvent &event )
 {
+	if( event.isControlDown() )
+		return false;
+
 	bool handled = true;
 	switch( event.getCode() ) {
 		case app::KeyEvent::KEY_c: {
-			mScrollView->setClipEnabled( ! mScrollView->isClipEnabled() );
+			mScrollViewFree->setClipEnabled( ! mScrollViewFree->isClipEnabled() );
 			break;
 		}
 		case app::KeyEvent::KEY_h: {
-			mScrollView->setHorizontalScrollingEnabled( ! mScrollView->isHorizontalScrollingEnabled() );
+			mScrollViewFree->setHorizontalScrollingEnabled( ! mScrollViewFree->isHorizontalScrollingEnabled() );
 			break;
 		}
 		case app::KeyEvent::KEY_v: {
-			mScrollView->setVerticalScrollingEnabled( ! mScrollView->isVerticalScrollingEnabled() );
+			mScrollViewFree->setVerticalScrollingEnabled( ! mScrollViewFree->isVerticalScrollingEnabled() );
 			break;
 		}
 		default:

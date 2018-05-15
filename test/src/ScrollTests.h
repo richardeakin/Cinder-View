@@ -12,6 +12,6 @@ public:
 private:
 	bool keyDown( ci::app::KeyEvent &event ) override;
 
-	ui::ScrollViewRef			mScrollView;
-	ui::PagingScrollViewRef	mHorizontalPager, mVerticalPager;
+	ui::ScrollViewRef			mScrollViewFree, mScrollViewNested, mScrollViewWithLayout;
+	ui::PagingScrollViewRef		mHorizontalPager, mVerticalPager;
 };
