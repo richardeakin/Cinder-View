@@ -98,6 +98,9 @@ class CI_UI_API ScrollView : public View {
 	bool isVerticalScrollingEnabled() const					{ return mVerticalScrollingEnabled; }
 	void setHorizontalScrollingEnabled( bool enable )		{ mHorizontalScrollingEnabled = enable; }
 	bool isHorizontalScrollingEnabled() const				{ return mHorizontalScrollingEnabled; }
+	
+	void setDisableScrollingWhenContentFits( bool enable = true )	{ mDisableScrollingWhenContentFits = enable; }
+	bool isDisableScrollingWhenContentFitsEnabled() const			{ return mDisableScrollingWhenContentFits; }
 
 	//! Signal emitted whenever the content scrolls (both by dragging and when decelerating).
 	ci::signals::Signal<void ()>& getSignalDidScroll()		{ return mSignalDidScroll; }
@@ -149,6 +152,7 @@ class CI_UI_API ScrollView : public View {
 	bool							mScrollingEnabled = true;
 	bool							mVerticalScrollingEnabled = true;
 	bool							mHorizontalScrollingEnabled = true;
+	bool							mDisableScrollingWhenContentFits = false;
 
 	ci::signals::Signal<void ()>	mSignalDidScroll, mSignalDragBegin, mSignalDragEnd;
 };

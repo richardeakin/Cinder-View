@@ -146,6 +146,10 @@ void ScrollView::calcContentSize()
 
 	mContentView->setSize( size ); // TODO: should this trigger layout or not?
 
+	if( mDisableScrollingWhenContentFits && size.x <= getWidth() && size.y <= getHeight() ) {
+		setScrollingEnabled( false );
+	}
+
 	LOG_SCROLL_CONTENT( "content size: " << mContentSize );
 }
 

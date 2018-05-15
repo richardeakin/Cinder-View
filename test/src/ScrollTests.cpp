@@ -169,6 +169,7 @@ ScrollTests::ScrollTests()
 	mScrollViewWithLayout->setHorizontalScrollingEnabled( false );
 	mScrollViewWithLayout->getContentView()->getBackground()->setColor( Color( 0.15f, 0, 0 ) );
 	mScrollViewWithLayout->getBackground()->setColor( Color( 0, 0, 0 ) );
+	mScrollViewWithLayout->setDisableScrollingWhenContentFits();
 
 	{
 		auto layout = make_shared<ui::VerticalLayout>();
