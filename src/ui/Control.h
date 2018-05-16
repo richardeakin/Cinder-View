@@ -115,8 +115,8 @@ class CI_UI_API Button : public Control {
 	ci::ColorA	mColorNormal = ci::ColorA::gray( 0.5f );
 	ci::ColorA	mColorEnabled = ci::ColorA::gray( 0.38f );
 	ci::ColorA	mColorPressed = ci::ColorA::gray( 0.3f );
-	ci::ColorA	mColorTitleNormal = ci::ColorA::gray( 0.2f, 0.6f );
-	ci::ColorA	mColorTitleEnabled = ci::ColorA::gray( 0.2f, 0.6f );
+	ci::ColorA	mColorTitleNormal = ci::ColorA::gray( 0.2f );
+	ci::ColorA	mColorTitleEnabled = ci::ColorA::gray( 0.2f );
 	bool		mHasColorTitleEnabled = false; // keep track of when user hasn't set the title color for enabled, will use normal color otherwise
 
 	ImageViewRef	mImageView;
@@ -136,6 +136,8 @@ class CI_UI_API CheckBox : public Button {
   protected:
 	void draw( Renderer *ren )	override;
 
+  private:
+	TextRef      mTextTitle;
 };
 
 //! Text input Control

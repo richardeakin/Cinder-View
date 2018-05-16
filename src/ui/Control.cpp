@@ -120,7 +120,7 @@ void Button::update()
 		mTitleLabel->setTextColor( getTitleColor() );
 		mTitleLabel->setText( getTitle() );
 
-		getBackground()->setColor( getColor() );
+		mTitleLabel->getBackground()->setColor( getColor() );
 	}
 }
 
@@ -244,6 +244,8 @@ CheckBox::CheckBox( const Rectf &bounds )
 	: Button( bounds )
 {
 	setAsToggle();
+	mTextTitle = TextManager::loadText( FontFace::NORMAL );
+	mColorTitleNormal = Color::white();
 }
 
 void CheckBox::draw( Renderer *ren )
@@ -265,11 +267,12 @@ void CheckBox::draw( Renderer *ren )
 		ren->drawSolidRect( checkFilled );
 	}
 
-	// TODO: update this
 	// draw title
-	ren->setColor( getTitleColor() );
+	// TODO: use Button's Label instead (we draw the text offset for CheckBox)
 	const float offsetY = 4;
-	//mTextTitle->drawString( getTitle(), vec2( r + padding * 2, getCenterLocal().y + mTextTitle->getDescent() + offsetY ) );
+	mTitleLabel->setHidden( true );
+	ren->setColor( getTitleColor() );
+	mTextTitle->drawString( getTitle(), vec2( r + padding * 2, getCenterLocal().y + mTextTitle->getDescent() + offsetY ) );
 }
 
 // ----------------------------------------------------------------------------------------------------

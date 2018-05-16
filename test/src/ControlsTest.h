@@ -16,5 +16,6 @@ private:
 	ui::HSliderRef			mHSlider;
 	ui::VSliderRef			mVSlider;
 	ui::ButtonRef			mButton, mImageButton, mToggle;
+	ui::CheckBoxRef			mCheckBox;
     ui::TextFieldRef        mTextField1, mTextField2, mTextField3;
 };
