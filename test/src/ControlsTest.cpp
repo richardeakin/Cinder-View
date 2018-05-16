@@ -1,9 +1,7 @@
 #include "ControlsTest.h"
 
 #include "cinder/app/App.h"
-//#include "cinder/Rand.h"
 #include "cinder/Log.h"
-#include "cinder/gl/draw.h"
 
 using namespace std;
 using namespace ci;
@@ -23,6 +21,7 @@ ControlsTest::ControlsTest()
 	mToggle->setTitle( "disabled" );
 	mToggle->setTitle( "enabled", ui::Button::State::ENABLED );
 	mToggle->setColor( Color( 0.2f, 0.5f, 0.5f ), ui::Button::State::ENABLED );
+	mToggle->getTitleLabel()->setFontSize( 28 );
 	mToggle->getSignalPressed().connect( [] { CI_LOG_V( "toggle pressed" ); } );
 	mToggle->getSignalReleased().connect( [] { CI_LOG_V( "toggle released" ); } );
 
@@ -113,7 +112,7 @@ void ControlsTest::layout()
 	// TODO: move these all to a container view and use a Layout
 	const float padding = 40.0f;
 
-	Rectf buttonBounds( padding, padding, padding + 80, padding + 30 );
+	Rectf buttonBounds( padding, padding, padding + 90, padding + 30 );
 	mButton->setBounds( buttonBounds );
 
 	buttonBounds += vec2( 0, buttonBounds.getHeight() + 10 );

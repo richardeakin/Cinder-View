@@ -87,6 +87,9 @@ class CI_UI_API Button : public Control {
 	//! TODO: only State::Normal is supported right now, add enabled and pressed too
 	void setImage( const ui::ImageRef &image, State state = State::NORMAL );
 
+	const LabelRef&		getTitleLabel() const	{ return mTitleLabel; }
+	const ImageViewRef&	getImageView() const	{ return mImageView; }
+
 	const ci::ColorA&	getColorForState( State state ) const;
 	const std::string&	getTitleForState( State state ) const;
 	const ci::ColorA&	getTitleColorForState( State state ) const;
