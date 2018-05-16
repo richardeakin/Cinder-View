@@ -24,6 +24,7 @@
 #pragma once
 
 #include "ui/View.h"
+#include "ui/ImageView.h"
 #include "ui/Label.h"
 #include "ui/GestureTracker.h"
 
@@ -101,7 +102,7 @@ class CI_UI_API Button : public Control {
 	ci::signals::Signal<void ()>&	getSignalReleased()	{ return mSignalReleased; }
 
   protected:
-	void draw( Renderer *ren )	override;
+	void update() override;
 
 	bool touchesBegan( ci::app::TouchEvent &event )	override;
 	bool touchesMoved( ci::app::TouchEvent &event )	override;
@@ -118,7 +119,8 @@ class CI_UI_API Button : public Control {
 	ci::ColorA	mColorTitleEnabled = ci::ColorA::gray( 0.2f, 0.6f );
 	bool		mHasColorTitleEnabled = false; // keep track of when user hasn't set the title color for enabled, will use normal color otherwise
 
-	TextRef			mTextTitle;
+	ImageViewRef	mImageView;
+	LabelRef		mTitleLabel;
 	std::string		mTitleNormal, mTitleEnabled;
 
 	ImageRef   mImageNormal, mImageEnabled, mImagePressed;

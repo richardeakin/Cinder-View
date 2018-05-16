@@ -52,7 +52,15 @@ bool Control::hitTestInsideCancelPadding( const vec2 &localPos ) const
 Button::Button( const Rectf &bounds )
 	: Control( bounds )
 {
-	mTextTitle = TextManager::loadText( FontFace::NORMAL );
+	//mTextTitle = TextManager::loadText( FontFace::NORMAL );
+	mTitleLabel = make_shared<Label>();
+	mTitleLabel->setFillParentEnabled();
+
+	mImageView = make_shared<ImageView>();
+	mImageView->setFillParentEnabled();
+
+	addSubview( mTitleLabel );
+	addSubview( mImageView );
 }
 
 const ColorA& Button::getColorForState( Button::State state ) const
@@ -95,22 +103,24 @@ const ColorA& Button::getTitleColorForState( State state ) const
 		return mColorTitleNormal;
 }
 
-void Button::draw( Renderer *ren )
+// TODO: do this only on state change, instead of every frame
+void Button::update()
 {
 	auto image = getImage();
 	if( image ) {
-		// draw image
-		ren->draw( image, getBoundsLocal() );
+		// draw image, hide label
+		mImageView->setHidden( false );
+		mTitleLabel->setHidden( true );
+
+		mImageView->setImage( image );
 	}
 	else {
-		// draw background solid color
-		ren->setColor( getColor() );
-		ren->drawSolidRect( getBoundsLocal() );
+		mImageView->setHidden( true );
+		mTitleLabel->setHidden( false );
+		mTitleLabel->setTextColor( getTitleColor() );
+		mTitleLabel->setText( getTitle() );
 
-		// draw title
-		const float padding = 6;
-		ren->setColor( getTitleColor() );
-		mTextTitle->drawString( getTitle(), vec2( padding, getCenterLocal().y + mTextTitle->getDescent() ) );
+		getBackground()->setColor( getColor() );
 	}
 }
 
@@ -164,17 +174,17 @@ ImageRef Button::getImage() const
 {
 	switch( getState() ) {
 		case State::NORMAL:
-		return mImageNormal;
+			return mImageNormal;
 		case State::ENABLED: {
 			if( mImageEnabled )
 				return mImageEnabled;
 		}
-							 break;
+		break;
 		case State::PRESSED: {
 			if( mImagePressed )
 				return mImagePressed;
 		}
-							 break;
+		break;
 		default:
 		break;
 	}
@@ -255,10 +265,11 @@ void CheckBox::draw( Renderer *ren )
 		ren->drawSolidRect( checkFilled );
 	}
 
+	// TODO: update this
 	// draw title
 	ren->setColor( getTitleColor() );
 	const float offsetY = 4;
-	mTextTitle->drawString( getTitle(), vec2( r + padding * 2, getCenterLocal().y + mTextTitle->getDescent() + offsetY ) );
+	//mTextTitle->drawString( getTitle(), vec2( r + padding * 2, getCenterLocal().y + mTextTitle->getDescent() + offsetY ) );
 }
 
 // ----------------------------------------------------------------------------------------------------
