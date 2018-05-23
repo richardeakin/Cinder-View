@@ -68,6 +68,12 @@ Rectf ImageView::getDestRectLocal() const
 	switch( mScaleMode ) {
 		case ImageScaleMode::FIT:
 			return Rectf( texBounds ).getCenteredFit( bounds, true );
+		case ImageScaleMode::FIT_HORIZONTAL: {
+			Rectf result = texBounds;
+			result.x2 = bounds.getWidth();
+			result.y2 = texBounds.getHeight() * bounds.getWidth() / texBounds.getWidth();
+			return result;
+		}
 		case ImageScaleMode::CENTER: {
 			Rectf result( texBounds );
 			result.offsetCenterTo( bounds.getCenter() );

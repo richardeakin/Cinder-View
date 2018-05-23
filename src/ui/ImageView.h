@@ -32,6 +32,7 @@ typedef std::shared_ptr<class ImageView>	ImageViewRef;
 
 enum ImageScaleMode {
 	FIT,
+	FIT_HORIZONTAL,
 	FILL,
 	CENTER,
 	CENTER_HORIZONTAL,
