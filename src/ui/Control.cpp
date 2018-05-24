@@ -117,8 +117,9 @@ void Button::update()
 	else {
 		mImageView->setHidden( true );
 		mTitleLabel->setHidden( false );
-		mTitleLabel->setTextColor( getTitleColor() );
 		mTitleLabel->setText( getTitle() );
+		if( mHasColorTitleEnabled )
+			mTitleLabel->setTextColor( getTitleColor() );
 
 		mTitleLabel->getBackground()->setColor( getColor() );
 	}
