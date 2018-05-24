@@ -212,6 +212,7 @@ bool Button::touchesMoved( app::TouchEvent &event )
 	if( ! hitTestInsideCancelPadding( pos ) ) {
 		setTouchCanceled( true );
 		mState = State::NORMAL;
+		mSignalReleased.emit();
 	}
 
 	return true;
@@ -230,9 +231,9 @@ bool Button::touchesEnded( app::TouchEvent &event )
 	else {
 		bool enable = isToggle() ? ! isEnabled() : false;
 		setEnabled( enable );
-
-		mSignalReleased.emit();
 	}
+
+	mSignalReleased.emit();
 
 	return true;
 }
