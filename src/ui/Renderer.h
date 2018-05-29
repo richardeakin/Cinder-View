@@ -28,7 +28,7 @@
 #include "cinder/Color.h"
 #include "cinder/Rect.h"
 
-#define UI_FRAMEBUFFER_CACHING_ENABLED 1
+#define UI_FRAMEBUFFER_CACHING_ENABLED 0
 
 namespace cinder {
 
