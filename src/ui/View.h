@@ -265,7 +265,7 @@ CI_UI_API std::string printHierarchyToString( const View &view );
 //! Returns a string representation of the View hierarchy starting at \a view (for debugging purposes).
 CI_UI_API std::string printHierarchyToString( const ViewRef &view );
 //! Traverses the View hierarchy of \a view, top to bottom.
-CI_UI_API void traverse( const ViewRef &view, const std::function<void( const ViewRef & )> &applyFn );
+CI_UI_API void traverse( const ViewRef &view, const std::function<bool( const ViewRef & )> &applyFn );
 
 template<typename ViewT, typename... Args>
 std::shared_ptr<ViewT> View::makeSubview( Args&&... args )
