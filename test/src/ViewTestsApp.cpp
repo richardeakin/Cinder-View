@@ -21,6 +21,7 @@ using namespace ci::app;
 using namespace std;
 
 const bool MULTITOUCH_ENABLED	= 0;
+const bool USE_SECONDARY_SCREEN = 1;
 const int DEFAULT_TEST			= 5;
 const vec2 WINDOW_SIZE			= vec2( 1220, 720 );
 const vec2 INFO_ROW_SIZE		= vec2( 250, 20 );
@@ -148,6 +149,7 @@ void ViewTestsApp::drawViewBorders()
 	gl::ScopedColor colorScope( 0, 1, 1 );
 	ui::traverse( mTestSuite->getGraph(), []( const ui::ViewRef &view ) {
 		gl::drawStrokedRect( view->getWorldBounds(), 2 );
+		return true;
 	} );
 }
 
@@ -170,13 +172,14 @@ void prepareSettings( app::App::Settings *settings )
 	settings->setWindowSize( WINDOW_SIZE.x, WINDOW_SIZE.y );
 
 	// move app to secondary display
-	if( Display::getDisplays().size() > 1 ) {
+	if( USE_SECONDARY_SCREEN && Display::getDisplays().size() > 1 ) {
 		settings->setDisplay( Display::getDisplays()[1] );
+		settings->setFullScreen( true );
 	}
 
-#if MULTITOUCH_ENABLED
-	settings->setMultiTouchEnabled();
-#endif
+	if( MULTITOUCH_ENABLED ) {
+		settings->setMultiTouchEnabled();
+	}
 }
 
 CINDER_APP( ViewTestsApp, RendererGl( RendererGl::Options().msaa( 8 ) ), prepareSettings )
