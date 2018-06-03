@@ -17,7 +17,7 @@
 #include "fmt/format.h"
 
 using namespace ci;
-using namespace ci::app;
+using namespace ci::app; 
 using namespace std;
 
 const bool MULTITOUCH_ENABLED	= 0;
@@ -25,6 +25,17 @@ const bool USE_SECONDARY_SCREEN = 1;
 const int DEFAULT_TEST			= 5;
 const vec2 WINDOW_SIZE			= vec2( 1220, 720 );
 const vec2 INFO_ROW_SIZE		= vec2( 250, 20 );
+
+
+#define LIVEPP_ENABLED 0
+
+#if LIVEPP_ENABLED
+
+#include <windows.h>
+#include "../../../../../LivePP/API/LPP_ForceLinkStaticRuntime.h"
+#include "../../../../../LivePP/API/LPP_API.h"
+
+#endif
 
 class ViewTestsApp : public App {
   public:
@@ -168,6 +179,11 @@ void ViewTestsApp::drawLayerBorders()
 
 void prepareSettings( app::App::Settings *settings )
 {
+#if LIVEPP_ENABLED
+	HMODULE livePP = lpp::lppLoadAndRegister( L"../../../../../LivePP", "ViewTests" );
+	lpp::lppEnableAllCallingModulesSync( livePP );
+#endif
+
 	//settings->setWindowPos( 0, 0 );
 	settings->setWindowSize( WINDOW_SIZE.x, WINDOW_SIZE.y );
 
