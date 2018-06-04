@@ -180,6 +180,7 @@ void View::addSubview( const ViewRef &view )
 	mSubviews.push_back( view );
 
 	setNeedsLayout();
+	view->setNeedsLayout();
 }
 
 void View::addSubviews( const vector<ViewRef> &views )
@@ -285,8 +286,6 @@ void View::setFillParentEnabled( bool enable )
 void View::setNeedsLayout()
 {
 	mNeedsLayout = true;
-	for( const auto &subview : mSubviews )
-		subview->setNeedsLayout();
 }
 
 void View::setWorldPosDirty()
