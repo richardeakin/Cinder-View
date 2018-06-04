@@ -205,11 +205,11 @@ void ScrollView::updateDeceleratingOffset()
 {
 	// apply velocity to content offset
 	float deltaTime = 1.0f / (float)getGraph()->getTargetFrameRate();
-	vec2 contentOffset = mContentOffset() - mSwipeVelocity * deltaTime;
+	vec2 contentOffset = mContentOffset() - mScrollVelocity * deltaTime;
 
 	const Rectf &boundaries = getDeceleratingBoundaries();
 	float decelFactor = boundaries.contains( contentOffset ) ? mDecelerationFactorInside : mDecelerationFactorOutside;
-	mSwipeVelocity *= 1 - decelFactor;
+	mScrollVelocity *= 1 - decelFactor;
 
 	mTargetOffset = boundaries.closestPoint( contentOffset );
 
@@ -221,13 +221,14 @@ void ScrollView::updateDeceleratingOffset()
 	}
 	contentOffset += velocity;
 
-	auto velLength = length( mSwipeVelocity );
+	auto velLength = length( mScrollVelocity );
 	auto offsetLength = length( mTargetOffset - contentOffset );
 
 	if( velLength < mMinVelocityConsideredAsStopped && offsetLength < mMinOffsetUntilStopped ) {
 		// snap to boundaries and finish deceleration
 		contentOffset = mTargetOffset;
 		mDecelerating = false;
+		mScrollVelocity = vec2( 0 );
 
 		// make sure scroll signal gets called before a page ended signal
 		updateContentViewOffset( contentOffset );
@@ -263,6 +264,7 @@ bool ScrollView::touchesBegan( app::TouchEvent &event )
 
 	mSwipeTracker->clear();
 	mSwipeTracker->storeTouchPos( pos, getGraph()->getElapsedSeconds() );
+	mSwipeVelocity = vec2( 0 );
 
 	mDragging = false; // will set to true once touchesMoved() is fired
 
@@ -298,6 +300,7 @@ bool ScrollView::touchesEnded( app::TouchEvent &event )
 	mSwipeTracker->storeTouchPos( pos, getGraph()->getElapsedSeconds() );
 
 	mSwipeVelocity = mSwipeTracker->calcSwipeVelocity();
+	mScrollVelocity = mSwipeVelocity;
 
 	if( mDragging ) {
 		mDragging = false;

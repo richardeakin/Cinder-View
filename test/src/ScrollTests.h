@@ -7,11 +7,15 @@ class ScrollTests : public ui::SuiteView {
 public:
 	ScrollTests();
 
+protected:
 	void layout() override;
+	void update() override;
+	bool keyDown( ci::app::KeyEvent &event ) override;
 
 private:
-	bool keyDown( ci::app::KeyEvent &event ) override;
 
 	ui::ScrollViewRef			mScrollViewFree, mScrollViewNested, mScrollViewWithLayout;
 	ui::PagingScrollViewRef		mHorizontalPager, mVerticalPager;
+	
+	ui::LabelGridRef			mInfoLabel;
 };

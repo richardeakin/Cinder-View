@@ -7,10 +7,10 @@
 #include "cinder/Rand.h"
 #include "cinder/Timeline.h"
 #include "cinder/Log.h"
+#include <glm/gtx/string_cast.hpp>
 
 using namespace std;
 using namespace ci;
-using namespace mason;
 
 const float PADDING = 40.0f;
 
@@ -187,11 +187,16 @@ ScrollTests::ScrollTests()
 		mScrollViewWithLayout->addContentView( label );
 	}
 
+	mInfoLabel = make_shared<ui::LabelGrid>();
+	mInfoLabel->setTextColor( Color::white() );
+	mInfoLabel->getBackground()->setColor( ColorA::gray( 0, 0.3f ) );
+
 	addSubview( mScrollViewFree );
 	addSubview( mHorizontalPager );
 	addSubview( mVerticalPager );
 	addSubview( mScrollViewNested );
 	addSubview( mScrollViewWithLayout );
+	addSubview( mInfoLabel );
 }
 
 void ScrollTests::layout()
@@ -220,7 +225,6 @@ void ScrollTests::layout()
 	mScrollViewWithLayout->setSize( size );
 }
 
-
 bool ScrollTests::keyDown( app::KeyEvent &event )
 {
 	if( event.isControlDown() )
@@ -245,4 +249,24 @@ bool ScrollTests::keyDown( app::KeyEvent &event )
 	}
 
 	return handled;
+}
+
+void ScrollTests::update()
+{
+	size_t row = 0;
+	mInfoLabel->setRow( row++, { "is dragging:",  to_string( mScrollViewFree->isDragging() ) } );
+	mInfoLabel->setRow( row++, { "is decelerating:",  to_string( mScrollViewFree->isDecelerating() ) } );
+	mInfoLabel->setRow( row++, { "swipe velocity:",  glm::to_string( mScrollViewFree->getSwipeVelocty() ) } );
+	mInfoLabel->setRow( row++, { "scroll velocity:",  glm::to_string( mScrollViewFree->getScrollVelocty() ) } );
+
+	//  resize info label
+	{
+		const float padding = 6;
+		const vec2 infoRowSize = vec2( 350, 20 );
+
+		const int numRows = mInfoLabel->getNumRows();
+		vec2 windowSize = vec2( app::getWindow()->getSize() );
+		vec2 labelSize = { infoRowSize.x, infoRowSize.y * numRows };
+		mInfoLabel->setBounds( { padding, windowSize.y - labelSize.y - padding, labelSize.x + padding, windowSize.y - padding } ); // anchor bottom left
+	}
 }

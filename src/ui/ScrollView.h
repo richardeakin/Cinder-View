@@ -65,6 +65,11 @@ class CI_UI_API ScrollView : public View {
 	//! Sets whether scrolling is enabled or not.
 	void setScrollingEnabled( bool enable = true )	{ mScrollingEnabled = enable; }
 
+	//! Returns the current swipe velocity (when user is dragging).
+	const ci::vec2		getSwipeVelocty() const		{ return mSwipeVelocity; }
+	//! Returns the current scroll velocity (when ScrollView is decelerating).
+	const ci::vec2		getScrollVelocty() const	{ return mScrollVelocity; }
+
 	//! Sets the friction factor to apply to velocity to slow it down (inside bounds). Default: 0.05
 	void setDecelerationFactorInside( float value )			{ mDecelerationFactorInside = value; }
 	//! Returns the friction factor to apply to velocity to slow it down (inside bounds). Default: 0.05
@@ -127,6 +132,7 @@ class CI_UI_API ScrollView : public View {
 
 	std::unique_ptr<SwipeTracker>	mSwipeTracker;
 	ci::vec2						mSwipeVelocity;
+	ci::vec2						mScrollVelocity;
 
 	bool					mDragging		= false;
 	bool					mDecelerating	= false;
