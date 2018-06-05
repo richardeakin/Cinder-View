@@ -584,6 +584,7 @@ void traverse( const ViewRef &view, const std::function<bool( const ViewRef & )>
 RectView::RectView( const ci::Rectf &bounds )
 	: View( bounds )
 {
+	setInteractive( false );
 	setBlendMode( BlendMode::PREMULT_ALPHA );
 }
 

@@ -101,7 +101,10 @@ gl::Fbo::Format	getBaseFboFormat()
 	return format;
 }
 
+static int sFrameBufferCount = 0;
+
 } // anonymous namespace
+
 bool FrameBuffer::Format::operator==(const Format &other) const
 {
 	return mSize == other.mSize;
@@ -109,12 +112,18 @@ bool FrameBuffer::Format::operator==(const Format &other) const
 
 FrameBuffer::FrameBuffer( const Format &format )
 {
+	sFrameBufferCount++;
+
 	mFbo = gl::Fbo::create( format.mSize.x, format.mSize.y, getBaseFboFormat() );
+
+	LOG_FRAMEBUFFER( hex << this << dec << ", total count: " << sFrameBufferCount << ", size: " << format.mSize );
 }
 
 FrameBuffer::~FrameBuffer()
 {
-	LOG_FRAMEBUFFER(  hex << this << dec );
+	sFrameBufferCount--;
+
+	LOG_FRAMEBUFFER( hex << this << dec << ", total count: " << sFrameBufferCount );
 }
 
 void FrameBuffer::updateFormat( const Format &format )
@@ -129,7 +138,9 @@ ivec2 FrameBuffer::getSize() const
 
 void FrameBuffer::setInUse( bool inUse )
 {
+#if UI_FRAMEBUFFER_CACHING_ENABLED
 	mInUse = inUse;
+#endif
 }
 
 ImageSourceRef FrameBuffer::createImageSource() const
@@ -255,14 +266,13 @@ FrameBufferRef Renderer::getFrameBuffer( const ci::ivec2 &size )
 	return result;
 
 #else
-	// temporary: always create and return a new FrameBuffer
-	clearUnusedFrameBuffers();
+	// FrameBuffer caching disabled, just create and return a new one.
+	// - FrameBuffer::getInUse() always returns false, meaning it can always be used by the renderer
+	// - this path will be removed once all the kinks have been worked out of framebuffer caching
+	CI_ASSERT( mFrameBufferCache.empty() );
 
 	auto format = FrameBuffer::Format().size( size );
 	auto result = make_shared<FrameBuffer>( format );
-	result->setInUse( true ); // always in use when caching is disabled
-	mFrameBufferCache.push_back( result );
-
 	return result;
 #endif
 }
@@ -272,7 +282,8 @@ void Renderer::clearUnusedFrameBuffers()
 	mFrameBufferCache.erase( remove_if( mFrameBufferCache.begin(), mFrameBufferCache.end(),
 		[]( const FrameBufferRef &frameBuffer ) {
 			return ! frameBuffer->isInUse();
-		} ), mFrameBufferCache.end() );
+		}
+	), mFrameBufferCache.end() );
 }
 
 void Renderer::pushFrameBuffer( const FrameBufferRef &frameBuffer )
@@ -283,9 +294,7 @@ void Renderer::pushFrameBuffer( const FrameBufferRef &frameBuffer )
 
 void Renderer::popFrameBuffer( const FrameBufferRef &frameBuffer )
 {
-#if UI_FRAMEBUFFER_CACHING_ENABLED
 	frameBuffer->setInUse( false );
-#endif
 	gl::context()->popFramebuffer();
 }
 

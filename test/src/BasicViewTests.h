@@ -7,6 +7,7 @@ public:
 	BasicViewTests();
 
 	void layout() override;
+	void update() override;
 
 private:
 	bool keyDown( ci::app::KeyEvent &event ) override;

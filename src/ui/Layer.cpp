@@ -56,12 +56,6 @@ Layer::Layer( View *view )
 Layer::~Layer()
 {
 	LOG_LAYER( hex << this << dec );
-
-#if ! defined( UI_FRAMEBUFFER_CACHING_ENABLED )
-	// temporary: marking FrameBuffer as unused once Layer is destroyed because it is the sole owner
-	if( mFrameBuffer )
-		mFrameBuffer->setInUse( false );
-#endif
 }
 
 float Layer::getAlpha() const
@@ -287,9 +281,7 @@ void Layer::processFilters( Renderer *ren, const FrameBufferRef &renderFrameBuff
 
 	mFiltersNeedConfiguration = false;
 
-#if defined( UI_FRAMEBUFFER_CACHING_ENABLED )
 	renderFrameBuffer->setInUse( false );
-#endif
 }
 
 void Layer::beginClip( View *view, Renderer *ren )

@@ -56,6 +56,11 @@ CompositingTest::CompositingTest()
 	mLabelD->getBackground()->setColor( Color( 1, 1, 0 ) );
 	mLabelD->setAlpha( 0.75f );
 
+	mLabelC->addSubview( mLabelD );
+	mContainerView->addSubviews( { mLabelA, mLabelB, mLabelC } );
+	addSubview( mContainerView );
+
+	// add controls to suite view
 	Rectf sliderRect =  Rectf( 10, 10, 150, 40 );
 	{
 		auto slider = make_shared<ui::HSlider>( sliderRect );
@@ -67,7 +72,7 @@ CompositingTest::CompositingTest()
 			mContainerView->setAlpha( alphaSliderPtr->getValue() );
 		} );
 
-		mContainerView->addSubview( slider );
+		addSubview( slider );
 	}
 	sliderRect += vec2( 0, 40 );
 	{
@@ -80,7 +85,7 @@ CompositingTest::CompositingTest()
 			mLabelC->setAlpha( alphaSliderPtr->getValue() );
 		} );
 
-		mContainerView->addSubview( slider );
+		addSubview( slider );
 	}
 	sliderRect += vec2( 0, 40 );
 	{
@@ -93,7 +98,7 @@ CompositingTest::CompositingTest()
 			mLabelD->setAlpha( alphaSliderPtr->getValue() );
 		} );
 
-		mContainerView->addSubview( slider );
+		addSubview( slider );
 	}
 	sliderRect += vec2( 0, 40 );
 	{
@@ -112,12 +117,9 @@ CompositingTest::CompositingTest()
 			//CI_LOG_I( "set bounds to: " << bounds );
 		} );
 
-		mContainerView->addSubview( slider );
+		addSubview( slider );
 	}
 
-	mLabelC->addSubview( mLabelD );
-	mContainerView->addSubviews( { mLabelA, mLabelB, mLabelC } );
-	addSubview( mContainerView );
 }
 
 void CompositingTest::layout()
