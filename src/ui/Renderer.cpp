@@ -29,8 +29,8 @@
 #include "cinder/gl/Fbo.h"
 #include "cinder/Log.h"
 
-//#define LOG_FRAMEBUFFER( stream )	CI_LOG_I( stream )
-#define LOG_FRAMEBUFFER( stream )	    ( (void)( 0 ) )
+#define LOG_FRAMEBUFFER( stream )	CI_LOG_I( stream )
+//#define LOG_FRAMEBUFFER( stream )	    ( (void)( 0 ) )
 
 using namespace ci;
 using namespace std;
@@ -101,7 +101,10 @@ gl::Fbo::Format	getBaseFboFormat()
 	return format;
 }
 
+static int sFrameBufferCount = 0;
+
 } // anonymous namespace
+
 bool FrameBuffer::Format::operator==(const Format &other) const
 {
 	return mSize == other.mSize;
@@ -109,12 +112,18 @@ bool FrameBuffer::Format::operator==(const Format &other) const
 
 FrameBuffer::FrameBuffer( const Format &format )
 {
+	sFrameBufferCount++;
+
 	mFbo = gl::Fbo::create( format.mSize.x, format.mSize.y, getBaseFboFormat() );
+
+	LOG_FRAMEBUFFER( hex << this << dec << ", total count: " << sFrameBufferCount << ", size: " << format.mSize );
 }
 
 FrameBuffer::~FrameBuffer()
 {
-	LOG_FRAMEBUFFER(  hex << this << dec );
+	sFrameBufferCount--;
+
+	LOG_FRAMEBUFFER( hex << this << dec << ", total count: " << sFrameBufferCount );
 }
 
 void FrameBuffer::updateFormat( const Format &format )
@@ -260,7 +269,10 @@ FrameBufferRef Renderer::getFrameBuffer( const ci::ivec2 &size )
 
 	auto format = FrameBuffer::Format().size( size );
 	auto result = make_shared<FrameBuffer>( format );
-	result->setInUse( true ); // always in use when caching is disabled
+
+	// always mark as in use when caching is disabled. Layers and Filters will mark as not in use when they are destroyed,
+	// and we'll remove those in clearUnusedFrameBuffers();
+	result->setInUse( true );
 	mFrameBufferCache.push_back( result );
 
 	return result;

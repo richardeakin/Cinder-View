@@ -205,3 +205,9 @@ bool BasicViewTests::keyDown( app::KeyEvent &event )
 
 	return handled;
 }
+
+void BasicViewTests::update()
+{
+	float alpha = sin( app::getElapsedSeconds() * 2 ) * 0.5f + 0.5f;
+	mImageView->setAlpha( alpha );
+}
