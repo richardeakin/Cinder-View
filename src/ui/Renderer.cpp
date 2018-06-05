@@ -29,8 +29,8 @@
 #include "cinder/gl/Fbo.h"
 #include "cinder/Log.h"
 
-#define LOG_FRAMEBUFFER( stream )	CI_LOG_I( stream )
-//#define LOG_FRAMEBUFFER( stream )	    ( (void)( 0 ) )
+//#define LOG_FRAMEBUFFER( stream )	CI_LOG_I( stream )
+#define LOG_FRAMEBUFFER( stream )	    ( (void)( 0 ) )
 
 using namespace ci;
 using namespace std;
@@ -138,7 +138,9 @@ ivec2 FrameBuffer::getSize() const
 
 void FrameBuffer::setInUse( bool inUse )
 {
+#if UI_FRAMEBUFFER_CACHING_ENABLED
 	mInUse = inUse;
+#endif
 }
 
 ImageSourceRef FrameBuffer::createImageSource() const
@@ -264,17 +266,13 @@ FrameBufferRef Renderer::getFrameBuffer( const ci::ivec2 &size )
 	return result;
 
 #else
-	// temporary: always create and return a new FrameBuffer
-	clearUnusedFrameBuffers();
+	// FrameBuffer caching disabled, just create and return a new one.
+	// - FrameBuffer::getInUse() always returns false, meaning it can always be used by the renderer
+	// - this path will be removed once all the kinks have been worked out of framebuffer caching
+	CI_ASSERT( mFrameBufferCache.empty() );
 
 	auto format = FrameBuffer::Format().size( size );
 	auto result = make_shared<FrameBuffer>( format );
-
-	// always mark as in use when caching is disabled. Layers and Filters will mark as not in use when they are destroyed,
-	// and we'll remove those in clearUnusedFrameBuffers();
-	result->setInUse( true );
-	mFrameBufferCache.push_back( result );
-
 	return result;
 #endif
 }
@@ -284,7 +282,8 @@ void Renderer::clearUnusedFrameBuffers()
 	mFrameBufferCache.erase( remove_if( mFrameBufferCache.begin(), mFrameBufferCache.end(),
 		[]( const FrameBufferRef &frameBuffer ) {
 			return ! frameBuffer->isInUse();
-		} ), mFrameBufferCache.end() );
+		}
+	), mFrameBufferCache.end() );
 }
 
 void Renderer::pushFrameBuffer( const FrameBufferRef &frameBuffer )
@@ -295,9 +294,7 @@ void Renderer::pushFrameBuffer( const FrameBufferRef &frameBuffer )
 
 void Renderer::popFrameBuffer( const FrameBufferRef &frameBuffer )
 {
-#if UI_FRAMEBUFFER_CACHING_ENABLED
 	frameBuffer->setInUse( false );
-#endif
 	gl::context()->popFramebuffer();
 }
 

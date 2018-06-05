@@ -164,12 +164,6 @@ void Filter::PassInfo::setSize( const ci::ivec2 &size, size_t passIndex )
 
 Filter::Pass::~Pass()
 {
-#if ! UI_FRAMEBUFFER_CACHING_ENABLED
-	// temporary: marking FrameBuffer as unused once Pass is destroyed because it is the sole owner
-	// TODO: remove this once caching is fixed
-	if( mFrameBuffer )
-		mFrameBuffer->setInUse( false );
-#endif
 }
 
 // ----------------------------------------------------------------------------------------------------

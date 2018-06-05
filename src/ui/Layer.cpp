@@ -56,12 +56,6 @@ Layer::Layer( View *view )
 Layer::~Layer()
 {
 	LOG_LAYER( hex << this << dec );
-
-#if ! defined( UI_FRAMEBUFFER_CACHING_ENABLED )
-	// temporary: marking FrameBuffer as unused once Layer is destroyed because it is the sole owner
-	if( mFrameBuffer )
-		mFrameBuffer->setInUse( false );
-#endif
 }
 
 float Layer::getAlpha() const
@@ -157,12 +151,7 @@ void Layer::draw( Renderer *ren )
 {
 	if( mRootView->mRendersToFrameBuffer ) {
 		ivec2 renderSize = ivec2( mRenderBounds.getSize() );
-#if UI_FRAMEBUFFER_CACHING_ENABLED
-		bool frameBufferInUse = mFrameBuffer->isInUse(); 
-#else
-		bool frameBufferInUse = false; // this makes the FrameBuffer appear as available, even though it has only one persistent owner
-#endif
-		if( ! mFrameBuffer || frameBufferInUse || mFrameBuffer->getSize().x < renderSize.x || mFrameBuffer->getSize().y < renderSize.y ) {
+		if( ! mFrameBuffer || mFrameBuffer->isInUse() || mFrameBuffer->getSize().x < renderSize.x || mFrameBuffer->getSize().y < renderSize.y ) {
 			// acquire necessary FrameBuffers. TODO: setup Filter framebuffers here too?
 			mFrameBuffer = ren->getFrameBuffer( renderSize );
 			LOG_LAYER( "aquired main FrameBuffer for view '" << mRootView->getName() << "', size: " << mFrameBuffer->getSize()
@@ -292,9 +281,7 @@ void Layer::processFilters( Renderer *ren, const FrameBufferRef &renderFrameBuff
 
 	mFiltersNeedConfiguration = false;
 
-#if defined( UI_FRAMEBUFFER_CACHING_ENABLED )
 	renderFrameBuffer->setInUse( false );
-#endif
 }
 
 void Layer::beginClip( View *view, Renderer *ren )
