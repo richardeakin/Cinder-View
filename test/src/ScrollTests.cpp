@@ -256,8 +256,8 @@ void ScrollTests::update()
 	size_t row = 0;
 	mInfoLabel->setRow( row++, { "is dragging:",  to_string( mScrollViewFree->isDragging() ) } );
 	mInfoLabel->setRow( row++, { "is decelerating:",  to_string( mScrollViewFree->isDecelerating() ) } );
-	mInfoLabel->setRow( row++, { "swipe velocity:",  glm::to_string( mScrollViewFree->getSwipeVelocty() ) } );
-	mInfoLabel->setRow( row++, { "scroll velocity:",  glm::to_string( mScrollViewFree->getScrollVelocty() ) } );
+	mInfoLabel->setRow( row++, { "swipe velocity:",  glm::to_string( mScrollViewFree->getSwipeVelocity() ) } );
+	mInfoLabel->setRow( row++, { "scroll velocity:",  glm::to_string( mScrollViewFree->getScrollVelocity() ) } );
 
 	//  resize info label
 	{
