@@ -54,6 +54,11 @@ enum class TextAlignment {
 	RIGHT
 };
 
+enum class TextBaselineAdjust {
+	NONE,
+	CENTER
+};
+
 typedef std::shared_ptr<class Text>	TextRef;
 
 class CI_UI_API Text {

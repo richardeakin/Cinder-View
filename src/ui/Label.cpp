@@ -141,10 +141,18 @@ vec2 Label::getBaseLine() const
 		default: CI_ASSERT_NOT_REACHABLE();
 	}
 
-	// TODO: consider an option for text vertical alignment
-	//vec2 result( x, getCenterLocal().y + mFont->getDescent() + mPadding.y1 );
-	vec2 result( x, mFont->getAscent() + mPadding.y1 ); // TODO: was only using this for when baseline is used in wrapped class, but may not do that
-	return result;
+	float y = 0;
+	switch( mBaselineAdjust ) {
+		case TextBaselineAdjust::NONE:
+			y = mFont->getAscent() + mPadding.y1;
+		break;
+		case TextBaselineAdjust::CENTER:
+			y = getCenterLocal().y + mFont->getDescent() + mPadding.y1;
+		break;
+		default: CI_ASSERT_NOT_REACHABLE();
+	}
+
+	return vec2( x, y );
 }
 
 void Label::markTextLayoutDirty()

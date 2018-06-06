@@ -51,6 +51,8 @@ public:
 
 	void				setAlignment( TextAlignment alignment )	{ mAlignment = alignment; }
 
+	void				setBaselineAdjust( TextBaselineAdjust adjust )	{ mBaselineAdjust = adjust; }
+
 	void				setPadding( const ci::Rectf &padding );
 	void				setShrinkToFitEnabled( bool enable = true );
 	bool				isShrinkToFitEnabled() const	{ return mShrinkToFit; }
@@ -81,7 +83,9 @@ private:
 
 	ci::Anim<ci::ColorA> mTextColor = { ci::ColorA::black() };
 
-	TextAlignment	mAlignment = TextAlignment::LEFT;
+	TextAlignment		mAlignment = TextAlignment::LEFT;
+	TextBaselineAdjust	mBaselineAdjust = TextBaselineAdjust::NONE;
+
 	bool			mWrapEnabled = false;
 	bool			mShrinkToFit = false;
 	bool			mTextLayoutDirty = false;
