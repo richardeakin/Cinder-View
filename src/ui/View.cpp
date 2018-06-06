@@ -288,6 +288,15 @@ void View::setNeedsLayout()
 	mNeedsLayout = true;
 }
 
+void View::layoutIfNeeded()
+{
+	if( mNeedsLayout )
+		layoutImpl();
+
+	for( const auto &subview : mSubviews )
+		subview->layoutIfNeeded();
+}
+
 void View::setWorldPosDirty()
 {
 	mWorldPosDirty = true;

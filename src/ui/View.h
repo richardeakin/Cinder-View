@@ -172,8 +172,10 @@ class CI_UI_API View : public std::enable_shared_from_this<View> {
 
 	//! Informs layout propagation that this View and its subviews need layout() to be called.
 	void	setNeedsLayout();
-	//! Returns whether this View needs to have its layout() method called before the next update().
+	//! Returns whether this View needs to have its layout() method called before the next update(). TODO: rename to getNeedsLayout()
 	bool	needsLayout() const	{ return mNeedsLayout; }
+	//! Lays out this view and its subviews immediately, if layout updates are pending.
+	void	layoutIfNeeded();
 
 	//! Signal emitted after this View has had it's layout() method called.
 	ci::signals::Signal<void ()>&	getSignalViewDidLayout()	{ return mSignalViewDidLayout; }
