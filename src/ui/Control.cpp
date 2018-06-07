@@ -488,8 +488,6 @@ SliderBase::SliderBase( const Rectf &bounds )
 {
 	mTextLabel = TextManager::loadText( FontFace::NORMAL );
 
-	mTapTracker.getSignalGestureDetected().connect( signals::slot( this, &SliderBase::onDoubleTap ) );
-
 	// set a default background color
 	getBackground()->setColor( Color::black() );
 }
@@ -524,12 +522,6 @@ void SliderBase::setValue( float value, bool emitChanged )
 		getSignalValueChanged().emit();
 }
 
-void SliderBase::onDoubleTap()
-{
-	CI_LOG_I( "bang" );
-	getBackground()->setColor( Color( 0, 0.5f, 0.5f ) );
-}
-
 void SliderBase::draw( Renderer *ren )
 {
 	const float sliderRadius = mValueThickness / 2;
@@ -556,7 +548,6 @@ std::string	SliderBase::getTitleLabel() const
 bool SliderBase::touchesBegan( app::TouchEvent &event )
 {
 	setTouchCanceled( false );
-	mTapTracker.processTouchesBegan( event, getGraph()->getElapsedSeconds() );
 
 	auto &firstTouch = event.getTouches().front();
 	vec2 pos = toLocal( firstTouch.getPos() );
@@ -592,8 +583,6 @@ bool SliderBase::touchesEnded( app::TouchEvent &event )
 {
 	if( isTouchCanceled() )
 		return false;
-
-	mTapTracker.processTouchesEnded( event, getGraph()->getElapsedSeconds() );
 
 	auto &firstTouch = event.getTouches().front();
 	vec2 pos = toLocal( firstTouch.getPos() );
