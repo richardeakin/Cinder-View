@@ -504,6 +504,7 @@ float View::getAlphaCombined() const
 void View::setLayout( const LayoutRef &layout )
 {
 	mLayout = layout;
+	setNeedsLayout();
 }
 
 ViewRef View::getViewWithLabel( const std::string &label ) const
