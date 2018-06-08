@@ -274,6 +274,7 @@ bool ScrollView::touchesBegan( app::TouchEvent &event )
 	mSwipeVelocity = vec2( 0 );
 
 	mDragging = false; // will set to true once touchesMoved() is fired
+	calcOffsetBoundaries(); // reset offset boundaries, which may have been modified if content offset is animating
 
 	firstTouch.setHandled();
 	return true;
