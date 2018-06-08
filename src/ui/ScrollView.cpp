@@ -117,9 +117,16 @@ ci::vec2 ScrollView::convertPointToParent( const ViewRef &contentView ) const
 	return contentView->getPos() + offset;
 }
 
-void ScrollView::setContentOffset( const ci::vec2 &offset )
+void ScrollView::setContentOffset( const ci::vec2 &offset, bool animated )
 {
-	mContentOffset = offset;
+	if( animated ) {
+		mTargetOffset = offset;
+		mDecelerating = true;
+		mOffsetBoundaries = Rectf( offset.x, offset.y, offset.x, offset.y );
+	}
+	else {
+		mContentOffset = offset;
+	}
 }
 
 void ScrollView::calcContentSize()
@@ -535,6 +542,11 @@ vec2 PagingScrollView::getTargetOffsetForPage( size_t index ) const
 	return mAxis == HORIZONTAL ? vec2( contentBounds.x1 - mPageMargin.x, 0 ) : vec2( 0, contentBounds.y1 - mPageMargin.y );
 }
 
+void ScrollView::onDecelerationEnded()
+{
+	calcOffsetBoundaries();
+}
+
 void PagingScrollView::onDecelerationEnded()
 {
 	if( mPageIsChangingAnimated ) {
@@ -573,7 +585,7 @@ void PagingScrollView::handlePageUpdate( bool animate )
 	else {
 		// jump to the current offset
 		updateDeceleratingOffset();
-		setContentOffset( mTargetOffset );
+		setContentOffset( mTargetOffset, false );
 		mSignalPageDidChange.emit();
 	}
 

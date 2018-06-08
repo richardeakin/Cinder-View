@@ -52,7 +52,7 @@ class CI_UI_API ScrollView : public View {
 	// - I think this conversion will just work in a more generic case since mContentView's position is just offset
 	ci::vec2    convertPointToParent( const ViewRef &contentView ) const;
 
-	void					setContentOffset( const ci::vec2 &offset );
+	void					setContentOffset( const ci::vec2 &offset, bool animated = false );
 	const ci::vec2&			getContentOffset() const	{ return mContentOffset; }
 	ci::Anim<ci::vec2>&		getContentOffsetAnim()		{ return mContentOffset; }
 
@@ -122,7 +122,7 @@ class CI_UI_API ScrollView : public View {
 	bool touchesMoved( ci::app::TouchEvent &event )	override;
 	bool touchesEnded( ci::app::TouchEvent &event )	override;
 
-	virtual void				onDecelerationEnded()	{}
+	virtual void				onDecelerationEnded();
 	virtual const ci::Rectf&	getDeceleratingBoundaries() const;
 
 	void calcContentSize();
