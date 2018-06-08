@@ -114,4 +114,26 @@ class CI_UI_API HorizontalLayout : public LinearLayout {
 	{}
 };
 
+// Basic grid layout. Uses Orientation to layout Views either horizontally or vertically in succession.
+class GridLayout : public Layout {
+public:
+	GridLayout();
+
+	// TODO: consider adding this
+	//void setCellSize( const ci::vec2 &size )	{ mCellSize = size; }
+
+	Orientation		getOrientation() const { return mOrientation; }
+	void			setOrientation( Orientation orientation ) { mOrientation = orientation; }
+
+	void			setResolution( size_t resolution );
+
+	void layout( View *view ) override;
+private:
+
+	//ci::vec2	mCellSize;
+	size_t		mResolution = 2;
+	Orientation	mOrientation = Orientation::VERTICAL;
+};
+
+
 } // namespace ui

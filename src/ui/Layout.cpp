@@ -108,4 +108,43 @@ void LinearLayout::layout( View *view )
 	}
 }
 
+// ----------------------------------------------------------------------------------------------------
+// GridLayout
+// ----------------------------------------------------------------------------------------------------
+
+GridLayout::GridLayout()
+{
+}
+
+void GridLayout::setResolution( size_t resolution )
+{ 
+	mResolution = std::max<size_t>( resolution, 1 );
+}
+
+void GridLayout::layout( View *view )
+{
+	vec2 containerSize = view->getSize();
+	const auto subviews = view->getSubviews();
+
+	float totalPadding = mResolution > 1 ? mPadding * ( mResolution - 1 ) : 0;
+	const float cellWidth = ( containerSize.x - mMargin.x1 - mMargin.x2 ) / (float)mResolution - totalPadding;
+
+	vec2 pos = mMargin.getUpperLeft();
+	ivec2 currentCell = ivec2( 0 );
+	for( auto &subview : subviews ) {
+		subview->setPos( pos );
+		subview->setSize( vec2( cellWidth, subview->getHeight() ) ); 
+
+		currentCell.x += 1;
+		pos.x += cellWidth + mPadding;
+		if( currentCell.x >= mResolution ) {
+			currentCell.x = 0;
+			currentCell.y += 1;
+
+			pos.x = mMargin.x1;
+			pos.y += subview->getHeight() + mPadding;
+		}
+	}
+}
+
 } // namespace ui
