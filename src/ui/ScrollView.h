@@ -210,8 +210,10 @@ class CI_UI_API PagingScrollView : public ScrollView {
 	//! Returns the minimum distance (pixels) to discount a touch sequence from being counted as a swipe (default: 50).
 	float	getSwipeDistanceThreshold() const			{ return mSwipeDistanceThreshold; }
 
-	ci::signals::Signal<void ()>& getSignalPageWillChange()		{ return mSignalPageWillChange; }
-	ci::signals::Signal<void ()>& getSignalPageDidChange()		{ return mSignalPageDidChange; }
+	//! Emitted before the page changes. Passes the page that we're changing to as argument.
+	ci::signals::Signal<void ( size_t )>& getSignalPageWillChange()		{ return mSignalPageWillChange; }
+	//! Emitted after the page has changed.
+	ci::signals::Signal<void ()>& getSignalPageDidChange()				{ return mSignalPageDidChange; }
 
   protected:
 
@@ -239,7 +241,8 @@ class CI_UI_API PagingScrollView : public ScrollView {
 	float			mSwipeDistanceThreshold	= 50;
 	bool			mPageIsChangingAnimated = false;
 
-	ci::signals::Signal<void ()>	mSignalPageWillChange, mSignalPageDidChange;
+	ci::signals::Signal<void ( size_t )>	mSignalPageWillChange;
+	ci::signals::Signal<void ()>			mSignalPageDidChange;
 };
 
 } // namespace ui

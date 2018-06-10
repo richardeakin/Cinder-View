@@ -385,7 +385,7 @@ void PagingScrollView::nextPage( bool animate )
 	if( mCurrentPageIndex == getNumContentViews() - 1 )
 		return;
 
-	mSignalPageWillChange.emit();
+	mSignalPageWillChange.emit( mCurrentPageIndex + 1 );
 	mCurrentPageIndex++;
 	handlePageUpdate( animate );
 }
@@ -395,7 +395,7 @@ void PagingScrollView::previousPage( bool animate )
 	if( mCurrentPageIndex == 0 )
 		return;
 
-	mSignalPageWillChange.emit();
+	mSignalPageWillChange.emit( mCurrentPageIndex - 1 );
 	mCurrentPageIndex--;
 	handlePageUpdate( animate );
 }
@@ -404,7 +404,7 @@ void PagingScrollView::setPage( size_t index, bool animate )
 {
 	CI_ASSERT_MSG( index < getNumContentViews(), "index out of bounds" );
 
-	mSignalPageWillChange.emit();
+	mSignalPageWillChange.emit( index );
 	mCurrentPageIndex = index;
 	handlePageUpdate( animate );
 }
