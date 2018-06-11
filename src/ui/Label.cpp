@@ -54,16 +54,16 @@ void Label::setFont( const std::string &key )
 
 void Label::setFont( float fontSize, FontFace fontFace )
 {
-	mFont = TextManager::loadText( fontFace, fontSize );
+	mText = TextManager::loadText( fontFace, fontSize );
 	markTextLayoutDirty();
 }
 
 void Label::setText( const std::string &text )
 {
-	if( mText == text )
+	if( mTextStr == text )
 		return;
 
-	mText = text;
+	mTextStr = text;
 	markTextLayoutDirty();
 }
 
@@ -106,7 +106,7 @@ void Label::layout()
 
 void Label::draw( Renderer *ren )
 {
-	if( mText.empty() )
+	if( mTextStr.empty() )
 		return;
 
 	ren->setColor( mTextColor );
@@ -118,10 +118,10 @@ void Label::draw( Renderer *ren )
 		fitRect.y1 += mPadding.y1 + baseline.y; // TODO: figure out how wrap and baseline should work together
 		fitRect.x2 -= mPadding.x2;
 		fitRect.y2 -= mPadding.y2;
-		mFont->drawStringWrapped( mText, fitRect );
+		mText->drawStringWrapped( mTextStr, fitRect );
 	}
 	else {
-		mFont->drawString( mText, baseline );
+		mText->drawString( mTextStr, baseline );
 	}
 }
 
@@ -144,10 +144,10 @@ vec2 Label::getBaseLine() const
 	float y = 0;
 	switch( mBaselineAdjust ) {
 		case TextBaselineAdjust::NONE:
-			y = mFont->getAscent() + mPadding.y1;
+			y = mText->getAscent() + mPadding.y1;
 		break;
 		case TextBaselineAdjust::CENTER:
-			y = getCenterLocal().y + mFont->getDescent() + mPadding.y1;
+			y = getCenterLocal().y + mText->getDescent() + mPadding.y1;
 		break;
 		default: CI_ASSERT_NOT_REACHABLE();
 	}
@@ -157,7 +157,7 @@ vec2 Label::getBaseLine() const
 
 void Label::markTextLayoutDirty()
 {
-	if( mText.empty() )
+	if( mTextStr.empty() )
 		return;
 
 	mTextLayoutDirty = true;
@@ -183,7 +183,7 @@ void Label::layoutForText()
 
 void Label::measureTextSize()
 {
-	if( mText.empty() ) {
+	if( mTextStr.empty() ) {
 		mTextSize = vec2( 0 );
 		return;
 	}
@@ -192,10 +192,10 @@ void Label::measureTextSize()
 		auto fitRect = getBoundsLocal();
 		fitRect.x1 += mPadding.x1;
 		fitRect.x2 -= mPadding.x2;
-		mTextSize = mFont->measureStringWrapped( mText, fitRect );		
+		mTextSize = mText->measureStringWrapped( mTextStr, fitRect );		
 	}
 	else {
-		mTextSize = mFont->measureString( mText );
+		mTextSize = mText->measureString( mTextStr );
 	}
 
 	//CI_LOG_I( "this: " << getLabel() << ", size: " << getSize() << ",  mTextSize: " << mTextSize );

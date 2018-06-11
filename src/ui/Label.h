@@ -35,7 +35,7 @@ public:
 	Label( const ci::Rectf &bounds = ci::Rectf::zero() );
 
 	void				setText( const std::string &text );
-	const std::string&	getText() const						{ return mText; }
+	const std::string&	getText() const						{ return mTextStr; }
 
 	void					setTextColor( const ci::ColorA &color )	{ mTextColor = color; }
 	const ci::ColorA&		getTextColor() const					{ return mTextColor; }
@@ -76,9 +76,9 @@ private:
 	void		markTextLayoutDirty();
 	void		measureTextSize();
 
-	TextRef			mFont; // TODO: should this be named mText, and below named mTextString? Or think of different name for ui::Text
-	std::string		mText;
-	ci::vec2		mTextSize; // TODO: move this to ui::Text
+	TextRef			mText;
+	std::string		mTextStr;
+	ci::vec2		mTextSize;
 	ci::Rectf		mPadding = ci::Rectf( 4, 4, 4, 4 );
 
 	ci::Anim<ci::ColorA> mTextColor = { ci::ColorA::black() };
