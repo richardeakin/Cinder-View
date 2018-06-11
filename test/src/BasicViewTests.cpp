@@ -102,6 +102,7 @@ BasicViewTests::BasicViewTests()
 
 	mLabelClipped = make_shared<ui::Label>();
 	mLabelClipped->setText( "blah blah blah blah blah" );
+	mLabelClipped->setFontFile( app::getAssetPath( "fonts/Saint-Andrews Queen.ttf" ), 16 );
 	mLabelClipped->setClipEnabled();
 	mLabelClipped->setTextColor( Color::white() );
 	mLabelClipped->getBackground()->setColor( Color( 0, 0, 0.4f ) );
@@ -158,6 +159,11 @@ void BasicViewTests::layout()
 
 bool BasicViewTests::keyDown( app::KeyEvent &event )
 {
+	if( event.isControlDown() ) {
+		// ViewTestsApp gets all events when ctrl is down
+		return false;
+	}
+
 	bool handled = true;
 	switch( event.getCode() ) {
 		case app::KeyEvent::KEY_c: {

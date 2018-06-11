@@ -38,6 +38,19 @@ namespace ui {
 // TextManager
 // ----------------------------------------------------------------------------------------------------
 
+namespace {
+
+float getDefaultSize()
+{
+#if defined( CINDER_MSW )
+	return 16;
+#else
+	return 14;
+#endif
+}
+
+} // anonymous namespace
+
 // static
 TextManager* TextManager::instance()
 {
@@ -49,11 +62,7 @@ TextManager* TextManager::instance()
 TextRef TextManager::loadText( std::string systemName, float size )
 {
 	if( size < 0 ) {
-#if defined( CINDER_MSW )
-		size = 16;
-#else
-		size = 14;
-#endif
+		size = getDefaultSize();
 	}
 
 	if( systemName.empty() ) {
@@ -61,6 +70,16 @@ TextRef TextManager::loadText( std::string systemName, float size )
 	}
 
 	return instance()->loadTextImpl( systemName, size );
+}
+
+// static
+TextRef TextManager::loadTextFromFile( const fs::path &filePath, float size )
+{
+	if( size < 0 ) {
+		size = getDefaultSize();
+	}
+
+	return instance()->loadTextFromFileImpl( filePath, size );
 }
 
 TextRef TextManager::loadTextImpl( const std::string &systemName, float size )
@@ -74,6 +93,23 @@ TextRef TextManager::loadTextImpl( const std::string &systemName, float size )
 
 	TextRef result = TextRef( new Text( font ) );
 	result->mSystemName = systemName;
+
+	mTextCache.push_back( result );
+
+	return result;
+}
+
+TextRef TextManager::loadTextFromFileImpl( const fs::path &filePath, float size )
+{
+	for( const auto &text : mTextCache ) {
+		if( text->mFilePath == filePath && text->getSize() == size )
+			return text;
+	}
+
+	auto font = Font( loadFile( filePath ), size );
+
+	TextRef result = TextRef( new Text( font ) );
+	result->mFilePath = filePath;
 
 	mTextCache.push_back( result );
 

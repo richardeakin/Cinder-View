@@ -42,6 +42,7 @@ public:
 	ci::Anim<ci::ColorA>*	animTextColor() { return &mTextColor; }
 
 	void                setFont( const std::string &systemName, float fontSize );
+	void                setFontFile( const ci::fs::path &filePath, float fontSize = -1 ); // TODO: probably need three methods here too, or use default size in implementation if < 0
 
 	void				setFontSize( float fontSize )						{ setFont( mText->getSystemName(), fontSize ); }
 	void				setFontName( const std::string &systemName )		{ setFont( systemName, mText->getSize() ); }

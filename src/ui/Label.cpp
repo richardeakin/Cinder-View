@@ -55,6 +55,15 @@ void Label::setFont( const std::string &systemName, float fontSize )
 	markTextLayoutDirty();
 }
 
+void Label::setFontFile( const ci::fs::path &filePath, float fontSize )
+{
+	if( mText && mText->getFilePath() == filePath && abs( fontSize - mText->getSize() ) < 0.01f )
+		return;
+
+	mText = TextManager::loadTextFromFile( filePath, fontSize );
+	markTextLayoutDirty();
+}
+
 void Label::setText( const std::string &text )
 {
 	if( mTextStr == text )
