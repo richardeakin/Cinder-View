@@ -43,11 +43,6 @@ namespace gl {
 
 namespace ui {
 
-enum class FontFace {
-	NORMAL,
-	BOLD
-};
-
 enum class TextAlignment {
 	LEFT,
 	CENTER,
@@ -64,8 +59,10 @@ typedef std::shared_ptr<class Text>	TextRef;
 class CI_UI_API Text {
 public:
 
+	const std::string&	getSystemName() const	{ return mSystemName; }
+	bool isSystemFont() const					{ return ! mSystemName.empty(); }
+
 	float		getSize() const;
-	FontFace	getFace() const;
 	float		getAscent() const;
 	float		getDescent() const;
 
@@ -76,10 +73,10 @@ public:
 
 private:
 	Text();
-	Text( const ci::Font &font, FontFace face );
+	Text( const ci::Font &font );
 
 	ci::gl::TextureFontRef	mTextureFont;
-	FontFace				mFace;
+	std::string				mSystemName;
 	std::atomic<bool>		mIsReady;
 
 	friend class TextManager;
@@ -88,7 +85,7 @@ private:
 class CI_UI_API TextManager {
 public:
 	//! If size < 0, a default size will be picked (this is temporary until some sort of styling is introduced)
-	static TextRef loadText( FontFace fontFace, float size = -1 );
+	static TextRef loadText( std::string systemName = "", float size = -1 );
 
 private:
 	TextManager()	{}
@@ -98,13 +95,9 @@ private:
 
 	static TextManager* instance();
 
-	TextRef loadTextImpl( FontFace fontFace, float size );
-	TextRef loadTextImplAsync( FontFace fontFace, float size );
-
-	std::string	getFontName( FontFace face ) const;
+	TextRef loadTextImpl( const std::string &systemName, float size );
 
 	std::vector<TextRef>	mTextCache;
-	std::mutex				mMutex;
 };
 
 } // namespace ui

@@ -46,7 +46,7 @@ TextManager* TextManager::instance()
 }
 
 // static
-TextRef TextManager::loadText( FontFace fontFace, float size )
+TextRef TextManager::loadText( std::string systemName, float size )
 {
 	if( size < 0 ) {
 #if defined( CINDER_MSW )
@@ -56,59 +56,28 @@ TextRef TextManager::loadText( FontFace fontFace, float size )
 #endif
 	}
 
-	if( app::isMainThread() )
-		return instance()->loadTextImpl( fontFace, size );
-	else
-		return instance()->loadTextImplAsync( fontFace, size );
+	if( systemName.empty() ) {
+		systemName = "Arial";
+	}
+
+	return instance()->loadTextImpl( systemName, size );
 }
 
-TextRef TextManager::loadTextImpl( FontFace face, float size )
+TextRef TextManager::loadTextImpl( const std::string &systemName, float size )
 {
 	for( const auto &text : mTextCache ) {
-		if( text->getFace() == face && text->getSize() == size )
+		if( text->mSystemName == systemName && text->getSize() == size )
 			return text;
 	}
 
-	auto font = Font( getFontName( face ), size );
+	auto font = Font( systemName, size );
 
-	TextRef result( new Text( font, face ) );
+	TextRef result = TextRef( new Text( font ) );
+	result->mSystemName = systemName;
 
-	lock_guard<mutex> lock( mMutex );
 	mTextCache.push_back( result );
 
 	return result;
-}
-
-TextRef TextManager::loadTextImplAsync( FontFace face, float size )
-{
-	for( const auto &text : mTextCache ) {
-		if( text->getFace() == face && text->getSize() == size )
-			return text;
-	}
-
-	shared_ptr<Text> result( new Text );
-	{
-		lock_guard<mutex> lock( mMutex );
-		mTextCache.push_back( result );
-	}
-
-	CI_ASSERT_MSG( false, "TODO (read comment)" );
-	// - move this to Script load process if possible, or force onto main thread with App
-//	Dispatch::onMain( [this, result, face, size] {
-		auto font = Font( getFontName( face ), size );
-		result->mTextureFont = gl::TextureFont::create( font );
-		result->mIsReady = true;
-//	} );
-
-	return result;
-}
-
-std::string TextManager::getFontName( FontFace face ) const
-{
-	if( face == FontFace::BOLD )
-		return "Arial Bold";
-	else
-		return "Arial";
 }
 
 // ----------------------------------------------------------------------------------------------------
@@ -120,8 +89,8 @@ Text::Text()
 {
 }
 
-Text::Text( const ci::Font &font, FontFace face )
-	: mFace( face ), mIsReady( false )
+Text::Text( const ci::Font &font )
+	: mIsReady( false )
 {
 	auto format = gl::TextureFont::Format().premultiply( true );
 	mTextureFont = gl::TextureFont::create( font, format );
@@ -134,11 +103,6 @@ float Text::getSize() const
 		return 0;
 
 	return mTextureFont->getFont().getSize();
-}
-
-FontFace Text::getFace() const
-{
-	return mFace;
 }
 
 float Text::getAscent() const

@@ -41,20 +41,17 @@ namespace ui {
 Label::Label( const Rectf &bounds )
 	: View( bounds )
 {
-	setFont( -1, FontFace::NORMAL );
+	setFont( "", -1 );
 	setInteractive( false );
 	setBlendMode( BlendMode::PREMULT_ALPHA );
 }
 
-void Label::setFont( const std::string &key )
+void Label::setFont( const std::string &systemName, float fontSize )
 {
-	// TODO: not sure yet if loading fonts by key is best.
-	// - probably need to be able to specify name some way or another
-}
+	if( mText && mText->getSystemName() == systemName && abs( fontSize - mText->getSize() ) < 0.01f )
+		return;
 
-void Label::setFont( float fontSize, FontFace fontFace )
-{
-	mText = TextManager::loadText( fontFace, fontSize );
+	mText = TextManager::loadText( systemName, fontSize );
 	markTextLayoutDirty();
 }
 

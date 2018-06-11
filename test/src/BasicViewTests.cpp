@@ -97,7 +97,7 @@ BasicViewTests::BasicViewTests()
 	mLabel->setText( "bold label" );
 	mLabel->setAlignment( ui::TextAlignment::CENTER );
 	mLabel->setTextColor( Color::white() );
-	mLabel->setFontFace( ui::FontFace::BOLD );
+	mLabel->setFontName( "Arial Bold" );
 	mLabel->getBackground()->setColor( Color( 0, 0, 0.4f ) );
 
 	mLabelClipped = make_shared<ui::Label>();

@@ -41,13 +41,10 @@ public:
 	const ci::ColorA&		getTextColor() const					{ return mTextColor; }
 	ci::Anim<ci::ColorA>*	animTextColor() { return &mTextColor; }
 
-	// TODO: need method for setting font by string
-	// - will ask ui::TextManager if it is loaded or perhaps provide path to file?
-	void                setFont( const std::string &key );
+	void                setFont( const std::string &systemName, float fontSize );
 
-	void				setFont( float fontSize, FontFace fontFace );
-	void				setFontSize( float fontSize )		{ setFont( fontSize, mFont->getFace() ); }
-	void				setFontFace( FontFace face )		{ setFont( mFont->getSize(), face ); }
+	void				setFontSize( float fontSize )						{ setFont( mText->getSystemName(), fontSize ); }
+	void				setFontName( const std::string &systemName )		{ setFont( systemName, mText->getSize() ); }
 
 	void				setAlignment( TextAlignment alignment )	{ mAlignment = alignment; }
 
