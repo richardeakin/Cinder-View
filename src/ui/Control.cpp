@@ -89,7 +89,7 @@ ImageRef Button::getImageForState( State state ) const
 
 const string& Button::getTitleForState( State state ) const
 {
-	if( state == State::ENABLED && ! mTitleEnabled.empty() )
+	if( ( state == State::ENABLED || state == State::PRESSED ) && ! mTitleEnabled.empty() )
 		return mTitleEnabled;
 	else
 		return mTitleNormal;
