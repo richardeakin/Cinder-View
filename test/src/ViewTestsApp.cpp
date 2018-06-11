@@ -95,6 +95,9 @@ void ViewTestsApp::keyDown( app::KeyEvent event )
 				CI_LOG_I( "reloading.." );
 				mTestSuite->reload();
 			break;
+			case app::KeyEvent::KEY_f:
+				setFullScreen( ! isFullScreen() );
+			break;
 			case app::KeyEvent::KEY_v:
 				CI_LOG_I( "TestSuite View hierarchy\n: " << ui::printHierarchyToString( mTestSuite->getGraph() ) );
 			break;
