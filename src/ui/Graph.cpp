@@ -47,7 +47,7 @@ Graph::Graph( const ci::app::WindowRef &window )
 
 		mWindow = app->getWindow();
 		mMultiTouchEnabled = app->isMultiTouchEnabled();
-		setBounds( mWindow->getBounds() );
+		setBounds( mWindow->toPixels( mWindow->getBounds() ) );
 	}
 
 	mRenderer = make_shared<ui::Renderer>();
@@ -88,13 +88,13 @@ void Graph::setClippingSize( const ci::ivec2 &size )
 //! Returns the size used for clipping operations in pixel coordinates. Defaults to the size of the window
 ci::ivec2 Graph::getClippingSize() const
 {
-	return ( mClippingSizeSet ? mClippingSize : mWindow->getSize() );
+	return ( mClippingSizeSet ? mClippingSize : mWindow->toPixels( mWindow->getSize() ) );
 }
 
 void Graph::layout()
 {
 	if( isFillParentEnabled() ) {
-		setSize( mWindow->getSize() );
+		setSize( mWindow->toPixels( mWindow->getSize() ) );
 	}
 }
 

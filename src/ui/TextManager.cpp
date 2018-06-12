@@ -90,7 +90,6 @@ TextRef TextManager::loadTextImpl( const std::string &systemName, float size )
 	}
 
 	auto font = Font( systemName, size );
-
 	TextRef result = TextRef( new Text( font ) );
 	result->mSystemName = systemName;
 
@@ -106,8 +105,10 @@ TextRef TextManager::loadTextFromFileImpl( const fs::path &filePath, float size 
 			return text;
 	}
 
-	auto font = Font( loadFile( filePath ), size );
+	// account for content scale when using GDI
+	size /= app::getWindow()->getContentScale(); // TODO: how to use Graph's app::Window for content size?
 
+	auto font = Font( loadFile( filePath ), size );
 	TextRef result = TextRef( new Text( font ) );
 	result->mFilePath = filePath;
 
