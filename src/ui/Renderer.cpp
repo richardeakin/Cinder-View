@@ -343,16 +343,21 @@ void Renderer::draw( const FrameBufferRef &frameBuffer, const ci::Area &sourceAr
 
 void Renderer::draw( const ImageRef &image, const ci::Rectf &destRect, const ci::gl::GlslProgRef &glsl )
 {
-	// TODO: use Batch. if no glsl then use a default one, replacing on Batch as necessary
-	if( glsl ) {
-		gl::ScopedGlslProg glslScope( glsl );
-		gl::ScopedTextureBind texScope( image->mTexture );
+	if( ! mBatchImage ) {
+		mBatchImage = gl::Batch::create( geom::Rect( Rectf( 0, 0, 1, 1 ) ), gl::getStockShader( gl::ShaderDef().color().texture() ) );
+	}
 
-		gl::drawSolidRect( destRect );
+	if( glsl && mBatchImage->getGlslProg() != glsl ) {
+		// TODO: add an overload that can take a gl::BatchRef so we don't have to replace glsl every time it changes
+		mBatchImage->replaceGlslProg( glsl );
 	}
-	else {
-		gl::draw( image->mTexture, destRect );
-	}
+
+	gl::ScopedTextureBind texScope( image->mTexture );
+
+	gl::ScopedModelMatrix modelScope;
+	gl::translate( destRect.getUpperLeft() );
+	gl::scale( destRect.getSize() );
+	mBatchImage->draw();
 }
 
 void Renderer::drawSolidRect( const Rectf &rect )

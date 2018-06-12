@@ -162,7 +162,7 @@ class CI_UI_API Renderer {
 	std::vector<FrameBufferRef>	mFrameBufferCache;
 
 	ci::gl::GlslProgRef         mGlslFrameBuffer;
-	ci::gl::BatchRef			mBatchSolidRect;
+	ci::gl::BatchRef			mBatchSolidRect, mBatchImage;
 };
 
 } // namespace ui
