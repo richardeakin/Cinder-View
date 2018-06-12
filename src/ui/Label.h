@@ -35,19 +35,17 @@ public:
 	Label( const ci::Rectf &bounds = ci::Rectf::zero() );
 
 	void				setText( const std::string &text );
-	const std::string&	getText() const						{ return mText; }
+	const std::string&	getText() const						{ return mTextStr; }
 
 	void					setTextColor( const ci::ColorA &color )	{ mTextColor = color; }
 	const ci::ColorA&		getTextColor() const					{ return mTextColor; }
 	ci::Anim<ci::ColorA>*	animTextColor() { return &mTextColor; }
 
-	// TODO: need method for setting font by string
-	// - will ask ui::TextManager if it is loaded or perhaps provide path to file?
-	void                setFont( const std::string &key );
+	void                setFont( const std::string &systemName, float fontSize );
+	void                setFontFile( const ci::fs::path &filePath, float fontSize = -1 ); // TODO: probably need three methods here too, or use default size in implementation if < 0
 
-	void				setFont( float fontSize, FontFace fontFace );
-	void				setFontSize( float fontSize )		{ setFont( fontSize, mFont->getFace() ); }
-	void				setFontFace( FontFace face )		{ setFont( mFont->getSize(), face ); }
+	void				setFontSize( float fontSize )						{ setFont( mText->getSystemName(), fontSize ); }
+	void				setFontName( const std::string &systemName )		{ setFont( systemName, mText->getSize() ); }
 
 	void				setAlignment( TextAlignment alignment )	{ mAlignment = alignment; }
 
@@ -76,9 +74,9 @@ private:
 	void		markTextLayoutDirty();
 	void		measureTextSize();
 
-	TextRef			mFont; // TODO: should this be named mText, and below named mTextString? Or think of different name for ui::Text
-	std::string		mText;
-	ci::vec2		mTextSize; // TODO: move this to ui::Text
+	TextRef			mText;
+	std::string		mTextStr;
+	ci::vec2		mTextSize;
 	ci::Rectf		mPadding = ci::Rectf( 4, 4, 4, 4 );
 
 	ci::Anim<ci::ColorA> mTextColor = { ci::ColorA::black() };

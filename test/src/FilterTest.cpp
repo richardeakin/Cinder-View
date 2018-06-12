@@ -64,7 +64,6 @@ FilterTest::FilterTest()
 	mLabel = make_shared<ui::Label>();
 	mLabel->setText( "T" );
 	mLabel->setLabel( "Label T" );
-	mLabel->setFontFace( ui::FontFace::NORMAL );
 	mLabel->setFontSize( 280 );
 	mLabel->setAlignment( ui::TextAlignment::CENTER );
 	mLabel->setTextColor( Color( 0, 0, 0.75f ) );
@@ -72,7 +71,7 @@ FilterTest::FilterTest()
 	mLabelNested = make_shared<ui::Label>();
 	mLabelNested->setText( "PLFF!" );
 	mLabelNested->setLabel( "Nested Label" );
-	mLabelNested->setFontFace( ui::FontFace::BOLD );
+	mLabelNested->setFontName( "Arial Bold" );
 	mLabelNested->setFontSize( 84 );
 	mLabelNested->setAlignment( ui::TextAlignment::CENTER );
 	mLabelNested->setTextColor( Color( 0, 0, 0.75f ) );

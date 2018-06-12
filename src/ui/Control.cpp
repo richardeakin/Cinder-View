@@ -246,7 +246,7 @@ CheckBox::CheckBox( const Rectf &bounds )
 	: Button( bounds )
 {
 	setAsToggle();
-	mTextTitle = TextManager::loadText( FontFace::NORMAL );
+	mTextTitle = TextManager::loadText();
 	mColorTitleNormal = Color::white();
 }
 
@@ -287,7 +287,7 @@ TextField::TextField( const ci::Rectf &bounds )
 	setAcceptsFirstResponder( true );
 	setClipEnabled( true );
 
-	mText = TextManager::loadText( FontFace::NORMAL );
+	mText = TextManager::loadText();
 }
 
 void TextField::setBorderColor( const ci::ColorA &color, State state )
@@ -486,7 +486,7 @@ bool TextField::checkCharIsValid( char c ) const
 SliderBase::SliderBase( const Rectf &bounds )
 	: Control( bounds )
 {
-	mTextLabel = TextManager::loadText( FontFace::NORMAL );
+	mTextLabel = TextManager::loadText();
 
 	// set a default background color
 	getBackground()->setColor( Color::black() );
@@ -662,7 +662,7 @@ SelectorBase::SelectorBase( const Rectf &bounds )
 {
 	setBlendMode( BlendMode::PREMULT_ALPHA );
 
-	mTextLabel = TextManager::loadText( FontFace::NORMAL );
+	mTextLabel = TextManager::loadText();
 }
 
 void SelectorBase::draw( Renderer *ren )
@@ -791,7 +791,7 @@ NumberBox::NumberBox( const Rectf &bounds )
 
 	setNumDigits( 3 );
 
-	mTextLabel = TextManager::loadText( FontFace::NORMAL );
+	mTextLabel = TextManager::loadText();
 	mTextField = make_shared<TextField>();
 	mTextField->setInputMode( TextField::InputMode::NUMERIC );
 	mTextField->setBorderMode( TextField::BorderMode::DISABLED );

@@ -22,7 +22,7 @@ using namespace std;
 
 const bool MULTITOUCH_ENABLED	= 0;
 const bool USE_SECONDARY_SCREEN = 1;
-const int DEFAULT_TEST			= 5;
+const int DEFAULT_TEST			= 0;
 const vec2 WINDOW_SIZE			= vec2( 1220, 720 );
 const vec2 INFO_ROW_SIZE		= vec2( 250, 20 );
 
@@ -94,6 +94,9 @@ void ViewTestsApp::keyDown( app::KeyEvent event )
 			case app::KeyEvent::KEY_r:
 				CI_LOG_I( "reloading.." );
 				mTestSuite->reload();
+			break;
+			case app::KeyEvent::KEY_f:
+				setFullScreen( ! isFullScreen() );
 			break;
 			case app::KeyEvent::KEY_v:
 				CI_LOG_I( "TestSuite View hierarchy\n: " << ui::printHierarchyToString( mTestSuite->getGraph() ) );
