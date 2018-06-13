@@ -16,9 +16,10 @@ CompositingTest::CompositingTest()
 	: SuiteView()
 {
 	mContainerView = make_shared<ui::StrokedRectView>();
-	mContainerView->setColor( Color::white() );
-	mContainerView->setLineWidth( 6 );
 	mContainerView->setLabel( "container" );
+	mContainerView->setColor( Color::white() );
+	mContainerView->setLineWidth( 6 ); // test that FrameBuffer will account for line width drawing outside of View bounds by half line width
+	mContainerView->getBackground()->setColor( Color::black() );
 
 	const float fontSizeBig = 64;
 
