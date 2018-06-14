@@ -209,6 +209,9 @@ void View::removeSubview( const ViewRef &view )
 	for( auto it = mSubviews.begin(); it != mSubviews.end(); ++it ) {
 		if( view == *it ) {
 			view->mParent = nullptr;
+			if( view->mAcceptsFirstResponder )
+				view->resignFirstResponder();
+
 			if( mIsIteratingSubviews )
 				view->mMarkedForRemoval = true;
 			else
@@ -224,12 +227,17 @@ void View::removeAllSubviews()
 	if( mIsIteratingSubviews ) {
 		for( auto &view : mSubviews ) {
 			view->mParent = nullptr;
+			if( view->mAcceptsFirstResponder )
+				view->resignFirstResponder();
+
 			view->mMarkedForRemoval = true;
 		}
 	}
 	else {
 		for( auto &view : mSubviews ) {
 			view->mParent = nullptr;
+			if( view->mAcceptsFirstResponder )
+				view->resignFirstResponder();
 		}
 		mSubviews.clear();
 	}

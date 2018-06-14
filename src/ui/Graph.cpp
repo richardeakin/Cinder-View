@@ -482,12 +482,13 @@ void Graph::moveToNextResponder()
 
 void Graph::moveToPreviousResponder()
 {
-	CI_LOG_I( "current first responder: " << ( mFirstResponder ? mFirstResponder->getName() : "(none)" ) << ", previous first responder: " <<  ( mPreviousFirstResponder ? mPreviousFirstResponder->getName() : "(none)" ) );
+	UI_LOG_RESPONDER( "current first responder: " << ( mFirstResponder ? mFirstResponder->getName() : "(none)" ) << ", previous first responder: " <<  ( mPreviousFirstResponder ? mPreviousFirstResponder->getName() : "(none)" ) );
 	
 	// FIXME: this isn't good enough, only goes back one level
 	// - this also needs to resign the current responder
-	if( mPreviousFirstResponder ) {
-		setFirstResponder( mPreviousFirstResponder );
+	auto previousFirstResponder = mPreviousFirstResponder.lock();
+	if( previousFirstResponder ) {
+		setFirstResponder( previousFirstResponder );
 	}
 }
 
@@ -498,7 +499,9 @@ void Graph::resignFirstResponder()
 		return;
 
 	UI_LOG_RESPONDER( "\t- resigning current responder." );
-	mPreviousFirstResponder = mFirstResponder;
+	if( mFirstResponder->getParent() ) {
+		mPreviousFirstResponder = mFirstResponder;
+	}
 	mFirstResponder->willResignFirstResponder();
 	mFirstResponder = nullptr;
 }
