@@ -14,6 +14,7 @@
 #include "ScrollTests.h"
 
 #include "glm/gtc/epsilon.hpp"
+#include "glm/gtx/string_cast.hpp"
 #include "fmt/format.h"
 
 using namespace ci;
@@ -22,12 +23,12 @@ using namespace std;
 
 const bool MULTITOUCH_ENABLED	= 0;
 const bool USE_SECONDARY_SCREEN = 1;
-const int DEFAULT_TEST			= 0;
+const int DEFAULT_TEST			= 1;
 const vec2 WINDOW_SIZE			= vec2( 1220, 720 );
 const vec2 INFO_ROW_SIZE		= vec2( 250, 20 );
 
 
-#define LIVEPP_ENABLED 0
+#define LIVEPP_ENABLED 1
 
 #if LIVEPP_ENABLED
 
@@ -55,6 +56,7 @@ class ViewTestsApp : public App {
 
 	bool	mDrawViewBorders = false;
 	bool    mDrawLayerBorders = false;
+	bool	mDrawDebugNames = false;
 };
 
 void ViewTestsApp::setup()
@@ -106,6 +108,9 @@ void ViewTestsApp::keyDown( app::KeyEvent event )
 			break;
 			case app::KeyEvent::KEY_k:
 				mDrawViewBorders = ! mDrawViewBorders;
+			break;
+			case app::KeyEvent::KEY_n:
+				mDrawDebugNames = ! mDrawDebugNames;
 			break;
 		}
 	}
@@ -160,15 +165,35 @@ void ViewTestsApp::draw()
 
 void ViewTestsApp::drawViewBorders()
 {
+	static gl::TextureFontRef sTextureFont;
+	if( mDrawDebugNames && ! sTextureFont ) {
+		sTextureFont = gl::TextureFont::create( Font( "Arial", 18 ) );
+	}
+
+
 	gl::ScopedColor colorScope( 0, 1, 1 );
-	ui::traverse( mTestSuite->getGraph(), []( const ui::ViewRef &view ) {
+	ui::traverse( mTestSuite->getGraph(), [this]( const ui::ViewRef &view ) {
+		//if( view->isHidden() )
+		//	return false;
+
 		gl::drawStrokedRect( view->getWorldBounds(), 2 );
+
+		if( mDrawDebugNames ) {
+			auto str = view->getName();
+			sTextureFont->drawString(str, view->getWorldPos() + vec2( 2, 2 + sTextureFont->getFont().getAscent() ) );
+		}
+
 		return true;
 	} );
 }
 
 void ViewTestsApp::drawLayerBorders()
 {
+	static gl::TextureFontRef sTextureFont;
+	if( mDrawDebugNames && ! sTextureFont ) {
+		sTextureFont = gl::TextureFont::create( Font( "Arial", 18 ) );
+	}
+
 	auto graph = mTestSuite->getGraph();
 	auto ren = graph->getRenderer();
 
@@ -176,6 +201,15 @@ void ViewTestsApp::drawLayerBorders()
 	for( auto &layer : graph->getLayers() ) {
 		Rectf layerBorder = layer->getBoundsWorld();
 		ren->drawStrokedRect( layerBorder, 3 );
+
+		if( mDrawDebugNames ) {
+			auto view = layer->getRootView();
+			auto str = view->getName();
+			if( layer->getFrameBuffer() ) {
+				str += ", FrameBuffer size: " + glm::to_string( layer->getFrameBuffer()->getSize() );
+			}
+			sTextureFont->drawString(str, view->getWorldPos() + vec2( 2, 2 + sTextureFont->getFont().getAscent() ) );
+		}
 	}
 	ren->popColor();
 }
