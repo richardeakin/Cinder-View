@@ -130,6 +130,11 @@ class CI_UI_API Renderer {
 	//!
 	void popBlendMode();
 	//!
+	void pushClip( const ci::ivec2 &lowerLeft, const ci::ivec2 &size );
+	//!
+	void popClip();
+
+	//!
 	FrameBufferRef getFrameBuffer( const ci::ivec2 &size );
 	//!
 	size_t getNumFrameBuffersCached() const     { return mFrameBufferCache.size(); }

@@ -163,6 +163,27 @@ void Layer::draw( Renderer *ren )
 
 		ren->pushFrameBuffer( mFrameBuffer );
 		gl::pushViewport( 0, mFrameBuffer->getHeight() - renderSize.y, renderSize.x, renderSize.y );
+
+		// if scissor stack not empty, adjust and push another for the current viewport
+		if( ! ren->mScissorStack.empty() ) {
+			auto currentScissor = ren->mScissorStack.back();
+
+			// convert mRenderBounds to world
+			Rectf viewWorldBounds = mRootView->getWorldBounds();
+			ivec2 clipLowerLeft = ivec2( viewWorldBounds.getLowerLeft() );
+
+			// figure out current clip coordinates in our view space
+			// rendering to window, flip y relative to Graph's bottom left using its clipping size
+			ivec2 clippingSize = mRootView->getGraph()->getClippingSize();
+			clipLowerLeft.y = clippingSize.y - clipLowerLeft.y;
+
+			ivec2 translatedScissorLowerLeft = currentScissor.first - clipLowerLeft;
+			translatedScissorLowerLeft = glm::max( ivec2( 0 ), translatedScissorLowerLeft ); // clamp to >= zero
+			ivec2 clipSize = mRenderBounds.getSize(); // TODO: clamp to <= currentScissor
+
+			ren->pushClip( translatedScissorLowerLeft, clipSize );
+		}
+
 		gl::pushMatrices();
 		gl::setMatricesWindow( renderSize );
 		gl::translate( - mRenderBounds.getUpperLeft() );
@@ -175,9 +196,15 @@ void Layer::draw( Renderer *ren )
 
 	// Do any necessary Filter processing and compositing
 	if( mRootView->mRendersToFrameBuffer ) {
-		ren->popFrameBuffer( mFrameBuffer );
-		gl::popViewport();
 		gl::popMatrices();
+
+		if( ren->mScissorStack.size() > 1 ) {
+			// we pushed our own clip on the stack so pop that off
+			ren->popClip();
+		}
+
+		gl::popViewport();
+		ren->popFrameBuffer( mFrameBuffer );
 
 		FrameBufferRef frameBuffer;
 		if( ! mRootView->mFilters.empty() ) {
@@ -207,7 +234,7 @@ void Layer::drawView( View *view, Renderer *ren )
 
 	if( view->isClipEnabled() ) {
 		//CI_LOG_I( "beginClip: " << view->getName() );
-		beginClip( view, ren );
+		pushClip( view, ren );
 	}
 
 	gl::ScopedModelMatrix modelScope;
@@ -235,7 +262,7 @@ void Layer::drawView( View *view, Renderer *ren )
 
 	if( view->isClipEnabled() ) {
 		//CI_LOG_I( "endClip: " << view->getName() );
-		endClip( ren );
+		ren->popClip();
 	}
 }
 
@@ -294,7 +321,7 @@ void Layer::processFilters( Renderer *ren, const FrameBufferRef &renderFrameBuff
 	renderFrameBuffer->setInUse( false );
 }
 
-void Layer::beginClip( View *view, Renderer *ren )
+void Layer::pushClip( View *view, Renderer *ren )
 {
 	Rectf viewWorldBounds = view->getWorldBounds();
 	vec2 clipLowerLeft = viewWorldBounds.getLowerLeft();
@@ -315,21 +342,7 @@ void Layer::beginClip( View *view, Renderer *ren )
 		clipLowerLeft.y = clippingSize.y - clipLowerLeft.y;
 	}
 
-	auto scissor = pair<ivec2, ivec2>( clipLowerLeft, view->getSize() );
-	ren->mScissorStack.push_back( scissor );
-
-	auto ctx = gl::context();
-	ctx->pushBoolState( GL_SCISSOR_TEST, GL_TRUE );	
-	ctx->pushScissor( scissor );
-}
-
-void Layer::endClip( Renderer *ren )
-{
-	auto ctx = gl::context();
-	ctx->popBoolState( GL_SCISSOR_TEST );
-	ctx->popScissor();
-
-	ren->mScissorStack.pop_back();
+	ren->pushClip( clipLowerLeft, view->getSize() );
 }
 
 Rectf Layer::getBoundsWorld() const

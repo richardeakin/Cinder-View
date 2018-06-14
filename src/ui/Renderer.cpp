@@ -313,6 +313,22 @@ void Renderer::popFrameBuffer( const FrameBufferRef &frameBuffer )
 	gl::context()->popFramebuffer();
 }
 
+void Renderer::pushClip( const ci::ivec2 &lowerLeft, const ci::ivec2 &size )
+{
+	gl::context()->pushBoolState( GL_SCISSOR_TEST, GL_TRUE );	
+	gl::context()->pushScissor( { lowerLeft, size } );
+
+	mScissorStack.push_back( { lowerLeft, size } );
+}
+
+void Renderer::popClip()
+{
+	gl::context()->popBoolState( GL_SCISSOR_TEST );
+	gl::context()->popScissor();
+
+	mScissorStack.pop_back();
+}
+
 std::string Renderer::printCurrentFrameBuffersToString() const
 {
 	stringstream s;
@@ -364,6 +380,7 @@ void Renderer::draw( const ImageRef &image, const ci::Rectf &destRect, const ci:
 
 	if( glsl && mBatchImage->getGlslProg() != glsl ) {
 		// TODO: add an overload that can take a gl::BatchRef so we don't have to replace glsl every time it changes
+		// - also if no glsl is provided always use our own Batch with a stock shader
 		mBatchImage->replaceGlslProg( glsl );
 	}
 

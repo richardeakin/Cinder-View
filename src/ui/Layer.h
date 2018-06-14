@@ -62,8 +62,7 @@ class CI_UI_API Layer : public std::enable_shared_from_this<Layer> {
 	void updateView( View *view );
 	void drawView( View *view, Renderer *ren );
 	void processFilters( Renderer *ren, const FrameBufferRef &renderFrameBuffer );
-	void beginClip( View *view, Renderer *ren );
-	void endClip( Renderer *ren );
+	void pushClip( View *view, Renderer *ren );
 
 	View*           mRootView;
 	Graph*          mGraph;
