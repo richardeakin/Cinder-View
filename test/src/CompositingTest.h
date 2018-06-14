@@ -6,6 +6,7 @@
 class CompositingTest : public ui::SuiteView {
 public:
 	CompositingTest();
+	~CompositingTest();
 
 	void layout() override;
 	void update() override;

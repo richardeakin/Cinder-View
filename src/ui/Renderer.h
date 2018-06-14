@@ -155,6 +155,9 @@ class CI_UI_API Renderer {
 
 	std::string printCurrentFrameBuffersToString() const;
 
+	// TODO: make private and provide public api
+	std::vector<std::pair<ci::ivec2, ci::ivec2>> mScissorStack;
+
   private:
 	std::vector<ci::ColorA>		mColorStack;
 	std::vector<BlendMode>		mBlendModeStack;
