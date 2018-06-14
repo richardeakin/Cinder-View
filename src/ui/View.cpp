@@ -209,6 +209,9 @@ void View::removeSubview( const ViewRef &view )
 	for( auto it = mSubviews.begin(); it != mSubviews.end(); ++it ) {
 		if( view == *it ) {
 			view->mParent = nullptr;
+			if( view->mAcceptsFirstResponder )
+				view->resignFirstResponder();
+
 			if( mIsIteratingSubviews )
 				view->mMarkedForRemoval = true;
 			else
@@ -224,12 +227,17 @@ void View::removeAllSubviews()
 	if( mIsIteratingSubviews ) {
 		for( auto &view : mSubviews ) {
 			view->mParent = nullptr;
+			if( view->mAcceptsFirstResponder )
+				view->resignFirstResponder();
+
 			view->mMarkedForRemoval = true;
 		}
 	}
 	else {
 		for( auto &view : mSubviews ) {
 			view->mParent = nullptr;
+			if( view->mAcceptsFirstResponder )
+				view->resignFirstResponder();
 		}
 		mSubviews.clear();
 	}
@@ -527,7 +535,7 @@ std::ostream& operator<<( std::ostream &os, const View &rhs )
 	if( ! rhs.getLabel().empty() )
 		os << " (" << rhs.getLabel() << ")";
 
-	os << " - pos: " << rhs.getPos() << ", world pos: " << rhs.getWorldPos() << ", size: " << rhs.getSize() << ", interactive: " << boolalpha << rhs.isInteractive() << ", hidden: " << rhs.isHidden() << dec;
+	os << " - pos: " << rhs.getPos() << ", world pos: " << rhs.getWorldPos() << ", size: " << rhs.getSize() << ", interactive: " << boolalpha << rhs.isInteractive() << ", hidden: " << rhs.isHidden() << ", clip: " << rhs.isClipEnabled() << dec;
 
 	if( rhs.getLayer() ) {
 		os << "\n[Layer";

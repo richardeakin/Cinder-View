@@ -163,6 +163,27 @@ void Layer::draw( Renderer *ren )
 
 		ren->pushFrameBuffer( mFrameBuffer );
 		gl::pushViewport( 0, mFrameBuffer->getHeight() - renderSize.y, renderSize.x, renderSize.y );
+
+		// if scissor stack not empty, adjust and push another for the current viewport
+		if( ! ren->mScissorStack.empty() ) {
+			auto currentScissor = ren->mScissorStack.back();
+
+			// convert mRenderBounds to world
+			Rectf viewWorldBounds = mRootView->getWorldBounds();
+			ivec2 clipLowerLeft = ivec2( viewWorldBounds.getLowerLeft() );
+
+			// figure out current clip coordinates in our view space
+			// rendering to window, flip y relative to Graph's bottom left using its clipping size
+			ivec2 clippingSize = mRootView->getGraph()->getClippingSize();
+			clipLowerLeft.y = clippingSize.y - clipLowerLeft.y;
+
+			ivec2 translatedScissorLowerLeft = currentScissor.first - clipLowerLeft;
+			translatedScissorLowerLeft = glm::max( ivec2( 0 ), translatedScissorLowerLeft ); // clamp to >= zero
+			ivec2 clipSize = mRenderBounds.getSize(); // TODO: clamp to <= currentScissor
+
+			ren->pushClip( translatedScissorLowerLeft, clipSize );
+		}
+
 		gl::pushMatrices();
 		gl::setMatricesWindow( renderSize );
 		gl::translate( - mRenderBounds.getUpperLeft() );
@@ -175,9 +196,15 @@ void Layer::draw( Renderer *ren )
 
 	// Do any necessary Filter processing and compositing
 	if( mRootView->mRendersToFrameBuffer ) {
-		ren->popFrameBuffer( mFrameBuffer );
-		gl::popViewport();
 		gl::popMatrices();
+
+		if( ren->mScissorStack.size() > 1 ) {
+			// we pushed our own clip on the stack so pop that off
+			ren->popClip();
+		}
+
+		gl::popViewport();
+		ren->popFrameBuffer( mFrameBuffer );
 
 		FrameBufferRef frameBuffer;
 		if( ! mRootView->mFilters.empty() ) {
@@ -205,8 +232,10 @@ void Layer::drawView( View *view, Renderer *ren )
 	if( view->isHidden() )
 		return;
 
-	if( view->isClipEnabled() )
-		beginClip( view, ren );
+	if( view->isClipEnabled() ) {
+		//CI_LOG_I( "beginClip: " << view->getName() );
+		pushClip( view, ren );
+	}
 
 	gl::ScopedModelMatrix modelScope;
 
@@ -218,15 +247,23 @@ void Layer::drawView( View *view, Renderer *ren )
 	for( auto &subview : view->getSubviews() ) {
 		auto subviewLayer = subview->getLayer();
 		if( subviewLayer ) {
+			// TODO: I think right here I need to disable clipping if it is enabled and we bind a framebuffer
+			// - or maybe can push / pop scioor when pushing the framebuffer?
+			auto clipState = gl::context()->getBoolState( GL_SCISSOR_TEST );
+			gl::context()->setBoolState( GL_SCISSOR_TEST, GL_FALSE );
 			subviewLayer->draw( ren );
+			if( clipState )
+				gl::context()->setBoolState( GL_SCISSOR_TEST, GL_TRUE );
 		}
 		else {
 			drawView( subview.get(), ren );
 		}
 	}
 
-	if( view->isClipEnabled() )
-		endClip();
+	if( view->isClipEnabled() ) {
+		//CI_LOG_I( "endClip: " << view->getName() );
+		ren->popClip();
+	}
 }
 
 void Layer::processFilters( Renderer *ren, const FrameBufferRef &renderFrameBuffer )
@@ -284,39 +321,28 @@ void Layer::processFilters( Renderer *ren, const FrameBufferRef &renderFrameBuff
 	renderFrameBuffer->setInUse( false );
 }
 
-void Layer::beginClip( View *view, Renderer *ren )
+void Layer::pushClip( View *view, Renderer *ren )
 {
 	Rectf viewWorldBounds = view->getWorldBounds();
-	vec2 lowerLeft = viewWorldBounds.getLowerLeft();
+	vec2 clipLowerLeft = viewWorldBounds.getLowerLeft();
 	if( mRootView->mRendersToFrameBuffer ) {
 		// get bounds of view relative to framebuffer. // TODO: need a method like convertPointToView( view, point );
-		Rectf frameBufferWorldBounds = mRootView->getWorldBounds();
- 		Rectf viewBoundsInFrameBuffer = viewWorldBounds - frameBufferWorldBounds.getUpperLeft();
+ 		Rectf viewBoundsInFrameBuffer = viewWorldBounds - mRootView->getWorldPos();
 
 		// Take lower left relative to FrameBuffer, which might actually be larger than mRenderBounds
-		lowerLeft = viewBoundsInFrameBuffer.getLowerLeft();
-		lowerLeft.y = mFrameBuffer->getHeight() - lowerLeft.y;
+		clipLowerLeft = viewBoundsInFrameBuffer.getLowerLeft();
+		clipLowerLeft.y = mFrameBuffer->getHeight() - clipLowerLeft.y;
 
-		// TODO: reason through if this makes sense in general
 		// - needed to add it when rendering to virtual canvas but stroked rect went beyond borders
-		lowerLeft.y += mRenderBounds.y1;
+		clipLowerLeft.y += mRenderBounds.y1;
 	}
 	else {
 		// rendering to window, flip y relative to Graph's bottom left using its clipping size
 		ivec2 clippingSize = mRootView->getGraph()->getClippingSize();
-		lowerLeft.y = clippingSize.y - lowerLeft.y;
+		clipLowerLeft.y = clippingSize.y - clipLowerLeft.y;
 	}
 
-	auto ctx = gl::context();
-	ctx->pushBoolState( GL_SCISSOR_TEST, GL_TRUE );
-	ctx->pushScissor( std::pair<ivec2, ivec2>( lowerLeft, view->getSize() ) );
-}
-
-void Layer::endClip()
-{
-	auto ctx = gl::context();
-	ctx->popBoolState( GL_SCISSOR_TEST );
-	ctx->popScissor();
+	ren->pushClip( clipLowerLeft, view->getSize() );
 }
 
 Rectf Layer::getBoundsWorld() const

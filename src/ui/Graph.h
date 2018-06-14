@@ -142,7 +142,8 @@ class CI_UI_API Graph : public View {
 
 	std::list<LayerRef>	    mLayers;
 	std::list<ViewRef>	    mViewsWithTouches;
-	ViewRef					mFirstResponder, mPreviousFirstResponder;
+	ViewRef					mFirstResponder;
+	std::weak_ptr<View>		mPreviousFirstResponder; //! Only store a weak reference to the previous responder so we don't retain it (mFirstResponder will get unset when it is removed from the view hierarchy)
 
 	friend class Layer;
 };

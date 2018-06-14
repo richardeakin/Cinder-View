@@ -130,6 +130,11 @@ class CI_UI_API Renderer {
 	//!
 	void popBlendMode();
 	//!
+	void pushClip( const ci::ivec2 &lowerLeft, const ci::ivec2 &size );
+	//!
+	void popClip();
+
+	//!
 	FrameBufferRef getFrameBuffer( const ci::ivec2 &size );
 	//!
 	size_t getNumFrameBuffersCached() const     { return mFrameBufferCache.size(); }
@@ -154,6 +159,9 @@ class CI_UI_API Renderer {
 	void drawStrokedRect( const ci::Rectf &rect, float lineWidth );
 
 	std::string printCurrentFrameBuffersToString() const;
+
+	// TODO: make private and provide public api
+	std::vector<std::pair<ci::ivec2, ci::ivec2>> mScissorStack;
 
   private:
 	std::vector<ci::ColorA>		mColorStack;

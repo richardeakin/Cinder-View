@@ -16,9 +16,11 @@ CompositingTest::CompositingTest()
 	: SuiteView()
 {
 	mContainerView = make_shared<ui::StrokedRectView>();
-	mContainerView->setColor( Color::white() );
-	mContainerView->setLineWidth( 6 );
 	mContainerView->setLabel( "container" );
+	mContainerView->setColor( Color::white() );
+	mContainerView->setLineWidth( 6 ); // test that FrameBuffer will account for line width drawing outside of View bounds by half line width
+	mContainerView->getBackground()->setColor( Color::black() );
+	mContainerView->setClipEnabled( true ); // FIXME: composited subviews to draw messed up
 
 	const float fontSizeBig = 64;
 
@@ -56,7 +58,7 @@ CompositingTest::CompositingTest()
 	mLabelD->getBackground()->setColor( Color( 1, 1, 0 ) );
 	mLabelD->setAlpha( 0.75f );
 
-	mLabelC->addSubview( mLabelD );
+	//mLabelC->addSubview( mLabelD );
 	mContainerView->addSubviews( { mLabelA, mLabelB, mLabelC } );
 	addSubview( mContainerView );
 
@@ -122,6 +124,11 @@ CompositingTest::CompositingTest()
 
 }
 
+CompositingTest::~CompositingTest()
+{
+	CI_LOG_I( hex << this << dec );
+}
+
 void CompositingTest::layout()
 {
 	mContainerView->setBounds( Rectf( PADDING, PADDING, getWidth() - PADDING, getHeight() - PADDING ) );
@@ -129,7 +136,8 @@ void CompositingTest::layout()
 
 	mLabelA->setPos( { 200, 100 } );
 	mLabelB->setPos( { 450, 100 } );
-	mLabelC->setPos( { 325, 200 } );
+	//mLabelC->setPos( { 325, 200 } );
+	mLabelC->setPos( { -20, 200 } );
 
 	mLabelA->setSize( LABEL_SIZE );
 	mLabelB->setSize( LABEL_SIZE );
@@ -170,6 +178,11 @@ bool CompositingTest::keyDown( app::KeyEvent &event )
 		case app::KeyEvent::KEY_s: {
 			vec2 nextLabelSize = LABEL_SIZE * vec2( randFloat( 0.5f, 2.0f ), randFloat( 0.5f, 2.0f ) );
 			app::timeline().apply( mLabelC->animSize(), nextLabelSize, 0.6f, EaseInOutExpo() );
+			break;
+		}
+		case app::KeyEvent::KEY_c: {
+			mContainerView->setClipEnabled( ! mContainerView->isClipEnabled() );
+			CI_LOG_I( "mContainerView clip enabled: " << mContainerView->isClipEnabled() );
 			break;
 		}
 		default:
