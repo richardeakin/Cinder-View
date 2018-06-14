@@ -535,7 +535,7 @@ std::ostream& operator<<( std::ostream &os, const View &rhs )
 	if( ! rhs.getLabel().empty() )
 		os << " (" << rhs.getLabel() << ")";
 
-	os << " - pos: " << rhs.getPos() << ", world pos: " << rhs.getWorldPos() << ", size: " << rhs.getSize() << ", interactive: " << boolalpha << rhs.isInteractive() << ", hidden: " << rhs.isHidden() << dec;
+	os << " - pos: " << rhs.getPos() << ", world pos: " << rhs.getWorldPos() << ", size: " << rhs.getSize() << ", interactive: " << boolalpha << rhs.isInteractive() << ", hidden: " << rhs.isHidden() << ", clip: " << rhs.isClipEnabled() << dec;
 
 	if( rhs.getLayer() ) {
 		os << "\n[Layer";
