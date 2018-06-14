@@ -193,6 +193,7 @@ void Renderer::popColor()
 
 void Renderer::setBlendMode( BlendMode mode )
 {
+#if 0
 	switch( mode ) {
 		case BlendMode::ALPHA:
 			gl::enableAlphaBlending();
@@ -203,6 +204,20 @@ void Renderer::setBlendMode( BlendMode mode )
 		default:
 			CI_ASSERT_NOT_REACHABLE();
 	}
+#else
+	auto ctx = gl::context();
+	ctx->enable( GL_BLEND );
+	switch( mode ) {
+		case BlendMode::ALPHA:
+			ctx->blendFuncSeparate( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA );
+		break;
+		case BlendMode::PREMULT_ALPHA:
+			ctx->blendFuncSeparate( GL_ONE, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA );
+		break;
+		default:
+			CI_ASSERT_NOT_REACHABLE();
+	}
+#endif
 }
 
 void Renderer::pushBlendMode( BlendMode mode )
