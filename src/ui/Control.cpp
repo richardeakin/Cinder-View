@@ -238,6 +238,24 @@ bool Button::touchesEnded( app::TouchEvent &event )
 	return true;
 }
 
+std::string toString( const Button::State &state )
+{
+	switch( state ) {
+		case Button::State::NORMAL:			return "NORMAL";
+		case Button::State::ENABLED:		return "ENABLED";
+		case Button::State::PRESSED:		return "PRESSED";
+		default:							CI_ASSERT_NOT_REACHABLE();
+	}
+
+	return "(unhandled enum value)";
+}
+
+std::ostream& operator<<( std::ostream &os, const Button::State &rhs )
+{
+	os << toString( rhs );
+	return os;
+}
+
 // ----------------------------------------------------------------------------------------------------
 // CheckBox
 // ----------------------------------------------------------------------------------------------------

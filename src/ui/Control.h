@@ -131,6 +131,11 @@ class CI_UI_API Button : public Control {
 	ci::signals::Signal<void ()>	mSignalPressed, mSignalReleased; // TODO: look at other frameworks (like html5, dart) and see what they name these, and how they organize the events
 };
 
+//! Returns scaleMode in string representation.
+CI_UI_API std::string toString( const Button::State &state );
+//! Stream support for ScaleMode
+CI_UI_API std::ostream& operator<<( std::ostream &os, const Button::State &rhs );
+
 //! Toggle Button with text off to the right side.
 class CI_UI_API CheckBox : public Button {
   public:
