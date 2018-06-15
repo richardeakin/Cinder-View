@@ -55,6 +55,7 @@ Button::Button( const Rectf &bounds )
 	//mTextTitle = TextManager::loadText( FontFace::NORMAL );
 	mTitleLabel = make_shared<Label>();
 	mTitleLabel->setFillParentEnabled();
+	updateTitle();
 
 	mImageView = make_shared<ImageView>();
 	mImageView->setFillParentEnabled();
@@ -89,18 +90,32 @@ ImageRef Button::getImageForState( State state ) const
 
 const string& Button::getTitleForState( State state ) const
 {
-	if( ( state == State::ENABLED || state == State::PRESSED ) && ! mTitleEnabled.empty() )
-		return mTitleEnabled;
-	else
-		return mTitleNormal;
+	if( ! mTitleEnabled.empty() ) {
+		if( state == State::ENABLED || ( state == State::PRESSED && ! mIsToggle ) )
+			return mTitleEnabled;
+		else if( mEnabled && state == State::PRESSED && mIsToggle ) {
+			return mTitleEnabled;
+		}
+	}
+
+	return mTitleNormal;
 }
 
 const ColorA& Button::getTitleColorForState( State state ) const
 {
-	if( state == State::ENABLED && mHasColorTitleEnabled )
+	//return mColorTitleNormal;
+	if( state == State::PRESSED && mHasColorTitlePressed )
+		return mColorTitlePressed;
+	else if( state == State::ENABLED && mHasColorTitleEnabled )
 		return mColorTitleEnabled;
 	else
 		return mColorTitleNormal;
+}
+
+void Button::updateTitle()
+{	
+	mTitleLabel->setText( getTitleForState( getState() ) );
+	mTitleLabel->setTextColor( getTitleColorForState( getState() ) );
 }
 
 // TODO: do this only on state change, instead of every frame
@@ -117,9 +132,6 @@ void Button::update()
 	else {
 		mImageView->setHidden( true );
 		mTitleLabel->setHidden( false );
-		mTitleLabel->setText( getTitle() );
-		if( mHasColorTitleEnabled )
-			mTitleLabel->setTextColor( getTitleColor() );
 
 		mTitleLabel->getBackground()->setColor( getColor() );
 	}
@@ -127,9 +139,13 @@ void Button::update()
 
 void Button::setEnabled( bool enabled )
 {
-	mEnabled = enabled;
-	mState = enabled ? State::ENABLED : State::NORMAL;
+	if( mEnabled == enabled )
+		return;
 
+	mEnabled = enabled;
+
+	mState = enabled ? State::ENABLED : State::NORMAL;
+	updateTitle();
 	getSignalValueChanged().emit();
 }
 
@@ -137,8 +153,13 @@ void Button::setTitle( const string &title, State state )
 {
 	if( state == State::NORMAL )
 		mTitleNormal = title;
-	else
+	else if( state == State::ENABLED )
 		mTitleEnabled = title;
+	else {
+		CI_LOG_W( "unable to set title for state: " << state );
+	}
+
+	updateTitle();
 }
 
 void Button::setTitleColor( const ci::ColorA &color, State state )
@@ -147,8 +168,14 @@ void Button::setTitleColor( const ci::ColorA &color, State state )
 		mColorTitleEnabled = color;
 		mHasColorTitleEnabled = true;
 	}
+	else if( state == State::PRESSED ) {
+		mColorTitlePressed = color;
+		mHasColorTitlePressed = true;
+	}
 	else
 		mColorTitleNormal = color;
+
+	updateTitle();
 }
 
 void Button::setColor( const ci::ColorA &color, State state )
@@ -197,6 +224,7 @@ bool Button::touchesBegan( app::TouchEvent &event )
 {
 	mState = State::PRESSED;
 	setTouchCanceled( false );
+	updateTitle();
 
 	mSignalPressed.emit();
 	event.getTouches().front().setHandled();
@@ -212,6 +240,7 @@ bool Button::touchesMoved( app::TouchEvent &event )
 	if( ! hitTestInsideCancelPadding( pos ) ) {
 		setTouchCanceled( true );
 		mState = State::NORMAL;
+		updateTitle();
 		mSignalReleased.emit();
 	}
 
