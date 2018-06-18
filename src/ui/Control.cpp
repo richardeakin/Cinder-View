@@ -62,6 +62,8 @@ Button::Button( const Rectf &bounds )
 
 	addSubview( mTitleLabel );
 	addSubview( mImageView );
+
+	mTitleLabel->setBackgroundEnabled( true );
 }
 
 const ColorA& Button::getColorForState( Button::State state ) const
@@ -133,7 +135,9 @@ void Button::update()
 		mImageView->setHidden( true );
 		mTitleLabel->setHidden( false );
 
-		mTitleLabel->getBackground()->setColor( getColor() );
+		if( mTitleLabel->isBackgroundEnabled() ) {
+			mTitleLabel->getBackground()->setColor( getColor() );
+		}
 	}
 }
 

@@ -132,6 +132,7 @@ class CI_UI_API View : public std::enable_shared_from_this<View> {
 	std::string			getName() const;
 
 	void setBackgroundEnabled( bool enable = true );
+	bool isBackgroundEnabled() const;
 	const RectViewRef& getBackground();
 
 	const ci::vec2&		getWorldPos() const;

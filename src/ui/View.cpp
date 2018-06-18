@@ -493,6 +493,11 @@ void View::setBackgroundEnabled( bool enable )
 		mBackground.reset();
 }
 
+bool View::isBackgroundEnabled() const
+{
+	return (bool)mBackground;
+}
+
 const RectViewRef& View::getBackground()
 {
 	setBackgroundEnabled();
