@@ -242,9 +242,12 @@ bool Button::touchesMoved( app::TouchEvent &event )
 
 	vec2 pos = toLocal( event.getTouches().front().getPos() );
 	if( ! hitTestInsideCancelPadding( pos ) ) {
+		UI_LOG_TOUCHES( "canceling touch for: " << getLabel() );
 		setTouchCanceled( true );
-		mState = State::NORMAL;
-		updateTitle();
+		if( ! isToggle() ) {
+			mState = State::NORMAL;
+			updateTitle();
+		}
 		mSignalReleased.emit();
 	}
 
@@ -258,8 +261,11 @@ bool Button::touchesEnded( app::TouchEvent &event )
 
 	vec2 pos = toLocal( event.getTouches().front().getPos() );
 	if( ! hitTestInsideCancelPadding( pos ) ) {
+		UI_LOG_TOUCHES( "canceling touch for: " << getLabel() );
 		setTouchCanceled( true );
-		mState = State::NORMAL;
+		if( ! isToggle() ) {
+			mState = State::NORMAL;
+		}
 	}
 	else {
 		bool enable = isToggle() ? ! isEnabled() : false;
