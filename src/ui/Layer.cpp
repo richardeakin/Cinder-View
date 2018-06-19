@@ -247,13 +247,7 @@ void Layer::drawView( View *view, Renderer *ren )
 	for( auto &subview : view->getSubviews() ) {
 		auto subviewLayer = subview->getLayer();
 		if( subviewLayer ) {
-			// TODO: I think right here I need to disable clipping if it is enabled and we bind a framebuffer
-			// - or maybe can push / pop scioor when pushing the framebuffer?
-			auto clipState = gl::context()->getBoolState( GL_SCISSOR_TEST );
-			gl::context()->setBoolState( GL_SCISSOR_TEST, GL_FALSE );
 			subviewLayer->draw( ren );
-			if( clipState )
-				gl::context()->setBoolState( GL_SCISSOR_TEST, GL_TRUE );
 		}
 		else {
 			drawView( subview.get(), ren );
