@@ -77,6 +77,7 @@ public:
 		INCREMENT = 0, //! Each successive View is placed after the previous one + padding
 		FILL, //! Spreads and expands subviews, overriding each subview's size.
 		DISTRIBUTE, //! Spreads subviews equally based on their center. Ignores padding.
+		PERIPHERAL, //! Stacks subviews on each side.
 		NUM_MODES
 	};
 
