@@ -143,12 +143,13 @@ void Button::update()
 
 void Button::setEnabled( bool enabled )
 {
-	if( mEnabled == enabled )
+	State state = enabled ? State::ENABLED : State::NORMAL;
+	if( mEnabled == enabled && mState == state )
 		return;
 
 	mEnabled = enabled;
+	mState = state;
 
-	mState = enabled ? State::ENABLED : State::NORMAL;
 	updateTitle();
 	getSignalValueChanged().emit();
 }
