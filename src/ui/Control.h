@@ -123,6 +123,7 @@ class CI_UI_API Button : public Control {
 	ci::ColorA	mColorTitleEnabled = ci::ColorA::gray( 0.2f );
 	ci::ColorA	mColorTitlePressed = ci::ColorA::gray( 0.1f );
 
+	bool		mHasColorTitleNormal = false;
 	bool		mHasColorTitleEnabled = false; // keep track of when user hasn't set the title color for enabled, will use normal color otherwise
 	bool		mHasColorTitlePressed = false;
 

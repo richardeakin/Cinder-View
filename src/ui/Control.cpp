@@ -105,19 +105,30 @@ const string& Button::getTitleForState( State state ) const
 
 const ColorA& Button::getTitleColorForState( State state ) const
 {
-	//return mColorTitleNormal;
-	if( state == State::PRESSED && mHasColorTitlePressed )
-		return mColorTitlePressed;
-	else if( state == State::ENABLED && mHasColorTitleEnabled )
-		return mColorTitleEnabled;
-	else
-		return mColorTitleNormal;
+	if( state == State::PRESSED && mHasColorTitlePressed ) 
+		return mColorTitlePressed; 
+	else if( state == State::ENABLED && mHasColorTitleEnabled ) 
+		return mColorTitleEnabled; 
+	else 
+		return mColorTitleNormal; 
 }
 
 void Button::updateTitle()
 {	
 	mTitleLabel->setText( getTitleForState( getState() ) );
-	mTitleLabel->setTextColor( getTitleColorForState( getState() ) );
+
+	// note: not using getTitleColorForState() here because we don't want to update the label's text color if
+	// the user is manipulating it directly (ex. animating it) rather than using Button::setTitleColorForState()
+	State state = getState();
+	if( state == State::PRESSED && mHasColorTitlePressed ) {
+		mTitleLabel->setTextColor( mColorTitlePressed );
+	}
+	else if( state == State::ENABLED && mHasColorTitleEnabled ) {
+		mTitleLabel->setTextColor( mColorTitleEnabled );
+	}
+	else if( mHasColorTitleNormal ) {
+		mTitleLabel->setTextColor( mColorTitleNormal );
+	}
 }
 
 // TODO: do this only on state change, instead of every frame
@@ -134,6 +145,10 @@ void Button::update()
 	else {
 		mImageView->setHidden( true );
 		mTitleLabel->setHidden( false );
+
+		if( getLabel() == "name button" ) {
+			int blarg = 2;
+		}
 
 		if( mTitleLabel->isBackgroundEnabled() ) {
 			mTitleLabel->getBackground()->setColor( getColor() );
@@ -177,8 +192,10 @@ void Button::setTitleColor( const ci::ColorA &color, State state )
 		mColorTitlePressed = color;
 		mHasColorTitlePressed = true;
 	}
-	else
+	else {
 		mColorTitleNormal = color;
+		mHasColorTitleNormal = true;
+	}
 
 	updateTitle();
 }
