@@ -251,7 +251,17 @@ void Graph::propagateTouchesBegan( ViewRef &view, app::TouchEvent &event, size_t
 	if( touchesInside.empty() )
 		return;
 
-	// TODO: this copy is currently necessary to prevent bad iterators if a view is added during iteration
+	if( view->getInterceptsTouches() && view->shouldInterceptTouches( touchesInside ) ) {
+		// store touches inside in separate 'intercepted location
+		if( view->touchesBegan( event ) ) {
+			// TODO: probably only want to store ones specified as 'intercepted' out of the touchesInside vector
+			// - might also want to do the touches.erase for individual touches marked as handled
+			view->mInterceptedTouches = touchesInside;
+			return;
+		}
+	}
+
+	// TODO: this copy is currently necessary to prevent bad iterators if a view is added during the subview touchesBegan()
 	// - Might defer adding but need to think through how the ordering will be handled
 	auto subviews = view->mSubviews;
 	for( auto rIt = subviews.rbegin(); rIt != subviews.rend(); ++rIt ) {

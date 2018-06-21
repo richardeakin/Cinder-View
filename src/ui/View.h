@@ -184,6 +184,14 @@ class CI_UI_API View : public std::enable_shared_from_this<View> {
 	ci::signals::Signal<void ()>&	getSignalViewDidLayout()	{ return mSignalViewDidLayout; }
 
 
+	bool mInterceptsTouches = false;
+	//!
+	void	setInterceptsTouches( bool enable = true ) { mInterceptsTouches = true; }
+	//!
+	bool	getInterceptsTouches() const				{ return mInterceptsTouches; }
+
+	virtual bool	shouldInterceptTouches( std::vector<ci::app::TouchEvent::Touch> &touches )	{ return false; }
+
 	//! This is done when the world position should be recalculated but calling layout isn't necessary (ex. when ScrollView offset moves)
 	void	setWorldPosDirty();
 
@@ -222,9 +230,10 @@ class CI_UI_API View : public std::enable_shared_from_this<View> {
 	void clearViewsMarkedForRemoval();
 
 
-	typedef std::map<uint32_t, ci::app::TouchEvent::Touch> TouchMapT; // TODO just store this as vector and use std::find
+	typedef std::map<uint32_t, ci::app::TouchEvent::Touch> TouchMapT; // TODO just store this as vector and use std::find (you hardly have more than 10 touches)
 
 	TouchMapT				mActiveTouches;
+	std::vector<ci::app::TouchEvent::Touch>		mInterceptedTouches;
 
 	bool					mInteractive = true;
 	bool					mHidden = false;

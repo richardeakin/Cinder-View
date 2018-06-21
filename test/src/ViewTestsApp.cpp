@@ -23,7 +23,7 @@ using namespace std;
 
 const bool MULTITOUCH_ENABLED	= 0;
 const bool USE_SECONDARY_SCREEN = 1;
-const int DEFAULT_TEST			= 1;
+const int DEFAULT_TEST			= 5;
 const vec2 WINDOW_SIZE			= vec2( 1220, 720 );
 const vec2 INFO_ROW_SIZE		= vec2( 250, 20 );
 

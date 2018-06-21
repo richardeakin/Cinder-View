@@ -54,6 +54,7 @@ ScrollView::ScrollView( const ci::Rectf &bounds )
 	: View( bounds )
 {
 	setClipEnabled();
+	setInterceptsTouches();
 
 	mContentView = make_shared<ContentView>( this );
 	mContentView->setLabel( "ScrollView-ContentView" );
@@ -319,6 +320,17 @@ bool ScrollView::touchesEnded( app::TouchEvent &event )
 		mDecelerating = true;
 		mSignalDidScroll.emit();
 	}
+
+	return true;
+}
+
+bool ScrollView::shouldInterceptTouches( std::vector<ci::app::TouchEvent::Touch> &touches )
+{
+	// TODO: perform hit tests on content views and see if there is one under a touch that is interactive and non hidden
+	// - need to indicate back to color which touches?
+	//     - might be able to do that by calling setHandled() on the touch itself
+
+	CI_LOG_I( "intercepted touches: " << touches.size() );
 
 	return true;
 }
