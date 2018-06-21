@@ -279,14 +279,14 @@ void Graph::propagateTouchesBegan( ViewRef &view, app::TouchEvent &event, size_t
 
 		// Remove active touches. Note: I'm having to do this outside of the above loop because I can't invalidate the vector::iterator
 		touches.erase(
-				remove_if( touches.begin(), touches.end(),
-				           [&view]( const app::TouchEvent::Touch &touch ) {
-					           if( touch.isHandled() ) {
-						           UI_LOG_TOUCHES( view->getName() << " | handled touch: " << touch.getId() );
-					           }
-					           return touch.isHandled();
-				           } ),
-				touches.end() );
+			remove_if( touches.begin(), touches.end(),
+				[&view]( const app::TouchEvent::Touch &touch ) {
+					if( touch.isHandled() ) {
+						UI_LOG_TOUCHES( view->getName() << " | handled touch: " << touch.getId() );
+					}
+					return touch.isHandled();
+				} ),
+			touches.end() );
 
 		UI_LOG_TOUCHES( view->getName() << " | num touches C: " << event.getTouches().size() );
 		
