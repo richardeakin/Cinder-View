@@ -233,6 +233,10 @@ ImageRef Button::getImage() const
 		case State::PRESSED: {
 			if( mImagePressed )
 				return mImagePressed;
+			else if( mEnabled && mImageEnabled )
+				return mImageEnabled;
+			else 
+				return mImageNormal;
 		}
 		break;
 		default:
