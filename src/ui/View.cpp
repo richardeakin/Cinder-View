@@ -204,6 +204,40 @@ void View::insertSubview( const ViewRef &view, size_t index )
 	mSubviews.insert( it, view );
 }
 
+void View::insertSubviewAbove( const ViewRef &view, const ViewRef &viewBelow )
+{
+	CI_ASSERT( view && viewAbove );
+	CI_ASSERT( view.get() != this && viewAbove.get() != this );
+
+	auto it = std::find( mSubviews.begin(), mSubviews.end(), viewBelow );
+	if( it == mSubviews.end() ) {
+		CI_LOG_W( "viewBelow labeled '" << viewBelow->getLabel() << "' not a child of this View '" << getLabel() << "'" );
+	}
+	else if( it != ( mSubviews.end() - 1 ) ) {
+		++it;
+	}
+
+	view->setParent( this );
+	mSubviews.insert( it, view );
+}
+
+void View::insertSubviewBelow( const ViewRef &view, const ViewRef &viewAbove )
+{
+	CI_ASSERT( view && viewAbove );
+	CI_ASSERT( view.get() != this && viewAbove.get() != this );
+
+	auto it = std::find( mSubviews.begin(), mSubviews.end(), viewAbove );
+	if( it == mSubviews.end() ) {
+		CI_LOG_W( "viewAbove labeled '" << viewAbove->getLabel() << "' not a child of this View '" << getLabel() << "'" );
+	}
+	else if( it != mSubviews.begin() ) {
+		--it;
+	}
+
+	view->setParent( this );
+	mSubviews.insert( it, view );
+}
+
 void View::removeSubview( const ViewRef &view )
 {
 	for( auto it = mSubviews.begin(); it != mSubviews.end(); ++it ) {

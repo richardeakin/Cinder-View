@@ -55,6 +55,8 @@ class CI_UI_API View : public std::enable_shared_from_this<View> {
 	void		addSubviews( const std::vector<ViewRef> &views );
 	virtual void addSubview( const ViewRef &view );
 	virtual void insertSubview( const ViewRef &view, size_t index );
+	virtual void insertSubviewAbove( const ViewRef &view, const ViewRef &viewBelow );
+	virtual void insertSubviewBelow( const ViewRef &view, const ViewRef &viewAbove );
 	virtual void removeSubview( const ViewRef &view );
 	virtual void removeAllSubviews();
 	virtual void removeFromParent();
