@@ -206,8 +206,8 @@ void View::insertSubview( const ViewRef &view, size_t index )
 
 void View::insertSubviewAbove( const ViewRef &view, const ViewRef &viewBelow )
 {
-	CI_ASSERT( view && viewAbove );
-	CI_ASSERT( view.get() != this && viewAbove.get() != this );
+	CI_ASSERT( view && viewBelow );
+	CI_ASSERT( view.get() != this && viewBelow.get() != this );
 
 	auto it = std::find( mSubviews.begin(), mSubviews.end(), viewBelow );
 	if( it == mSubviews.end() ) {
