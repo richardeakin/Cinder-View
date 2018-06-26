@@ -88,9 +88,16 @@ private:
 
 class CI_UI_API TextManager {
 public:
+	static TextManager* instance();
+
 	//! If size < 0, a default size will be picked (this is temporary until some sort of styling is introduced)
 	static TextRef loadText( std::string systemName = "", float size = -1 );
 	static TextRef loadTextFromFile( const ci::fs::path &filePath, float size = -1 );
+
+	//! Note: call this before loading any text objects
+	void setSupportedChars( const std::string &str )	{ mSupportedChars = str; }
+
+	const std::string&	getSupportedChars() const		{ return mSupportedChars; }
 
 private:
 	TextManager()	{}
@@ -98,12 +105,11 @@ private:
 	TextManager( const TextManager& )				= delete;
 	TextManager& operator=( const TextManager& )	= delete;
 
-	static TextManager* instance();
-
 	TextRef loadTextImpl( const std::string &systemName, float size );
 	TextRef loadTextFromFileImpl( const ci::fs::path &filePath, float size );
 
 	std::vector<TextRef>	mTextCache;
+	std::string				mSupportedChars;
 };
 
 } // namespace ui

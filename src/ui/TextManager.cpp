@@ -130,7 +130,7 @@ Text::Text( const ci::Font &font )
 	: mIsReady( false )
 {
 	auto format = gl::TextureFont::Format().premultiply( true );
-	mTextureFont = gl::TextureFont::create( font, format );
+	mTextureFont = gl::TextureFont::create( font, format, TextManager::instance()->getSupportedChars() );
 	mIsReady = true;
 }
 
