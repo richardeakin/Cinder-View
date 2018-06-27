@@ -58,6 +58,12 @@ TextManager* TextManager::instance()
 	return &sInstance;
 }
 
+TextManager::TextManager()
+{
+	// Set the default suppored chars, can be updated later by user.
+	mSupportedChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890().?!,:;'\"&*=+-/\\@#_[]<>%^llflfiphrids\303\251\303\241\303\250\303\240";
+}
+
 // static
 TextRef TextManager::loadText( std::string systemName, float size )
 {

@@ -100,7 +100,7 @@ public:
 	const std::string&	getSupportedChars() const		{ return mSupportedChars; }
 
 private:
-	TextManager()	{}
+	TextManager();
 	
 	TextManager( const TextManager& )				= delete;
 	TextManager& operator=( const TextManager& )	= delete;
