@@ -54,7 +54,7 @@ ScrollView::ScrollView( const ci::Rectf &bounds )
 	: View( bounds )
 {
 	setClipEnabled();
-	setInterceptsTouches();
+	//setInterceptsTouches();
 
 	mContentView = make_shared<ContentView>( this );
 	mContentView->setLabel( "ScrollView-ContentView" );
@@ -266,6 +266,10 @@ void ScrollView::updateContentViewOffset( const vec2 &offset )
 
 bool ScrollView::touchesBegan( app::TouchEvent &event )
 {
+	if( ! getActiveTouches().empty() ) {
+		return false;
+	}	
+
 	auto &firstTouch = event.getTouches().front();
 	vec2 pos = toLocal( firstTouch.getPos() );
 	LOG_SCROLL_TRACKING( "pos:" << pos );
