@@ -257,6 +257,12 @@ void Graph::propagateTouchesBegan( ViewRef &view, app::TouchEvent &event, size_t
 			// TODO: probably only want to store ones specified as 'intercepted' out of the touchesInside vector
 			// - might also want to do the touches.erase for individual touches marked as handled
 			view->mInterceptedTouches = touchesInside;
+
+			if( find( mViewsWithTouches.begin(), mViewsWithTouches.end(), view ) == mViewsWithTouches.end() ) {
+				mViewsWithTouches.push_back( view );
+			}
+
+			event.setHandled();
 			return;
 		}
 	}
@@ -304,9 +310,8 @@ void Graph::propagateTouchesBegan( ViewRef &view, app::TouchEvent &event, size_t
 			mViewsWithTouches.push_back( view );
 		}
 
-		if( numTouchesHandled == mCurrentTouchEvent.getTouches().size() ) {
-			event.setHandled();
-		}
+		// Allow other app signal connections to respond to the event with remaining touches if not all were handled
+		event.setHandled( numTouchesHandled == mCurrentTouchEvent.getTouches().size() );
 
 		UI_LOG_TOUCHES( "handled: " << event.isHandled() );
 	}
@@ -318,43 +323,60 @@ void Graph::propagateTouchesMoved( app::TouchEvent &event )
 	for( const auto &touch : event.getTouches() )
 		mActiveTouches[touch.getId()] = touch;
 
-//	size_t numTouchesHandled = 0;
+	size_t numTouchesHandled = 0;
 
 	for( auto &view : mViewsWithTouches ) {
-//		UI_LOG_TOUCHES( view->getName() << " | num touches A: " << event.getTouches().size() );
+		//UI_LOG_TOUCHES( view->getName() << " | num touches A: " << event.getTouches().size() );
 
-		CI_ASSERT( ! view->mActiveTouches.empty() );
-		// Update active touches
-		vector<app::TouchEvent::Touch> touchesContinued;
-		for( const auto &touch : mCurrentTouchEvent.getTouches() ) {
-			auto touchIt = view->mActiveTouches.find( touch.getId() );
-			if( touchIt == view->mActiveTouches.end() )
-				continue;
+		// update intercepted touches
+		if( ! view->mInterceptedTouches.empty() ) {
+			for( auto &touch : view->mInterceptedTouches ) {
+				auto it = find_if( mCurrentTouchEvent.getTouches().begin(), mCurrentTouchEvent.getTouches().end(),
+					[&touch]( const auto &t ) { return touch.getId() == t.getId(); }
+				);
 
-			view->mActiveTouches[touch.getId()] = touch;
-			touchesContinued.push_back( touch );
+				if( it != mCurrentTouchEvent.getTouches().end() ) {
+					touch = *it;
+					UI_LOG_TOUCHES( view->getName() << " | intercepted touch updated, id " << touch.getId() << ", pos: " << touch.getPos() );
+				}
+			}
 		}
 
-//		UI_LOG_TOUCHES( view->getName() << " | num touchesContinued: " << touchesContinued.size() );
+		// Update active touches
+		if( ! view->mActiveTouches.empty() ) {
+			vector<app::TouchEvent::Touch> touchesContinued;
+			for( const auto &touch : mCurrentTouchEvent.getTouches() ) {
+				auto it = view->mActiveTouches.find( touch.getId() );
+				if( it == view->mActiveTouches.end() )
+					continue;
 
-		if( ! touchesContinued.empty() ) {
-			event.getTouches() = touchesContinued;
-			view->touchesMoved( event );
+				view->mActiveTouches[touch.getId()] = touch;
+				touchesContinued.push_back( touch );
+			}
 
-			// for now always updating the active touch in touch map
-//			for( auto &touch : event.getTouches() ) {
-//				if( touch.isHandled() ) {
-//					numTouchesHandled++;
-//					view->mActiveTouches.at( touch.getId() ) = touch;
-//				}
-//			}
+			//UI_LOG_TOUCHES( view->getName() << " | num touchesContinued: " << touchesContinued.size() );
+
+			if( ! touchesContinued.empty() ) {
+				event.getTouches() = touchesContinued;
+				view->touchesMoved( event );
+
+				// for now always updating the active touch in touch map
+				//for( auto &touch : event.getTouches() ) {
+				//	if( touch.isHandled() ) {
+				//		numTouchesHandled++;
+				//		view->mActiveTouches.at( touch.getId() ) = touch;
+				//	}
+				//}
+			}
 		}
 	}
 
-//	if( numTouchesHandled == mCurrentTouchEvent.getTouches().size() ) {
-//		event.setHandled();
-//	}
-//	UI_LOG_TOUCHES( "handled: " << event.isHandled() );
+	// Allow other app signal connections to respond to the event with remaining touches if not all were handled
+	// TODO: probably need above commented out for loop to be enabled for this to work
+	//		 - and to also account for intercepted touches
+	//event.setHandled( numTouchesHandled == mCurrentTouchEvent.getTouches().size() );
+
+	//UI_LOG_TOUCHES( "handled: " << event.isHandled() );
 }
 
 void Graph::propagateTouchesEnded( app::TouchEvent &event )

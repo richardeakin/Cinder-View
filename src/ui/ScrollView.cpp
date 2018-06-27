@@ -54,7 +54,7 @@ ScrollView::ScrollView( const ci::Rectf &bounds )
 	: View( bounds )
 {
 	setClipEnabled();
-	//setInterceptsTouches();
+	setInterceptsTouches();
 
 	mContentView = make_shared<ContentView>( this );
 	mContentView->setLabel( "ScrollView-ContentView" );
@@ -260,6 +260,11 @@ void ScrollView::updateContentViewOffset( const vec2 &offset )
 	mContentView->setPos( - mContentOffset() );
 }
 
+const Rectf& ScrollView::getDeceleratingBoundaries() const
+{
+	return mOffsetBoundaries;
+}
+
 // ----------------------------------------------------------------------------------------------------
 // Events
 // ----------------------------------------------------------------------------------------------------
@@ -339,9 +344,10 @@ bool ScrollView::shouldInterceptTouches( std::vector<ci::app::TouchEvent::Touch>
 	return true;
 }
 
-const Rectf& ScrollView::getDeceleratingBoundaries() const
+bool ScrollView::shouldInterceptedTouchesContinue( std::vector<ci::app::TouchEvent::Touch> &touches )
 {
-	return mOffsetBoundaries;
+	// TODO NEXT: use SwipeTracker to determine if we are swiping and just count it as a regular touch
+	return false;
 }
 
 // ----------------------------------------------------------------------------------------------------

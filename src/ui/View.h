@@ -191,6 +191,7 @@ class CI_UI_API View : public std::enable_shared_from_this<View> {
 	bool	getInterceptsTouches() const				{ return mInterceptsTouches; }
 
 	virtual bool	shouldInterceptTouches( std::vector<ci::app::TouchEvent::Touch> &touches )	{ return false; }
+	virtual bool	shouldInterceptedTouchesContinue( std::vector<ci::app::TouchEvent::Touch> &touches )	{ return false; }
 
 	//! This is done when the world position should be recalculated but calling layout isn't necessary (ex. when ScrollView offset moves)
 	void	setWorldPosDirty();
