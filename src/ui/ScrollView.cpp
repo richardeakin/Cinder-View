@@ -29,8 +29,8 @@ using namespace std;
 //#define LOG_SCROLL_CONTENT( stream )	CI_LOG_I( stream )
 #define LOG_SCROLL_CONTENT( stream )	( (void)( 0 ) )
 
-//#define LOG_SCROLL_TRACKING( stream )	CI_LOG_I( stream )
-#define LOG_SCROLL_TRACKING( stream )	( (void)( 0 ) )
+#define LOG_SCROLL_TRACKING( stream )	CI_LOG_I( stream )
+////#define LOG_SCROLL_TRACKING( stream )	( (void)( 0 ) )
 
 namespace ui {
 
@@ -277,7 +277,7 @@ bool ScrollView::touchesBegan( app::TouchEvent &event )
 
 	auto &firstTouch = event.getTouches().front();
 	vec2 pos = toLocal( firstTouch.getPos() );
-	LOG_SCROLL_TRACKING( "pos:" << pos );
+	LOG_SCROLL_TRACKING( "intercepting touches: " << mInterceptedTouches.size() << ",  pos:" << pos );
 
 	mSwipeTracker->clear();
 	mSwipeTracker->storeTouchPos( pos, getGraph()->getElapsedSeconds() );
@@ -297,6 +297,8 @@ bool ScrollView::touchesMoved( app::TouchEvent &event )
 	updateOffset( pos, lastPos );
 	mSwipeTracker->storeTouchPos( pos, getGraph()->getElapsedSeconds() );
 	
+	LOG_SCROLL_TRACKING( "intercepting touches: " << mInterceptedTouches.size() << ",  pos:" << pos );
+
 	if( ! mDragging ) {
 		mDragging = true;
 		mSignalDragBegin.emit();

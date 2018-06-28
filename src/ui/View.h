@@ -184,7 +184,12 @@ class CI_UI_API View : public std::enable_shared_from_this<View> {
 	ci::signals::Signal<void ()>&	getSignalViewDidLayout()	{ return mSignalViewDidLayout; }
 
 
+	// ----
+	// TODO: cleanup intercept ivars
 	bool mInterceptsTouches = false;
+	std::vector<ci::app::TouchEvent::Touch>		mInterceptedTouches;
+	// ----
+
 	//!
 	void	setInterceptsTouches( bool enable = true ) { mInterceptsTouches = true; }
 	//!
@@ -234,7 +239,6 @@ class CI_UI_API View : public std::enable_shared_from_this<View> {
 	typedef std::map<uint32_t, ci::app::TouchEvent::Touch> TouchMapT; // TODO just store this as vector and use std::find (you hardly have more than 10 touches)
 
 	TouchMapT				mActiveTouches;
-	std::vector<ci::app::TouchEvent::Touch>		mInterceptedTouches;
 
 	bool					mInteractive = true;
 	bool					mHidden = false;

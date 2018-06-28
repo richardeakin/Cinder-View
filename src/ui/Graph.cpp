@@ -100,6 +100,15 @@ void Graph::layout()
 
 void Graph::propagateUpdate()
 {
+	// check what intercepting views should concede touches
+	for( auto &view : mViewsWithTouches ) {
+		if( ! view->mInterceptedTouches.empty() ) {
+			if( view->shouldInterceptedTouchesContinue( view->mInterceptedTouches ) ) {
+				// TODO: allow touches to proceed to children
+			}
+		}
+	}
+
 	mLayer->update();
 
 	for( auto layerIt = mLayers.begin(); layerIt != mLayers.end(); /* */ ) {
@@ -340,6 +349,11 @@ void Graph::propagateTouchesMoved( app::TouchEvent &event )
 					UI_LOG_TOUCHES( view->getName() << " | intercepted touch updated, id " << touch.getId() << ", pos: " << touch.getPos() );
 				}
 			}
+
+			// call touchesMoved() on view intercepting the event
+			auto interceptEvent = event;
+			interceptEvent.getTouches() = view->mInterceptedTouches;
+			view->touchesMoved( interceptEvent );
 		}
 
 		// Update active touches
@@ -386,37 +400,62 @@ void Graph::propagateTouchesEnded( app::TouchEvent &event )
 
 	for( auto viewIt = mViewsWithTouches.begin(); viewIt != mViewsWithTouches.end(); /* */ ) {
 		auto &view = *viewIt;
-		UI_LOG_TOUCHES( view->getName() << " | num active touches: " << view->mActiveTouches.size() );
+		UI_LOG_TOUCHES( view->getName() << " | num active touches: " << view->mActiveTouches.size() << ", intercepting touches: " << view->mInterceptedTouches.size() );
 
-		CI_ASSERT( ! view->mActiveTouches.empty() );
-		// Update active touches
-		vector<app::TouchEvent::Touch> touchesEnded;
-		for( const auto &touch : mCurrentTouchEvent.getTouches() ) {
-			auto touchIt = view->mActiveTouches.find( touch.getId() );
-			if( touchIt == view->mActiveTouches.end() )
-				continue;
+		// Update intercepting touches, at this point they can just be removed
+		if( ! view->mInterceptedTouches.empty() ) {
+			// TODO (intercept): if I'm calling touchesBegan() / touchesMoved() for intercepted touches, need to also deliver a touchesEnded()?
+			// TODO (intercept): if code stays this similar to touchesMoved() then break out into different method
+			for( auto &touch : view->mInterceptedTouches ) {
+				auto it = find_if( mCurrentTouchEvent.getTouches().begin(), mCurrentTouchEvent.getTouches().end(),
+					[&touch]( const auto &t ) { return touch.getId() == t.getId(); }
+				);
 
-			view->mActiveTouches[touch.getId()] = touch;
-			touchesEnded.push_back( touch );
-		}
-
-		UI_LOG_TOUCHES( view->getName() << " | num touchesEnded: " << touchesEnded.size() );
-
-		if( ! touchesEnded.empty() ) {
-			event.getTouches() = touchesEnded;
-			view->touchesEnded( event );
-
-			for( const auto &touch : touchesEnded ) {
-				view->mActiveTouches.erase( touch.getId() );
+				if( it != mCurrentTouchEvent.getTouches().end() ) {
+					touch = *it;
+					UI_LOG_TOUCHES( view->getName() << " | intercepted touch updated, id " << touch.getId() << ", pos: " << touch.getPos() );
+				}
 			}
+
+			// call toucheended() on view intercepting the event
+			auto interceptEvent = event;
+			interceptEvent.getTouches() = view->mInterceptedTouches;
+			view->touchesEnded( interceptEvent );
+
+			viewIt = mViewsWithTouches.erase( viewIt );
+			continue;
 		}
 
-		// remove View from container once all its active touches have ended
-		if( view->mActiveTouches.empty() ) {
-			viewIt = mViewsWithTouches.erase( viewIt );
-		}
-		else {
-			++viewIt;
+		// Update active touches
+		if( ! view->mActiveTouches.empty() ) {
+			vector<app::TouchEvent::Touch> touchesEnded;
+			for( const auto &touch : mCurrentTouchEvent.getTouches() ) {
+				auto touchIt = view->mActiveTouches.find( touch.getId() );
+				if( touchIt == view->mActiveTouches.end() )
+					continue;
+
+				view->mActiveTouches[touch.getId()] = touch;
+				touchesEnded.push_back( touch );
+			}
+
+			UI_LOG_TOUCHES( view->getName() << " | num touchesEnded: " << touchesEnded.size() );
+
+			if( ! touchesEnded.empty() ) {
+				event.getTouches() = touchesEnded;
+				view->touchesEnded( event );
+
+				for( const auto &touch : touchesEnded ) {
+					view->mActiveTouches.erase( touch.getId() );
+				}
+			}
+
+			// remove View from container once all its active touches have ended
+			if( view->mActiveTouches.empty() ) {
+				viewIt = mViewsWithTouches.erase( viewIt );
+			}
+			else {
+				++viewIt;
+			}
 		}
 	}
 
