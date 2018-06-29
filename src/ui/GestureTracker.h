@@ -62,7 +62,7 @@ class CI_UI_API SwipeTracker {
   private:
 	struct StoredTouch {
 		ci::vec2	position;
-		double		eventSeconds;
+		double		eventSeconds = -1;
 	};
 
 	std::list<StoredTouch>	mStoredTouches;
