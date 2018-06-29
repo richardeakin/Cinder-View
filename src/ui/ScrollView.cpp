@@ -314,7 +314,7 @@ bool ScrollView::touchesEnded( app::TouchEvent &event )
 {
 	vec2 pos = toLocal( event.getTouches().front().getPos() );
 	vec2 lastPos = mSwipeTracker->getLastTouchPos();
-	LOG_SCROLL_TRACKING( "pos:" << pos );
+	LOG_SCROLL_TRACKING( "intercepting touches: " << mInterceptedTouches.size() << ",  pos:" << pos );
 
 	updateOffset( pos, lastPos );
 	mSwipeTracker->storeTouchPos( pos, getGraph()->getElapsedSeconds() );
@@ -341,14 +341,33 @@ bool ScrollView::shouldInterceptTouches( std::vector<ci::app::TouchEvent::Touch>
 	// - need to indicate back to color which touches?
 	//     - might be able to do that by calling setHandled() on the touch itself
 
-	CI_LOG_I( "intercepted touches: " << touches.size() );
+	LOG_SCROLL_TRACKING( "frame: " << getGraph()->getCurrentFrame() << ", touches: " << touches.size() );
+
 
 	return true;
 }
 
 bool ScrollView::shouldInterceptedTouchesContinue( std::vector<ci::app::TouchEvent::Touch> &touches )
 {
-	// TODO NEXT: use SwipeTracker to determine if we are swiping and just count it as a regular touch
+	CI_ASSERT( mSwipeTracker->getNumStoredTouches() > 0 );
+
+	const double durationForTap = 0.03f;
+
+	double duration = mSwipeTracker->getLastTouchTime() - mSwipeTracker->getFirstTouchTime();
+
+	vec2 dist = mSwipeTracker->calcSwipeDistance(); // TODO: use
+
+	LOG_SCROLL_TRACKING( "frame: " << getGraph()->getCurrentFrame() << ", touches: " << touches.size() << ", dragging: " << mDragging << ", gesture duration: " << duration << ", dist: " << dist );
+
+	// determine if complete gesture duration was short enough to be considered a tap
+	// TODO NEXT: mDragging isn't set during touchesBegan() currently - should it?
+	// - otherwise need to know that there is an active touch being processed.
+	// - maybe an intercepted touch should go through the full touchesBegan() procedure instead of immediately returning?
+	if( ! mDragging && duration < durationForTap ) {
+		LOG_SCROLL_TRACKING( "\t- tap: allow touch to continue." );
+		return true;
+	}
+
 	return false;
 }
 

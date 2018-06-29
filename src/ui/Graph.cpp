@@ -104,7 +104,7 @@ void Graph::propagateUpdate()
 	for( auto &view : mViewsWithTouches ) {
 		if( ! view->mInterceptedTouches.empty() ) {
 			if( view->shouldInterceptedTouchesContinue( view->mInterceptedTouches ) ) {
-				// TODO: allow touches to proceed to children
+				// TODO NEXT: allow touches to proceed to children
 			}
 		}
 	}
@@ -156,6 +156,7 @@ size_t Graph::getCurrentFrame() const
 	return app::getElapsedFrames();
 }
 
+// TODO: rename to getCurrentTime()
 double Graph::getElapsedSeconds() const
 {
 	return app::getElapsedSeconds();
@@ -268,21 +269,21 @@ void Graph::propagateTouchesBegan( ViewRef &view, app::TouchEvent &event, size_t
 
 	if( view->getInterceptsTouches() && view->shouldInterceptTouches( touchesInside ) ) {
 		// store touches inside in separate 'intercepted location
+		view->mInterceptedTouches = touchesInside;
 		if( view->touchesBegan( event ) ) {
-			// TODO: probably only want to store ones specified as 'intercepted' out of the touchesInside vector
-			// - might also want to do the touches.erase for individual touches marked as handled
-			view->mInterceptedTouches = touchesInside;
+			// TODO: might want to erase individual touches depending on if they were marked as handled
 
 			if( find( mViewsWithTouches.begin(), mViewsWithTouches.end(), view ) == mViewsWithTouches.end() ) {
 				mViewsWithTouches.push_back( view );
 			}
 
+			// TODO: only call this if all touches have been handled at this point 
 			event.setHandled();
 			return;
 		}
 	}
 
-	// TODO: this copy is currently necessary to prevent bad iterators if a view is added during the subview touchesBegan()
+	// TODO (optimization): this copy is currently necessary to prevent bad iterators if a view is added during the subview touchesBegan()
 	// - Might defer adding but need to think through how the ordering will be handled
 	auto subviews = view->mSubviews;
 	for( auto rIt = subviews.rbegin(); rIt != subviews.rend(); ++rIt ) {
@@ -341,7 +342,7 @@ void Graph::propagateTouchesMoved( app::TouchEvent &event )
 	size_t numTouchesHandled = 0;
 
 	for( auto &view : mViewsWithTouches ) {
-		//UI_LOG_TOUCHES( view->getName() << " | num touches A: " << event.getTouches().size() );
+		UI_LOG_TOUCHES( view->getName() << " | num touches A: " << event.getTouches().size() );
 
 		// update intercepted touches
 		if( ! view->mInterceptedTouches.empty() ) {
@@ -425,9 +426,9 @@ void Graph::propagateTouchesEnded( app::TouchEvent &event )
 
 			// call toucheended() on view intercepting the event
 			auto interceptEvent = event;
-			interceptEvent.getTouches() = view->mInterceptedTouches;
+			interceptEvent.getTouches() = view->mInterceptedTouches; // TODO: need to clear this at some point
 			view->touchesEnded( interceptEvent );
-
+			
 			viewIt = mViewsWithTouches.erase( viewIt );
 			continue;
 		}
@@ -471,7 +472,7 @@ void Graph::propagateTouchesEnded( app::TouchEvent &event )
 		if( numRemoved == 0 ) {
 			CI_LOG_W( "stray touch attempted to be removed" );
 		}
-		UI_LOG_TOUCHES( "touch: " << touch.getId() << ", num removed: " << numRemoved );
+		UI_LOG_TOUCHES( "touch id: " << touch.getId() << ", num removed: " << numRemoved );
 	}
 
 	mCurrentTouchEvent.getTouches().clear();
