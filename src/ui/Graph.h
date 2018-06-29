@@ -114,6 +114,8 @@ class CI_UI_API Graph : public View {
 	//!
 	double	getTargetFrameRate() const;
 	//!
+	size_t	getCurrentFrame() const;
+	//!
 	double	getElapsedSeconds() const;
 
   protected:

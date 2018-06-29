@@ -144,10 +144,16 @@ void Graph::propagateDraw()
 // ----------------------------------------------------------------------------------------------------
 // TODO: offer way to customize the framerate for the graph, and possibly update functionality with
 // fixed timestep ensured
+// - could keep member vars for these and make them settable
 
 double Graph::getTargetFrameRate() const
 {
 	return app::getFrameRate();
+}
+
+size_t Graph::getCurrentFrame() const
+{
+	return app::getElapsedFrames();
 }
 
 double Graph::getElapsedSeconds() const
