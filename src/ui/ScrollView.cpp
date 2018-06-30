@@ -335,7 +335,7 @@ bool ScrollView::touchesEnded( app::TouchEvent &event )
 	return true;
 }
 
-bool ScrollView::shouldInterceptTouches( std::vector<ci::app::TouchEvent::Touch> &touches )
+bool ScrollView::shouldInterceptTouches( ci::app::TouchEvent &event )
 {
 	// TODO: perform hit tests on content views and see if there is one under a touch that is interactive and non hidden
 	// - need to indicate back to color which touches?
@@ -347,7 +347,7 @@ bool ScrollView::shouldInterceptTouches( std::vector<ci::app::TouchEvent::Touch>
 	return true;
 }
 
-bool ScrollView::shouldInterceptedTouchesContinue( std::vector<ci::app::TouchEvent::Touch> &touches )
+bool ScrollView::shouldInterceptedTouchesContinue( ci::app::TouchEvent &event )
 {
 	CI_ASSERT( mSwipeTracker->getNumStoredTouches() > 0 );
 
@@ -361,9 +361,6 @@ bool ScrollView::shouldInterceptedTouchesContinue( std::vector<ci::app::TouchEve
 		<< ", interacting: " << isUserInteracting() << ", gesture duration: " << duration << ", dist: " << dist );
 
 	// determine if complete gesture duration was short enough to be considered a tap
-	// TODO NEXT: mDragging isn't set during touchesBegan() currently - should it?
-	// - otherwise need to know that there is an active touch being processed.
-	// - maybe an intercepted touch should go through the full touchesBegan() procedure instead of immediately returning?
 	if( ! isUserInteracting() && duration < durationForTap ) {
 		LOG_SCROLL_TRACKING( "\t- tap: allow touch to continue." );
 		return true;
