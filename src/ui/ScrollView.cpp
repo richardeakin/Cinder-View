@@ -357,13 +357,14 @@ bool ScrollView::shouldInterceptedTouchesContinue( std::vector<ci::app::TouchEve
 
 	vec2 dist = mSwipeTracker->calcSwipeDistance(); // TODO: use
 
-	LOG_SCROLL_TRACKING( "frame: " << getGraph()->getCurrentFrame() << ", touches: " << touches.size() << ", dragging: " << mDragging << ", gesture duration: " << duration << ", dist: " << dist );
+	LOG_SCROLL_TRACKING( "frame: " << getGraph()->getCurrentFrame() << ", touches: " << touches.size() << ", dragging: " << mDragging 
+		<< ", interacting: " << isUserInteracting() << ", gesture duration: " << duration << ", dist: " << dist );
 
 	// determine if complete gesture duration was short enough to be considered a tap
 	// TODO NEXT: mDragging isn't set during touchesBegan() currently - should it?
 	// - otherwise need to know that there is an active touch being processed.
 	// - maybe an intercepted touch should go through the full touchesBegan() procedure instead of immediately returning?
-	if( ! mDragging && duration < durationForTap ) {
+	if( ! isUserInteracting() && duration < durationForTap ) {
 		LOG_SCROLL_TRACKING( "\t- tap: allow touch to continue." );
 		return true;
 	}

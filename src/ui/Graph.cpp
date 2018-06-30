@@ -267,30 +267,35 @@ void Graph::propagateTouchesBegan( ViewRef &view, app::TouchEvent &event, size_t
 	if( touchesInside.empty() )
 		return;
 
+	bool intercepting = false;
 	if( view->getInterceptsTouches() && view->shouldInterceptTouches( touchesInside ) ) {
 		// store touches inside in separate 'intercepted location
 		view->mInterceptedTouches = touchesInside;
-		if( view->touchesBegan( event ) ) {
-			// TODO: might want to erase individual touches depending on if they were marked as handled
+		intercepting = true;
 
-			if( find( mViewsWithTouches.begin(), mViewsWithTouches.end(), view ) == mViewsWithTouches.end() ) {
-				mViewsWithTouches.push_back( view );
-			}
+		//if( view->touchesBegan( event ) ) {
+		//	// TODO: might want to erase individual touches depending on if they were marked as handled
 
-			// TODO: only call this if all touches have been handled at this point 
-			event.setHandled();
-			return;
-		}
+		//	if( find( mViewsWithTouches.begin(), mViewsWithTouches.end(), view ) == mViewsWithTouches.end() ) {
+		//		mViewsWithTouches.push_back( view );
+		//	}
+
+		//	 TODO: only call this if all touches have been handled at this point 
+		//	event.setHandled();
+		//	return;
+		//}
 	}
 
-	// TODO (optimization): this copy is currently necessary to prevent bad iterators if a view is added during the subview touchesBegan()
-	// - Might defer adding but need to think through how the ordering will be handled
-	auto subviews = view->mSubviews;
-	for( auto rIt = subviews.rbegin(); rIt != subviews.rend(); ++rIt ) {
-		event.getTouches() = touchesInside; // TODO: find a way to avoid making this copy per subview
-		propagateTouchesBegan( *rIt, event, numTouchesHandled, firstResponder );
-		if( event.isHandled() )
-			return;
+	if( ! intercepting ) {
+		// TODO (optimization): this copy is currently necessary to prevent bad iterators if a view is added during the subview touchesBegan()
+		// - Might defer adding but need to think through how the ordering will be handled
+		auto subviews = view->mSubviews;
+		for( auto rIt = subviews.rbegin(); rIt != subviews.rend(); ++rIt ) {
+			event.getTouches() = touchesInside; // TODO: find a way to avoid making this copy per subview
+			propagateTouchesBegan( *rIt, event, numTouchesHandled, firstResponder );
+			if( event.isHandled() )
+				return;
+		}
 	}
 
 	event.getTouches() = touchesInside;
