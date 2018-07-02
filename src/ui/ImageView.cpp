@@ -22,6 +22,7 @@
 */
 
 #include "ImageView.h"
+#include "cinder/gl/Batch.h"
 
 using namespace ci;
 using namespace std;
@@ -39,6 +40,25 @@ void ImageView::setImage( const ImageRef &image )
 	mImage = image;
 }
 
+void ImageView::setShader( const ci::gl::GlslProgRef &glsl )
+{
+	if( mBatch ) {
+		mBatch->replaceGlslProg( glsl );
+	}
+	else {
+		mBatch = gl::Batch::create( geom::Rect( Rectf( 0, 0, 1, 1 ) ),  glsl );
+	}
+}
+
+ci::gl::GlslProgRef	ImageView::getShader() const
+{
+	if( mBatch ) {
+		return mBatch->getGlslProg();
+	}
+
+	return nullptr;
+}
+
 void ImageView::draw( Renderer *ren )
 {
 	if( ! mImage )
@@ -53,7 +73,12 @@ void ImageView::draw( Renderer *ren )
 		ren->setColor( color );
 	}
 
-	ren->draw( mImage, getDestRectLocal() );
+	if( mBatch ) {
+		ren->draw( mImage, getDestRectLocal(), mBatch );
+	}
+	else {
+		ren->draw( mImage, getDestRectLocal() );
+	}
 }
 
 Rectf ImageView::getDestRectLocal() const

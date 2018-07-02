@@ -9,8 +9,10 @@ public:
 	void layout() override;
 	void update() override;
 
-private:
 	bool keyDown( ci::app::KeyEvent &event ) override;
+
+private:
+	void loadImageViewShader();
 
 	ui::ViewRef				mContainerView;
 	ui::StrokedRectViewRef	mBorderView;
