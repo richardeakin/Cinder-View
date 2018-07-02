@@ -167,8 +167,7 @@ size_t Graph::getCurrentFrame() const
 	return app::getElapsedFrames();
 }
 
-// TODO: rename to getCurrentTime()
-double Graph::getElapsedSeconds() const
+double Graph::getCurrentTime() const
 {
 	return app::getElapsedSeconds();
 }

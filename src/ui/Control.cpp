@@ -424,7 +424,7 @@ void TextField::draw( Renderer *ren )
 		Rectf cursorRect = { cursorLoc.x - cursorThickness / 2, 0, cursorLoc.x + cursorThickness / 2, getHeight() };
 
 		ColorA cursorColor = mBorderColorSelected;
-		cursorColor.a *= (float)( 1.0 - glm::pow( cos( getGraph()->getElapsedSeconds() * 2 ), 4 ) );
+		cursorColor.a *= (float)( 1.0 - glm::pow( cos( getGraph()->getCurrentTime() * 2 ), 4 ) );
 
 		// TODO: does this need more care to be correctly composited?
 		ren->pushBlendMode( ui::BlendMode::PREMULT_ALPHA );
@@ -1026,7 +1026,7 @@ void NumberBox::onTextInputCompleted()
 bool NumberBox::touchesBegan( app::TouchEvent &event )
 {
 	setTouchCanceled( false );
-	mTapTracker.processTouchesBegan( event, getGraph()->getElapsedSeconds() );
+	mTapTracker.processTouchesBegan( event, getGraph()->getCurrentTime() );
 
 	auto &firstTouch = event.getTouches().front();
 	mDragStartPos = toLocal( firstTouch.getPos() );
@@ -1051,7 +1051,7 @@ bool NumberBox::touchesMoved( app::TouchEvent &event )
 bool NumberBox::touchesEnded( app::TouchEvent &event )
 {
 	setTouchCanceled( false );
-	mTapTracker.processTouchesEnded( event, getGraph()->getElapsedSeconds() );
+	mTapTracker.processTouchesEnded( event, getGraph()->getCurrentTime() );
 
 	auto &firstTouch = event.getTouches().front();
 	vec2 pos = toLocal( firstTouch.getPos() );

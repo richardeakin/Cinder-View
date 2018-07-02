@@ -116,7 +116,7 @@ class CI_UI_API Graph : public View {
 	//!
 	size_t	getCurrentFrame() const;
 	//!
-	double	getElapsedSeconds() const;
+	double	getCurrentTime() const;
 
   protected:
 	void layout() override;
