@@ -278,16 +278,17 @@ void Graph::propagateTouchesBegan( ViewRef &view, app::TouchEvent &event, size_t
 	if( touchesInside.empty() )
 		return;
 
+	// First allow current View to intercept the event (skip if already intercepted)
 	event.getTouches() = touchesInside;
-
 	bool intercepting = false;
-	if( view->getInterceptsTouches() && view->shouldInterceptTouches( event ) ) {
+	if( view->getInterceptsTouches() && view->mInterceptedTouchEvent.getTouches().empty() && view->shouldInterceptTouches( event ) ) {
 		// store touches inside in separate 'intercepted location
 		// TODO: might want to erase individual touches depending on if they were marked as handled
 		view->mInterceptedTouchEvent = event;
 		intercepting = true;
 	}
 
+	// Allow children views to handle non-intercepted event before the current view
 	if( ! intercepting ) {
 		// TODO (optimization): this copy is currently necessary to prevent bad iterators if a view is added during the subview touchesBegan()
 		// - Might defer adding but need to think through how the ordering will be handled
@@ -308,21 +309,16 @@ void Graph::propagateTouchesBegan( ViewRef &view, app::TouchEvent &event, size_t
 				view->mActiveTouches[touch.getId()] = touch;
 				numTouchesHandled++;
 				numTouchesHandledThisView++;
+				UI_LOG_TOUCHES( view->getName() << " | handled touch: " << touch.getId() << ", total handled: " << numTouchesHandled << ", in this view: " << numTouchesHandledThisView );
 			}
 		}
-
-		UI_LOG_TOUCHES( view->getName() << " | numTouchesHandled: " << numTouchesHandled );
 
 		// Remove active touches. Note: I'm having to do this outside of the above loop because I can't invalidate the vector::iterator
 		touches.erase(
 			remove_if( touches.begin(), touches.end(),
-				[&view]( const app::TouchEvent::Touch &touch ) {
-					if( touch.isHandled() ) {
-						UI_LOG_TOUCHES( view->getName() << " | handled touch: " << touch.getId() );
-					}
-					return touch.isHandled();
-				} ),
-			touches.end() );
+				[]( const app::TouchEvent::Touch &touch ) { return touch.isHandled(); } ),
+			touches.end()
+		);
 
 		UI_LOG_TOUCHES( view->getName() << " | num touches C: " << event.getTouches().size() );
 		
@@ -333,7 +329,7 @@ void Graph::propagateTouchesBegan( ViewRef &view, app::TouchEvent &event, size_t
 		// Allow other app signal connections to respond to the event with remaining touches if not all were handled
 		event.setHandled( numTouchesHandled == mCurrentTouchEvent.getTouches().size() );
 
-		UI_LOG_TOUCHES( "handled: " << event.isHandled() );
+		UI_LOG_TOUCHES( "handled: " << boolalpha << event.isHandled() << dec );
 	}
 }
 

@@ -277,7 +277,7 @@ bool ScrollView::touchesBegan( app::TouchEvent &event )
 
 	auto &firstTouch = event.getTouches().front();
 	vec2 pos = toLocal( firstTouch.getPos() );
-	LOG_SCROLL_TRACKING( "intercepting touches: " << mInterceptedTouches.size() << ",  pos:" << pos );
+	LOG_SCROLL_TRACKING( "intercepting touches: " << mInterceptedTouchEvent.getTouches().size() << ",  pos:" << pos );
 
 	mSwipeTracker->clear();
 	mSwipeTracker->storeTouchPos( pos, getGraph()->getElapsedSeconds() );
@@ -297,7 +297,7 @@ bool ScrollView::touchesMoved( app::TouchEvent &event )
 	updateOffset( pos, lastPos );
 	mSwipeTracker->storeTouchPos( pos, getGraph()->getElapsedSeconds() );
 	
-	LOG_SCROLL_TRACKING( "intercepting touches: " << mInterceptedTouches.size() << ",  pos:" << pos );
+	LOG_SCROLL_TRACKING( "intercepting touches: " << mInterceptedTouchEvent.getTouches().size() << ",  pos:" << pos );
 
 	if( ! mDragging ) {
 		mDragging = true;
@@ -314,7 +314,7 @@ bool ScrollView::touchesEnded( app::TouchEvent &event )
 {
 	vec2 pos = toLocal( event.getTouches().front().getPos() );
 	vec2 lastPos = mSwipeTracker->getLastTouchPos();
-	LOG_SCROLL_TRACKING( "intercepting touches: " << mInterceptedTouches.size() << ",  pos:" << pos );
+	LOG_SCROLL_TRACKING( "intercepting touches: " << mInterceptedTouchEvent.getTouches().size() << ",  pos:" << pos );
 
 	updateOffset( pos, lastPos );
 	mSwipeTracker->storeTouchPos( pos, getGraph()->getElapsedSeconds() );
@@ -341,7 +341,7 @@ bool ScrollView::shouldInterceptTouches( ci::app::TouchEvent &event )
 	// - need to indicate back to color which touches?
 	//     - might be able to do that by calling setHandled() on the touch itself
 
-	LOG_SCROLL_TRACKING( "frame: " << getGraph()->getCurrentFrame() << ", touches: " << touches.size() );
+	LOG_SCROLL_TRACKING( "frame: " << getGraph()->getCurrentFrame() << ", touches: " << event.getTouches().size() );
 
 
 	return true;
@@ -351,13 +351,13 @@ bool ScrollView::shouldInterceptedTouchesContinue( ci::app::TouchEvent &event )
 {
 	CI_ASSERT( mSwipeTracker->getNumStoredTouches() > 0 );
 
-	const double durationForTap = 0.03f;
+	const double durationForTap = 0.05f; // 3.0f / 60;
 
 	double duration = mSwipeTracker->getLastTouchTime() - mSwipeTracker->getFirstTouchTime();
 
 	vec2 dist = mSwipeTracker->calcSwipeDistance(); // TODO: use
 
-	LOG_SCROLL_TRACKING( "frame: " << getGraph()->getCurrentFrame() << ", touches: " << touches.size() << ", dragging: " << mDragging 
+	LOG_SCROLL_TRACKING( "frame: " << getGraph()->getCurrentFrame() << ", touches: " << event.getTouches().size() << ", dragging: " << mDragging 
 		<< ", interacting: " << isUserInteracting() << ", gesture duration: " << duration << ", dist: " << dist );
 
 	// determine if complete gesture duration was short enough to be considered a tap
