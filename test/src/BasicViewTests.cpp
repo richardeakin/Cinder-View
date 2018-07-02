@@ -4,6 +4,7 @@
 #include "cinder/Rand.h"
 #include "cinder/Timeline.h"
 #include "cinder/Log.h"
+#include "cinder/gl/GlslProg.h"
 
 using namespace std;
 using namespace ci;
@@ -124,7 +125,7 @@ BasicViewTests::BasicViewTests()
 	mImageView->addSubview( imageBorder );
 	fs::path imageFilePath = app::getAssetPath( "images/monkey_hitchhike.jpg" );
 	try {
-		CI_LOG_I( "loading image view.." );
+		CI_LOG_I( "loading image for ImageView.." );
 		auto image = make_shared<ui::Image>( loadImage( loadFile( imageFilePath ) ) );
 		mImageView->setImage( image );
 		CI_LOG_I( "complete" );
@@ -132,6 +133,8 @@ BasicViewTests::BasicViewTests()
 	catch( std::exception &exc ) {
 		CI_LOG_EXCEPTION( "failed to load image at path: " << imageFilePath, exc );
 	}
+
+	loadImageViewShader();
 
 	mContainerView->addSubviews( { mLabel, mLabelClipped, mLabelGrid, mImageView } );
 	addSubview( mContainerView );
@@ -210,6 +213,58 @@ bool BasicViewTests::keyDown( app::KeyEvent &event )
 	}
 
 	return handled;
+}
+
+void BasicViewTests::loadImageViewShader()
+{
+	const string IMAGEVIEW_VERT = R"(
+	#version 400
+
+	uniform mat4 ciModelViewProjection;
+
+	uniform vec2 uPositionOffset, uPositionScale;
+	uniform vec2 uTexCoordOffset, uTexCoordScale;
+
+	in vec4 ciPosition;
+	in vec2 ciTexCoord0;
+	in vec4 ciColor;
+
+	out highp vec2 vTexCoord;
+	out lowp vec4 vColor;
+
+	void main()
+	{
+		gl_Position = ciModelViewProjection * ciPosition;
+		vTexCoord = ciTexCoord0;
+		vColor = ciColor;
+	}
+	)";
+
+	const string IMAGEVIEW_FRAG = R"(
+	#version 400
+
+	uniform sampler2D uTex0;
+
+	in vec2	vTexCoord;
+	in vec4 vColor;
+
+	out vec4 oFragColor;
+
+	void main()
+	{
+		oFragColor = texture( uTex0, vTexCoord.st ) * vColor;
+	}
+	)";
+
+	// load custom shader for ImageView
+	try {
+		auto glsl = gl::GlslProg::create( IMAGEVIEW_VERT, IMAGEVIEW_FRAG );
+		mImageView->setShader( glsl );
+		CI_LOG_I( "loaded shader for ImageView" );
+	}
+	catch( Exception &exc ) {
+		CI_LOG_EXCEPTION( "failed to load glsl for ImageView", exc );
+	}
 }
 
 void BasicViewTests::update()

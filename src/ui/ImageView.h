@@ -26,6 +26,16 @@
 #include "ui/View.h"
 #include "ui/Image.h"
 
+namespace cinder {
+
+namespace gl {
+
+typedef std::shared_ptr<class Batch>		BatchRef;
+typedef std::shared_ptr<class GlslProg>     GlslProgRef;
+
+} } // namespace cinder::gl
+
+
 namespace ui {
 
 typedef std::shared_ptr<class ImageView>	ImageViewRef;
@@ -59,6 +69,9 @@ class CI_UI_API ImageView : public View {
 	const ci::Color&		getColor() const					{ return mColor; }
 	ci::Anim<ci::Color>*	getColorAnim()						{ return &mColor; }
 
+	void setShader( const ci::gl::GlslProgRef &glsl );
+	ci::gl::GlslProgRef	getShader() const;
+
   protected:
 	void draw( Renderer *ren ) override;
 
@@ -66,6 +79,7 @@ class CI_UI_API ImageView : public View {
 	ImageRef				mImage;
 	ImageScaleMode			mScaleMode = ImageScaleMode::FIT;
 	ci::Anim<ci::Color>		mColor = ci::Color::white();
+	ci::gl::BatchRef		mBatch;
 };
 
 
