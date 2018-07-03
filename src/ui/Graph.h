@@ -124,7 +124,11 @@ class CI_UI_API Graph : public View {
   private:
 	LayerRef makeLayer( View *rootView );
 
-	void propagateTouchesBegan( ViewRef &view, ci::app::TouchEvent &event, size_t &numTouchesHandled, ViewRef &firstResponder );
+	void propagateTouchesBegan( const ViewRef &view, ci::app::TouchEvent &event, size_t &numTouchesHandled, ViewRef &firstResponder );
+	
+	void updateViewsInterceptingTouches();
+	//! Returns true if view should be erased from mViewsWithTouches and the intercepted event was released.
+	bool updateInterceptingTouches( const ViewRef &view );
 
 #if 0
 	void propagateKeyDown( ViewRef &view, ci::app::KeyEvent &event );

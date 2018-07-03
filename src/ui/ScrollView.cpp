@@ -347,11 +347,11 @@ bool ScrollView::shouldInterceptTouches( ci::app::TouchEvent &event )
 	return true;
 }
 
-bool ScrollView::shouldInterceptedTouchesContinue( ci::app::TouchEvent &event )
+bool ScrollView::shouldViewReleaseInterceptingTouches( ci::app::TouchEvent &event )
 {
 	CI_ASSERT( mSwipeTracker->getNumStoredTouches() > 0 );
 
-	const double durationForTap = 0.05f; // 3.0f / 60;
+	const double durationForTap = 0.35f; // 3.0f / 60;
 
 	double duration = mSwipeTracker->getLastTouchTime() - mSwipeTracker->getFirstTouchTime();
 

@@ -81,13 +81,14 @@ ScrollTests::ScrollTests()
 	auto scrollBorder = make_shared<ui::StrokedRectView>();
 	scrollBorder->setFillParentEnabled();
 	scrollBorder->setColor( ColorA( 0.9f, 0.5f, 0.0f, 0.7f ) );
-	mScrollViewFree->addSubview( scrollBorder );
+	//mScrollViewFree->addSubview( scrollBorder );
 
 	// add some content views:
 	auto custom = make_shared<CustomView>( Rectf( 40, 30, 180, 130 ) );
 
 	auto button = make_shared<ui::Button>( Rectf( 200, 30, 300, 70 ) );
 	button->setTitle( "tap me" );
+	button->setLabel( "Button ('tap me')" );
 	button->setTitleColor( Color( 0, 0.2f, 0.8f ) );
 	button->setColor( Color( 0.6f, 0.6f, 0.8f ), ui::Button::State::PRESSED );
 	button->getSignalPressed().connect( [] { CI_LOG_V( "button pressed" ); } );

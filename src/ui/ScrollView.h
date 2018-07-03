@@ -123,7 +123,7 @@ class CI_UI_API ScrollView : public View {
 	bool touchesEnded( ci::app::TouchEvent &event )	override;
 
 	bool shouldInterceptTouches( ci::app::TouchEvent &event ) override;
-	bool shouldInterceptedTouchesContinue( ci::app::TouchEvent &event ) override;
+	bool shouldViewReleaseInterceptingTouches( ci::app::TouchEvent &event ) override;
 
 	virtual void				onDecelerationEnded();
 	virtual const ci::Rectf&	getDeceleratingBoundaries() const;
