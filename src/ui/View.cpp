@@ -328,6 +328,11 @@ void View::setFillParentEnabled( bool enable )
 void View::setNeedsLayout()
 {
 	mNeedsLayout = true;
+
+	for( const auto &subview : mSubviews ) {
+		if( subview->mFillParent )
+			subview->setNeedsLayout();
+	}
 }
 
 void View::layoutIfNeeded()
@@ -391,19 +396,19 @@ void View::updateImpl()
 {
 	CI_ASSERT( mGraph );
 
-	// if bounds is animating, update background's position and size, propagate layout
-	bool needsLayout = mNeedsLayout;
 	bool hasBackground = (bool)mBackground;
 	bool needsLayer = false;
 
+	// if pos is animating, update background and world pos
 	if( ! mPos.isComplete() ) {
 		if( hasBackground )
 			mBackground->setPos( getPos() );
 
 		setWorldPosDirty();
 	}
+	// if size is animating, update background and layout
 	if( ! mSize.isComplete() ) {
-		needsLayout = true;
+		setNeedsLayout();
 		if( hasBackground )
 			mBackground->setSize( getSize() );
 	}
@@ -429,7 +434,7 @@ void View::updateImpl()
 			getGraph()->removeLayer( mLayer );
 	}
 
-	if( needsLayout )
+	if( needsLayout() )
 		layoutImpl();
 
 	if( hasBackground ) {
