@@ -362,7 +362,7 @@ bool ScrollView::shouldViewReleaseInterceptingTouches( ci::app::TouchEvent &even
 
 	// determine if complete gesture duration was short enough to be considered a tap
 	if( ! isUserInteracting() && duration < durationForTap ) {
-		LOG_SCROLL_TRACKING( "\t- tap: allow touch to continue." );
+		LOG_SCROLL_TRACKING( "\t- gesture under minimimum duration: return true." );
 		return true;
 	}
 

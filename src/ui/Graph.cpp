@@ -330,7 +330,7 @@ void Graph::propagateTouchesBegan( const ViewRef &view, app::TouchEvent &event, 
 				view->mActiveTouches[touch.getId()] = touch;
 				numTouchesHandled++;
 				numTouchesHandledThisView++;
-				UI_LOG_TOUCHES( view->getName() << " | handled touch: " << touch.getId() << ", total handled: " << numTouchesHandled << ", in this view: " << numTouchesHandledThisView );
+				UI_LOG_TOUCHES( view->getName() << " | handled touch with id: " << touch.getId() << ", total handled: " << numTouchesHandled << ", in this view: " << numTouchesHandledThisView );
 			}
 		}
 
@@ -350,7 +350,7 @@ void Graph::propagateTouchesBegan( const ViewRef &view, app::TouchEvent &event, 
 		// Allow other app signal connections to respond to the event with remaining touches if not all were handled
 		event.setHandled( numTouchesHandled == mCurrentTouchEvent.getTouches().size() );
 
-		UI_LOG_TOUCHES( "handled: " << boolalpha << event.isHandled() << dec );
+		UI_LOG_TOUCHES( "event handled: " << boolalpha << event.isHandled() << dec );
 	}
 }
 
@@ -418,7 +418,7 @@ void Graph::propagateTouchesMoved( app::TouchEvent &event )
 	//		 - and to also account for intercepted touches
 	//event.setHandled( numTouchesHandled == mCurrentTouchEvent.getTouches().size() );
 
-	//UI_LOG_TOUCHES( "handled: " << event.isHandled() );
+	//UI_LOG_TOUCHES( "event handled: " << event.isHandled() );
 }
 
 void Graph::propagateTouchesEnded( app::TouchEvent &event )
@@ -473,6 +473,7 @@ void Graph::propagateTouchesEnded( app::TouchEvent &event )
 			// - if the view is intercepting a touch, then updateViewsInterceptingTouches() will clear it later
 			if( intercepting ) {
 				updateInterceptingTouches( view ); // TODO: ignoring bool return value here. necessary elsewhere (in update loop)
+				view->mInterceptedTouchEvent = {};
 			}
 
 			if( view->mActiveTouches.empty() ) {
