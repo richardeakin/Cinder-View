@@ -90,9 +90,9 @@ ScrollTests::ScrollTests()
 	button->setTitle( "tap me" );
 	button->setLabel( "Button ('tap me')" );
 	button->setTitleColor( Color( 0, 0.2f, 0.8f ) );
-	button->setColor( Color( 0.6f, 0.6f, 0.8f ), ui::Button::State::PRESSED );
-	button->getSignalPressed().connect( [] { CI_LOG_V( "button pressed" ); } );
-	button->getSignalReleased().connect( [] { CI_LOG_V( "button released" ); } );
+	button->setColor( Color( 0.4f, 0.6f, 0.9f ), ui::Button::State::PRESSED );
+	button->getSignalPressed().connect( [] { CI_LOG_I( "button pressed" ); } );
+	button->getSignalReleased().connect( [] { CI_LOG_I( "button released" ); } );
 
 	auto imageView = make_shared<ui::ImageView>( Rectf( 40, 150, 600, 600 ) );
 	imageView->getBackground()->setColor( Color( 0, 0.2f, 0 ) );

@@ -343,7 +343,6 @@ bool ScrollView::shouldInterceptTouches( ci::app::TouchEvent &event )
 
 	LOG_SCROLL_TRACKING( "frame: " << getGraph()->getCurrentFrame() << ", touches: " << event.getTouches().size() );
 
-
 	return true;
 }
 
@@ -351,19 +350,31 @@ bool ScrollView::shouldViewReleaseInterceptingTouches( ci::app::TouchEvent &even
 {
 	CI_ASSERT( mSwipeTracker->getNumStoredTouches() > 0 );
 
-	const double durationForTap = 0.35f; // 3.0f / 60;
+	const double durationConsideredTap = 0.35f; // 0.05f = 3.0f / 60;
+	const vec2 distConsideredDrag = vec2( 10.0f );
 
-	double duration = mSwipeTracker->getLastTouchTime() - mSwipeTracker->getFirstTouchTime();
+	double durationInteracting = getGraph()->getCurrentTime() - mSwipeTracker->getFirstTouchTime();
 
-	vec2 dist = mSwipeTracker->calcSwipeDistance(); // TODO: use
+	vec2 dist = mSwipeTracker->calcSwipeDistance();
 
 	LOG_SCROLL_TRACKING( "frame: " << getGraph()->getCurrentFrame() << ", touches: " << event.getTouches().size() << ", dragging: " << mDragging 
-		<< ", interacting: " << isUserInteracting() << ", tracker stored touches: " << mSwipeTracker->getNumStoredTouches() << ", gesture duration: " << duration << ", dist: " << dist );
+		<< ", interacting: " << isUserInteracting() << ", tracker stored touches: " << mSwipeTracker->getNumStoredTouches() << ", gesture duration: " << durationInteracting << ", dist: " << dist );
 
 	// determine if complete gesture duration was short enough to be considered a tap
-	if( ! isUserInteracting() && duration < durationForTap ) {
-		LOG_SCROLL_TRACKING( "\t- gesture under minimimum duration: return true." );
-		return true;
+	if( durationInteracting < durationConsideredTap ) {
+		if( ! isUserInteracting() ) {
+			LOG_SCROLL_TRACKING( "\t- gesture considered a tap: return true." );
+			return true;
+		}
+	}
+	else {
+		if( dist.x < distConsideredDrag.x && dist.y < distConsideredDrag.y ) {
+			LOG_SCROLL_TRACKING( "\t- gesture duration no longer considered tap and user dragged far enough: return true." );
+			return true;
+		}
+		else if( isUserInteracting() ) {
+			LOG_SCROLL_TRACKING( "\t- gesture duration no longer considered tap. TODO: claim ownership of touch." );
+		}
 	}
 
 	return false;

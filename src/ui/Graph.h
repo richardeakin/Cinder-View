@@ -126,9 +126,8 @@ class CI_UI_API Graph : public View {
 
 	void propagateTouchesBegan( const ViewRef &view, ci::app::TouchEvent &event, size_t &numTouchesHandled, ViewRef &firstResponder );
 	
-	void updateViewsInterceptingTouches();
 	//! Returns true if view should be erased from mViewsWithTouches and the intercepted event was released.
-	bool updateInterceptingTouches( const ViewRef &view );
+	bool handleInterceptingTouches( const ViewRef &view, bool eventEnding );
 
 #if 0
 	void propagateKeyDown( ViewRef &view, ci::app::KeyEvent &event );

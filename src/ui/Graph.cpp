@@ -98,41 +98,25 @@ void Graph::layout()
 	}
 }
 
-// TODO: can remove this method?
-void Graph::updateViewsInterceptingTouches()
+// If eventEnding i true, will call propagateTouchesEnded(). Otherwise, released touches will allow subviews a chance at touchesBegan
+// Returns true if view should be erased from mViewsWithTouches and the intercepted event was released.
+// TODO (intercept): call this from touchesMoved() too
+bool Graph::handleInterceptingTouches( const ViewRef &view, bool eventEnding )
 {
-	// check what intercepting views should concede touches
-	for( auto viewIt = mViewsWithTouches.begin(); viewIt != mViewsWithTouches.end(); /* */ ) {
-		auto &view = *viewIt;
+	if( view->shouldViewReleaseInterceptingTouches( view->mInterceptedTouchEvent ) ) {
+		// pass intercepted event back through view hierarchy (will skip intercept chance for the view this time
+		size_t numTouchesHandled = 0;
+		ViewRef firstResponder;
+		auto releasedEvent = view->mInterceptedTouchEvent;
+		propagateTouchesBegan( view, releasedEvent, numTouchesHandled, firstResponder );
+		view->mInterceptedTouchEvent = {}; // clear intercepted touch event after the propagateTouchesBegan(), so it doesn't intercept again
 
-		if( updateInterceptingTouches( view ) ) {
-			viewIt = mViewsWithTouches.erase( viewIt );
-			view->mInterceptedTouchEvent = {};
+		if( view->mInterceptedTouchEvent.isHandled() && eventEnding ) {
+			// If a view handled the event, cancel the current intercept and re-run touchesEnded()
+			propagateTouchesEnded( releasedEvent );
 		}
-		else {
-			++viewIt;
-		}
-	}
-}
 
-bool Graph::updateInterceptingTouches( const ViewRef &view )
-{
-	if( ! view->mInterceptedTouchEvent.getTouches().empty() ) {
-		if( view->shouldViewReleaseInterceptingTouches( view->mInterceptedTouchEvent ) ) {
-			// pass intercepted event back through view hierarchy (will skip intercept chance for the view this time
-			size_t numTouchesHandled = 0;
-			ViewRef firstResponder;
-			auto releasedEvent = view->mInterceptedTouchEvent;
-			propagateTouchesBegan( view, releasedEvent, numTouchesHandled, firstResponder );
-			if( view->mInterceptedTouchEvent.isHandled() ) {
-				// If a view handled the event, cancel the current intercept and re-run touchesEnded()
-				//auto releasedEvent = view->mInterceptedTouchEvent;
-				view->mInterceptedTouchEvent = {}; // TODO: move this to before propagateTouchesBegan?
-				propagateTouchesEnded( releasedEvent );
-			}
-
-			return true;
-		}
+		return true;
 	}
 
 	return false;
@@ -140,10 +124,28 @@ bool Graph::updateInterceptingTouches( const ViewRef &view )
 
 void Graph::propagateUpdate()
 {
-	updateViewsInterceptingTouches();
+	// Check if views should release their intercepting touches
+	// - if yes, will allow subviews a chance at touchesBegan()
+	for( auto viewIt = mViewsWithTouches.begin(); viewIt != mViewsWithTouches.end(); /* */ ) {
+		const auto &view = *viewIt;
+		if( ! view->mInterceptedTouchEvent.getTouches().empty() ) {
+			UI_LOG_TOUCHES( view->getName() << " | updating intercepted touch" );
+			if( handleInterceptingTouches( view, false ) ) {
+				// view has released its intercepted event
+				UI_LOG_TOUCHES( view->getName() << " | released." );
+				view->mInterceptedTouchEvent = {};
+				viewIt = mViewsWithTouches.erase( viewIt );
+				continue;
+			}
+		}
 
+		++viewIt;
+	}
+
+	// Update the Layer tree, starting with the root
 	mLayer->update();
 
+	// Remove Layers marked for removal
 	for( auto layerIt = mLayers.begin(); layerIt != mLayers.end(); /* */ ) {
 		auto &layer = *layerIt;
 
@@ -156,7 +158,7 @@ void Graph::propagateUpdate()
 		}
 	}
 
-	// clear any Views that were marked for removal
+	// Remove Views marked for removal
 	mViewsWithTouches.erase(
 			remove_if( mViewsWithTouches.begin(), mViewsWithTouches.end(),
 			           []( const ViewRef &view ) {
@@ -472,7 +474,7 @@ void Graph::propagateTouchesEnded( app::TouchEvent &event )
 			// remove View from container once all its active touches have ended
 			// - if the view is intercepting a touch, then updateViewsInterceptingTouches() will clear it later
 			if( intercepting ) {
-				updateInterceptingTouches( view ); // TODO: ignoring bool return value here. necessary elsewhere (in update loop)
+				handleInterceptingTouches( view, true );
 				view->mInterceptedTouchEvent = {};
 			}
 
