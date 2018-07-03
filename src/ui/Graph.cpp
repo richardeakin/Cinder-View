@@ -101,21 +101,22 @@ void Graph::layout()
 void Graph::propagateUpdate()
 {
 	// check what intercepting views should concede touches
-	for( auto &view : mViewsWithTouches ) {
+	for( auto viewIt = mViewsWithTouches.begin(); viewIt != mViewsWithTouches.end(); /* */ ) {
+		auto &view = *viewIt;
 		if( ! view->mInterceptedTouchEvent.getTouches().empty() ) {
 			if( view->shouldInterceptedTouchesContinue( view->mInterceptedTouchEvent ) ) {
-				// Allow event to pass to subviews
-				// TODO NEXT: the following calls touches began, but what about ended?
-				for( auto &subview : view->getSubviews() ) {
-					// TODO: I think we want to do exactly the same thing here as Graph::propagateTouchesBegan( app::TouchEvent &event ), but call it for each subview
-					// - utilizes responder chain stuff too
-					size_t numTouchesHandled = 0;
-					ViewRef firstResponder;
-					propagateTouchesBegan( subview, view->mInterceptedTouchEvent, numTouchesHandled, firstResponder );
-					if( view->mInterceptedTouchEvent.isHandled() ) {
-						break;
-					}
+				// pass intercepted event back through view hierarchy (will skip intercept chance for the view this time
+				size_t numTouchesHandled = 0;
+				ViewRef firstResponder;
+				propagateTouchesBegan( view, view->mInterceptedTouchEvent, numTouchesHandled, firstResponder );
+				if( view->mInterceptedTouchEvent.isHandled() ) {
+					// TODO: call touches ended ended after
+					view->mInterceptedTouchEvent = {};
+					break;
 				}
+
+				viewIt = mViewsWithTouches.erase( viewIt );
+				mInterceptedTouchEvent = {};
 			}
 		}
 	}
@@ -352,14 +353,14 @@ void Graph::propagateTouchesMoved( app::TouchEvent &event )
 
 				if( it != mCurrentTouchEvent.getTouches().end() ) {
 					touch = *it;
-					UI_LOG_TOUCHES( view->getName() << " | intercepted touch updated, id " << touch.getId() << ", pos: " << touch.getPos() );
+					UI_LOG_TOUCHES( view->getName() << " | intercepted touch updated with id: " << touch.getId() << ", pos: " << touch.getPos() );
 				}
 			}
 
 			// call touchesMoved() on view intercepting the event
 			auto interceptEvent = event;
 			interceptEvent.getTouches() = view->mInterceptedTouchEvent.getTouches();
-			view->touchesMoved( interceptEvent );
+			//view->touchesMoved( interceptEvent );
 		}
 
 		// Update active touches
@@ -417,18 +418,27 @@ void Graph::propagateTouchesEnded( app::TouchEvent &event )
 
 				if( it != mCurrentTouchEvent.getTouches().end() ) {
 					touch = *it;
-					UI_LOG_TOUCHES( view->getName() << " | intercepted touch updated, id " << touch.getId() << ", pos: " << touch.getPos() );
+					UI_LOG_TOUCHES( view->getName() << " | intercepted touch updated with id: " << touch.getId() << ", pos: " << touch.getPos() );
 				}
 			}
 
-			// call toucheended() on view intercepting the event
+			// call touchesEnded() on view intercepting the event
 			auto interceptEvent = event;
 			interceptEvent.getTouches() = view->mInterceptedTouchEvent.getTouches();
-			view->touchesEnded( interceptEvent );
-			
-			viewIt = mViewsWithTouches.erase( viewIt );
-			mInterceptedTouchEvent = {};
-			continue;
+			//view->touchesEnded( interceptEvent );
+
+			// TODO: does it make sense to handle updating intercept events from propagateTouchesMoved() / Ended, instead of waiting for the next update loop?
+			// - also thinking about whether adding a touch phase could improve this
+			// - one benefit is that we can handle the event at least one frame sooner, so less latency for button taps
+
+			//viewIt = mViewsWithTouches.erase( viewIt );
+			//mInterceptedTouchEvent = {};
+
+			// TODO NEXT: without this continue, the view will be removed from mViewsWithTouches before it gets a chance to be updated in propagateUpdate()
+			// - thinking through how it will be to call touchesBegan / End on child views before the 'Update active touches' section below gets processed.
+			//    -need to do that first?
+
+			//continue;
 		}
 
 		// Update active touches

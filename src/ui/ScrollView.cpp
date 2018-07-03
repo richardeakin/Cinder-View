@@ -358,7 +358,7 @@ bool ScrollView::shouldInterceptedTouchesContinue( ci::app::TouchEvent &event )
 	vec2 dist = mSwipeTracker->calcSwipeDistance(); // TODO: use
 
 	LOG_SCROLL_TRACKING( "frame: " << getGraph()->getCurrentFrame() << ", touches: " << event.getTouches().size() << ", dragging: " << mDragging 
-		<< ", interacting: " << isUserInteracting() << ", gesture duration: " << duration << ", dist: " << dist );
+		<< ", interacting: " << isUserInteracting() << ", tracker stored touches: " << mSwipeTracker->getNumStoredTouches() << ", gesture duration: " << duration << ", dist: " << dist );
 
 	// determine if complete gesture duration was short enough to be considered a tap
 	if( ! isUserInteracting() && duration < durationForTap ) {
