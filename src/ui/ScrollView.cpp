@@ -368,8 +368,8 @@ bool ScrollView::shouldViewReleaseInterceptingTouches( ci::app::TouchEvent &even
 		}
 	}
 	else {
-		if( dist.x < distConsideredDrag.x && dist.y < distConsideredDrag.y ) {
-			LOG_SCROLL_TRACKING( "\t- gesture duration no longer considered tap and user dragged far enough: return true." );
+		if( fabsf( dist.x ) < distConsideredDrag.x && fabsf( dist.y ) < distConsideredDrag.y ) {
+			LOG_SCROLL_TRACKING( "\t- gesture duration no longer considered tap and touch still enough: return true." );
 			return true;
 		}
 		else if( isUserInteracting() ) {
