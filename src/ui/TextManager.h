@@ -47,7 +47,8 @@ namespace ui {
 enum class TextAlignment {
 	LEFT,
 	CENTER,
-	RIGHT
+	RIGHT,
+	JUSTIFIED
 };
 
 enum class TextBaselineAdjust {

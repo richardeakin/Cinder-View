@@ -47,9 +47,8 @@ public:
 	void				setFontSize( float fontSize )						{ setFont( mText->getSystemName(), fontSize ); }
 	void				setFontName( const std::string &systemName )		{ setFont( systemName, mText->getSize() ); }
 
-	void				setAlignment( TextAlignment alignment )	{ mAlignment = alignment; }
-
-	void				setBaselineAdjust( TextBaselineAdjust adjust )	{ mBaselineAdjust = adjust; }
+	void				setAlignment( TextAlignment alignment );
+	void				setBaselineAdjust( TextBaselineAdjust adjust );
 
 	void				setPadding( const ci::Rectf &padding );
 	void				setShrinkToFitEnabled( bool enable = true );
