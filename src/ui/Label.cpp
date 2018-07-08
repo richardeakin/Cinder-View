@@ -79,6 +79,18 @@ void Label::setSize( const ci::vec2 &size )
 	markTextLayoutDirty();
 }
 
+void Label::setAlignment( TextAlignment alignment )
+{ 
+	mAlignment = alignment;
+	markTextLayoutDirty();
+}
+
+void Label::setBaselineAdjust( TextBaselineAdjust adjust )
+{ 
+	mBaselineAdjust = adjust;
+	markTextLayoutDirty();
+}
+
 void Label::setPadding( const ci::Rectf &padding )
 {
 	mPadding = padding;
