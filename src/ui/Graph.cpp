@@ -98,12 +98,12 @@ void Graph::layout()
 	}
 }
 
-// If eventEnding i true, will call propagateTouchesEnded(). Otherwise, released touches will allow subviews a chance at touchesBegan
+// If eventEnding is true, will call propagateTouchesEnded(). Otherwise, released touches will allow subviews a chance at touchesBegan
 // Returns true if view should be erased from mViewsWithTouches and the intercepted event was released.
 // TODO (intercept): call this from touchesMoved() too
 bool Graph::handleInterceptingTouches( const ViewRef &view, bool eventEnding )
 {
-	if( view->shouldViewReleaseInterceptingTouches( view->mInterceptedTouchEvent ) ) {
+	if( view->shouldStopInterceptingTouches( view->mInterceptedTouchEvent ) ) {
 		// pass intercepted event back through view hierarchy (will skip intercept chance for the view this time
 		size_t numTouchesHandled = 0;
 		ViewRef firstResponder;
@@ -306,7 +306,7 @@ void Graph::propagateTouchesBegan( const ViewRef &view, app::TouchEvent &event, 
 	bool intercepting = false;
 	if( view->getInterceptsTouches() && view->mInterceptedTouchEvent.getTouches().empty() && view->shouldInterceptTouches( event ) ) {
 		// store touches inside in separate 'intercepted location
-		// TODO: might want to erase individual touches depending on if they were marked as handled
+		// TODO (intercept): might want to erase individual touches depending on if they were marked as handled
 		view->mInterceptedTouchEvent = event;
 		intercepting = true;
 	}

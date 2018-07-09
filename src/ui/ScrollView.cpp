@@ -337,7 +337,7 @@ bool ScrollView::touchesEnded( app::TouchEvent &event )
 
 bool ScrollView::shouldInterceptTouches( ci::app::TouchEvent &event )
 {
-	// TODO: perform hit tests on content views and see if there is one under a touch that is interactive and non hidden
+	// TODO (intercept): perform hit tests on content views and see if there is one under a touch that is interactive and non hidden
 	// - need to indicate back to color which touches?
 	//     - might be able to do that by calling setHandled() on the touch itself
 
@@ -346,7 +346,7 @@ bool ScrollView::shouldInterceptTouches( ci::app::TouchEvent &event )
 	return true;
 }
 
-bool ScrollView::shouldViewReleaseInterceptingTouches( ci::app::TouchEvent &event )
+bool ScrollView::shouldStopInterceptingTouches( ci::app::TouchEvent &event )
 {
 	CI_ASSERT( mSwipeTracker->getNumStoredTouches() > 0 );
 
@@ -373,7 +373,11 @@ bool ScrollView::shouldViewReleaseInterceptingTouches( ci::app::TouchEvent &even
 			return true;
 		}
 		else if( isUserInteracting() ) {
-			LOG_SCROLL_TRACKING( "\t- gesture duration no longer considered tap. TODO: claim ownership of touch." );
+			LOG_SCROLL_TRACKING( "\t- gesture duration no longer considered tap." );
+			// TODO NEXT (intercept): claim ownership of touch.
+			// - possibly by marking touch as handled, or might use a different bool but don't think i like that if possible to avoid
+			event.getTouches().front().setHandled( true );
+			return true;
 		}
 	}
 
