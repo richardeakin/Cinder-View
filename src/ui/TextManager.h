@@ -77,11 +77,12 @@ public:
 
 private:
 	Text();
-	Text( const ci::Font &font );
+	Text( const ci::Font &font, float fontSize );
 
 	ci::gl::TextureFontRef	mTextureFont;
 	std::string				mSystemName;
 	ci::fs::path			mFilePath;
+	float					mFontSize; //! note: this might be different to the ci::Font size, due to content scaling
 	std::atomic<bool>		mIsReady;
 
 	friend class TextManager;

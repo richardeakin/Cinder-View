@@ -22,6 +22,7 @@
  */
 
 #include "ui/TextManager.h"
+#include "ui/Debug.h"
 
 #include "cinder/Cinder.h"
 #include "cinder/gl/TextureFont.h"
@@ -96,11 +97,11 @@ TextRef TextManager::loadTextImpl( const std::string &systemName, float size )
 	}
 
 	auto font = Font( systemName, size );
-	TextRef result = TextRef( new Text( font ) );
+	TextRef result = TextRef( new Text( font, size ) );
 	result->mSystemName = systemName;
 
 	mTextCache.push_back( result );
-
+	UI_LOG_TEXT( "created Text object for font with system name: " << systemName << ", font size: " << size );
 	return result;
 }
 
@@ -112,14 +113,14 @@ TextRef TextManager::loadTextFromFileImpl( const fs::path &filePath, float size 
 	}
 
 	// account for content scale when using GDI
-	size /= app::getWindow()->getContentScale(); // TODO: how to use Graph's app::Window for content size?
+	float sizeScaled = size / app::getWindow()->getContentScale(); // TODO: how to use Graph's app::Window for content size?
 
-	auto font = Font( loadFile( filePath ), size );
-	TextRef result = TextRef( new Text( font ) );
+	auto font = Font( loadFile( filePath ), sizeScaled );
+	TextRef result = TextRef( new Text( font, size ) );
 	result->mFilePath = filePath;
 
 	mTextCache.push_back( result );
-
+	UI_LOG_TEXT( "created Text object for font with path: " << filePath << ", font size: " << size << " (scaled: " << sizeScaled << ")" );
 	return result;
 }
 
@@ -132,8 +133,8 @@ Text::Text()
 {
 }
 
-Text::Text( const ci::Font &font )
-	: mIsReady( false )
+Text::Text( const ci::Font &font, float size )
+	: mIsReady( false ), mFontSize( size )
 {
 	auto format = gl::TextureFont::Format().premultiply( true );
 	mTextureFont = gl::TextureFont::create( font, format, TextManager::instance()->getSupportedChars() );
@@ -142,10 +143,7 @@ Text::Text( const ci::Font &font )
 
 float Text::getSize() const
 {
-	if( ! mIsReady )
-		return 0;
-
-	return mTextureFont->getFont().getSize();
+	return mFontSize;
 }
 
 float Text::getAscent() const
