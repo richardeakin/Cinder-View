@@ -363,7 +363,7 @@ bool ScrollView::shouldStopInterceptingTouches( ci::app::TouchEvent &event )
 	// determine if complete gesture duration was short enough to be considered a tap
 	if( durationInteracting < durationConsideredTap ) {
 		if( ! isUserInteracting() ) {
-			LOG_SCROLL_TRACKING( "\t- gesture considered a tap: return true." );
+			LOG_SCROLL_TRACKING( "\t- gesture considered a tap: return true (unclaimed)." );
 			return true;
 		}
 	}

@@ -141,6 +141,9 @@ class CI_UI_API Graph : public View {
 	int					mEventSlotPriority = 1;
 	ci::ivec2			mClippingSize;
 	bool				mClippingSizeSet = false;
+	double				mCurrentTime;
+	uint64_t			mCurrentFrame;
+	
 
 	ci::signals::ConnectionList				mEventConnections;
 	ci::vec2								mPrevMousePos;

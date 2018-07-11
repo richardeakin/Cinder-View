@@ -162,6 +162,10 @@ bool Graph::handleInterceptingTouches( const ViewRef &view, bool eventEnding )
 
 void Graph::propagateUpdate()
 {
+	// TODO: see note in Time section on allowing this to be customized.
+	mCurrentTime = app::getElapsedSeconds();
+	mCurrentFrame = app::getElapsedFrames();
+
 	// Check if views should release their intercepting touches
 	// - if yes, will allow subviews a chance at touchesBegan()
 	for( auto viewIt = mViewsWithTouches.begin(); viewIt != mViewsWithTouches.end(); /* */ ) {
@@ -170,9 +174,9 @@ void Graph::propagateUpdate()
 			UI_LOG_TOUCHES( view->getName() << " | updating intercepted touch" );
 			if( handleInterceptingTouches( view, false ) ) {
 				// view has released its intercepted event
-				UI_LOG_TOUCHES( view->getName() << " | released." );
+				UI_LOG_TOUCHES( view->getName() << " | erasing." );
 				view->mInterceptedTouchEvent = {};
-				viewIt = mViewsWithTouches.erase( viewIt );
+				viewIt = mViewsWithTouches.erase( viewIt ); // TODO (intercept): consider marking for removal and erasing later
 				continue;
 			}
 		}
@@ -226,12 +230,12 @@ double Graph::getTargetFrameRate() const
 
 size_t Graph::getCurrentFrame() const
 {
-	return app::getElapsedFrames();
+	return mCurrentFrame;
 }
 
 double Graph::getCurrentTime() const
 {
-	return app::getElapsedSeconds();
+	return mCurrentTime;
 }
 
 // ----------------------------------------------------------------------------------------------------
@@ -519,6 +523,7 @@ void Graph::propagateTouchesEnded( app::TouchEvent &event )
 			}
 
 			if( view->mActiveTouches.empty() ) {
+				UI_LOG_TOUCHES( view->getName() << " | erasing." );
 				viewIt = mViewsWithTouches.erase( viewIt );
 			}
 			else {
