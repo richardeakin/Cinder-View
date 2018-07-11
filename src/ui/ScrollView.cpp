@@ -369,13 +369,13 @@ bool ScrollView::shouldStopInterceptingTouches( ci::app::TouchEvent &event )
 	}
 	else {
 		if( fabsf( dist.x ) < distConsideredDrag.x && fabsf( dist.y ) < distConsideredDrag.y ) {
-			LOG_SCROLL_TRACKING( "\t- gesture duration no longer considered tap and touch still enough: return true." );
+			LOG_SCROLL_TRACKING( "\t- gesture duration no longer considered tap and touch still enough: return true (unclaimed)." );
 			return true;
 		}
 		else if( isUserInteracting() ) {
-			LOG_SCROLL_TRACKING( "\t- gesture duration no longer considered tap." );
-			// TODO NEXT (intercept): claim ownership of touch.
-			// - possibly by marking touch as handled, or might use a different bool but don't think i like that if possible to avoid
+			LOG_SCROLL_TRACKING( "\t- gesture duration no longer considered tap: return true (and own touch)" );
+			// claim ownership of touches.
+			// TODO: consider owning all the touches here (they are assigned to the TouchEvent from Graph)
 			event.getTouches().front().setHandled( true );
 			return true;
 		}
