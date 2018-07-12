@@ -521,10 +521,16 @@ bool Graph::handleInterceptingTouches( const ViewRef &view, bool eventEnding )
 
 			UI_LOG_TOUCHES( "\t- touches unclaimed: " << touches.size() );
 
-			// pass intercepted event back through view hierarchy (will skip intercept chance for the view this time
+			// give subview hierarchy a chance at the touches
 			size_t numTouchesHandled = 0;
 			ViewRef firstResponder;
-			propagateTouchesBegan( view, beganEvent, numTouchesHandled, firstResponder );
+			auto subviews = view->mSubviews;
+			for( auto rIt = subviews.rbegin(); rIt != subviews.rend(); ++rIt ) {
+				propagateTouchesBegan( *rIt, beganEvent, numTouchesHandled, firstResponder );
+				if( beganEvent.isHandled() )
+					break;
+			}
+
 		}
 
 		// Handle event ending with original intercepted touches. TODO (intercept): use those handled in touches began only?
@@ -532,8 +538,8 @@ bool Graph::handleInterceptingTouches( const ViewRef &view, bool eventEnding )
 		auto endedEvent = view->mInterceptedTouchEvent;
 		view->mInterceptedTouchEvent = {}; // clear intercepted touch event after the propagateTouchesBegan(), so it doesn't intercept again. TODO (intercept): necessary here? if so update docs
 
-										   // TODO (intercept): does this make sense, to call propagateTouchesEnded() for the ScrollView if event is already ending?
-										   // - only makes sense if the buton wants the touch.
+		// If the intercept event was claimed by a child, call touches ended on it here.
+		// TODO (intercept): should do this for any touches right below propagateTouchesBegan() above
 		if( beganEvent.isHandled() && eventEnding ) {
 			// If a view handled the event, cancel the current intercept and re-run touchesEnded()
 			UI_LOG_TOUCHES( "\t- touches ending: " << endedEvent.getTouches().size() );
