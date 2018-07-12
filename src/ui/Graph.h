@@ -61,7 +61,7 @@ class CI_UI_API Graph : public View {
 
 	void propagateTouchesBegan( ci::app::TouchEvent &event );
 	void propagateTouchesMoved( ci::app::TouchEvent &event );
-	void propagateTouchesEnded( ci::app::TouchEvent &event );
+	void propagateTouchesEnded( ci::app::TouchEvent &event, const ui::ViewRef &interceptingView = nullptr );
 
 	void propagateKeyDown( ci::app::KeyEvent &event );
 	void propagateKeyUp( ci::app::KeyEvent &event );

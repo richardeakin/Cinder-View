@@ -405,14 +405,15 @@ void Graph::propagateTouchesMoved( app::TouchEvent &event )
 	//UI_LOG_TOUCHES( "event handled: " << event.isHandled() );
 }
 
-void Graph::propagateTouchesEnded( app::TouchEvent &event )
+void Graph::propagateTouchesEnded( app::TouchEvent &event, const ui::ViewRef &interceptingView )
 {
-	mCurrentTouchEvent = event;
+	mCurrentTouchEvent = event; // TODO (intercept): may want to only set this if it isn't an intercepting event
 //	size_t numTouchesHandled = 0;
 
 	for( auto viewIt = mViewsWithTouches.begin(); viewIt != mViewsWithTouches.end(); /* */ ) {
 		auto &view = *viewIt;
 		UI_LOG_TOUCHES( view->getName() << " | num active touches: " << view->mActiveTouches.size() << ", intercepting touches: " << view->mInterceptedTouchEvent.getTouches().size() );
+		//CI_ASSERT( ! view->mActiveTouches.empty() );
 
 		// Update touches on view's mInterceptedTouchEvent
 		bool intercepting = false;
@@ -453,20 +454,21 @@ void Graph::propagateTouchesEnded( app::TouchEvent &event )
 				}
 			}
 
-			// remove View from container once all its active touches have ended
 			// - if the view is intercepting a touch, then updateViewsInterceptingTouches() will clear it later
 			if( intercepting ) {
 				handleInterceptingTouches( view, true );
-				view->mInterceptedTouchEvent = {};
+				//view->mInterceptedTouchEvent = {};
 			}
 
-			if( view->mActiveTouches.empty() ) {
-				UI_LOG_TOUCHES( view->getName() << " | erasing." );
-				viewIt = mViewsWithTouches.erase( viewIt );
-			}
-			else {
-				++viewIt;
-			}
+		}
+
+		// remove View from container once all its active touches have ended
+		if( view != interceptingView && view->mActiveTouches.empty() ) {
+			UI_LOG_TOUCHES( view->getName() << " | erasing." );
+			viewIt = mViewsWithTouches.erase( viewIt );
+		}
+		else {
+			++viewIt;
 		}
 	}
 
@@ -536,17 +538,16 @@ bool Graph::handleInterceptingTouches( const ViewRef &view, bool eventEnding )
 		// Handle event ending with original intercepted touches. TODO (intercept): use those handled in touches began only?
 		// TODO (intercept): only make copy if eventEnding is true
 		auto endedEvent = view->mInterceptedTouchEvent;
-		view->mInterceptedTouchEvent = {}; // clear intercepted touch event after the propagateTouchesBegan(), so it doesn't intercept again. TODO (intercept): necessary here? if so update docs
+		view->mInterceptedTouchEvent = {}; // clear intercepted event for the view
 
 		// If the intercept event was claimed by a child, call touches ended on it here.
 		// TODO (intercept): should do this for any touches right below propagateTouchesBegan() above
 		if( beganEvent.isHandled() && eventEnding ) {
 			// If a view handled the event, cancel the current intercept and re-run touchesEnded()
 			UI_LOG_TOUCHES( "\t- touches ending: " << endedEvent.getTouches().size() );
-			propagateTouchesEnded( endedEvent );
+			propagateTouchesEnded( endedEvent, view );
+			return true;
 		}
-
-		return true;
 	}
 
 	return false;
