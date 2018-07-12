@@ -98,68 +98,6 @@ void Graph::layout()
 	}
 }
 
-// If eventEnding is true, will call propagateTouchesEnded(). Otherwise, released touches will allow subviews a chance at touchesBegan
-// Returns true if view should be erased from mViewsWithTouches and the intercepted event was released.
-// TODO (intercept): call this from touchesMoved() too
-bool Graph::handleInterceptingTouches( const ViewRef &view, bool eventEnding )
-{
-	if( view->shouldStopInterceptingTouches( view->mInterceptedTouchEvent ) ) {
-		// if the view claimed ownership of any touches, make it handle a touchesMoved()
-		// TODO NEXT (intercept): debug this
-		vector<app::TouchEvent::Touch>	handledTouches;
-		for( const auto &touch : view->mInterceptedTouchEvent.getTouches() ) {
-			if( touch.isHandled() ) {
-				handledTouches.push_back( touch );
-			}
-		}
-
-		UI_LOG_TOUCHES( view->getName() << " | intercepted touch stopped, handled touches: " << handledTouches.size() );
-
-		if( ! handledTouches.empty() ) {
-			// TODO: I think I need to add the touches to this view's active touches first
-			UI_LOG_TOUCHES( "\t- touches claimed: " << handledTouches.size() );
-			auto claimedEvent = view->mInterceptedTouchEvent;
-			claimedEvent.getTouches() = handledTouches;
-			propagateTouchesMoved( claimedEvent );
-		}
-		
-		// TODO: I think this doesn't work well if a view tries to give the touch to children but no one takes it
-		// - in that case, probably wants to be a touchesMoved() on this view
-		auto beganEvent = view->mInterceptedTouchEvent;
-		if( handledTouches.size() != beganEvent.getTouches().size() ) {
-			// Erase any handled touches
-			auto &touches = beganEvent.getTouches();
-			touches.erase(
-				remove_if( touches.begin(), touches.end(),
-					[]( const app::TouchEvent::Touch &touch ) { return touch.isHandled(); } ),
-				touches.end()
-			);
-
-			UI_LOG_TOUCHES( "\t- touches unclaimed: " << touches.size() );
-
-			// pass intercepted event back through view hierarchy (will skip intercept chance for the view this time
-			size_t numTouchesHandled = 0;
-			ViewRef firstResponder;
-			propagateTouchesBegan( view, beganEvent, numTouchesHandled, firstResponder );
-		}
-
-		// Handle event ending with original intercepted touches. TODO (intercept): use those handled in touches began only?
-		// TODO (intercept): only make copy if eventEnding is true
-		auto endedEvent = view->mInterceptedTouchEvent;
-		view->mInterceptedTouchEvent = {}; // clear intercepted touch event after the propagateTouchesBegan(), so it doesn't intercept again. TODO (intercept): necessary here? if so update docs
-
-		if( beganEvent.isHandled() && eventEnding ) {
-			// If a view handled the event, cancel the current intercept and re-run touchesEnded()
-			UI_LOG_TOUCHES( "\t- touches ending: " << endedEvent.getTouches().size() );
-			propagateTouchesEnded( endedEvent );
-		}
-
-		return true;
-	}
-
-	return false;
-}
-
 void Graph::propagateUpdate()
 {
 	// TODO: see note in Time section on allowing this to be customized.
@@ -396,7 +334,7 @@ void Graph::propagateTouchesBegan( const ViewRef &view, app::TouchEvent &event, 
 		// Allow other app signal connections to respond to the event with remaining touches if not all were handled
 		event.setHandled( numTouchesHandled == mCurrentTouchEvent.getTouches().size() );
 
-		UI_LOG_TOUCHES( "event handled: " << boolalpha << event.isHandled() << dec );
+		UI_LOG_TOUCHES( view->getName() << " | event handled: " << boolalpha << event.isHandled() << dec );
 	}
 }
 
@@ -542,6 +480,70 @@ void Graph::propagateTouchesEnded( app::TouchEvent &event )
 	}
 
 	mCurrentTouchEvent.getTouches().clear();
+}
+
+// If eventEnding is true, will call propagateTouchesEnded(). Otherwise, released touches will allow subviews a chance at touchesBegan
+// Returns true if view should be erased from mViewsWithTouches and the intercepted event was released.
+// TODO (intercept): call this from touchesMoved() too
+bool Graph::handleInterceptingTouches( const ViewRef &view, bool eventEnding )
+{
+	if( view->shouldStopInterceptingTouches( view->mInterceptedTouchEvent ) ) {
+		// if the view claimed ownership of any touches, make it handle a touchesMoved()
+		vector<app::TouchEvent::Touch>	handledTouches;
+		for( const auto &touch : view->mInterceptedTouchEvent.getTouches() ) {
+			if( touch.isHandled() ) {
+				handledTouches.push_back( touch );
+			}
+		}
+
+		UI_LOG_TOUCHES( view->getName() << " | intercepted touch stopped, handled touches: " << handledTouches.size() );
+
+		// TODO (intercept): should only fire a touchesMoved if event isn't ending
+		if( ! handledTouches.empty() ) {
+			// TODO: I think I need to add the touches to this view's active touches first
+			UI_LOG_TOUCHES( "\t- touches claimed: " << handledTouches.size() );
+			auto claimedEvent = view->mInterceptedTouchEvent;
+			claimedEvent.getTouches() = handledTouches;
+			propagateTouchesMoved( claimedEvent );
+		}
+
+		// TODO (intercept): I think this doesn't work well if a view tries to give the touch to children but no one takes it
+		// - in that case, probably wants to be a touchesMoved() on this view (if it isn't ending)
+		auto beganEvent = view->mInterceptedTouchEvent;
+		if( handledTouches.size() != beganEvent.getTouches().size() ) {
+			// Erase any handled touches
+			auto &touches = beganEvent.getTouches();
+			touches.erase(
+				remove_if( touches.begin(), touches.end(),
+					[]( const app::TouchEvent::Touch &touch ) { return touch.isHandled(); } ),
+				touches.end()
+			);
+
+			UI_LOG_TOUCHES( "\t- touches unclaimed: " << touches.size() );
+
+			// pass intercepted event back through view hierarchy (will skip intercept chance for the view this time
+			size_t numTouchesHandled = 0;
+			ViewRef firstResponder;
+			propagateTouchesBegan( view, beganEvent, numTouchesHandled, firstResponder );
+		}
+
+		// Handle event ending with original intercepted touches. TODO (intercept): use those handled in touches began only?
+		// TODO (intercept): only make copy if eventEnding is true
+		auto endedEvent = view->mInterceptedTouchEvent;
+		view->mInterceptedTouchEvent = {}; // clear intercepted touch event after the propagateTouchesBegan(), so it doesn't intercept again. TODO (intercept): necessary here? if so update docs
+
+										   // TODO (intercept): does this make sense, to call propagateTouchesEnded() for the ScrollView if event is already ending?
+										   // - only makes sense if the buton wants the touch.
+		if( beganEvent.isHandled() && eventEnding ) {
+			// If a view handled the event, cancel the current intercept and re-run touchesEnded()
+			UI_LOG_TOUCHES( "\t- touches ending: " << endedEvent.getTouches().size() );
+			propagateTouchesEnded( endedEvent );
+		}
+
+		return true;
+	}
+
+	return false;
 }
 
 void Graph::propagateKeyDown( ci::app::KeyEvent &event )
