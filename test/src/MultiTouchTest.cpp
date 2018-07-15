@@ -85,10 +85,6 @@ MultiTouchTest::MultiTouchTest()
 	setupDraggables();
 
 	mDraggablesContainer->setHidden();
-
-	mTouchOverlay = make_shared<TouchOverlayView>();
-
-	addSubview( mTouchOverlay ); // Add last so it is always on top
 }
 
 void MultiTouchTest::setupControls()
@@ -177,11 +173,11 @@ void MultiTouchTest::layout()
 
 bool MultiTouchTest::keyDown( app::KeyEvent &event )
 {
+	if( event.isControlDown() )
+		return false;
+
 	bool handled = true;
 	switch( event.getChar() ) {
-		case 't':
-			mTouchOverlay->setHidden( ! mTouchOverlay->isHidden() );
-		break;
 		case 'v':
 			CI_LOG_I( "num views with touches: " << getGraph()->getViewsWithTouches().size() );
 		break;
@@ -334,30 +330,5 @@ void MultiTouchTest::update()
 {
 	if( mEnableContinuousInjection && ! mDraggablesContainer->isHidden() ) {
 		injectContinuousTouches();
-	}
-}
-
-TouchOverlayView::TouchOverlayView()
-{
-	setFillParentEnabled();
-	mTextureFont = gl::TextureFont::create( Font( "Arial", 12 ) );
-	mBatchCircle = gl::Batch::create( geom::WireCircle().radius( 14 ).subdivisions( 40 ), gl::getStockShader( gl::ShaderDef().color() ) );
-}
-
-void TouchOverlayView::draw( ui::Renderer *ren )
-{
-	const auto &touches = getGraph()->getAllTouchesInWindow();
-	for( const auto &touch : touches ) {
-		vec2 pos = touch.second.getPos();
-		{
-			ren->setColor( Color( 0, 1, 1 ) );
-			gl::ScopedModelMatrix modelScope;
-			gl::translate( pos );
-			mBatchCircle->draw();
-		}
-		{
-			ren->setColor( Color::white() );
-			mTextureFont->drawString( to_string( touch.first ), vec2( pos.x - 3, pos.y + 4 ) );
-		}
 	}
 }

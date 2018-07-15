@@ -6,8 +6,6 @@
 
 #include "cinder/gl/gl.h"
 
-typedef std::shared_ptr<class TouchOverlayView> TouchOverlayViewRef;
-
 class MultiTouchTest : public ui::SuiteView {
   public:
 	MultiTouchTest();
@@ -30,7 +28,6 @@ class MultiTouchTest : public ui::SuiteView {
 	ui::VSliderRef			mVSlider1, mVSlider2;
 	ui::ButtonRef			mButton, mToggle;
 	ui::ViewRef             mControlsContainer, mDraggablesContainer;
-	TouchOverlayViewRef     mTouchOverlay;
 
 	bool mEnableContinuousInjection = false;
 

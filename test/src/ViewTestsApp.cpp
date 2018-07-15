@@ -50,6 +50,7 @@ class ViewTestsApp : public App {
 	void resizeInfoLabel();
 	void drawViewBorders();
 	void drawLayerBorders();
+	void drawTouches();
 
 	ui::SuiteRef		mTestSuite;
 	ui::LabelGridRef    mInfoLabel;
@@ -57,14 +58,15 @@ class ViewTestsApp : public App {
 	bool	mDrawViewBorders = false;
 	bool    mDrawLayerBorders = false;
 	bool	mDrawDebugNames = false;
+	bool	mDrawTouches = false;
 };
 
 void ViewTestsApp::setup()
 {
 	ui::Graph::EventOptions eventOptions;
-#if MULTITOUCH_ENABLED
-	eventOptions.mouse( false );
-#endif
+	if( MULTITOUCH_ENABLED ) {
+		eventOptions.mouse( false );
+	}
 	mTestSuite = make_shared<ui::Suite>( eventOptions );
 
 	mTestSuite->registerSuiteView<BasicViewTests>( "basic" );
@@ -111,6 +113,10 @@ void ViewTestsApp::keyDown( app::KeyEvent event )
 			break;
 			case app::KeyEvent::KEY_n:
 				mDrawDebugNames = ! mDrawDebugNames;
+			break;
+			case app::KeyEvent::KEY_t:
+				mDrawTouches = ! mDrawTouches;
+				CI_LOG_I( "draw touches: " << mDrawTouches );
 			break;
 		}
 	}
@@ -159,6 +165,8 @@ void ViewTestsApp::draw()
 		drawViewBorders();
 	if( mDrawLayerBorders )
 		drawLayerBorders();
+	if( mDrawTouches )
+		drawTouches();
 
 	CI_CHECK_GL();
 }
@@ -212,6 +220,31 @@ void ViewTestsApp::drawLayerBorders()
 		}
 	}
 	ren->popColor();
+}
+
+void ViewTestsApp::drawTouches()
+{
+	static gl::TextureFontRef sTextureFont;
+	static gl::BatchRef	sBatchCircle;
+	if( ! sTextureFont ) {
+		sTextureFont = gl::TextureFont::create( Font( "Arial", 12 ) );
+		sBatchCircle = gl::Batch::create( geom::WireCircle().radius( 14 ).subdivisions( 40 ), gl::getStockShader( gl::ShaderDef().color() ) );
+	}
+
+	const auto &touches = mTestSuite->getGraph()->getAllTouchesInWindow();
+	for( const auto &touch : touches ) {
+		vec2 pos = touch.second.getPos();
+		{
+			gl::ScopedColor col( Color( 0, 1, 1 ) );
+			gl::ScopedModelMatrix modelScope;
+			gl::translate( pos );
+			sBatchCircle->draw();
+		}
+		{
+			gl::ScopedColor col( Color::white() );
+			sTextureFont->drawString( to_string( touch.first ), vec2( pos.x - 3, pos.y + 4 ) );
+		}
+	}
 }
 
 void prepareSettings( app::App::Settings *settings )
