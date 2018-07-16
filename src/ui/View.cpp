@@ -472,6 +472,29 @@ void View::clearViewsMarkedForRemoval()
 			mSubviews.end() );
 }
 
+const View* View::hitTest( const ci::app::TouchEvent &event ) const
+{
+	for( auto rIt = getSubviews().rbegin(); rIt != getSubviews().rend(); ++rIt ) {
+		const auto &view = *rIt;
+		if( view->isHidden() || ! view->isInteractive() )
+			continue;
+
+		auto hitView = (*rIt)->hitTest( event );
+		if( hitView ) {
+			return hitView;
+		}
+	}
+	
+	for( const auto &touch : event.getTouches() ) {
+		vec2 pos = toLocal( touch.getPos() );
+		if( isPointInside( pos ) ) {
+			return this;
+		}
+	}
+
+	return nullptr;
+}
+
 bool View::isPointInside( const vec2 &localPos ) const
 {
 	return ( localPos.x >= 0 ) && ( localPos.x <= getWidth() ) && ( localPos.y >= 0 ) && ( localPos.y <= getHeight() );

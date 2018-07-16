@@ -344,12 +344,15 @@ bool ScrollView::touchesEnded( app::TouchEvent &event )
 bool ScrollView::shouldInterceptTouches( ci::app::TouchEvent &event )
 {
 	// TODO (intercept): perform hit tests on content views and see if there is one under a touch that is interactive and non hidden
-	// - need to indicate back to color which touches?
+	// - need to indicate back to caller which touches?
 	//     - might be able to do that by calling setHandled() on the touch itself
 
-	LOG_SCROLL_TRACKING( "frame: " << getGraph()->getCurrentFrame() << ", touches: " << event.getTouches().size() );
+	auto hitView = hitTest( event );
+	bool hitInteractiveChild = hitView != this;
 
-	return true;
+	LOG_SCROLL_TRACKING( "frame: " << getGraph()->getCurrentFrame() << ", touches: " << event.getTouches().size() << ", hit interactive view: " << boolalpha << hitInteractiveChild << dec );
+
+	return hitView != nullptr;
 }
 
 bool ScrollView::shouldStopInterceptingTouches( ci::app::TouchEvent &event )
@@ -362,6 +365,9 @@ bool ScrollView::shouldStopInterceptingTouches( ci::app::TouchEvent &event )
 	double durationInteracting = getGraph()->getCurrentTime() - mSwipeTracker->getFirstTouchTime();
 
 	vec2 dist = mSwipeTracker->calcSwipeDistance();
+	// TODO NEXT: considering how to handle a scroll direction being disabled
+	// - could zero out its axis
+	// - but also, if there is significant movement in a disable axis, want to give up interception
 
 	LOG_SCROLL_TRACKING( "frame: " << getGraph()->getCurrentFrame() << ", touches: " << event.getTouches().size() << ", dragging: " << mDragging 
 		<< ", interacting: " << isUserInteracting() << ", tracker stored touches: " << mSwipeTracker->getNumStoredTouches() << ", gesture duration: " << durationInteracting << ", dist: " << dist );
