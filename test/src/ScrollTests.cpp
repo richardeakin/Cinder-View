@@ -145,12 +145,11 @@ ScrollTests::ScrollTests()
 	mScrollViewNested = make_shared<ui::ScrollView>();
 	mScrollViewNested->setLabel( "ScrollView (nested parent)" );
 	mScrollViewNested->setHorizontalScrollingEnabled( false );
+	mScrollViewNested->getBackground()->setColor( Color( 0, 0, 0 ) );
 	mScrollViewNested->getContentView()->getBackground()->setColor( Color( 0.15f, 0, 0 ) );
 
-	mScrollViewNested->getBackground()->setColor( Color( 0, 0, 0 ) );
-
 	{
-		auto scrollview = make_shared<ui::ScrollView>( Rectf( 40, 100, 3000, 130 ) );
+		auto scrollview = make_shared<ui::ScrollView>( Rectf( 40, 100, 1200, 130 ) );
 		scrollview->setLabel( "ScrollView (nested child)" );
 		scrollview->setVerticalScrollingEnabled( false );
 

@@ -114,6 +114,7 @@ void Graph::propagateUpdate()
 				// view has released its intercepted event
 				UI_LOG_TOUCHES( view->getName() << " | erasing." );
 				view->mInterceptedTouchEvent = {};
+				view->mActiveTouches.clear();
 				viewIt = mViewsWithTouches.erase( viewIt ); // TODO (intercept): consider marking for removal and erasing later
 				continue;
 			}
@@ -324,8 +325,6 @@ void Graph::propagateTouchesBegan( const ViewRef &view, app::TouchEvent &event, 
 				[]( const app::TouchEvent::Touch &touch ) { return touch.isHandled(); } ),
 			touches.end()
 		);
-
-		UI_LOG_TOUCHES( view->getName() << " | num touches C: " << event.getTouches().size() );
 		
 		if( numTouchesHandledThisView != 0 && find( mViewsWithTouches.begin(), mViewsWithTouches.end(), view ) == mViewsWithTouches.end() ) {
 			mViewsWithTouches.push_back( view );
@@ -334,7 +333,7 @@ void Graph::propagateTouchesBegan( const ViewRef &view, app::TouchEvent &event, 
 		// Allow other app signal connections to respond to the event with remaining touches if not all were handled
 		event.setHandled( numTouchesHandled == mCurrentTouchEvent.getTouches().size() );
 
-		UI_LOG_TOUCHES( view->getName() << " | event handled: " << boolalpha << event.isHandled() << dec );
+		UI_LOG_TOUCHES( view->getName() << " | num touches C: " << event.getTouches().size() << ", event handled: " << boolalpha << event.isHandled() << dec );
 	}
 }
 
@@ -542,10 +541,12 @@ bool Graph::handleInterceptingTouches( const ViewRef &view, bool eventEnding )
 
 		// If the intercept event was claimed by a child, call touches ended on it here.
 		// TODO (intercept): should do this for any touches right below propagateTouchesBegan() above
-		if( beganEvent.isHandled() && eventEnding ) {
-			// If a view handled the event, cancel the current intercept and re-run touchesEnded()
-			UI_LOG_TOUCHES( "\t- touches ending: " << endedEvent.getTouches().size() );
-			propagateTouchesEnded( endedEvent, view );
+		if( beganEvent.isHandled() ) {
+			// If a subview handled the event from the intercepting view's touchesEnded, subview also gets a touchesEnded
+			if( eventEnding ) {
+				UI_LOG_TOUCHES( "\t- touches ending: " << endedEvent.getTouches().size() );
+				propagateTouchesEnded( endedEvent, view );
+			}
 			return true;
 		}
 	}
