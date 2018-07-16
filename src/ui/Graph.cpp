@@ -269,7 +269,7 @@ void Graph::propagateTouchesBegan( const ViewRef &view, app::TouchEvent &event, 
 
 	for( const auto &touch : event.getTouches() ) {
 		vec2 pos = view->toLocal( touch.getPos() );
-		if( view->hitTest( pos ) ) {
+		if( view->isPointInside( pos ) ) {
 			touchesInside.push_back( touch );
 			
 			if( view->getAcceptsFirstResponder() )

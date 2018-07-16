@@ -472,7 +472,7 @@ void View::clearViewsMarkedForRemoval()
 			mSubviews.end() );
 }
 
-bool View::hitTest( const vec2 &localPos ) const
+bool View::isPointInside( const vec2 &localPos ) const
 {
 	return ( localPos.x >= 0 ) && ( localPos.x <= getWidth() ) && ( localPos.y >= 0 ) && ( localPos.y <= getHeight() );
 }
