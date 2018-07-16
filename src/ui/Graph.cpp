@@ -114,7 +114,7 @@ void Graph::propagateUpdate()
 				// view has released its intercepted event
 				UI_LOG_TOUCHES( view->getName() << " | erasing." );
 				view->mInterceptedTouchEvent = {};
-				view->mActiveTouches.clear();
+				view->mActiveTouches.clear(); // TODO (intercept): only clear touches that have been marked as handled (either by this view or the next one in line)
 				viewIt = mViewsWithTouches.erase( viewIt ); // TODO (intercept): consider marking for removal and erasing later
 				continue;
 			}

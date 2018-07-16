@@ -14,11 +14,12 @@ using namespace ci;
 
 const float PADDING = 40.0f;
 
-class CustomView : public ui::RectView {
+class CustomScrollTestsView : public ui::RectView {
 public:
-	CustomView( const Rectf &bounds )
+	CustomScrollTestsView( const Rectf &bounds )
 		: RectView( bounds )
 	{
+		setInteractive();
 		setColor( Color( 0, 0.3f, 0 ) );
 	}
 
@@ -30,7 +31,7 @@ protected:
 		vec2 pos = event.getTouches().front().getPos();
 		event.getTouches().front().setHandled();
 		mLocalTouchPos = toLocal( pos );
-//		CI_LOG_V( getLabel() << " local pos: " << mLocalTouchPos << ", world pos: " << getWorldPos() << ", event pos: " << pos );
+		CI_LOG_I( getLabel() << " local pos: " << mLocalTouchPos << ", world pos: " << getWorldPos() << ", event pos: " << pos );
 
 		return true;
 	}
@@ -41,7 +42,7 @@ protected:
 
 		vec2 pos = event.getTouches().front().getPos();
 		mLocalTouchPos = toLocal( pos );
-//		CI_LOG_V( getLabel() << " local pos: " << mLocalTouchPos << ", world pos: " << getWorldPos() << ", event pos: " << pos );
+		CI_LOG_I( getLabel() << " local pos: " << mLocalTouchPos << ", world pos: " << getWorldPos() << ", event pos: " << pos );
 
 		return true;
 	}
@@ -52,7 +53,7 @@ protected:
 
 		vec2 pos = event.getTouches().front().getPos();
 		mLocalTouchPos = toLocal( pos );
-//		CI_LOG_V( getLabel() << " local pos: " << mLocalTouchPos << ", world pos: " << getWorldPos() << ", event pos: " << pos );
+		CI_LOG_I( getLabel() << " local pos: " << mLocalTouchPos << ", world pos: " << getWorldPos() << ", event pos: " << pos );
 
 		return true;
 	}
@@ -84,7 +85,7 @@ ScrollTests::ScrollTests()
 	//mScrollViewFree->addSubview( scrollBorder );
 
 	// add some content views:
-	auto custom = make_shared<CustomView>( Rectf( 40, 30, 180, 130 ) );
+	auto custom = make_shared<CustomScrollTestsView>( Rectf( 40, 30, 180, 130 ) );
 
 	auto button = make_shared<ui::Button>( Rectf( 200, 30, 300, 70 ) );
 	button->setTitle( "tap me" );
