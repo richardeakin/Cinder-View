@@ -99,6 +99,8 @@ class CI_UI_API ScrollView : public View {
 	//! Returns the max speed (pixels) that can be applied as a result of seeking toward target offset. Default: 300.0
 	float getMaxSpeed() const								{ return mMaxSpeed; }
 
+	void setLabel( const std::string &label ) override;
+
 	void setVerticalScrollingEnabled( bool enable )			{ mVerticalScrollingEnabled = enable; }
 	bool isVerticalScrollingEnabled() const					{ return mVerticalScrollingEnabled; }
 	void setHorizontalScrollingEnabled( bool enable )		{ mHorizontalScrollingEnabled = enable; }

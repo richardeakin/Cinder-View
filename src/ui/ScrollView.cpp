@@ -265,6 +265,12 @@ const Rectf& ScrollView::getDeceleratingBoundaries() const
 	return mOffsetBoundaries;
 }
 
+void ScrollView::setLabel( const std::string &label )
+{
+	View::setLabel( label );
+	mContentView->setLabel( "ContentView (" + label + ")" );
+}
+
 // ----------------------------------------------------------------------------------------------------
 // Events
 // ----------------------------------------------------------------------------------------------------
