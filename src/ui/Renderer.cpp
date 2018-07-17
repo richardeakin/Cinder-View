@@ -236,6 +236,8 @@ void Renderer::popBlendMode()
 
 FrameBufferRef Renderer::getFrameBuffer( const ci::ivec2 &size )
 {
+	CI_ASSERT( size.x > 0 && size.y > 0 );
+
 #if UI_FRAMEBUFFER_CACHING_ENABLED
 	auto availableIt = mFrameBufferCache.end();
 	for( auto frameBufferIt = mFrameBufferCache.begin(); frameBufferIt < mFrameBufferCache.end(); ++frameBufferIt ) {

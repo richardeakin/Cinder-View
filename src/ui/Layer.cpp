@@ -151,10 +151,13 @@ void Layer::draw( Renderer *ren )
 {
 	if( mRootView->mRendersToFrameBuffer ) {
 		ivec2 renderSize = ivec2( mRenderBounds.getSize() );
+		if( renderSize.x == 0 || renderSize.y == 0 )
+			return; // don't try to draw to a FrameBuffer if we don't have a valid bounds
+
 		if( ! mFrameBuffer || mFrameBuffer->isInUse() || mFrameBuffer->getSize().x < renderSize.x || mFrameBuffer->getSize().y < renderSize.y ) {
 			// acquire necessary FrameBuffers. TODO: setup Filter framebuffers here too?
 			mFrameBuffer = ren->getFrameBuffer( renderSize );
-			LOG_LAYER( "aquired main FrameBuffer for view '" << mRootView->getName() << "', size: " << mFrameBuffer->getSize()
+			LOG_LAYER( "acquired main FrameBuffer for view '" << mRootView->getName() << "', size: " << mFrameBuffer->getSize()
 			           << "', mRenderBounds: " << mRenderBounds << ", view bounds:" << mRootView->getBounds() );
 
 			mFrameBuffer->setInUse( true ); // note: only so that the following LOG_LAYER prints correctly, this will be marked in use during the pushFrameBuffer()
