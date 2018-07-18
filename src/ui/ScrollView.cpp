@@ -283,7 +283,7 @@ bool ScrollView::touchesBegan( app::TouchEvent &event )
 
 	auto &firstTouch = event.getTouches().front();
 	vec2 pos = toLocal( firstTouch.getPos() );
-	LOG_SCROLL_TRACKING( "intercepting touches: " << mInterceptedTouchEvent.getTouches().size() << ",  pos: " << pos );
+	LOG_SCROLL_TRACKING( "intercepting touches: " << getInterceptingTouches().size() << ",  pos: " << pos );
 
 	mSwipeTracker->clear();
 	mSwipeTracker->storeTouchPos( pos, getGraph()->getCurrentTime() );
@@ -303,7 +303,7 @@ bool ScrollView::touchesMoved( app::TouchEvent &event )
 	updateOffset( pos, lastPos );
 	mSwipeTracker->storeTouchPos( pos, getGraph()->getCurrentTime() );
 	
-	LOG_SCROLL_TRACKING( "intercepting touches: " << mInterceptedTouchEvent.getTouches().size() << ",  pos: " << pos );
+	LOG_SCROLL_TRACKING( "intercepting touches: " << getInterceptingTouches().size() << ",  pos: " << pos );
 
 	if( ! mDragging ) {
 		mDragging = true;
@@ -320,7 +320,7 @@ bool ScrollView::touchesEnded( app::TouchEvent &event )
 {
 	vec2 pos = toLocal( event.getTouches().front().getPos() );
 	vec2 lastPos = mSwipeTracker->getLastTouchPos();
-	LOG_SCROLL_TRACKING( "intercepting touches: " << mInterceptedTouchEvent.getTouches().size() << ",  pos: " << pos );
+	LOG_SCROLL_TRACKING( "intercepting touches: " << getInterceptingTouches().size() << ",  pos: " << pos );
 
 	updateOffset( pos, lastPos );
 	mSwipeTracker->storeTouchPos( pos, getGraph()->getCurrentTime() );
