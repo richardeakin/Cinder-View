@@ -144,7 +144,8 @@ class CI_UI_API View : public std::enable_shared_from_this<View> {
 	ci::Rectf			toWorld( const ci::Rectf &localRect ) const;
 	ci::Rectf			toLocal( const ci::Rectf &worldRect ) const;
 
-	virtual bool				isPointInside( const ci::vec2 &localPos ) const;
+	virtual const View*	hitTest( const ci::app::TouchEvent &event ) const;
+	virtual bool		isPointInside( const ci::vec2 &localPos ) const;
 
 	void	setHidden( bool hidden = true )			{ mHidden = hidden; }
 	bool	isHidden() const						{ return mHidden; }
