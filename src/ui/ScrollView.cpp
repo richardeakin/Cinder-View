@@ -348,11 +348,12 @@ bool ScrollView::shouldInterceptTouches( ci::app::TouchEvent &event )
 	//     - might be able to do that by calling setHandled() on the touch itself
 
 	auto hitView = hitTest( event );
-	bool hitInteractiveChild = hitView != this;
+	bool hitInteractiveChild = hitView != mContentView.get();
 
-	LOG_SCROLL_TRACKING( "frame: " << getGraph()->getCurrentFrame() << ", touches: " << event.getTouches().size() << ", hit interactive view: " << boolalpha << hitInteractiveChild << dec );
+	string hitViewStr = ( (bool)hitView ? hitView->getName() : "(null)" );
+	LOG_SCROLL_TRACKING( "frame: " << getGraph()->getCurrentFrame() << ", touches: " << event.getTouches().size() << ", hit interactive view: " << boolalpha << hitInteractiveChild << dec << ", hit view: " << hitViewStr );
 
-	return hitView != nullptr;
+	return hitInteractiveChild;
 }
 
 bool ScrollView::shouldStopInterceptingTouches( ci::app::TouchEvent &event )
@@ -365,9 +366,9 @@ bool ScrollView::shouldStopInterceptingTouches( ci::app::TouchEvent &event )
 	double durationInteracting = getGraph()->getCurrentTime() - mSwipeTracker->getFirstTouchTime();
 
 	vec2 dist = mSwipeTracker->calcSwipeDistance();
-	// TODO NEXT: considering how to handle a scroll direction being disabled
+	// TODO (intercept): considering how to handle a scroll direction being disabled
 	// - could zero out its axis
-	// - but also, if there is significant movement in a disable axis, want to give up interception
+	// - but also, if there is significant movement in a disabled axis, want to give up intercept
 
 	LOG_SCROLL_TRACKING( "frame: " << getGraph()->getCurrentFrame() << ", touches: " << event.getTouches().size() << ", dragging: " << mDragging 
 		<< ", interacting: " << isUserInteracting() << ", tracker stored touches: " << mSwipeTracker->getNumStoredTouches() << ", gesture duration: " << durationInteracting << ", dist: " << dist );
