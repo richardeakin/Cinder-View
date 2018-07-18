@@ -14,11 +14,12 @@ using namespace ci;
 
 const float PADDING = 40.0f;
 
-class CustomView : public ui::RectView {
+class CustomScrollTestsView : public ui::RectView {
 public:
-	CustomView( const Rectf &bounds )
+	CustomScrollTestsView( const Rectf &bounds )
 		: RectView( bounds )
 	{
+		setInteractive();
 		setColor( Color( 0, 0.3f, 0 ) );
 	}
 
@@ -30,7 +31,7 @@ protected:
 		vec2 pos = event.getTouches().front().getPos();
 		event.getTouches().front().setHandled();
 		mLocalTouchPos = toLocal( pos );
-//		CI_LOG_V( getLabel() << " local pos: " << mLocalTouchPos << ", world pos: " << getWorldPos() << ", event pos: " << pos );
+		CI_LOG_I( getLabel() << " local pos: " << mLocalTouchPos << ", world pos: " << getWorldPos() << ", event pos: " << pos );
 
 		return true;
 	}
@@ -41,7 +42,7 @@ protected:
 
 		vec2 pos = event.getTouches().front().getPos();
 		mLocalTouchPos = toLocal( pos );
-//		CI_LOG_V( getLabel() << " local pos: " << mLocalTouchPos << ", world pos: " << getWorldPos() << ", event pos: " << pos );
+		CI_LOG_I( getLabel() << " local pos: " << mLocalTouchPos << ", world pos: " << getWorldPos() << ", event pos: " << pos );
 
 		return true;
 	}
@@ -52,7 +53,7 @@ protected:
 
 		vec2 pos = event.getTouches().front().getPos();
 		mLocalTouchPos = toLocal( pos );
-//		CI_LOG_V( getLabel() << " local pos: " << mLocalTouchPos << ", world pos: " << getWorldPos() << ", event pos: " << pos );
+		CI_LOG_I( getLabel() << " local pos: " << mLocalTouchPos << ", world pos: " << getWorldPos() << ", event pos: " << pos );
 
 		return true;
 	}
@@ -81,17 +82,18 @@ ScrollTests::ScrollTests()
 	auto scrollBorder = make_shared<ui::StrokedRectView>();
 	scrollBorder->setFillParentEnabled();
 	scrollBorder->setColor( ColorA( 0.9f, 0.5f, 0.0f, 0.7f ) );
-	mScrollViewFree->addSubview( scrollBorder );
+	//mScrollViewFree->addSubview( scrollBorder );
 
 	// add some content views:
-	auto custom = make_shared<CustomView>( Rectf( 40, 30, 180, 130 ) );
+	auto custom = make_shared<CustomScrollTestsView>( Rectf( 40, 30, 180, 130 ) );
 
 	auto button = make_shared<ui::Button>( Rectf( 200, 30, 300, 70 ) );
 	button->setTitle( "tap me" );
+	button->setLabel( "Button ('tap me')" );
 	button->setTitleColor( Color( 0, 0.2f, 0.8f ) );
-	button->setColor( Color( 0.6f, 0.6f, 0.8f ), ui::Button::State::PRESSED );
-	button->getSignalPressed().connect( [] { CI_LOG_V( "button pressed" ); } );
-	button->getSignalReleased().connect( [] { CI_LOG_V( "button released" ); } );
+	button->setColor( Color( 0.4f, 0.6f, 0.9f ), ui::Button::State::PRESSED );
+	button->getSignalPressed().connect( [] { CI_LOG_I( "button pressed" ); } );
+	button->getSignalReleased().connect( [] { CI_LOG_I( "button released" ); } );
 
 	auto imageView = make_shared<ui::ImageView>( Rectf( 40, 150, 600, 600 ) );
 	imageView->getBackground()->setColor( Color( 0, 0.2f, 0 ) );
@@ -142,14 +144,13 @@ ScrollTests::ScrollTests()
 	}
 
 	mScrollViewNested = make_shared<ui::ScrollView>();
-	mScrollViewNested->setLabel( "ScrollView (nested)" );
+	mScrollViewNested->setLabel( "ScrollView (nested parent)" );
 	mScrollViewNested->setHorizontalScrollingEnabled( false );
+	mScrollViewNested->getBackground()->setColor( Color( 0, 0, 0 ) );
 	mScrollViewNested->getContentView()->getBackground()->setColor( Color( 0.15f, 0, 0 ) );
 
-	mScrollViewNested->getBackground()->setColor( Color( 0, 0, 0 ) );
-
 	{
-		auto scrollview = make_shared<ui::ScrollView>( Rectf( 40, 100, 3000, 130 ) );
+		auto scrollview = make_shared<ui::ScrollView>( Rectf( 40, 100, 1200, 130 ) );
 		scrollview->setLabel( "ScrollView (nested child)" );
 		scrollview->setVerticalScrollingEnabled( false );
 

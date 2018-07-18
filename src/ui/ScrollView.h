@@ -99,6 +99,17 @@ class CI_UI_API ScrollView : public View {
 	//! Returns the max speed (pixels) that can be applied as a result of seeking toward target offset. Default: 300.0
 	float getMaxSpeed() const								{ return mMaxSpeed; }
 
+	//! Sets the amount of time in seconds until an intercept touch will no longer be considered a tap or flick (quick swipe) interaction.
+	void setInterceptDelayTime( double seconds )			{ mInterceptDelayTime = seconds; }
+	//! Returns the amount of time in seconds until an intercept touch will no longer be considered a tap or flick (quick swipe) interaction.
+	double setInterceptDelayTime() const					{ return mInterceptDelayTime; }
+	//! Sets the distance (in both axes) in pixels until an intercept touch will no longer be considered a drag interaction.
+	void setInterceptMaxDragDistance( const ci::vec2 &dist )	{ mInterceptMaxDragDistance = dist; }
+	//! Returns the distance (in both axes) in pixels until an intercept touch will no longer be considered a drag interaction.
+	const ci::vec2& getInterceptMaxDragDistance() const		{ return mInterceptMaxDragDistance; }	
+
+	void setLabel( const std::string &label ) override;
+
 	void setVerticalScrollingEnabled( bool enable )			{ mVerticalScrollingEnabled = enable; }
 	bool isVerticalScrollingEnabled() const					{ return mVerticalScrollingEnabled; }
 	void setHorizontalScrollingEnabled( bool enable )		{ mHorizontalScrollingEnabled = enable; }
@@ -121,6 +132,9 @@ class CI_UI_API ScrollView : public View {
 	bool touchesBegan( cinder::app::TouchEvent &event )	override;
 	bool touchesMoved( ci::app::TouchEvent &event )	override;
 	bool touchesEnded( ci::app::TouchEvent &event )	override;
+
+	bool shouldInterceptTouches( ci::app::TouchEvent &event ) override;
+	bool shouldStopInterceptingTouches( ci::app::TouchEvent &event ) override;
 
 	virtual void				onDecelerationEnded();
 	virtual const ci::Rectf&	getDeceleratingBoundaries() const;
@@ -154,6 +168,9 @@ class CI_UI_API ScrollView : public View {
 	float mMinVelocityConsideredAsStopped	= 10;
 	float mMinOffsetUntilStopped			= 0.5f;  // TODO: add max offset too (but should still move smoothly perhaps tanh).
 	float mMaxSpeed							= 300.0f;
+	
+	double		mInterceptDelayTime			= 0.05f; // 0.05f = 3.0f / 60;
+	ci::vec2	mInterceptMaxDragDistance		= ci::vec2( 10.0f );
 
 	bool							mScrollingEnabled = true;
 	bool							mVerticalScrollingEnabled = true;

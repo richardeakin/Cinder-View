@@ -29,8 +29,8 @@ using namespace std;
 //#define LOG_SCROLL_CONTENT( stream )	CI_LOG_I( stream )
 #define LOG_SCROLL_CONTENT( stream )	( (void)( 0 ) )
 
-//#define LOG_SCROLL_TRACKING( stream )	CI_LOG_I( stream )
-#define LOG_SCROLL_TRACKING( stream )	( (void)( 0 ) )
+#define LOG_SCROLL_TRACKING( stream )	CI_LOG_I( stream )
+////#define LOG_SCROLL_TRACKING( stream )	( (void)( 0 ) )
 
 namespace ui {
 
@@ -54,6 +54,7 @@ ScrollView::ScrollView( const ci::Rectf &bounds )
 	: View( bounds )
 {
 	setClipEnabled();
+	setInterceptsTouches();
 
 	mContentView = make_shared<ContentView>( this );
 	mContentView->setLabel( "ScrollView-ContentView" );
@@ -259,18 +260,33 @@ void ScrollView::updateContentViewOffset( const vec2 &offset )
 	mContentView->setPos( - mContentOffset() );
 }
 
+const Rectf& ScrollView::getDeceleratingBoundaries() const
+{
+	return mOffsetBoundaries;
+}
+
+void ScrollView::setLabel( const std::string &label )
+{
+	View::setLabel( label );
+	mContentView->setLabel( "ContentView (" + label + ")" );
+}
+
 // ----------------------------------------------------------------------------------------------------
 // Events
 // ----------------------------------------------------------------------------------------------------
 
 bool ScrollView::touchesBegan( app::TouchEvent &event )
 {
+	if( ! getActiveTouches().empty() ) {
+		return false;
+	}	
+
 	auto &firstTouch = event.getTouches().front();
 	vec2 pos = toLocal( firstTouch.getPos() );
-	LOG_SCROLL_TRACKING( "pos:" << pos );
+	LOG_SCROLL_TRACKING( "intercepting touches: " << getInterceptingTouches().size() << ",  pos: " << pos );
 
 	mSwipeTracker->clear();
-	mSwipeTracker->storeTouchPos( pos, getGraph()->getElapsedSeconds() );
+	mSwipeTracker->storeTouchPos( pos, getGraph()->getCurrentTime() );
 	mSwipeVelocity = vec2( 0 );
 
 	mDragging = false; // will set to true once touchesMoved() is fired
@@ -285,8 +301,10 @@ bool ScrollView::touchesMoved( app::TouchEvent &event )
 	vec2 pos = toLocal( event.getTouches().front().getPos() );
 	vec2 lastPos = mSwipeTracker->getLastTouchPos();
 	updateOffset( pos, lastPos );
-	mSwipeTracker->storeTouchPos( pos, getGraph()->getElapsedSeconds() );
+	mSwipeTracker->storeTouchPos( pos, getGraph()->getCurrentTime() );
 	
+	LOG_SCROLL_TRACKING( "intercepting touches: " << getInterceptingTouches().size() << ",  pos: " << pos );
+
 	if( ! mDragging ) {
 		mDragging = true;
 		mSignalDragBegin.emit();
@@ -302,10 +320,10 @@ bool ScrollView::touchesEnded( app::TouchEvent &event )
 {
 	vec2 pos = toLocal( event.getTouches().front().getPos() );
 	vec2 lastPos = mSwipeTracker->getLastTouchPos();
-	LOG_SCROLL_TRACKING( "pos:" << pos );
+	LOG_SCROLL_TRACKING( "intercepting touches: " << getInterceptingTouches().size() << ",  pos: " << pos );
 
 	updateOffset( pos, lastPos );
-	mSwipeTracker->storeTouchPos( pos, getGraph()->getElapsedSeconds() );
+	mSwipeTracker->storeTouchPos( pos, getGraph()->getCurrentTime() );
 
 	mSwipeVelocity = mSwipeTracker->calcSwipeVelocity();
 	mScrollVelocity = mSwipeVelocity;
@@ -323,9 +341,61 @@ bool ScrollView::touchesEnded( app::TouchEvent &event )
 	return true;
 }
 
-const Rectf& ScrollView::getDeceleratingBoundaries() const
+bool ScrollView::shouldInterceptTouches( ci::app::TouchEvent &event )
 {
-	return mOffsetBoundaries;
+	// TODO (intercept): perform hit tests on content views and see if there is one under a touch that is interactive and non hidden
+	// - need to indicate back to caller which touches?
+	//     - might be able to do that by calling setHandled() on the touch itself
+
+	auto hitView = hitTest( event );
+	bool hitInteractiveChild = hitView != mContentView.get();
+
+	string hitViewStr = ( (bool)hitView ? hitView->getName() : "(null)" );
+	LOG_SCROLL_TRACKING( "frame: " << getGraph()->getCurrentFrame() << ", touches: " << event.getTouches().size() << ", hit interactive view: " << boolalpha << hitInteractiveChild << dec << ", hit view: " << hitViewStr );
+
+	return hitInteractiveChild;
+}
+
+bool ScrollView::shouldStopInterceptingTouches( ci::app::TouchEvent &event )
+{
+	CI_ASSERT( mSwipeTracker->getNumStoredTouches() > 0 );
+
+	double duration = getGraph()->getCurrentTime() - mSwipeTracker->getFirstTouchTime();
+	vec2 dist = mSwipeTracker->calcSwipeDistance();
+
+	LOG_SCROLL_TRACKING( "frame: " << getGraph()->getCurrentFrame() << ", touches: " << event.getTouches().size() << ", dragging: " << mDragging 
+		<< ", interacting: " << isUserInteracting() << ", tracker stored touches: " << mSwipeTracker->getNumStoredTouches() << ", gesture duration: " << duration << ", dist: " << dist );
+
+	// determine if complete gesture duration was short enough to be considered a tap
+	if( duration < mInterceptDelayTime ) {
+		if( ! isUserInteracting() ) {
+			LOG_SCROLL_TRACKING( "\t- gesture considered a tap: return true (unclaimed)." );
+			return true;
+		}
+		else if( ! mHorizontalScrollingEnabled && fabsf( dist.x ) > mInterceptMaxDragDistance.x ) {
+			LOG_SCROLL_TRACKING( "\t- gesture considered horizontal drag and axis disbabled: return true (unclaimed)." );
+			return true;
+		}
+		else if( ! mVerticalScrollingEnabled && fabsf( dist.y ) > mInterceptMaxDragDistance.y ) {
+			LOG_SCROLL_TRACKING( "\t- gesture considered vertical drag and axis disbabled: return true (unclaimed)." );
+			return true;
+		}
+	}
+	else {
+		if( fabsf( dist.x ) < mInterceptMaxDragDistance.x && fabsf( dist.y ) < mInterceptMaxDragDistance.y ) {
+			LOG_SCROLL_TRACKING( "\t- gesture duration no longer considered tap and distance less than drag: return true (unclaimed)." );
+			return true;
+		}
+		else if( isUserInteracting() ) {
+			LOG_SCROLL_TRACKING( "\t- gesture duration no longer considered tap: return true (and own touch)" );
+			// claim ownership of touches.
+			// TODO: consider owning all the touches here (they are assigned to the TouchEvent from Graph)
+			event.getTouches().front().setHandled( true );
+			return true;
+		}
+	}
+
+	return false;
 }
 
 // ----------------------------------------------------------------------------------------------------

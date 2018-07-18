@@ -125,7 +125,7 @@ class CI_UI_API View : public std::enable_shared_from_this<View> {
 	ViewRef	getNextResponder() const;
 
 	//! Sets a label that can be used to identify this View
-	void				setLabel( const std::string &label )	{ mLabel = label; }
+	virtual void		setLabel( const std::string &label )	{ mLabel = label; }
 	const std::string&	getLabel() const						{ return mLabel; }
 	//! Returns the first label whose label matches the specified string, or an empty ViewRef.
 	ViewRef				getViewWithLabel( const std::string &label ) const;
@@ -144,7 +144,8 @@ class CI_UI_API View : public std::enable_shared_from_this<View> {
 	ci::Rectf			toWorld( const ci::Rectf &localRect ) const;
 	ci::Rectf			toLocal( const ci::Rectf &worldRect ) const;
 
-	virtual bool				hitTest( const ci::vec2 &localPos ) const;
+	virtual const View*	hitTest( const ci::app::TouchEvent &event ) const;
+	virtual bool		isPointInside( const ci::vec2 &localPos ) const;
 
 	void	setHidden( bool hidden = true )			{ mHidden = hidden; }
 	bool	isHidden() const						{ return mHidden; }
@@ -183,6 +184,12 @@ class CI_UI_API View : public std::enable_shared_from_this<View> {
 	//! Signal emitted after this View has had it's layout() method called.
 	ci::signals::Signal<void ()>&	getSignalViewDidLayout()	{ return mSignalViewDidLayout; }
 
+	//! Enables or disables touch intercepting. If true, this View will get a call to shouldInterceptTouches() before its subviews get a chance to interact with the touch.
+	void	setInterceptsTouches( bool enable = true ) { mInterceptsTouches = true; }
+	//! Returns whether touch intercepting is enabled. If true, this View will get a call to shouldInterceptTouches() before its subviews get a chance to interact with the touch.
+	bool	getInterceptsTouches() const				{ return mInterceptsTouches; }
+	//! Returns the touches currently being intercepted
+	const std::vector<ci::app::TouchEvent::Touch>&	getInterceptingTouches() const	{ return mInterceptedTouchEvent.getTouches(); }
 
 	//! This is done when the world position should be recalculated but calling layout isn't necessary (ex. when ScrollView offset moves)
 	void	setWorldPosDirty();
@@ -206,6 +213,10 @@ class CI_UI_API View : public std::enable_shared_from_this<View> {
 	virtual bool touchesBegan( ci::app::TouchEvent &event )	{ return false; }
 	virtual bool touchesMoved( ci::app::TouchEvent &event )	{ return false; }
 	virtual bool touchesEnded( ci::app::TouchEvent &event )	{ return false; }
+	//! Override and return true to intercept touches from an event before subviews have a chance at it.
+	virtual bool	shouldInterceptTouches( ci::app::TouchEvent &event )	{ return false; }
+	//! If the View is intercepting a touch, override this and return false to stop intercepting.
+	virtual bool	shouldStopInterceptingTouches( ci::app::TouchEvent &event )	{ return false; }
 
 	virtual bool keyDown( ci::app::KeyEvent &event )	{ return false; }
 	virtual bool keyUp( ci::app::KeyEvent &event )		{ return false; }
@@ -222,7 +233,7 @@ class CI_UI_API View : public std::enable_shared_from_this<View> {
 	void clearViewsMarkedForRemoval();
 
 
-	typedef std::map<uint32_t, ci::app::TouchEvent::Touch> TouchMapT; // TODO just store this as vector and use std::find
+	typedef std::map<uint32_t, ci::app::TouchEvent::Touch> TouchMapT; // TODO just store this as vector and use std::find (you hardly have more than 10 touches)
 
 	TouchMapT				mActiveTouches;
 
@@ -255,6 +266,9 @@ class CI_UI_API View : public std::enable_shared_from_this<View> {
 
 	bool					mAcceptsFirstResponder = false;
 	ViewRef					mNextResponder;
+
+	bool					mInterceptsTouches = false;
+	ci::app::TouchEvent		mInterceptedTouchEvent;
 
 	ci::signals::Signal<void ()>	mSignalViewDidLayout;
 
