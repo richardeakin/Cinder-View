@@ -360,25 +360,29 @@ bool ScrollView::shouldStopInterceptingTouches( ci::app::TouchEvent &event )
 {
 	CI_ASSERT( mSwipeTracker->getNumStoredTouches() > 0 );
 
-	double durationInteracting = getGraph()->getCurrentTime() - mSwipeTracker->getFirstTouchTime();
-
+	double duration = getGraph()->getCurrentTime() - mSwipeTracker->getFirstTouchTime();
 	vec2 dist = mSwipeTracker->calcSwipeDistance();
-	// TODO (intercept): considering how to handle a scroll direction being disabled
-	// - could zero out its axis
-	// - but also, if there is significant movement in a disabled axis, want to give up intercept
 
 	LOG_SCROLL_TRACKING( "frame: " << getGraph()->getCurrentFrame() << ", touches: " << event.getTouches().size() << ", dragging: " << mDragging 
-		<< ", interacting: " << isUserInteracting() << ", tracker stored touches: " << mSwipeTracker->getNumStoredTouches() << ", gesture duration: " << durationInteracting << ", dist: " << dist );
+		<< ", interacting: " << isUserInteracting() << ", tracker stored touches: " << mSwipeTracker->getNumStoredTouches() << ", gesture duration: " << duration << ", dist: " << dist );
 
 	// determine if complete gesture duration was short enough to be considered a tap
-	if( durationInteracting < mInterceptDelayTime ) {
+	if( duration < mInterceptDelayTime ) {
 		if( ! isUserInteracting() ) {
 			LOG_SCROLL_TRACKING( "\t- gesture considered a tap: return true (unclaimed)." );
 			return true;
 		}
+		else if( ! mHorizontalScrollingEnabled && fabsf( dist.x ) > mInterceptMaxDragDistance.x ) {
+			LOG_SCROLL_TRACKING( "\t- gesture considered horizontal drag and axis disbabled: return true (unclaimed)." );
+			return true;
+		}
+		else if( ! mVerticalScrollingEnabled && fabsf( dist.y ) > mInterceptMaxDragDistance.y ) {
+			LOG_SCROLL_TRACKING( "\t- gesture considered vertical drag and axis disbabled: return true (unclaimed)." );
+			return true;
+		}
 	}
 	else {
-		if( fabsf( dist.x ) < mInterceptDragDistance.x && fabsf( dist.y ) < mInterceptDragDistance.y ) {
+		if( fabsf( dist.x ) < mInterceptMaxDragDistance.x && fabsf( dist.y ) < mInterceptMaxDragDistance.y ) {
 			LOG_SCROLL_TRACKING( "\t- gesture duration no longer considered tap and distance less than drag: return true (unclaimed)." );
 			return true;
 		}

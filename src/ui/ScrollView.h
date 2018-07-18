@@ -99,14 +99,14 @@ class CI_UI_API ScrollView : public View {
 	//! Returns the max speed (pixels) that can be applied as a result of seeking toward target offset. Default: 300.0
 	float getMaxSpeed() const								{ return mMaxSpeed; }
 
-	//! Sets the amount of time in seconds until an intercept touch will no longer be considered a tap or flick (quick swipe) interation.
+	//! Sets the amount of time in seconds until an intercept touch will no longer be considered a tap or flick (quick swipe) interaction.
 	void setInterceptDelayTime( double seconds )			{ mInterceptDelayTime = seconds; }
 	//! Returns the amount of time in seconds until an intercept touch will no longer be considered a tap or flick (quick swipe) interaction.
 	double setInterceptDelayTime() const					{ return mInterceptDelayTime; }
 	//! Sets the distance (in both axes) in pixels until an intercept touch will no longer be considered a drag interaction.
-	void setInterceptDragDistance( const ci::vec2 &dist )	{ mInterceptDragDistance = dist; }
+	void setInterceptMaxDragDistance( const ci::vec2 &dist )	{ mInterceptMaxDragDistance = dist; }
 	//! Returns the distance (in both axes) in pixels until an intercept touch will no longer be considered a drag interaction.
-	const ci::vec2& getInterceptDragDistance() const		{ return mInterceptDragDistance; }	
+	const ci::vec2& getInterceptMaxDragDistance() const		{ return mInterceptMaxDragDistance; }	
 
 	void setLabel( const std::string &label ) override;
 
@@ -170,7 +170,7 @@ class CI_UI_API ScrollView : public View {
 	float mMaxSpeed							= 300.0f;
 	
 	double		mInterceptDelayTime			= 0.05f; // 0.05f = 3.0f / 60;
-	ci::vec2	mInterceptDragDistance		= ci::vec2( 10.0f );
+	ci::vec2	mInterceptMaxDragDistance		= ci::vec2( 10.0f );
 
 	bool							mScrollingEnabled = true;
 	bool							mVerticalScrollingEnabled = true;
