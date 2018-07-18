@@ -29,8 +29,8 @@ using namespace std;
 //#define LOG_SCROLL_CONTENT( stream )	CI_LOG_I( stream )
 #define LOG_SCROLL_CONTENT( stream )	( (void)( 0 ) )
 
-#define LOG_SCROLL_TRACKING( stream )	CI_LOG_I( stream )
-////#define LOG_SCROLL_TRACKING( stream )	( (void)( 0 ) )
+//#define LOG_SCROLL_TRACKING( stream )	CI_LOG_I( stream )
+#define LOG_SCROLL_TRACKING( stream )	( (void)( 0 ) )
 
 namespace ui {
 
