@@ -98,6 +98,8 @@ class CI_UI_API ScrollView : public View {
 	void setMaxSpeed( float value )							{ mMaxSpeed = value; }
 	//! Returns the max speed (pixels) that can be applied as a result of seeking toward target offset. Default: 300.0
 	float getMaxSpeed() const								{ return mMaxSpeed; }
+	//! Returns whether or not the content offset is animating.
+	bool isContentOffsetAnimating() const					{ return mContentOffsetAnimating; }
 
 	//! Sets the amount of time in seconds until an intercept touch will no longer be considered a tap or flick (quick swipe) interaction.
 	void setInterceptDelayTime( double seconds )			{ mInterceptDelayTime = seconds; }
@@ -148,8 +150,9 @@ class CI_UI_API ScrollView : public View {
 	ci::vec2						mSwipeVelocity;
 	ci::vec2						mScrollVelocity;
 
-	bool					mDragging		= false;
-	bool					mDecelerating	= false;
+	bool					mDragging				= false;
+	bool					mDecelerating			= false;
+	bool					mContentOffsetAnimating	= false;
 	ci::vec2				mTargetOffset;
 
   private:
@@ -256,7 +259,6 @@ class CI_UI_API PagingScrollView : public ScrollView {
 	ci::Rectf		mDeceleratingBoundaries = ci::Rectf::zero();
 	float			mSwipeVelocityThreshold	= 500;
 	float			mSwipeDistanceThreshold	= 50;
-	bool			mPageIsChangingAnimated = false;
 
 	ci::signals::Signal<void ( size_t )>	mSignalPageWillChange;
 	ci::signals::Signal<void ()>			mSignalPageDidChange;

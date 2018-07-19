@@ -123,10 +123,12 @@ void ScrollView::setContentOffset( const ci::vec2 &offset, bool animated )
 	if( animated ) {
 		mTargetOffset = offset;
 		mDecelerating = true;
+		mContentOffsetAnimating = true;
 		mOffsetBoundaries = Rectf( offset.x, offset.y, offset.x, offset.y );
 	}
 	else {
 		mContentOffset = offset;
+		mContentOffsetAnimating = false;
 	}
 }
 
@@ -183,8 +185,15 @@ void ScrollView::layout()
 
 void ScrollView::update()
 {
+	if( ! mContentOffset.isComplete() ) {
+		mContentOffsetAnimating = true;
+	}
+
 	if( isUserInteracting() ) {
 		mScrollVelocity = mSwipeTracker->calcSwipeVelocity();
+	}
+	else if( mContentOffsetAnimating ) {
+		CI_LOG_I( "TODO: calc scroll velocity somehow based on animating offset" );
 	}
 
 	bool hasContentViews = ! mContentView->getSubviews().empty();
@@ -619,13 +628,16 @@ vec2 PagingScrollView::getTargetOffsetForPage( size_t index ) const
 
 void ScrollView::onDecelerationEnded()
 {
+	mContentOffsetAnimating = false;
 	calcOffsetBoundaries();
 }
 
 void PagingScrollView::onDecelerationEnded()
 {
-	if( mPageIsChangingAnimated ) {
-		mPageIsChangingAnimated = false;
+	bool animating = isContentOffsetAnimating();
+	ScrollView::onDecelerationEnded();
+
+	if( animating ) {
 		mSignalPageDidChange.emit();
 	}
 }
@@ -655,7 +667,7 @@ void PagingScrollView::handlePageUpdate( bool animate )
 	calcDeceleratingBoundaries();
 	if( animate ) {
 		mDecelerating = true;
-		mPageIsChangingAnimated = true;
+		mContentOffsetAnimating = true;
 	}
 	else {
 		// jump to the current offset
