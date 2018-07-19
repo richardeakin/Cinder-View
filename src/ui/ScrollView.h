@@ -152,7 +152,6 @@ class CI_UI_API ScrollView : public View {
 
 	bool					mDragging				= false;
 	bool					mDecelerating			= false;
-	bool					mContentOffsetAnimating	= false;
 	ci::vec2				mTargetOffset;
 
   private:
@@ -171,7 +170,8 @@ class CI_UI_API ScrollView : public View {
 	float mMinVelocityConsideredAsStopped	= 10;
 	float mMinOffsetUntilStopped			= 0.5f;  // TODO: add max offset too (but should still move smoothly perhaps tanh).
 	float mMaxSpeed							= 300.0f;
-	
+	bool  mContentOffsetAnimating			= false;
+
 	double		mInterceptDelayTime			= 0.05f; // 0.05f = 3.0f / 60;
 	ci::vec2	mInterceptMaxDragDistance		= ci::vec2( 10.0f );
 
@@ -257,6 +257,7 @@ class CI_UI_API PagingScrollView : public ScrollView {
 	size_t			mCurrentPageIndex = 0;
 	ci::vec2		mPageMargin = ci::vec2( 0 );
 	ci::Rectf		mDeceleratingBoundaries = ci::Rectf::zero();
+	bool			mPageIsChangingAnimated = false; 
 	float			mSwipeVelocityThreshold	= 500;
 	float			mSwipeDistanceThreshold	= 50;
 

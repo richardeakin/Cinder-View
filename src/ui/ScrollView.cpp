@@ -162,7 +162,7 @@ void ScrollView::calcContentSize()
 		setScrollingEnabled( false );
 	}
 
-	LOG_SCROLL_CONTENT( "content size: " << mContentSize );
+	LOG_SCROLL_CONTENT( "content size: " << mContentView->getSize() );
 }
 
 void ScrollView::calcOffsetBoundaries()
@@ -274,6 +274,12 @@ void ScrollView::updateContentViewOffset( const vec2 &offset )
 
 	// Move all of the content's position based on mContentOffset. Their world positions will be marked dirty.
 	mContentView->setPos( - mContentOffset() );
+}
+
+void ScrollView::onDecelerationEnded()
+{
+	mContentOffsetAnimating = false;
+	calcOffsetBoundaries();
 }
 
 const Rectf& ScrollView::getDeceleratingBoundaries() const
@@ -629,18 +635,10 @@ vec2 PagingScrollView::getTargetOffsetForPage( size_t index ) const
 	return mAxis == HORIZONTAL ? vec2( contentBounds.x1 - mPageMargin.x, 0 ) : vec2( 0, contentBounds.y1 - mPageMargin.y );
 }
 
-void ScrollView::onDecelerationEnded()
-{
-	mContentOffsetAnimating = false;
-	calcOffsetBoundaries();
-}
-
 void PagingScrollView::onDecelerationEnded()
 {
-	bool animating = isContentOffsetAnimating();
-	ScrollView::onDecelerationEnded();
-
-	if( animating ) {
+	if( mPageIsChangingAnimated ) {
+		mPageIsChangingAnimated = false;
 		mSignalPageDidChange.emit();
 	}
 }
@@ -670,7 +668,7 @@ void PagingScrollView::handlePageUpdate( bool animate )
 	calcDeceleratingBoundaries();
 	if( animate ) {
 		mDecelerating = true;
-		mContentOffsetAnimating = true;
+		mPageIsChangingAnimated = true;
 	}
 	else {
 		// jump to the current offset
@@ -679,7 +677,7 @@ void PagingScrollView::handlePageUpdate( bool animate )
 		mSignalPageDidChange.emit();
 	}
 
-	LOG_SCROLL_CONTENT( "current page: " << mCurrentPageIndex );
+	LOG_SCROLL_CONTENT( "current page: " << mCurrentPageIndex << ", animated: " << animate );
 }
 
 bool PagingScrollView::isOnFirstPage() const
