@@ -179,12 +179,12 @@ ScrollTests::ScrollTests()
 		mScrollViewWithLayout->getContentView()->setLayout( layout );
 	}
 
-	for( size_t i = 0; i < 10; i++ ) {
+	for( size_t i = 0; i < 20; i++ ) {
 		auto label = make_shared<ui::Label>( Rectf( 0, 0, 140, 30 ) );
 		label->setFontSize( 24 );
 		label->setText( "label " + to_string( i ) );
 		label->setTextColor( Color::white() );
-		label->getBackground()->setColor( Color( CM_HSV, 0.5f + (float)i * 0.4f / (float)10, 1.0f, 0.75f ) );
+		label->getBackground()->setColor( Color( CM_HSV, 0.5f + (float)i * 0.025f, 1.0f, 0.75f ) );
 		mScrollViewWithLayout->addContentView( label );
 	}
 
@@ -231,6 +231,8 @@ bool ScrollTests::keyDown( app::KeyEvent &event )
 	if( event.isControlDown() )
 		return false;
 
+	const float animateOffsetDist = 100;
+
 	bool handled = true;
 	switch( event.getCode() ) {
 		case app::KeyEvent::KEY_c: {
@@ -243,6 +245,42 @@ bool ScrollTests::keyDown( app::KeyEvent &event )
 		}
 		case app::KeyEvent::KEY_v: {
 			mScrollViewFree->setVerticalScrollingEnabled( ! mScrollViewFree->isVerticalScrollingEnabled() );
+			break;
+		}
+		case app::KeyEvent::KEY_DOWN: {
+			if( event.isShiftDown() ) {
+				mVerticalPager->nextPage( true );
+			}
+			else {
+				mScrollViewFree->setContentOffset( mScrollViewFree->getContentOffset() + vec2( 0, animateOffsetDist ), true );
+			}
+			break;
+		}
+		case app::KeyEvent::KEY_UP: {
+			if( event.isShiftDown() ) {
+				mVerticalPager->previousPage( true );
+			}
+			else {
+				mScrollViewFree->setContentOffset( mScrollViewFree->getContentOffset() - vec2( 0, animateOffsetDist ), true );
+			}
+			break;
+		}
+		case app::KeyEvent::KEY_RIGHT: {
+			if( event.isShiftDown() ) {
+				mHorizontalPager->nextPage( true );
+			}
+			else {
+				mScrollViewFree->setContentOffset( mScrollViewFree->getContentOffset() + vec2( animateOffsetDist, 0 ), true );
+			}
+			break;
+		}
+		case app::KeyEvent::KEY_LEFT: {
+			if( event.isShiftDown() ) {
+				mHorizontalPager->previousPage( true );
+			}
+			else {
+				mScrollViewFree->setContentOffset( mScrollViewFree->getContentOffset() - vec2( animateOffsetDist, 0 ), true );
+			}
 			break;
 		}
 		default:
