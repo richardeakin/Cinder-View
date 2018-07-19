@@ -462,6 +462,10 @@ void Graph::propagateTouchesEnded( app::TouchEvent &event, const ui::ViewRef &in
 		}
 
 		// remove View from container once all its active touches have ended
+		// FIXME: crash here, interceptingView is null, view is the Scroller and has no more active touches
+		// - happened when tapping the video play / pause button in story scroller
+		// - i think it is because there were two intercepting views
+		CI_ASSERT( view );
 		if( view != interceptingView && view->mActiveTouches.empty() ) {
 			UI_LOG_TOUCHES( view->getName() << " | erasing." );
 			viewIt = mViewsWithTouches.erase( viewIt );
