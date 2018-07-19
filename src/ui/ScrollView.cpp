@@ -123,8 +123,10 @@ void ScrollView::setContentOffset( const ci::vec2 &offset, bool animated )
 	if( animated ) {
 		mTargetOffset = offset;
 		mDecelerating = true;
-		mContentOffsetAnimating = true;
 		mOffsetBoundaries = Rectf( offset.x, offset.y, offset.x, offset.y );
+
+		mSwipeTracker->clear();
+		mContentOffsetAnimating = true;
 	}
 	else {
 		mContentOffset = offset;
@@ -193,7 +195,8 @@ void ScrollView::update()
 		mScrollVelocity = mSwipeTracker->calcSwipeVelocity();
 	}
 	else if( mContentOffsetAnimating ) {
-		CI_LOG_I( "TODO: calc scroll velocity somehow based on animating offset" );
+		mSwipeTracker->storeTouchPos( mContentOffset, getGraph()->getCurrentTime() );
+		mScrollVelocity = mSwipeTracker->calcSwipeVelocity();
 	}
 
 	bool hasContentViews = ! mContentView->getSubviews().empty();
