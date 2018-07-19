@@ -183,6 +183,10 @@ void ScrollView::layout()
 
 void ScrollView::update()
 {
+	if( isUserInteracting() ) {
+		mScrollVelocity = mSwipeTracker->calcSwipeVelocity();
+	}
+
 	bool hasContentViews = ! mContentView->getSubviews().empty();
 	if( hasContentViews && ! isUserInteracting() && isDecelerating() ) {
 		updateDeceleratingOffset();
