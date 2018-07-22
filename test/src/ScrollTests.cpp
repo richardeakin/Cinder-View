@@ -79,38 +79,40 @@ ScrollTests::ScrollTests()
 	mScrollViewFree->setLabel( "ScrollView (free)" );
 	mScrollViewFree->getContentView()->getBackground()->setColor( Color( 0.15f, 0, 0 ) );
 
-	auto scrollBorder = make_shared<ui::StrokedRectView>();
-	scrollBorder->setFillParentEnabled();
-	scrollBorder->setColor( ColorA( 0.9f, 0.5f, 0.0f, 0.7f ) );
-	//mScrollViewFree->addSubview( scrollBorder );
+	{
+		auto scrollBorder = make_shared<ui::StrokedRectView>();
+		scrollBorder->setFillParentEnabled();
+		scrollBorder->setColor( ColorA( 0.9f, 0.5f, 0.0f, 0.7f ) );
+		//mScrollViewFree->addSubview( scrollBorder );
 
-	// add some content views:
-	auto custom = make_shared<CustomScrollTestsView>( Rectf( 40, 30, 180, 130 ) );
+		// add some content views:
+		auto custom = make_shared<CustomScrollTestsView>( Rectf( 40, 30, 180, 130 ) );
 
-	auto button = make_shared<ui::Button>( Rectf( 200, 30, 300, 70 ) );
-	button->setTitle( "tap me" );
-	button->setLabel( "Button ('tap me')" );
-	button->setTitleColor( Color( 0, 0.2f, 0.8f ) );
-	button->setColor( Color( 0.4f, 0.6f, 0.9f ), ui::Button::State::PRESSED );
-	button->getSignalPressed().connect( [] { CI_LOG_I( "button pressed" ); } );
-	button->getSignalReleased().connect( [] { CI_LOG_I( "button released" ); } );
+		auto button = make_shared<ui::Button>( Rectf( 200, 30, 300, 70 ) );
+		button->setTitle( "tap me" );
+		button->setLabel( "Button ('tap me')" );
+		button->setTitleColor( Color( 0, 0.2f, 0.8f ) );
+		button->setColor( Color( 0.4f, 0.6f, 0.9f ), ui::Button::State::PRESSED );
+		button->getSignalPressed().connect( [] { CI_LOG_I( "button pressed" ); } );
+		button->getSignalReleased().connect( [] { CI_LOG_I( "button released" ); } );
 
-	auto imageView = make_shared<ui::ImageView>( Rectf( 40, 150, 600, 600 ) );
-	imageView->getBackground()->setColor( Color( 0, 0.2f, 0 ) );
+		auto imageView = make_shared<ui::ImageView>( Rectf( 40, 150, 600, 600 ) );
+		imageView->getBackground()->setColor( Color( 0, 0.2f, 0 ) );
 
-	fs::path imageFilePath = app::getAssetPath( "images/monkey_hitchhike.jpg" );
-	try {
-		CI_LOG_I( "loading image view.." );
-		auto image = make_shared<ui::Image>( loadImage( loadFile( imageFilePath ) ) );
-		imageView->setImage( image );
-		imageView->setSize( image->getSize() );
-		CI_LOG_I( "complete" );
+		fs::path imageFilePath = app::getAssetPath( "images/monkey_hitchhike.jpg" );
+		try {
+			CI_LOG_I( "loading image view.." );
+			auto image = make_shared<ui::Image>( loadImage( loadFile( imageFilePath ) ) );
+			imageView->setImage( image );
+			imageView->setSize( image->getSize() );
+			CI_LOG_I( "complete" );
+		}
+		catch( std::exception &exc ) {
+			CI_LOG_EXCEPTION( "failed to load image at path: " << imageFilePath, exc );
+		}
+
+		mScrollViewFree->addContentViews( { custom, imageView, button } );
 	}
-	catch( std::exception &exc ) {
-		CI_LOG_EXCEPTION( "failed to load image at path: " << imageFilePath, exc );
-	}
-
-	mScrollViewFree->addContentViews( { custom, imageView, button } );
 
 	// Horizontal paging ScrollView
 	mHorizontalPager = make_shared<ui::PagingScrollView>();
@@ -148,18 +150,33 @@ ScrollTests::ScrollTests()
 	mScrollViewNested->setHorizontalScrollingEnabled( false );
 	mScrollViewNested->getBackground()->setColor( Color( 0, 0, 0 ) );
 	mScrollViewNested->getContentView()->getBackground()->setColor( Color( 0.15f, 0, 0 ) );
+	mScrollViewNested->setClipEnabled( true );
 
 	{
 		auto scrollview = make_shared<ui::ScrollView>( Rectf( 40, 100, 1200, 130 ) );
 		scrollview->setLabel( "ScrollView (nested child)" );
 		scrollview->setVerticalScrollingEnabled( false );
+		//scrollview->getContentView()->getBackground()->setColor( Color( 0, 1, 0 ) );
 
-		auto label = make_shared<ui::Label>( Rectf( 0, 0, 240, 130 ) );
+		auto button = make_shared<ui::Button>();
+		button->setSize( vec2( 80, 40 ) );
+		button->setTitle( "button" );
+		button->setLabel( "nested Button" );
+		button->setTitleColor( Color( 0, 0.2f, 0.8f ) );
+		button->setColor( Color( 0.4f, 0.6f, 0.9f ), ui::Button::State::PRESSED );
+		button->getSignalPressed().connect( [] { CI_LOG_I( "nested button pressed" ); } );
+		button->getSignalReleased().connect( [] { CI_LOG_I( "nested button released" ); } );
+
+		auto label = make_shared<ui::Label>();
+		label->setPos( button->getBounds().getUpperRight() + vec2( 10, 0 ) );
+		label->setSize( vec2( 240, 130 ) );
 		label->setFontSize( 36 );
 		label->setShrinkToFitEnabled();
 		label->setText( "blah blah blah blah blah" );
 		label->setTextColor( Color::white() );
 		label->getBackground()->setColor( Color( 0, 0, 1 ) );
+
+		scrollview->addContentView( button );
 		scrollview->addContentView( label );
 
 		mScrollViewNested->addContentView( scrollview );
@@ -193,11 +210,11 @@ ScrollTests::ScrollTests()
 	mInfoLabel->getBackground()->setColor( ColorA::gray( 0, 0.3f ) );
 
 	addSubview( mScrollViewFree );
-	addSubview( mHorizontalPager );
-	addSubview( mVerticalPager );
+	//addSubview( mHorizontalPager );
+	//addSubview( mVerticalPager );
 	addSubview( mScrollViewNested );
-	addSubview( mScrollViewWithLayout );
-	addSubview( mInfoLabel );
+	//addSubview( mScrollViewWithLayout );
+	//addSubview( mInfoLabel );
 }
 
 void ScrollTests::layout()
