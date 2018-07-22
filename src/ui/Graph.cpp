@@ -143,7 +143,7 @@ void Graph::propagateUpdate()
 	mViewsWithTouches.erase(
 			remove_if( mViewsWithTouches.begin(), mViewsWithTouches.end(),
 			           []( const ViewRef &view ) {
-				           return view->mMarkedForRemoval;
+				           return view->mMarkedForRemoval || view->mActiveTouches.empty();
 			           } ),
 			mViewsWithTouches.end() );
 }
@@ -409,10 +409,8 @@ void Graph::propagateTouchesEnded( app::TouchEvent &event, const ui::ViewRef &in
 	mCurrentTouchEvent = event; // TODO (intercept): may want to only set this if it isn't an intercepting event
 //	size_t numTouchesHandled = 0;
 
-	for( auto viewIt = mViewsWithTouches.begin(); viewIt != mViewsWithTouches.end(); /* */ ) {
-		auto &view = *viewIt;
+	for(const auto &view : mViewsWithTouches ) {
 		UI_LOG_TOUCHES( view->getName() << " | num active touches: " << view->mActiveTouches.size() << ", intercepting touches: " << view->mInterceptedTouchEvent.getTouches().size() );
-		//CI_ASSERT( ! view->mActiveTouches.empty() );
 
 		// Update touches on view's mInterceptedTouchEvent
 		bool intercepting = false;
@@ -458,20 +456,6 @@ void Graph::propagateTouchesEnded( app::TouchEvent &event, const ui::ViewRef &in
 				handleInterceptingTouches( view, true );
 				//view->mInterceptedTouchEvent = {};
 			}
-
-		}
-
-		// remove View from container once all its active touches have ended
-		// FIXME: crash here, interceptingView is null, view is the Scroller and has no more active touches
-		// - happened when tapping the video play / pause button in story scroller
-		// - i think it is because there were two intercepting views
-		CI_ASSERT( view );
-		if( view != interceptingView && view->mActiveTouches.empty() ) {
-			UI_LOG_TOUCHES( view->getName() << " | erasing." );
-			viewIt = mViewsWithTouches.erase( viewIt );
-		}
-		else {
-			++viewIt;
 		}
 	}
 
