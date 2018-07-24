@@ -41,9 +41,23 @@ namespace ui {
 class ScrollView::ContentView : public View {
   public:
 	ContentView( ScrollView *parent )
-		: View( parent->getBoundsLocal() )
+		: View( parent->getBoundsLocal() ), mParent( parent )
 	{
 	}
+
+	Rectf getBoundsForFrameBuffer() const override
+	{
+		// If clipping is enabled, return the size of the ScrollView for render bounds, since nothing else will be visible.
+		if( mParent->isClipEnabled() ) {
+			return mParent->getBoundsLocal();
+		}
+		else {
+			return View::getBoundsForFrameBuffer();
+		}
+	}
+
+  private:
+	ScrollView *mParent;
 };
 
 // ----------------------------------------------------------------------------------------------------
