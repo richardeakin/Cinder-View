@@ -134,6 +134,8 @@ ci::vec2 ScrollView::convertPointToParent( const ViewRef &contentView ) const
 
 void ScrollView::setContentOffset( const ci::vec2 &offset, bool animated )
 {
+	LOG_SCROLL_CONTENT( "offest: " << offset << ", animated: " << animated );
+
 	if( animated ) {
 		mTargetOffset = offset;
 		mDecelerating = true;
@@ -143,7 +145,10 @@ void ScrollView::setContentOffset( const ci::vec2 &offset, bool animated )
 		mContentOffsetAnimating = true;
 	}
 	else {
-		mContentOffset = offset;
+		calcOffsetBoundaries();
+		updateContentViewOffset( offset );
+		mTargetOffset = mOffsetBoundaries.closestPoint( mContentOffset );
+
 		mContentOffsetAnimating = false;
 	}
 }
