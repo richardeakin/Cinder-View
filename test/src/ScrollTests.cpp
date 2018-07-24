@@ -210,11 +210,11 @@ ScrollTests::ScrollTests()
 	mInfoLabel->getBackground()->setColor( ColorA::gray( 0, 0.3f ) );
 
 	addSubview( mScrollViewFree );
-	//addSubview( mHorizontalPager );
-	//addSubview( mVerticalPager );
+	addSubview( mHorizontalPager );
+	addSubview( mVerticalPager );
 	addSubview( mScrollViewNested );
-	//addSubview( mScrollViewWithLayout );
-	//addSubview( mInfoLabel );
+	addSubview( mScrollViewWithLayout );
+	addSubview( mInfoLabel );
 }
 
 void ScrollTests::layout()
@@ -248,6 +248,7 @@ bool ScrollTests::keyDown( app::KeyEvent &event )
 	if( event.isControlDown() )
 		return false;
 
+	const bool animate = false;
 	const float animateOffsetDist = 100;
 
 	bool handled = true;
@@ -266,37 +267,37 @@ bool ScrollTests::keyDown( app::KeyEvent &event )
 		}
 		case app::KeyEvent::KEY_DOWN: {
 			if( event.isShiftDown() ) {
-				mVerticalPager->nextPage( true );
+				mVerticalPager->nextPage( animate );
 			}
 			else {
-				mScrollViewFree->setContentOffset( mScrollViewFree->getContentOffset() + vec2( 0, animateOffsetDist ), true );
+				mScrollViewFree->setContentOffset( mScrollViewFree->getContentOffset() + vec2( 0, animateOffsetDist ), animate );
 			}
 			break;
 		}
 		case app::KeyEvent::KEY_UP: {
 			if( event.isShiftDown() ) {
-				mVerticalPager->previousPage( true );
+				mVerticalPager->previousPage( animate );
 			}
 			else {
-				mScrollViewFree->setContentOffset( mScrollViewFree->getContentOffset() - vec2( 0, animateOffsetDist ), true );
+				mScrollViewFree->setContentOffset( mScrollViewFree->getContentOffset() - vec2( 0, animateOffsetDist ), animate );
 			}
 			break;
 		}
 		case app::KeyEvent::KEY_RIGHT: {
 			if( event.isShiftDown() ) {
-				mHorizontalPager->nextPage( true );
+				mHorizontalPager->nextPage( animate );
 			}
 			else {
-				mScrollViewFree->setContentOffset( mScrollViewFree->getContentOffset() + vec2( animateOffsetDist, 0 ), true );
+				mScrollViewFree->setContentOffset( mScrollViewFree->getContentOffset() + vec2( animateOffsetDist, 0 ), animate );
 			}
 			break;
 		}
 		case app::KeyEvent::KEY_LEFT: {
 			if( event.isShiftDown() ) {
-				mHorizontalPager->previousPage( true );
+				mHorizontalPager->previousPage( animate );
 			}
 			else {
-				mScrollViewFree->setContentOffset( mScrollViewFree->getContentOffset() - vec2( animateOffsetDist, 0 ), true );
+				mScrollViewFree->setContentOffset( mScrollViewFree->getContentOffset() - vec2( animateOffsetDist, 0 ), animate );
 			}
 			break;
 		}
