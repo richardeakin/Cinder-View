@@ -248,8 +248,8 @@ bool ScrollTests::keyDown( app::KeyEvent &event )
 	if( event.isControlDown() )
 		return false;
 
-	const bool animate = false;
-	const float animateOffsetDist = 100;
+	const bool animate = true;
+	const float animateOffsetDist = 200;
 
 	bool handled = true;
 	switch( event.getCode() ) {
@@ -315,6 +315,8 @@ void ScrollTests::update()
 	mInfoLabel->setRow( row++, { "is decelerating:",  to_string( mScrollViewFree->isDecelerating() ) } );
 	mInfoLabel->setRow( row++, { "swipe velocity:",  glm::to_string( mScrollViewFree->getSwipeVelocity() ) } );
 	mInfoLabel->setRow( row++, { "scroll velocity:",  glm::to_string( mScrollViewFree->getScrollVelocity() ) } );
+	mInfoLabel->setRow( row++, { "content offset:",  glm::to_string( mScrollViewFree->getContentOffset() ) } );
+	mInfoLabel->setRow( row++, { "target offset:",  glm::to_string( mScrollViewFree->getTargetOffset() ) } );
 
 	//  resize info label
 	{

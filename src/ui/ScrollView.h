@@ -56,6 +56,8 @@ class CI_UI_API ScrollView : public View {
 	const ci::vec2&			getContentOffset() const	{ return mContentOffset; }
 	ci::Anim<ci::vec2>&		getContentOffsetAnim()		{ return mContentOffset; }
 
+	const ci::vec2&			getTargetOffset() const		{ return mTargetOffset; }
+
 	//! Returns whether the user is currently dragging on the ScrollView
 	bool isDragging() const			{ return mDragging; }
 	//! Returns whether the contents are freely decelerating, e.g. after the user has finished dragging.

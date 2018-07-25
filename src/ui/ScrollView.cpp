@@ -29,8 +29,8 @@ using namespace std;
 //#define LOG_SCROLL_CONTENT( stream )	CI_LOG_I( stream )
 #define LOG_SCROLL_CONTENT( stream )	( (void)( 0 ) )
 
-//#define LOG_SCROLL_TRACKING( stream )	CI_LOG_I( stream )
-#define LOG_SCROLL_TRACKING( stream )	( (void)( 0 ) )
+#define LOG_SCROLL_TRACKING( stream )	CI_LOG_I( stream )
+//#define LOG_SCROLL_TRACKING( stream )	( (void)( 0 ) )
 
 namespace ui {
 
@@ -251,7 +251,8 @@ void ScrollView::updateDeceleratingOffset()
 	vec2 contentOffset = mContentOffset() - mScrollVelocity * deltaTime;
 
 	const Rectf &boundaries = getDeceleratingBoundaries();
-	float decelFactor = boundaries.contains( contentOffset ) ? mDecelerationFactorInside : mDecelerationFactorOutside;
+	const bool containsOffset = boundaries.contains( contentOffset );
+	float decelFactor = containsOffset ? mDecelerationFactorInside : mDecelerationFactorOutside;
 	mScrollVelocity *= 1 - decelFactor;
 
 	mTargetOffset = boundaries.closestPoint( contentOffset );
@@ -329,6 +330,7 @@ bool ScrollView::touchesBegan( app::TouchEvent &event )
 	mSwipeTracker->clear();
 	mSwipeTracker->storeTouchPos( pos, getGraph()->getCurrentTime() );
 	mSwipeVelocity = vec2( 0 );
+	mScrollVelocity = vec2( 0 );
 
 	mDragging = false; // will set to true once touchesMoved() is fired
 	calcOffsetBoundaries(); // reset offset boundaries, which may have been modified if content offset is animating
@@ -343,8 +345,10 @@ bool ScrollView::touchesMoved( app::TouchEvent &event )
 	vec2 lastPos = mSwipeTracker->getLastTouchPos();
 	updateOffset( pos, lastPos );
 	mSwipeTracker->storeTouchPos( pos, getGraph()->getCurrentTime() );
-	
+
 	LOG_SCROLL_TRACKING( "intercepting touches: " << getInterceptingTouches().size() << ",  pos: " << pos );
+
+	mContentOffsetAnimating = false;
 
 	if( ! mDragging ) {
 		mDragging = true;
@@ -361,13 +365,16 @@ bool ScrollView::touchesEnded( app::TouchEvent &event )
 {
 	vec2 pos = toLocal( event.getTouches().front().getPos() );
 	vec2 lastPos = mSwipeTracker->getLastTouchPos();
-	LOG_SCROLL_TRACKING( "intercepting touches: " << getInterceptingTouches().size() << ",  pos: " << pos );
 
 	updateOffset( pos, lastPos );
 	mSwipeTracker->storeTouchPos( pos, getGraph()->getCurrentTime() );
 
 	mSwipeVelocity = mSwipeTracker->calcSwipeVelocity();
 	mScrollVelocity = mSwipeVelocity;
+
+	LOG_SCROLL_TRACKING( "intercepting touches: " << getInterceptingTouches().size() << ",  pos: " << pos << ", swipe velocity: " << mSwipeVelocity );
+
+	mContentOffsetAnimating = false;
 
 	if( mDragging ) {
 		mDragging = false;
