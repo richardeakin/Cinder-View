@@ -171,6 +171,8 @@ class CI_UI_API View : public std::enable_shared_from_this<View> {
 	void	removeFilter( const FilterRef &filter );
 	void	removeAllFilters();
 
+	const std::vector<FilterRef>&	getFilters() const	{ return mFilters; }
+
 	void	setFillParentEnabled( bool enable = true );
 	bool	isFillParentEnabled() const					{ return mFillParent; }
 

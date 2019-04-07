@@ -106,8 +106,6 @@ void Layer::update()
 
 void Layer::updateView( View *view )
 {
-	view->mIsIteratingSubviews = true;
-
 	// update parents before children
 	const bool willLayout = view->needsLayout();
 	if( willLayout && ! mRootView->mFilters.empty() ) {
@@ -116,6 +114,7 @@ void Layer::updateView( View *view )
 
 	view->updateImpl();
 
+	view->mIsIteratingSubviews = true;
 	for( auto &subview : view->getSubviews() ) {
 		if( subview->mMarkedForRemoval )
 			continue;
@@ -125,6 +124,8 @@ void Layer::updateView( View *view )
 
 		updateView( subview.get() );
 	}
+	view->mIsIteratingSubviews = false;
+	view->clearViewsMarkedForRemoval();
 
 	if( view->mLayer && view->mLayer.get() != this && ! view->mMarkedForRemoval ) {
 		view->mLayer->update();
@@ -138,9 +139,6 @@ void Layer::updateView( View *view )
 			LOG_LAYER( "mRenderBounds: " << mRenderBounds );
 		}
 	}
-
-	view->mIsIteratingSubviews = false;
-	view->clearViewsMarkedForRemoval();
 }
 
 // rules for when we need a new main RenderBuffer:

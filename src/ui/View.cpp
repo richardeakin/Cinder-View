@@ -608,6 +608,9 @@ std::ostream& operator<<( std::ostream &os, const View &rhs )
 		os << "\n[Layer";
 		if( rhs.getLayer()->getFrameBuffer() ) {
 			os << " FrameBuffer " << hex << rhs.getLayer()->getFrameBuffer().get() << dec << " size: " << rhs.getLayer()->getFrameBuffer()->getSize();
+			if( ! rhs.getFilters().empty() ) {
+				os << ", filters: " << rhs.getFilters().size();
+			}
 		}
 		os << "]";
 	}
