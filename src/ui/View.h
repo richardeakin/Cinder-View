@@ -204,6 +204,9 @@ class CI_UI_API View : public std::enable_shared_from_this<View> {
 	//! Returns the bounds required for rendering this View to a FrameBuffer. \default is this View's local bounds. Override if this View needs a larger sized or FrameBuffer.
 	virtual ci::Rectf   getBoundsForFrameBuffer() const;
 
+	//! TODO: try to combine this with getBoundsForFrameBuffer. this is a temp solution to get modified clip bounds.
+	virtual ci::Rectf   getClipWorldBounds() const	{ return getWorldBounds(); }
+
 	// Responder ------------------
 	// TODO: rename these with 'can' or 'should' suffix? To indicate they are asking whether this is possible or not
 	//! Return false if you cannot become first responder.

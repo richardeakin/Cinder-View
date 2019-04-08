@@ -318,7 +318,7 @@ void Layer::processFilters( Renderer *ren, const FrameBufferRef &renderFrameBuff
 
 void Layer::pushClip( View *view, Renderer *ren )
 {
-	Rectf viewWorldBounds = view->getWorldBounds();
+	Rectf viewWorldBounds = view->getClipWorldBounds();
 	vec2 clipLowerLeft = viewWorldBounds.getLowerLeft();
 	vec2 clipSize = view->getSize();
 	if( mRootView->mRendersToFrameBuffer ) {
