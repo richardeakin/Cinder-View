@@ -252,6 +252,7 @@ class CI_UI_API View : public std::enable_shared_from_this<View> {
 	ci::Anim<float>			mAlpha = 1.0f;
 	ci::Anim<ci::vec2>		mPos;
 	ci::Anim<ci::vec2>		mSize;
+	ci::vec2				mPosLastUpdate, mSizeLastUpdate;
 	std::string				mLabel;
 	bool					mFillParent = false; // TODO: replace this with proper layout system
 	BlendMode				mBlendMode = BlendMode::ALPHA;
