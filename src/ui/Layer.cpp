@@ -320,7 +320,7 @@ void Layer::pushClip( View *view, Renderer *ren )
 {
 	Rectf viewWorldBounds = view->getClipWorldBounds();
 	vec2 clipLowerLeft = viewWorldBounds.getLowerLeft();
-	vec2 clipSize = view->getSize();
+	vec2 clipSize = viewWorldBounds.getSize();
 	if( mRootView->mRendersToFrameBuffer ) {
 		// get bounds of view relative to framebuffer. // TODO: need a method like convertPointToView( view, point );
  		Rectf viewBoundsInFrameBuffer = viewWorldBounds - mRootView->getWorldPos();
