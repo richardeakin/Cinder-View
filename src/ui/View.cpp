@@ -230,9 +230,6 @@ void View::insertSubviewBelow( const ViewRef &view, const ViewRef &viewAbove )
 	if( it == mSubviews.end() ) {
 		CI_LOG_W( "viewAbove labeled '" << viewAbove->getLabel() << "' not a child of this View '" << getLabel() << "'" );
 	}
-	else if( it != mSubviews.begin() ) {
-		--it;
-	}
 
 	view->setParent( this );
 	mSubviews.insert( it, view );
