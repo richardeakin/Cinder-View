@@ -28,7 +28,7 @@ const vec2 WINDOW_SIZE			= vec2( 1220, 720 );
 const vec2 INFO_ROW_SIZE		= vec2( 250, 20 );
 
 
-#define LIVEPP_ENABLED 1
+#define LIVEPP_ENABLED 0
 
 #if LIVEPP_ENABLED
 
