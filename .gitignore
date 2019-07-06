@@ -22,6 +22,7 @@ xcuserdata/
 ipch/
 **/vc2013/enc_temp_folder/**
 **/vc2015/enc_temp_folder/**
+.vs/
 
 # Jetbrains IDEs
 .idea
