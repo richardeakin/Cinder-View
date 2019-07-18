@@ -250,7 +250,7 @@ void ViewTestsApp::drawTouches()
 void prepareSettings( app::App::Settings *settings )
 {
 #if LIVEPP_ENABLED
-	HMODULE livePP = lpp::lppLoadAndRegister( L"../../../../../LivePP", "ViewTests" );
+	HMODULE livePP = lpp::lppLoadAndRegister( L"../../../../../../LivePP", "ViewTests" );
 	lpp::lppEnableAllCallingModulesSync( livePP );
 #endif
 
