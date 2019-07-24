@@ -209,6 +209,8 @@
       <MinimalRebuild>false</MinimalRebuild>
       <ProgramDataBaseFileName>$(REPO_PATH)\lib\msw\$(PlatformTarget)\$(Configuration)\$(PlatformToolset)\cinder-view.pdb</ProgramDataBaseFileName>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <AdditionalOptions>/FS /Gw %(AdditionalOptions)</AdditionalOptions>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -232,6 +234,8 @@
       <MinimalRebuild>false</MinimalRebuild>
       <ProgramDataBaseFileName>$(REPO_PATH)\lib\msw\$(PlatformTarget)\$(Configuration)\$(PlatformToolset)\cinder-view.pdb</ProgramDataBaseFileName>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <AdditionalOptions>/FS /Gw %(AdditionalOptions)</AdditionalOptions>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -256,8 +260,9 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
       <ProgramDataBaseFileName>$(REPO_PATH)\lib\msw\$(PlatformTarget)\$(Configuration)\$(PlatformToolset)\cinder-view.pdb</ProgramDataBaseFileName>
-      <AdditionalOptions>/FS %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/FS /Gw %(AdditionalOptions)</AdditionalOptions>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -281,6 +286,8 @@
       <MinimalRebuild>false</MinimalRebuild>
       <ProgramDataBaseFileName>$(REPO_PATH)\lib\msw\$(PlatformTarget)\$(Configuration)\$(PlatformToolset)\cinder-view.pdb</ProgramDataBaseFileName>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <AdditionalOptions>/FS /Gw %(AdditionalOptions)</AdditionalOptions>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -307,6 +314,7 @@
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <ProgramDataBaseFileName>$(REPO_PATH)\lib\msw\$(PlatformTarget)\$(Configuration)\$(PlatformToolset)\cinder-view.pdb</ProgramDataBaseFileName>
+      <AdditionalOptions>/FS /Gw %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -333,6 +341,7 @@
       <PreprocessorDefinitions>CINDER_SHARED;CINDER_UI_SHARED_BUILD;FMT_EXPORT;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <ProgramDataBaseFileName>$(REPO_PATH)\lib\msw\$(PlatformTarget)\$(Configuration)\$(PlatformToolset)\cinder-view.pdb</ProgramDataBaseFileName>
+      <AdditionalOptions>/FS /Gw %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -361,6 +370,7 @@
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <ProgramDataBaseFileName>$(REPO_PATH)\lib\msw\$(PlatformTarget)\$(Configuration)\$(PlatformToolset)\cinder-view.pdb</ProgramDataBaseFileName>
+      <AdditionalOptions>/FS /Gw %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -387,6 +397,7 @@
       <PreprocessorDefinitions>CINDER_SHARED;CINDER_UI_SHARED_BUILD;FMT_EXPORT;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <ProgramDataBaseFileName>$(REPO_PATH)\lib\msw\$(PlatformTarget)\$(Configuration)\$(PlatformToolset)\cinder-view.pdb</ProgramDataBaseFileName>
+      <AdditionalOptions>/FS /Gw %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
