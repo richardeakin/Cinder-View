@@ -26,8 +26,11 @@
 using namespace ci;
 using namespace std;
 
-//#define LOG_SCROLL( stream )	CI_LOG_I( stream )
-#define LOG_SCROLL( stream )	( (void)( 0 ) )
+//#define LOG_SCROLL_CONTENT( stream )	CI_LOG_I( stream )
+#define LOG_SCROLL_CONTENT( stream )	( (void)( 0 ) )
+
+//#define LOG_SCROLL_TRACKING( stream )	CI_LOG_I( stream )
+#define LOG_SCROLL_TRACKING( stream )	( (void)( 0 ) )
 
 namespace ui {
 
@@ -38,9 +41,23 @@ namespace ui {
 class ScrollView::ContentView : public View {
   public:
 	ContentView( ScrollView *parent )
-		: View( parent->getBoundsLocal() )
+		: View( parent->getBoundsLocal() ), mParent( parent )
 	{
 	}
+
+	Rectf getBoundsForFrameBuffer() const override
+	{
+		// If clipping is enabled, return the size of the ScrollView for render bounds, since nothing else will be visible.
+		if( mParent->isClipEnabled() ) {
+			return mParent->getBoundsLocal();
+		}
+		else {
+			return View::getBoundsForFrameBuffer();
+		}
+	}
+
+  private:
+	ScrollView *mParent;
 };
 
 // ----------------------------------------------------------------------------------------------------
@@ -51,6 +68,7 @@ ScrollView::ScrollView( const ci::Rectf &bounds )
 	: View( bounds )
 {
 	setClipEnabled();
+	setInterceptsTouches();
 
 	mContentView = make_shared<ContentView>( this );
 	mContentView->setLabel( "ScrollView-ContentView" );
@@ -114,57 +132,92 @@ ci::vec2 ScrollView::convertPointToParent( const ViewRef &contentView ) const
 	return contentView->getPos() + offset;
 }
 
-void ScrollView::setContentOffset( const ci::vec2 &offset )
+void ScrollView::setContentOffset( const ci::vec2 &offset, bool animated )
 {
-	mContentOffset = offset;
+	LOG_SCROLL_CONTENT( "offest: " << offset << ", animated: " << animated );
+
+	if( animated ) {
+		mTargetOffset = offset;
+		mDecelerating = true;
+		mOffsetBoundaries = Rectf( offset.x, offset.y, offset.x, offset.y );
+
+		mSwipeTracker->clear();
+		mContentOffsetAnimating = true;
+	}
+	else {
+		calcOffsetBoundaries();
+		updateContentViewOffset( offset );
+		mTargetOffset = mOffsetBoundaries.closestPoint( mContentOffset );
+
+		mContentOffsetAnimating = false;
+	}
 }
 
 void ScrollView::calcContentSize()
 {
+	// Start with the size of the ScrollView, then increase content size as necessary.
+	mContentView->setSize( getSize() );
 	if( mContentView->getLayout() ) {
-		LOG_SCROLL( "(using Layout)" );
+		LOG_SCROLL_CONTENT( "(using Layout)" );
 		mContentView->getLayout()->layout( mContentView.get() );
 	}
 
-	vec2 size = vec2( 0 );
+	vec2 size = mContentView->getSize();
 	for( const auto &view : mContentView->getSubviews() ) {
 		auto viewBounds = view->getBounds();
-		LOG_SCROLL( "view: " << view );
-		LOG_SCROLL( "\t- size before: " << size );
+		LOG_SCROLL_CONTENT( "view: " << view );
+		LOG_SCROLL_CONTENT( "\t- size before: " << size );
 		if( size.x < viewBounds.x2 )
 			size.x = viewBounds.x2;
 		if( size.y < viewBounds.y2 )
 			size.y = viewBounds.y2;
 
-		LOG_SCROLL( "\t- size after: " << size );
+		LOG_SCROLL_CONTENT( "\t- size after: " << size );
 	}
 
-	mContentSize = size; // TODO: can remove mContentSize and just use mContentView->getSize() instead?
 	mContentView->setSize( size ); // TODO: should this trigger layout or not?
 
-	LOG_SCROLL( "content size: " << mContentSize );
+	if( mDisableScrollingWhenContentFits && size.x <= getWidth() && size.y <= getHeight() ) {
+		setScrollingEnabled( false );
+	}
+
+	LOG_SCROLL_CONTENT( "content size: " << mContentView->getSize() );
 }
 
 void ScrollView::calcOffsetBoundaries()
 {
-	mOffsetBoundaries = Rectf( 0, 0, mContentSize.x - getWidth(), mContentSize.y - getHeight() );
-	LOG_SCROLL( "mOffsetBoundaries (before): " << mOffsetBoundaries );
+	const auto &contentSize = mContentView->getSize();
+	mOffsetBoundaries = Rectf( 0, 0, contentSize.x - getWidth(), contentSize.y - getHeight() );
+	LOG_SCROLL_CONTENT( "mOffsetBoundaries (before): " << mOffsetBoundaries );
 
 	if( mOffsetBoundaries.x2 < 0 )
 		mOffsetBoundaries.x2 = 0;
 	if( mOffsetBoundaries.y2 < 0 )
 		mOffsetBoundaries.y2 = 0;
 
-	LOG_SCROLL( "mContentSize: " << mContentSize << ", mOffsetBoundaries: " << mOffsetBoundaries << ", getSize(): " << getSize() );
+	LOG_SCROLL_CONTENT( "mContentSize: " << contentSize << ", mOffsetBoundaries: " << mOffsetBoundaries << ", getSize(): " << getSize() );
 }
 
 void ScrollView::layout()
 {
+	calcContentSize();
 	calcOffsetBoundaries();
 }
 
 void ScrollView::update()
 {
+	if( ! mContentOffset.isComplete() ) {
+		mContentOffsetAnimating = true;
+	}
+
+	if( isUserInteracting() ) {
+		mScrollVelocity = mSwipeTracker->calcSwipeVelocity();
+	}
+	else if( mContentOffsetAnimating ) {
+		mSwipeTracker->storeTouchPos( mContentOffset, getGraph()->getCurrentTime() );
+		mScrollVelocity = mSwipeTracker->calcSwipeVelocity();
+	}
+
 	bool hasContentViews = ! mContentView->getSubviews().empty();
 	if( hasContentViews && ! isUserInteracting() && isDecelerating() ) {
 		updateDeceleratingOffset();
@@ -188,18 +241,19 @@ void ScrollView::updateOffset( const ci::vec2 &currentPos, const ci::vec2 &previ
 	// restrict the target offset to content boundaries.
 	mTargetOffset = mOffsetBoundaries.closestPoint( mContentOffset );
 
-	LOG_SCROLL( "mContentOffset: " << mContentOffset() << ", mTargetOffset: " << mTargetOffset );
+	LOG_SCROLL_TRACKING( "mContentOffset: " << mContentOffset() << ", mTargetOffset: " << mTargetOffset );
 }
 
 void ScrollView::updateDeceleratingOffset()
 {
 	// apply velocity to content offset
 	float deltaTime = 1.0f / (float)getGraph()->getTargetFrameRate();
-	vec2 contentOffset = mContentOffset() - mSwipeVelocity * deltaTime;
+	vec2 contentOffset = mContentOffset() - mScrollVelocity * deltaTime;
 
 	const Rectf &boundaries = getDeceleratingBoundaries();
-	float decelFactor = boundaries.contains( contentOffset ) ? mDecelerationFactorInside : mDecelerationFactorOutside;
-	mSwipeVelocity *= 1 - decelFactor;
+	const bool containsOffset = boundaries.contains( contentOffset );
+	float decelFactor = containsOffset ? mDecelerationFactorInside : mDecelerationFactorOutside;
+	mScrollVelocity *= 1 - decelFactor;
 
 	mTargetOffset = boundaries.closestPoint( contentOffset );
 
@@ -211,13 +265,14 @@ void ScrollView::updateDeceleratingOffset()
 	}
 	contentOffset += velocity;
 
-	auto velLength = length( mSwipeVelocity );
+	auto velLength = length( mScrollVelocity );
 	auto offsetLength = length( mTargetOffset - contentOffset );
 
 	if( velLength < mMinVelocityConsideredAsStopped && offsetLength < mMinOffsetUntilStopped ) {
 		// snap to boundaries and finish deceleration
 		contentOffset = mTargetOffset;
 		mDecelerating = false;
+		mScrollVelocity = vec2( 0 );
 
 		// make sure scroll signal gets called before a page ended signal
 		updateContentViewOffset( contentOffset );
@@ -241,18 +296,44 @@ void ScrollView::updateContentViewOffset( const vec2 &offset )
 	mContentView->setPos( - mContentOffset() );
 }
 
+void ScrollView::onDecelerationEnded()
+{
+	mContentOffsetAnimating = false;
+	calcOffsetBoundaries();
+}
+
+const Rectf& ScrollView::getDeceleratingBoundaries() const
+{
+	return mOffsetBoundaries;
+}
+
+void ScrollView::setLabel( const std::string &label )
+{
+	View::setLabel( label );
+	mContentView->setLabel( "ContentView (" + label + ")" );
+}
+
 // ----------------------------------------------------------------------------------------------------
 // Events
 // ----------------------------------------------------------------------------------------------------
 
 bool ScrollView::touchesBegan( app::TouchEvent &event )
 {
+	if( ! getActiveTouches().empty() ) {
+		return false;
+	}	
+
 	auto &firstTouch = event.getTouches().front();
 	vec2 pos = toLocal( firstTouch.getPos() );
+	LOG_SCROLL_TRACKING( "intercepting touches: " << getInterceptingTouches().size() << ",  pos: " << pos );
+
 	mSwipeTracker->clear();
-	mSwipeTracker->storeTouchPos( pos, getGraph()->getElapsedSeconds() );
+	mSwipeTracker->storeTouchPos( pos, getGraph()->getCurrentTime() );
+	mSwipeVelocity = vec2( 0 );
+	mScrollVelocity = vec2( 0 );
 
 	mDragging = false; // will set to true once touchesMoved() is fired
+	calcOffsetBoundaries(); // reset offset boundaries, which may have been modified if content offset is animating
 
 	firstTouch.setHandled();
 	return true;
@@ -263,8 +344,12 @@ bool ScrollView::touchesMoved( app::TouchEvent &event )
 	vec2 pos = toLocal( event.getTouches().front().getPos() );
 	vec2 lastPos = mSwipeTracker->getLastTouchPos();
 	updateOffset( pos, lastPos );
-	mSwipeTracker->storeTouchPos( pos, getGraph()->getElapsedSeconds() );
-	
+	mSwipeTracker->storeTouchPos( pos, getGraph()->getCurrentTime() );
+
+	LOG_SCROLL_TRACKING( "intercepting touches: " << getInterceptingTouches().size() << ",  pos: " << pos );
+
+	mContentOffsetAnimating = false;
+
 	if( ! mDragging ) {
 		mDragging = true;
 		mSignalDragBegin.emit();
@@ -280,10 +365,16 @@ bool ScrollView::touchesEnded( app::TouchEvent &event )
 {
 	vec2 pos = toLocal( event.getTouches().front().getPos() );
 	vec2 lastPos = mSwipeTracker->getLastTouchPos();
+
 	updateOffset( pos, lastPos );
-	mSwipeTracker->storeTouchPos( pos, getGraph()->getElapsedSeconds() );
+	mSwipeTracker->storeTouchPos( pos, getGraph()->getCurrentTime() );
 
 	mSwipeVelocity = mSwipeTracker->calcSwipeVelocity();
+	mScrollVelocity = mSwipeVelocity;
+
+	LOG_SCROLL_TRACKING( "intercepting touches: " << getInterceptingTouches().size() << ",  pos: " << pos << ", swipe velocity: " << mSwipeVelocity );
+
+	mContentOffsetAnimating = false;
 
 	if( mDragging ) {
 		mDragging = false;
@@ -298,9 +389,61 @@ bool ScrollView::touchesEnded( app::TouchEvent &event )
 	return true;
 }
 
-const Rectf& ScrollView::getDeceleratingBoundaries() const
+bool ScrollView::shouldInterceptTouches( ci::app::TouchEvent &event )
 {
-	return mOffsetBoundaries;
+	// TODO (intercept): perform hit tests on content views and see if there is one under a touch that is interactive and non hidden
+	// - need to indicate back to caller which touches?
+	//     - might be able to do that by calling setHandled() on the touch itself
+
+	auto hitView = hitTest( event );
+	bool hitInteractiveChild = hitView != mContentView.get();
+
+	string hitViewStr = ( (bool)hitView ? hitView->getName() : "(null)" );
+	LOG_SCROLL_TRACKING( "frame: " << getGraph()->getCurrentFrame() << ", touches: " << event.getTouches().size() << ", hit interactive view: " << boolalpha << hitInteractiveChild << dec << ", hit view: " << hitViewStr );
+
+	return hitInteractiveChild;
+}
+
+bool ScrollView::shouldStopInterceptingTouches( ci::app::TouchEvent &event )
+{
+	CI_ASSERT( mSwipeTracker->getNumStoredTouches() > 0 );
+
+	double duration = getGraph()->getCurrentTime() - mSwipeTracker->getFirstTouchTime();
+	vec2 dist = mSwipeTracker->calcSwipeDistance();
+
+	LOG_SCROLL_TRACKING( "frame: " << getGraph()->getCurrentFrame() << ", touches: " << event.getTouches().size() << ", dragging: " << mDragging 
+		<< ", interacting: " << isUserInteracting() << ", tracker stored touches: " << mSwipeTracker->getNumStoredTouches() << ", gesture duration: " << duration << ", dist: " << dist );
+
+	// determine if complete gesture duration was short enough to be considered a tap
+	if( duration < mInterceptDelayTime ) {
+		if( ! isUserInteracting() ) {
+			LOG_SCROLL_TRACKING( "\t- gesture considered a tap: return true (unclaimed)." );
+			return true;
+		}
+		else if( ! mHorizontalScrollingEnabled && fabsf( dist.x ) > mInterceptMaxDragDistance.x ) {
+			LOG_SCROLL_TRACKING( "\t- gesture considered horizontal drag and axis disbabled: return true (unclaimed)." );
+			return true;
+		}
+		else if( ! mVerticalScrollingEnabled && fabsf( dist.y ) > mInterceptMaxDragDistance.y ) {
+			LOG_SCROLL_TRACKING( "\t- gesture considered vertical drag and axis disbabled: return true (unclaimed)." );
+			return true;
+		}
+	}
+	else {
+		if( fabsf( dist.x ) < mInterceptMaxDragDistance.x && fabsf( dist.y ) < mInterceptMaxDragDistance.y ) {
+			LOG_SCROLL_TRACKING( "\t- gesture duration no longer considered tap and distance less than drag: return true (unclaimed)." );
+			return true;
+		}
+		else if( isUserInteracting() ) {
+			LOG_SCROLL_TRACKING( "\t- gesture duration no longer considered tap: return true (and own touch)" );
+			// claim ownership of touches.
+			// TODO: consider owning all the touches here (they are assigned to the TouchEvent from Graph)
+			event.getTouches().front().setHandled( true );
+			return true;
+		}
+	}
+
+	return false;
 }
 
 // ----------------------------------------------------------------------------------------------------
@@ -360,7 +503,7 @@ void PagingScrollView::nextPage( bool animate )
 	if( mCurrentPageIndex == getNumContentViews() - 1 )
 		return;
 
-	mSignalPageWillChange.emit();
+	mSignalPageWillChange.emit( mCurrentPageIndex + 1 );
 	mCurrentPageIndex++;
 	handlePageUpdate( animate );
 }
@@ -370,7 +513,7 @@ void PagingScrollView::previousPage( bool animate )
 	if( mCurrentPageIndex == 0 )
 		return;
 
-	mSignalPageWillChange.emit();
+	mSignalPageWillChange.emit( mCurrentPageIndex - 1 );
 	mCurrentPageIndex--;
 	handlePageUpdate( animate );
 }
@@ -379,7 +522,7 @@ void PagingScrollView::setPage( size_t index, bool animate )
 {
 	CI_ASSERT_MSG( index < getNumContentViews(), "index out of bounds" );
 
-	mSignalPageWillChange.emit();
+	mSignalPageWillChange.emit( index );
 	mCurrentPageIndex = index;
 	handlePageUpdate( animate );
 }
@@ -399,7 +542,7 @@ void PagingScrollView::setAxis( Axis axis )
 		setVerticalScrollingEnabled( true );
 	}
 
-	layoutPages();
+	layoutPages( true );
 }
 
 void PagingScrollView::setLayoutMode( LayoutMode mode )
@@ -408,18 +551,18 @@ void PagingScrollView::setLayoutMode( LayoutMode mode )
 		return;
 
 	mLayoutMode = mode;
-	layoutPages();
+	layoutPages( true );
 }
 
 void PagingScrollView::setPageMargin( const vec2 &margin )
 {
 	mPageMargin = margin;
-	layoutPages();
+	layoutPages( true );
 }
 
 void PagingScrollView::layout()
 {
-	layoutPages();
+	layoutPages( false );
 	ScrollView::layout();
 }
 
@@ -458,14 +601,17 @@ bool PagingScrollView::touchesEnded( app::TouchEvent &event )
 	return handled;
 }
 
-void PagingScrollView::layoutPages()
+void PagingScrollView::layoutPages( bool updateBoundaries )
 {
 	for( size_t i = 0; i < getNumPages(); i++ ) {
 		layoutPage( i );
 	}
 
-	calcContentSize();
-	calcOffsetBoundaries();
+	if( updateBoundaries ) {
+		calcContentSize();
+		calcOffsetBoundaries();
+	}
+
 	calcDeceleratingBoundaries();
 }
 
@@ -504,7 +650,7 @@ void PagingScrollView::layoutPage( size_t index )
 		}
 	}
 
-	LOG_SCROLL( "index: " << index << ", bounds: " << getContentView()->getBounds() );
+	LOG_SCROLL_CONTENT( "index: " << index << ", bounds: " << getContentView()->getBounds() );
 }
 
 vec2 PagingScrollView::getTargetOffsetForPage( size_t index ) const
@@ -553,11 +699,11 @@ void PagingScrollView::handlePageUpdate( bool animate )
 	else {
 		// jump to the current offset
 		updateDeceleratingOffset();
-		setContentOffset( mTargetOffset );
+		setContentOffset( mTargetOffset, false );
 		mSignalPageDidChange.emit();
 	}
 
-	LOG_SCROLL( "current page: " << mCurrentPageIndex );
+	LOG_SCROLL_CONTENT( "current page: " << mCurrentPageIndex << ", animated: " << animate );
 }
 
 bool PagingScrollView::isOnFirstPage() const

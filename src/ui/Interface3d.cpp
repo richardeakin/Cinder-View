@@ -120,19 +120,6 @@ Direction3dView::Direction3dView( const ci::Rectf &bounds )
 void Direction3dView::layout()
 {
 	Interface3dBaseView::layout();
-
-	// TODO: probably need something slightly different since arrow will spin around origin
-	const float rayPadding = 0.27f;
-	if( getWidth() > getHeight() ) {
-		vec3 topPos = mCam.generateRay( 0, rayPadding, mCam.getAspectRatio() ).calcPosition( mPlacement.z );
-		vec3 bottomPos = mCam.generateRay( 0, 1 - rayPadding, mCam.getAspectRatio() ).calcPosition( mPlacement.z );
-		mArrowLength = topPos.y - bottomPos.y;
-	}
-	else {
-		vec3 rightPos = mCam.generateRay( 1 - rayPadding, 0, mCam.getAspectRatio() ).calcPosition( mPlacement.z );
-		vec3 leftPos = mCam.generateRay( rayPadding, 0, mCam.getAspectRatio() ).calcPosition( mPlacement.z );
-		mArrowLength = leftPos.x - rightPos.x;
-	}
 }
 
 void Direction3dView::draw3d()

@@ -39,6 +39,7 @@ namespace ui {
 void SwipeTracker::clear()
 {
 	mStoredTouches.clear();
+	mFirstTouch = {};
 }
 
 void SwipeTracker::storeTouchPos( const ci::vec2 &pos, double currentTime )

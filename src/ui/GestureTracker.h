@@ -42,13 +42,16 @@ namespace ui {
 //! Swipe gesture tracker. Currently only one finger taps. TODO: multi-finger swipe support.
 class CI_UI_API SwipeTracker {
   public:
-
+	//! Clears all stored touches.
 	void clear();
 	void storeTouchPos( const ci::vec2 &pos, double currentTime );
 	ci::vec2 calcSwipeVelocity();
 	ci::vec2 calcSwipeDistance();
 
+	//! Returns the positions of the first recorded touch, or vec2( 0 ) if none have yet been recorded.
 	ci::vec2 getFirstTouchPos() const	{ return mFirstTouch.position; }
+	//! Returns the time of the first recorded touch, or -1 if none have yet been recorded.
+	double getFirstTouchTime() const	{ return mFirstTouch.eventSeconds; }
 	//! Returns the positions of the last recorded touch, or vec2( 0 ) if none have yet been recorded.
 	ci::vec2 getLastTouchPos() const;
 	//! Returns the time of the last recorded touch, or -1 if none have yet been recorded.
@@ -59,7 +62,7 @@ class CI_UI_API SwipeTracker {
   private:
 	struct StoredTouch {
 		ci::vec2	position;
-		double		eventSeconds;
+		double		eventSeconds = -1;
 	};
 
 	std::list<StoredTouch>	mStoredTouches;

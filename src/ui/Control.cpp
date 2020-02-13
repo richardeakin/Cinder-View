@@ -52,7 +52,18 @@ bool Control::hitTestInsideCancelPadding( const vec2 &localPos ) const
 Button::Button( const Rectf &bounds )
 	: Control( bounds )
 {
-	mTextTitle = TextManager::loadText( FontFace::NORMAL );
+	//mTextTitle = TextManager::loadText( FontFace::NORMAL );
+	mTitleLabel = make_shared<Label>();
+	mTitleLabel->setFillParentEnabled();
+	updateTitle();
+
+	mImageView = make_shared<ImageView>();
+	mImageView->setFillParentEnabled();
+
+	addSubview( mTitleLabel );
+	addSubview( mImageView );
+
+	mTitleLabel->setBackgroundEnabled( true );
 }
 
 const ColorA& Button::getColorForState( Button::State state ) const
@@ -81,44 +92,80 @@ ImageRef Button::getImageForState( State state ) const
 
 const string& Button::getTitleForState( State state ) const
 {
-	if( state == State::ENABLED && ! mTitleEnabled.empty() )
-		return mTitleEnabled;
-	else
-		return mTitleNormal;
+	if( ! mTitleEnabled.empty() ) {
+		if( state == State::ENABLED || ( state == State::PRESSED && ! mIsToggle ) )
+			return mTitleEnabled;
+		else if( mEnabled && state == State::PRESSED && mIsToggle ) {
+			return mTitleEnabled;
+		}
+	}
+
+	return mTitleNormal;
 }
 
 const ColorA& Button::getTitleColorForState( State state ) const
 {
-	if( state == State::ENABLED && mHasColorTitleEnabled )
-		return mColorTitleEnabled;
-	else
-		return mColorTitleNormal;
+	if( state == State::PRESSED && mHasColorTitlePressed ) 
+		return mColorTitlePressed; 
+	else if( state == State::ENABLED && mHasColorTitleEnabled ) 
+		return mColorTitleEnabled; 
+	else 
+		return mColorTitleNormal; 
 }
 
-void Button::draw( Renderer *ren )
+void Button::updateTitle()
+{	
+	mTitleLabel->setText( getTitleForState( getState() ) );
+
+	// note: not using getTitleColorForState() here because we don't want to update the label's text color if
+	// the user is manipulating it directly (ex. animating it) rather than using Button::setTitleColorForState()
+	State state = getState();
+	if( state == State::PRESSED && mHasColorTitlePressed ) {
+		mTitleLabel->setTextColor( mColorTitlePressed );
+	}
+	else if( state == State::ENABLED && mHasColorTitleEnabled ) {
+		mTitleLabel->setTextColor( mColorTitleEnabled );
+	}
+	else if( mHasColorTitleNormal ) {
+		mTitleLabel->setTextColor( mColorTitleNormal );
+	}
+}
+
+// TODO: do this only on state change, instead of every frame
+void Button::update()
 {
 	auto image = getImage();
 	if( image ) {
-		// draw image
-		ren->draw( image, getBoundsLocal() );
+		// draw image, hide label
+		mImageView->setHidden( false );
+		mTitleLabel->setHidden( true );
+
+		mImageView->setImage( image );
 	}
 	else {
-		// draw background solid color
-		ren->setColor( getColor() );
-		ren->drawSolidRect( getBoundsLocal() );
+		mImageView->setHidden( true );
+		mTitleLabel->setHidden( false );
 
-		// draw title
-		const float padding = 6;
-		ren->setColor( getTitleColor() );
-		mTextTitle->drawString( getTitle(), vec2( padding, getCenterLocal().y + mTextTitle->getDescent() ) );
+		if( getLabel() == "name button" ) {
+			int blarg = 2;
+		}
+
+		if( mTitleLabel->isBackgroundEnabled() ) {
+			mTitleLabel->getBackground()->setColor( getColor() );
+		}
 	}
 }
 
 void Button::setEnabled( bool enabled )
 {
-	mEnabled = enabled;
-	mState = enabled ? State::ENABLED : State::NORMAL;
+	State state = enabled ? State::ENABLED : State::NORMAL;
+	if( mEnabled == enabled && mState == state )
+		return;
 
+	mEnabled = enabled;
+	mState = state;
+
+	updateTitle();
 	getSignalValueChanged().emit();
 }
 
@@ -126,8 +173,13 @@ void Button::setTitle( const string &title, State state )
 {
 	if( state == State::NORMAL )
 		mTitleNormal = title;
-	else
+	else if( state == State::ENABLED )
 		mTitleEnabled = title;
+	else {
+		CI_LOG_W( "unable to set title for state: " << state );
+	}
+
+	updateTitle();
 }
 
 void Button::setTitleColor( const ci::ColorA &color, State state )
@@ -136,8 +188,16 @@ void Button::setTitleColor( const ci::ColorA &color, State state )
 		mColorTitleEnabled = color;
 		mHasColorTitleEnabled = true;
 	}
-	else
+	else if( state == State::PRESSED ) {
+		mColorTitlePressed = color;
+		mHasColorTitlePressed = true;
+	}
+	else {
 		mColorTitleNormal = color;
+		mHasColorTitleNormal = true;
+	}
+
+	updateTitle();
 }
 
 void Button::setColor( const ci::ColorA &color, State state )
@@ -164,17 +224,21 @@ ImageRef Button::getImage() const
 {
 	switch( getState() ) {
 		case State::NORMAL:
-		return mImageNormal;
+			return mImageNormal;
 		case State::ENABLED: {
 			if( mImageEnabled )
 				return mImageEnabled;
 		}
-							 break;
+		break;
 		case State::PRESSED: {
 			if( mImagePressed )
 				return mImagePressed;
+			else if( mEnabled && mImageEnabled )
+				return mImageEnabled;
+			else 
+				return mImageNormal;
 		}
-							 break;
+		break;
 		default:
 		break;
 	}
@@ -186,6 +250,7 @@ bool Button::touchesBegan( app::TouchEvent &event )
 {
 	mState = State::PRESSED;
 	setTouchCanceled( false );
+	updateTitle();
 
 	mSignalPressed.emit();
 	event.getTouches().front().setHandled();
@@ -199,8 +264,13 @@ bool Button::touchesMoved( app::TouchEvent &event )
 
 	vec2 pos = toLocal( event.getTouches().front().getPos() );
 	if( ! hitTestInsideCancelPadding( pos ) ) {
+		UI_LOG_TOUCHES( "canceling touch for: " << getLabel() );
 		setTouchCanceled( true );
-		mState = State::NORMAL;
+		if( ! isToggle() ) {
+			mState = State::NORMAL;
+			updateTitle();
+		}
+		mSignalReleased.emit();
 	}
 
 	return true;
@@ -213,17 +283,38 @@ bool Button::touchesEnded( app::TouchEvent &event )
 
 	vec2 pos = toLocal( event.getTouches().front().getPos() );
 	if( ! hitTestInsideCancelPadding( pos ) ) {
+		UI_LOG_TOUCHES( "canceling touch for: " << getLabel() );
 		setTouchCanceled( true );
-		mState = State::NORMAL;
+		if( ! isToggle() ) {
+			mState = State::NORMAL;
+		}
 	}
 	else {
 		bool enable = isToggle() ? ! isEnabled() : false;
 		setEnabled( enable );
-
-		mSignalReleased.emit();
 	}
 
+	mSignalReleased.emit();
+
 	return true;
+}
+
+std::string toString( const Button::State &state )
+{
+	switch( state ) {
+		case Button::State::NORMAL:			return "NORMAL";
+		case Button::State::ENABLED:		return "ENABLED";
+		case Button::State::PRESSED:		return "PRESSED";
+		default:							CI_ASSERT_NOT_REACHABLE();
+	}
+
+	return "(unhandled enum value)";
+}
+
+std::ostream& operator<<( std::ostream &os, const Button::State &rhs )
+{
+	os << toString( rhs );
+	return os;
 }
 
 // ----------------------------------------------------------------------------------------------------
@@ -234,6 +325,8 @@ CheckBox::CheckBox( const Rectf &bounds )
 	: Button( bounds )
 {
 	setAsToggle();
+	mTextTitle = TextManager::loadText();
+	mColorTitleNormal = Color::white();
 }
 
 void CheckBox::draw( Renderer *ren )
@@ -256,8 +349,10 @@ void CheckBox::draw( Renderer *ren )
 	}
 
 	// draw title
-	ren->setColor( getTitleColor() );
+	// TODO: use Button's Label instead (we draw the text offset for CheckBox)
 	const float offsetY = 4;
+	mTitleLabel->setHidden( true );
+	ren->setColor( getTitleColor() );
 	mTextTitle->drawString( getTitle(), vec2( r + padding * 2, getCenterLocal().y + mTextTitle->getDescent() + offsetY ) );
 }
 
@@ -271,7 +366,7 @@ TextField::TextField( const ci::Rectf &bounds )
 	setAcceptsFirstResponder( true );
 	setClipEnabled( true );
 
-	mText = TextManager::loadText( FontFace::NORMAL );
+	mText = TextManager::loadText();
 }
 
 void TextField::setBorderColor( const ci::ColorA &color, State state )
@@ -329,7 +424,7 @@ void TextField::draw( Renderer *ren )
 		Rectf cursorRect = { cursorLoc.x - cursorThickness / 2, 0, cursorLoc.x + cursorThickness / 2, getHeight() };
 
 		ColorA cursorColor = mBorderColorSelected;
-		cursorColor.a *= (float)( 1.0 - glm::pow( cos( getGraph()->getElapsedSeconds() * 2 ), 4 ) );
+		cursorColor.a *= (float)( 1.0 - glm::pow( cos( getGraph()->getCurrentTime() * 2 ), 4 ) );
 
 		// TODO: does this need more care to be correctly composited?
 		ren->pushBlendMode( ui::BlendMode::PREMULT_ALPHA );
@@ -470,9 +565,7 @@ bool TextField::checkCharIsValid( char c ) const
 SliderBase::SliderBase( const Rectf &bounds )
 	: Control( bounds )
 {
-	mTextLabel = TextManager::loadText( FontFace::NORMAL );
-
-	mTapTracker.getSignalGestureDetected().connect( signals::slot( this, &SliderBase::onDoubleTap ) );
+	mTextLabel = TextManager::loadText();
 
 	// set a default background color
 	getBackground()->setColor( Color::black() );
@@ -508,12 +601,6 @@ void SliderBase::setValue( float value, bool emitChanged )
 		getSignalValueChanged().emit();
 }
 
-void SliderBase::onDoubleTap()
-{
-	CI_LOG_I( "bang" );
-	getBackground()->setColor( Color( 0, 0.5f, 0.5f ) );
-}
-
 void SliderBase::draw( Renderer *ren )
 {
 	const float sliderRadius = mValueThickness / 2;
@@ -540,7 +627,6 @@ std::string	SliderBase::getTitleLabel() const
 bool SliderBase::touchesBegan( app::TouchEvent &event )
 {
 	setTouchCanceled( false );
-	mTapTracker.processTouchesBegan( event, getGraph()->getElapsedSeconds() );
 
 	auto &firstTouch = event.getTouches().front();
 	vec2 pos = toLocal( firstTouch.getPos() );
@@ -576,8 +662,6 @@ bool SliderBase::touchesEnded( app::TouchEvent &event )
 {
 	if( isTouchCanceled() )
 		return false;
-
-	mTapTracker.processTouchesEnded( event, getGraph()->getElapsedSeconds() );
 
 	auto &firstTouch = event.getTouches().front();
 	vec2 pos = toLocal( firstTouch.getPos() );
@@ -657,7 +741,7 @@ SelectorBase::SelectorBase( const Rectf &bounds )
 {
 	setBlendMode( BlendMode::PREMULT_ALPHA );
 
-	mTextLabel = TextManager::loadText( FontFace::NORMAL );
+	mTextLabel = TextManager::loadText();
 }
 
 void SelectorBase::draw( Renderer *ren )
@@ -786,7 +870,7 @@ NumberBox::NumberBox( const Rectf &bounds )
 
 	setNumDigits( 3 );
 
-	mTextLabel = TextManager::loadText( FontFace::NORMAL );
+	mTextLabel = TextManager::loadText();
 	mTextField = make_shared<TextField>();
 	mTextField->setInputMode( TextField::InputMode::NUMERIC );
 	mTextField->setBorderMode( TextField::BorderMode::DISABLED );
@@ -942,7 +1026,7 @@ void NumberBox::onTextInputCompleted()
 bool NumberBox::touchesBegan( app::TouchEvent &event )
 {
 	setTouchCanceled( false );
-	mTapTracker.processTouchesBegan( event, getGraph()->getElapsedSeconds() );
+	mTapTracker.processTouchesBegan( event, getGraph()->getCurrentTime() );
 
 	auto &firstTouch = event.getTouches().front();
 	mDragStartPos = toLocal( firstTouch.getPos() );
@@ -967,7 +1051,7 @@ bool NumberBox::touchesMoved( app::TouchEvent &event )
 bool NumberBox::touchesEnded( app::TouchEvent &event )
 {
 	setTouchCanceled( false );
-	mTapTracker.processTouchesEnded( event, getGraph()->getElapsedSeconds() );
+	mTapTracker.processTouchesEnded( event, getGraph()->getCurrentTime() );
 
 	auto &firstTouch = event.getTouches().front();
 	vec2 pos = toLocal( firstTouch.getPos() );

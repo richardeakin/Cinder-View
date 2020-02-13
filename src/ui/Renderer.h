@@ -28,7 +28,7 @@
 #include "cinder/Color.h"
 #include "cinder/Rect.h"
 
-#define UI_FRAMEBUFFER_CACHING_ENABLED 1
+#define UI_FRAMEBUFFER_CACHING_ENABLED 0
 
 namespace cinder {
 
@@ -130,6 +130,11 @@ class CI_UI_API Renderer {
 	//!
 	void popBlendMode();
 	//!
+	void pushClip( const ci::ivec2 &lowerLeft, const ci::ivec2 &size );
+	//!
+	void popClip();
+
+	//!
 	FrameBufferRef getFrameBuffer( const ci::ivec2 &size );
 	//!
 	size_t getNumFrameBuffersCached() const     { return mFrameBufferCache.size(); }
@@ -144,7 +149,9 @@ class CI_UI_API Renderer {
 	//!
 	void draw( const FrameBufferRef &frameBuffer, const ci::Area &sourceArea, const ci::Rectf &destRect );
 	//!
-	void draw( const ImageRef &image, const ci::Rectf &destRect, const ci::gl::GlslProgRef &glsl = nullptr );
+	void draw( const ImageRef &image, const ci::Rectf &destRect );
+	//!
+	void draw( const ImageRef &image, const ci::Rectf &destRect, const ci::gl::BatchRef &batch );
 
 	//! Draws a solid rectangle with dimensions \a rect.
 	void drawSolidRect( const ci::Rectf &rect );
@@ -155,6 +162,9 @@ class CI_UI_API Renderer {
 
 	std::string printCurrentFrameBuffersToString() const;
 
+	// TODO: make private and provide public api
+	std::vector<std::pair<ci::ivec2, ci::ivec2>> mScissorStack;
+
   private:
 	std::vector<ci::ColorA>		mColorStack;
 	std::vector<BlendMode>		mBlendModeStack;
@@ -162,7 +172,7 @@ class CI_UI_API Renderer {
 	std::vector<FrameBufferRef>	mFrameBufferCache;
 
 	ci::gl::GlslProgRef         mGlslFrameBuffer;
-	ci::gl::BatchRef			mBatchSolidRect;
+	ci::gl::BatchRef			mBatchSolidRect, mBatchImage;
 };
 
 } // namespace ui

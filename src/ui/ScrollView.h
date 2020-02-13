@@ -52,9 +52,11 @@ class CI_UI_API ScrollView : public View {
 	// - I think this conversion will just work in a more generic case since mContentView's position is just offset
 	ci::vec2    convertPointToParent( const ViewRef &contentView ) const;
 
-	void					setContentOffset( const ci::vec2 &offset );
+	void					setContentOffset( const ci::vec2 &offset, bool animated = false );
 	const ci::vec2&			getContentOffset() const	{ return mContentOffset; }
 	ci::Anim<ci::vec2>&		getContentOffsetAnim()		{ return mContentOffset; }
+
+	const ci::vec2&			getTargetOffset() const		{ return mTargetOffset; }
 
 	//! Returns whether the user is currently dragging on the ScrollView
 	bool isDragging() const			{ return mDragging; }
@@ -64,6 +66,11 @@ class CI_UI_API ScrollView : public View {
 	bool isScrollingEnabled() const	{ return mScrollingEnabled; }
 	//! Sets whether scrolling is enabled or not.
 	void setScrollingEnabled( bool enable = true )	{ mScrollingEnabled = enable; }
+
+	//! Returns the current swipe velocity (when user is dragging).
+	const ci::vec2		getSwipeVelocity() const	{ return mSwipeVelocity; }
+	//! Returns the current scroll velocity (when ScrollView is decelerating).
+	const ci::vec2		getScrollVelocity() const	{ return mScrollVelocity; }
 
 	//! Sets the friction factor to apply to velocity to slow it down (inside bounds). Default: 0.05
 	void setDecelerationFactorInside( float value )			{ mDecelerationFactorInside = value; }
@@ -93,11 +100,27 @@ class CI_UI_API ScrollView : public View {
 	void setMaxSpeed( float value )							{ mMaxSpeed = value; }
 	//! Returns the max speed (pixels) that can be applied as a result of seeking toward target offset. Default: 300.0
 	float getMaxSpeed() const								{ return mMaxSpeed; }
+	//! Returns whether or not the content offset is animating.
+	bool isContentOffsetAnimating() const					{ return mContentOffsetAnimating; }
+
+	//! Sets the amount of time in seconds until an intercept touch will no longer be considered a tap or flick (quick swipe) interaction.
+	void setInterceptDelayTime( double seconds )			{ mInterceptDelayTime = seconds; }
+	//! Returns the amount of time in seconds until an intercept touch will no longer be considered a tap or flick (quick swipe) interaction.
+	double setInterceptDelayTime() const					{ return mInterceptDelayTime; }
+	//! Sets the distance (in both axes) in pixels until an intercept touch will no longer be considered a drag interaction.
+	void setInterceptMaxDragDistance( const ci::vec2 &dist )	{ mInterceptMaxDragDistance = dist; }
+	//! Returns the distance (in both axes) in pixels until an intercept touch will no longer be considered a drag interaction.
+	const ci::vec2& getInterceptMaxDragDistance() const		{ return mInterceptMaxDragDistance; }	
+
+	void setLabel( const std::string &label ) override;
 
 	void setVerticalScrollingEnabled( bool enable )			{ mVerticalScrollingEnabled = enable; }
 	bool isVerticalScrollingEnabled() const					{ return mVerticalScrollingEnabled; }
 	void setHorizontalScrollingEnabled( bool enable )		{ mHorizontalScrollingEnabled = enable; }
 	bool isHorizontalScrollingEnabled() const				{ return mHorizontalScrollingEnabled; }
+	
+	void setDisableScrollingWhenContentFits( bool enable = true )	{ mDisableScrollingWhenContentFits = enable; }
+	bool isDisableScrollingWhenContentFitsEnabled() const			{ return mDisableScrollingWhenContentFits; }
 
 	//! Signal emitted whenever the content scrolls (both by dragging and when decelerating).
 	ci::signals::Signal<void ()>& getSignalDidScroll()		{ return mSignalDidScroll; }
@@ -114,7 +137,10 @@ class CI_UI_API ScrollView : public View {
 	bool touchesMoved( ci::app::TouchEvent &event )	override;
 	bool touchesEnded( ci::app::TouchEvent &event )	override;
 
-	virtual void				onDecelerationEnded()	{}
+	bool shouldInterceptTouches( ci::app::TouchEvent &event ) override;
+	bool shouldStopInterceptingTouches( ci::app::TouchEvent &event ) override;
+
+	virtual void				onDecelerationEnded();
 	virtual const ci::Rectf&	getDeceleratingBoundaries() const;
 
 	void calcContentSize();
@@ -124,9 +150,10 @@ class CI_UI_API ScrollView : public View {
 
 	std::unique_ptr<SwipeTracker>	mSwipeTracker;
 	ci::vec2						mSwipeVelocity;
+	ci::vec2						mScrollVelocity;
 
-	bool					mDragging		= false;
-	bool					mDecelerating	= false;
+	bool					mDragging				= false;
+	bool					mDecelerating			= false;
 	ci::vec2				mTargetOffset;
 
   private:
@@ -135,7 +162,6 @@ class CI_UI_API ScrollView : public View {
 	class ContentView;
 	std::shared_ptr<ContentView>	mContentView;
   	ci::Anim<ci::vec2>				mContentOffset;
-	ci::vec2						mContentSize;
 
 	ci::Rectf				mOffsetBoundaries = ci::Rectf::zero();
 
@@ -146,10 +172,15 @@ class CI_UI_API ScrollView : public View {
 	float mMinVelocityConsideredAsStopped	= 10;
 	float mMinOffsetUntilStopped			= 0.5f;  // TODO: add max offset too (but should still move smoothly perhaps tanh).
 	float mMaxSpeed							= 300.0f;
+	bool  mContentOffsetAnimating			= false;
+
+	double		mInterceptDelayTime			= 0.05f; // 0.05f = 3.0f / 60;
+	ci::vec2	mInterceptMaxDragDistance		= ci::vec2( 10.0f );
 
 	bool							mScrollingEnabled = true;
 	bool							mVerticalScrollingEnabled = true;
 	bool							mHorizontalScrollingEnabled = true;
+	bool							mDisableScrollingWhenContentFits = false;
 
 	ci::signals::Signal<void ()>	mSignalDidScroll, mSignalDragBegin, mSignalDragEnd;
 };
@@ -201,8 +232,10 @@ class CI_UI_API PagingScrollView : public ScrollView {
 	//! Returns the minimum distance (pixels) to discount a touch sequence from being counted as a swipe (default: 50).
 	float	getSwipeDistanceThreshold() const			{ return mSwipeDistanceThreshold; }
 
-	ci::signals::Signal<void ()>& getSignalPageWillChange()		{ return mSignalPageWillChange; }
-	ci::signals::Signal<void ()>& getSignalPageDidChange()		{ return mSignalPageDidChange; }
+	//! Emitted before the page changes. Passes the page that we're changing to as argument.
+	ci::signals::Signal<void ( size_t )>& getSignalPageWillChange()		{ return mSignalPageWillChange; }
+	//! Emitted after the page has changed.
+	ci::signals::Signal<void ()>& getSignalPageDidChange()				{ return mSignalPageDidChange; }
 
   protected:
 
@@ -212,7 +245,7 @@ class CI_UI_API PagingScrollView : public ScrollView {
 	void				onDecelerationEnded() override;
 	const ci::Rectf&	getDeceleratingBoundaries() const	override;
 
-	void layoutPages();
+	void layoutPages( bool updateBoundaries );
 	void layoutPage( size_t index );
 	void calcDeceleratingBoundaries();
 	void handlePageUpdate( bool animate );
@@ -226,11 +259,12 @@ class CI_UI_API PagingScrollView : public ScrollView {
 	size_t			mCurrentPageIndex = 0;
 	ci::vec2		mPageMargin = ci::vec2( 0 );
 	ci::Rectf		mDeceleratingBoundaries = ci::Rectf::zero();
+	bool			mPageIsChangingAnimated = false; 
 	float			mSwipeVelocityThreshold	= 500;
 	float			mSwipeDistanceThreshold	= 50;
-	bool			mPageIsChangingAnimated = false;
 
-	ci::signals::Signal<void ()>	mSignalPageWillChange, mSignalPageDidChange;
+	ci::signals::Signal<void ( size_t )>	mSignalPageWillChange;
+	ci::signals::Signal<void ()>			mSignalPageDidChange;
 };
 
 } // namespace ui

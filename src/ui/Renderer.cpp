@@ -101,7 +101,10 @@ gl::Fbo::Format	getBaseFboFormat()
 	return format;
 }
 
+static int sFrameBufferCount = 0;
+
 } // anonymous namespace
+
 bool FrameBuffer::Format::operator==(const Format &other) const
 {
 	return mSize == other.mSize;
@@ -109,12 +112,18 @@ bool FrameBuffer::Format::operator==(const Format &other) const
 
 FrameBuffer::FrameBuffer( const Format &format )
 {
+	sFrameBufferCount++;
+
 	mFbo = gl::Fbo::create( format.mSize.x, format.mSize.y, getBaseFboFormat() );
+
+	LOG_FRAMEBUFFER( hex << this << dec << ", total count: " << sFrameBufferCount << ", size: " << format.mSize );
 }
 
 FrameBuffer::~FrameBuffer()
 {
-	LOG_FRAMEBUFFER(  hex << this << dec );
+	sFrameBufferCount--;
+
+	LOG_FRAMEBUFFER( hex << this << dec << ", total count: " << sFrameBufferCount );
 }
 
 void FrameBuffer::updateFormat( const Format &format )
@@ -129,7 +138,9 @@ ivec2 FrameBuffer::getSize() const
 
 void FrameBuffer::setInUse( bool inUse )
 {
+#if UI_FRAMEBUFFER_CACHING_ENABLED
 	mInUse = inUse;
+#endif
 }
 
 ImageSourceRef FrameBuffer::createImageSource() const
@@ -182,6 +193,7 @@ void Renderer::popColor()
 
 void Renderer::setBlendMode( BlendMode mode )
 {
+#if 0
 	switch( mode ) {
 		case BlendMode::ALPHA:
 			gl::enableAlphaBlending();
@@ -192,6 +204,20 @@ void Renderer::setBlendMode( BlendMode mode )
 		default:
 			CI_ASSERT_NOT_REACHABLE();
 	}
+#else
+	auto ctx = gl::context();
+	ctx->enable( GL_BLEND );
+	switch( mode ) {
+		case BlendMode::ALPHA:
+			ctx->blendFuncSeparate( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA );
+		break;
+		case BlendMode::PREMULT_ALPHA:
+			ctx->blendFuncSeparate( GL_ONE, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA );
+		break;
+		default:
+			CI_ASSERT_NOT_REACHABLE();
+	}
+#endif
 }
 
 void Renderer::pushBlendMode( BlendMode mode )
@@ -210,6 +236,8 @@ void Renderer::popBlendMode()
 
 FrameBufferRef Renderer::getFrameBuffer( const ci::ivec2 &size )
 {
+	CI_ASSERT( size.x > 0 && size.y > 0 );
+
 #if UI_FRAMEBUFFER_CACHING_ENABLED
 	auto availableIt = mFrameBufferCache.end();
 	for( auto frameBufferIt = mFrameBufferCache.begin(); frameBufferIt < mFrameBufferCache.end(); ++frameBufferIt ) {
@@ -255,14 +283,13 @@ FrameBufferRef Renderer::getFrameBuffer( const ci::ivec2 &size )
 	return result;
 
 #else
-	// temporary: always create and return a new FrameBuffer
-	clearUnusedFrameBuffers();
+	// FrameBuffer caching disabled, just create and return a new one.
+	// - FrameBuffer::getInUse() always returns false, meaning it can always be used by the renderer
+	// - this path will be removed once all the kinks have been worked out of framebuffer caching
+	CI_ASSERT( mFrameBufferCache.empty() );
 
 	auto format = FrameBuffer::Format().size( size );
 	auto result = make_shared<FrameBuffer>( format );
-	result->setInUse( true ); // always in use when caching is disabled
-	mFrameBufferCache.push_back( result );
-
 	return result;
 #endif
 }
@@ -272,7 +299,8 @@ void Renderer::clearUnusedFrameBuffers()
 	mFrameBufferCache.erase( remove_if( mFrameBufferCache.begin(), mFrameBufferCache.end(),
 		[]( const FrameBufferRef &frameBuffer ) {
 			return ! frameBuffer->isInUse();
-		} ), mFrameBufferCache.end() );
+		}
+	), mFrameBufferCache.end() );
 }
 
 void Renderer::pushFrameBuffer( const FrameBufferRef &frameBuffer )
@@ -283,10 +311,24 @@ void Renderer::pushFrameBuffer( const FrameBufferRef &frameBuffer )
 
 void Renderer::popFrameBuffer( const FrameBufferRef &frameBuffer )
 {
-#if UI_FRAMEBUFFER_CACHING_ENABLED
 	frameBuffer->setInUse( false );
-#endif
 	gl::context()->popFramebuffer();
+}
+
+void Renderer::pushClip( const ci::ivec2 &lowerLeft, const ci::ivec2 &size )
+{
+	gl::context()->pushBoolState( GL_SCISSOR_TEST, GL_TRUE );	
+	gl::context()->pushScissor( { lowerLeft, size } );
+
+	mScissorStack.push_back( { lowerLeft, size } );
+}
+
+void Renderer::popClip()
+{
+	gl::context()->popBoolState( GL_SCISSOR_TEST );
+	gl::context()->popScissor();
+
+	mScissorStack.pop_back();
 }
 
 std::string Renderer::printCurrentFrameBuffersToString() const
@@ -332,18 +374,23 @@ void Renderer::draw( const FrameBufferRef &frameBuffer, const ci::Area &sourceAr
 	gl::draw( frameBuffer->mFbo->getColorTexture(), sourceArea, destRect );
 }
 
-void Renderer::draw( const ImageRef &image, const ci::Rectf &destRect, const ci::gl::GlslProgRef &glsl )
+void Renderer::draw( const ImageRef &image, const ci::Rectf &destRect )
 {
-	// TODO: use Batch. if no glsl then use a default one, replacing on Batch as necessary
-	if( glsl ) {
-		gl::ScopedGlslProg glslScope( glsl );
-		gl::ScopedTextureBind texScope( image->mTexture );
+	if( ! mBatchImage ) {
+		mBatchImage = gl::Batch::create( geom::Rect( Rectf( 0, 0, 1, 1 ) ), gl::getStockShader( gl::ShaderDef().color().texture() ) );
+	}
 
-		gl::drawSolidRect( destRect );
-	}
-	else {
-		gl::draw( image->mTexture, destRect );
-	}
+	draw( image, destRect, mBatchImage );
+}
+
+void Renderer::draw( const ImageRef &image, const ci::Rectf &destRect, const ci::gl::BatchRef &batch )
+{
+	gl::ScopedTextureBind texScope( image->mTexture );
+
+	gl::ScopedModelMatrix modelScope;
+	gl::translate( destRect.getUpperLeft() );
+	gl::scale( destRect.getSize() );
+	batch->draw();
 }
 
 void Renderer::drawSolidRect( const Rectf &rect )

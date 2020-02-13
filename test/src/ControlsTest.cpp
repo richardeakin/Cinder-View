@@ -1,9 +1,7 @@
 #include "ControlsTest.h"
 
 #include "cinder/app/App.h"
-//#include "cinder/Rand.h"
 #include "cinder/Log.h"
-#include "cinder/gl/draw.h"
 
 using namespace std;
 using namespace ci;
@@ -16,6 +14,19 @@ ControlsTest::ControlsTest()
 	mButton->setTitle( "Button" );
 	mButton->getSignalPressed().connect( [] { CI_LOG_I( "mButton pressed" ); } );
 	mButton->getSignalReleased().connect( [] { CI_LOG_I( "mButton released" ); } );
+
+	mToggle = make_shared<ui::Button>();
+	mToggle->setAsToggle();
+	mToggle->setLabel( "toggle" );
+	mToggle->setTitle( "disabled" );
+	mToggle->setTitle( "enabled", ui::Button::State::ENABLED );
+	mToggle->setColor( Color( 0.2f, 0.5f, 0.5f ), ui::Button::State::ENABLED );
+	mToggle->getTitleLabel()->setFontSize( 28 );
+	mToggle->getSignalPressed().connect( [] { CI_LOG_V( "toggle pressed" ); } );
+	mToggle->getSignalReleased().connect( [] { CI_LOG_V( "toggle released" ); } );
+
+	mCheckBox = make_shared<ui::CheckBox>();
+	mCheckBox->setTitle( "checkbox" );
 
 	mImageButton = make_shared<ui::Button>();
 	mImageButton->setLabel( "image button" );
@@ -34,15 +45,6 @@ ControlsTest::ControlsTest()
 	catch( exception &exc ) {
 		CI_LOG_EXCEPTION( "failed to load images for button", exc );
 	}
-
-	mToggle = make_shared<ui::Button>();
-	mToggle->setAsToggle();
-	mToggle->setLabel( "toggle" );
-	mToggle->setTitle( "disabled" );
-	mToggle->setTitle( "enabled", ui::Button::State::ENABLED );
-	mToggle->setColor( Color( 0.2f, 0.5f, 0.5f ), ui::Button::State::ENABLED );
-	mToggle->getSignalPressed().connect( [] { CI_LOG_V( "toggle pressed" ); } );
-	mToggle->getSignalReleased().connect( [] { CI_LOG_V( "toggle released" ); } );
 
 	// temp - adding controls to this test
 	mHSlider = make_shared<ui::HSlider>();
@@ -96,8 +98,9 @@ ControlsTest::ControlsTest()
 
 	addSubviews( { 
 		mButton,
-		mImageButton,
 		mToggle,
+		mCheckBox,
+		mImageButton,
 		mHSlider, mVSlider,
 		nboxA, nboxB, nbox3,
 		mTextField1, mTextField2, mTextField3
@@ -109,15 +112,18 @@ void ControlsTest::layout()
 	// TODO: move these all to a container view and use a Layout
 	const float padding = 40.0f;
 
-	Rectf buttonBounds( padding, padding, padding + 80, padding + 30 );
+	Rectf buttonBounds( padding, padding, padding + 90, padding + 30 );
 	mButton->setBounds( buttonBounds );
 
 	buttonBounds += vec2( 0, buttonBounds.getHeight() + 10 );
 	mToggle->setBounds( buttonBounds );
 
-	mImageButton->setPos( vec2( mButton->getBounds().x2 + padding, mButton->getPosY() ) );
+	buttonBounds.moveULTo( vec2( buttonBounds.x2 + padding, padding ) );
+	mCheckBox->setBounds( buttonBounds );
 
-	Rectf sliderHBounds = Rectf( padding, buttonBounds.y2 + padding, padding + 200, buttonBounds.y2 + padding + 30 );
+	mImageButton->setPos( vec2( mCheckBox->getBounds().x2 + padding, mCheckBox->getPosY() ) );
+
+	Rectf sliderHBounds = Rectf( padding, mImageButton->getBounds().y2 + padding, padding + 200, mImageButton->getBounds().y2 + padding + 30 );
 	mHSlider->setBounds( sliderHBounds );
 
 	Rectf sliderVBounds = Rectf( padding, sliderHBounds.y2 + 10, padding + 30, sliderHBounds.y2 + 210 );

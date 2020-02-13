@@ -4,6 +4,7 @@
 #include "cinder/Rand.h"
 #include "cinder/Timeline.h"
 #include "cinder/Log.h"
+#include "cinder/gl/GlslProg.h"
 
 using namespace std;
 using namespace ci;
@@ -97,11 +98,12 @@ BasicViewTests::BasicViewTests()
 	mLabel->setText( "bold label" );
 	mLabel->setAlignment( ui::TextAlignment::CENTER );
 	mLabel->setTextColor( Color::white() );
-	mLabel->setFontFace( ui::FontFace::BOLD );
+	mLabel->setFontName( "Arial Bold" );
 	mLabel->getBackground()->setColor( Color( 0, 0, 0.4f ) );
 
 	mLabelClipped = make_shared<ui::Label>();
 	mLabelClipped->setText( "blah blah blah blah blah" );
+	mLabelClipped->setFontFile( app::getAssetPath( "fonts/Saint-Andrews Queen.ttf" ), 16 );
 	mLabelClipped->setClipEnabled();
 	mLabelClipped->setTextColor( Color::white() );
 	mLabelClipped->getBackground()->setColor( Color( 0, 0, 0.4f ) );
@@ -123,7 +125,7 @@ BasicViewTests::BasicViewTests()
 	mImageView->addSubview( imageBorder );
 	fs::path imageFilePath = app::getAssetPath( "images/monkey_hitchhike.jpg" );
 	try {
-		CI_LOG_I( "loading image view.." );
+		CI_LOG_I( "loading image for ImageView.." );
 		auto image = make_shared<ui::Image>( loadImage( loadFile( imageFilePath ) ) );
 		mImageView->setImage( image );
 		CI_LOG_I( "complete" );
@@ -131,6 +133,8 @@ BasicViewTests::BasicViewTests()
 	catch( std::exception &exc ) {
 		CI_LOG_EXCEPTION( "failed to load image at path: " << imageFilePath, exc );
 	}
+
+	loadImageViewShader();
 
 	mContainerView->addSubviews( { mLabel, mLabelClipped, mLabelGrid, mImageView } );
 	addSubview( mContainerView );
@@ -158,6 +162,11 @@ void BasicViewTests::layout()
 
 bool BasicViewTests::keyDown( app::KeyEvent &event )
 {
+	if( event.isControlDown() ) {
+		// ViewTestsApp gets all events when ctrl is down
+		return false;
+	}
+
 	bool handled = true;
 	switch( event.getCode() ) {
 		case app::KeyEvent::KEY_c: {
@@ -204,4 +213,62 @@ bool BasicViewTests::keyDown( app::KeyEvent &event )
 	}
 
 	return handled;
+}
+
+void BasicViewTests::loadImageViewShader()
+{
+	const string IMAGEVIEW_VERT = R"(
+	#version 400
+
+	uniform mat4 ciModelViewProjection;
+
+	uniform vec2 uPositionOffset, uPositionScale;
+	uniform vec2 uTexCoordOffset, uTexCoordScale;
+
+	in vec4 ciPosition;
+	in vec2 ciTexCoord0;
+	in vec4 ciColor;
+
+	out highp vec2 vTexCoord;
+	out lowp vec4 vColor;
+
+	void main()
+	{
+		gl_Position = ciModelViewProjection * ciPosition;
+		vTexCoord = ciTexCoord0;
+		vColor = ciColor;
+	}
+	)";
+
+	const string IMAGEVIEW_FRAG = R"(
+	#version 400
+
+	uniform sampler2D uTex0;
+
+	in vec2	vTexCoord;
+	in vec4 vColor;
+
+	out vec4 oFragColor;
+
+	void main()
+	{
+		oFragColor = texture( uTex0, vTexCoord.st ) * vColor;
+	}
+	)";
+
+	// load custom shader for ImageView
+	try {
+		auto glsl = gl::GlslProg::create( IMAGEVIEW_VERT, IMAGEVIEW_FRAG );
+		mImageView->setShader( glsl );
+		CI_LOG_I( "loaded shader for ImageView" );
+	}
+	catch( Exception &exc ) {
+		CI_LOG_EXCEPTION( "failed to load glsl for ImageView", exc );
+	}
+}
+
+void BasicViewTests::update()
+{
+	float alpha = sin( app::getElapsedSeconds() * 2 ) * 0.5f + 0.5f;
+	mImageView->setAlpha( alpha );
 }

@@ -35,37 +35,57 @@ public:
 	Label( const ci::Rectf &bounds = ci::Rectf::zero() );
 
 	void				setText( const std::string &text );
-	const std::string&	getText() const						{ return mText; }
+	const std::string&	getText() const						{ return mTextStr; }
 
-	void				setTextColor( const ci::ColorA &color )	{ mTextColor = color; }
-	const ci::ColorA&	getTextColor() const					{ return mTextColor; }
+	void					setTextColor( const ci::ColorA &color )	{ mTextColor = color; }
+	const ci::ColorA&		getTextColor() const					{ return mTextColor; }
+	ci::Anim<ci::ColorA>*	animTextColor() { return &mTextColor; }
 
-	void				setFont( float fontSize, FontFace fontFace );
-	void				setFontSize( float fontSize )		{ setFont( fontSize, mFont->getFace() ); }
-	void				setFontFace( FontFace face )		{ setFont( mFont->getSize(), face ); }
+	void                setFont( const std::string &systemName, float fontSize );
+	void                setFontFile( const ci::fs::path &filePath, float fontSize = -1 ); // TODO: probably need three methods here too, or use default size in implementation if < 0
 
-	void				setAlignment( TextAlignment alignment )	{ mAlignment = alignment; }
+	void				setFontSize( float fontSize )						{ setFont( mText->getSystemName(), fontSize ); }
+	void				setFontName( const std::string &systemName )		{ setFont( systemName, mText->getSize() ); }
+
+	void				setAlignment( TextAlignment alignment );
+	void				setBaselineAdjust( TextBaselineAdjust adjust );
 
 	void				setPadding( const ci::Rectf &padding );
 	void				setShrinkToFitEnabled( bool enable = true );
 	bool				isShrinkToFitEnabled() const	{ return mShrinkToFit; }
 
+	void				setWrapEnabled( bool enable = true );
+	bool				isWrapEnabled() const	{ return mWrapEnabled; }
+	//void				setLineSpace( float lineSpace ) {}
+	//! Updates rectangular region that text should be laid out in.
+	void				setSize( const ci::vec2 &size ) override;
+	//! note: not const because SdfText::getBounds() isn't const
+	ci::vec2			getTextSize() const	{ return mTextSize; }
+
+	//! Called automatically from View::layout() as needed, can be called earlier to adjust size properties before then.
+	void				layoutForText();
 protected:
+	void layout() override;
 	void draw( Renderer *ren ) override;
 
 private:
 	ci::vec2	getBaseLine() const;
+	void		markTextLayoutDirty();
 	void		measureTextSize();
-	void		shrinkToFit();
 
-
-	TextRef			mFont;
-	std::string		mText;
+	TextRef			mText;
+	std::string		mTextStr;
 	ci::vec2		mTextSize;
-	ci::ColorA		mTextColor = ci::ColorA::black();
 	ci::Rectf		mPadding = ci::Rectf( 4, 4, 4, 4 );
-	TextAlignment	mAlignment = TextAlignment::LEFT;
+
+	ci::Anim<ci::ColorA> mTextColor = { ci::ColorA::black() };
+
+	TextAlignment		mAlignment = TextAlignment::LEFT;
+	TextBaselineAdjust	mBaselineAdjust = TextBaselineAdjust::NONE;
+
+	bool			mWrapEnabled = false;
 	bool			mShrinkToFit = false;
+	bool			mTextLayoutDirty = false;
 };
 
 //! Manages a grid of text entries, useful for building things like info panels. Non-interactive by default.

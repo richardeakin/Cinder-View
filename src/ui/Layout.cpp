@@ -29,11 +29,12 @@
 
 using namespace ci;
 using namespace std;
-using namespace ui;
+
+namespace ui {
 
 namespace {
 
-void updateAxisPos( const ui::ViewRef &view, float position, int axis )
+void updateAxisPos( const ViewRef &view, float position, int axis )
 {
 	auto current = view->getPos();
 	current[axis] = position;
@@ -42,13 +43,13 @@ void updateAxisPos( const ui::ViewRef &view, float position, int axis )
 
 } // anonymous namespace
 
-ui::LinearLayout::LinearLayout( Orientation orientation, Mode mode, Alignment alignment )
+LinearLayout::LinearLayout( Orientation orientation, Mode mode, Alignment alignment )
 	: mOrientation( orientation ), mMode( mode ), mAlignment( alignment )
 {
 
 }
 
-void ui::LinearLayout::layout( View *view )
+void LinearLayout::layout( View *view )
 {
 	int axis = (int)mOrientation;
 	int axis2 = ( axis + 1 ) % 2;
@@ -57,7 +58,7 @@ void ui::LinearLayout::layout( View *view )
 	vec2 containerSize = view->getSize();
 	float containerSizeMinusMargins = containerSize[axis] - mMargin.getUpperLeft()[axis] - mMargin.getLowerRight()[axis];
 	float paddingTotal = glm::max( 0.0f, float( subviews.size() ) - 1.0f ) * mPadding;
-	float subviewsTotal = std::accumulate( subviews.begin(), subviews.end(), 0.0f, [&] ( float sum, const ui::ViewRef &view ) {
+	float subviewsTotal = std::accumulate( subviews.begin(), subviews.end(), 0.0f, [&] ( float sum, const ViewRef &view ) {
 		return sum + view->getSize()[axis];
 	} );
 
@@ -106,3 +107,44 @@ void ui::LinearLayout::layout( View *view )
 		}
 	}
 }
+
+// ----------------------------------------------------------------------------------------------------
+// GridLayout
+// ----------------------------------------------------------------------------------------------------
+
+GridLayout::GridLayout()
+{
+}
+
+void GridLayout::setResolution( size_t resolution )
+{ 
+	mResolution = std::max<size_t>( resolution, 1 );
+}
+
+void GridLayout::layout( View *view )
+{
+	vec2 containerSize = view->getSize();
+	const auto subviews = view->getSubviews();
+
+	float totalPadding = mResolution > 1 ? mPadding * ( mResolution - 1 ) : 0;
+	const float cellWidth = ( containerSize.x - mMargin.x1 - mMargin.x2 ) / (float)mResolution - totalPadding;
+
+	vec2 pos = mMargin.getUpperLeft();
+	ivec2 currentCell = ivec2( 0 );
+	for( auto &subview : subviews ) {
+		subview->setPos( pos );
+		subview->setSize( vec2( cellWidth, subview->getHeight() ) ); 
+
+		currentCell.x += 1;
+		pos.x += cellWidth + mPadding;
+		if( currentCell.x >= mResolution ) {
+			currentCell.x = 0;
+			currentCell.y += 1;
+
+			pos.x = mMargin.x1;
+			pos.y += subview->getHeight() + mPadding;
+		}
+	}
+}
+
+} // namespace ui

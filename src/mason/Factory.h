@@ -60,6 +60,16 @@ class Factory {
 		return builderFnIt->second( args... );
 	}
 
+	std::vector<std::string>	getAllKeys() const
+	{
+		std::vector<std::string> result;
+		for( const auto &mp : mBuilderMap ) {
+			result.push_back( mp.first );
+		}
+
+		return result;
+	}
+
   private:
 	// Helper functor for building objects registered with Factory and returning them in a shared_ptr.
 	template<typename Y>

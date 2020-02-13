@@ -22,6 +22,7 @@
  */
 
 #include "ui/TextManager.h"
+#include "ui/Debug.h"
 
 #include "cinder/Cinder.h"
 #include "cinder/gl/TextureFont.h"
@@ -38,6 +39,19 @@ namespace ui {
 // TextManager
 // ----------------------------------------------------------------------------------------------------
 
+namespace {
+
+float getDefaultSize()
+{
+#if defined( CINDER_MSW )
+	return 16;
+#else
+	return 14;
+#endif
+}
+
+} // anonymous namespace
+
 // static
 TextManager* TextManager::instance()
 {
@@ -45,70 +59,69 @@ TextManager* TextManager::instance()
 	return &sInstance;
 }
 
+TextManager::TextManager()
+{
+	// Set the default suppored chars, can be updated later by user.
+	mSupportedChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890().?!,:;'\"&*=+-/\\@#_[]<>%^llflfiphrids\303\251\303\241\303\250\303\240";
+}
+
 // static
-TextRef TextManager::loadText( FontFace fontFace, float size )
+TextRef TextManager::loadText( std::string systemName, float size )
 {
 	if( size < 0 ) {
-#if defined( CINDER_MSW )
-		size = 16;
-#else
-		size = 14;
-#endif
+		size = getDefaultSize();
 	}
 
-	if( app::isMainThread() )
-		return instance()->loadTextImpl( fontFace, size );
-	else
-		return instance()->loadTextImplAsync( fontFace, size );
+	if( systemName.empty() ) {
+		systemName = "Arial";
+	}
+
+	return instance()->loadTextImpl( systemName, size );
 }
 
-TextRef TextManager::loadTextImpl( FontFace face, float size )
+// static
+TextRef TextManager::loadTextFromFile( const fs::path &filePath, float size )
+{
+	if( size < 0 ) {
+		size = getDefaultSize();
+	}
+
+	return instance()->loadTextFromFileImpl( filePath, size );
+}
+
+TextRef TextManager::loadTextImpl( const std::string &systemName, float size )
 {
 	for( const auto &text : mTextCache ) {
-		if( text->getFace() == face && text->getSize() == size )
+		if( text->mSystemName == systemName && text->getSize() == size )
 			return text;
 	}
 
-	auto font = Font( getFontName( face ), size );
+	auto font = Font( systemName, size );
+	TextRef result = TextRef( new Text( font, size ) );
+	result->mSystemName = systemName;
 
-	TextRef result( new Text( font, face ) );
-
-	lock_guard<mutex> lock( mMutex );
 	mTextCache.push_back( result );
-
+	UI_LOG_TEXT( "created Text object for font with system name: " << systemName << ", font size: " << size );
 	return result;
 }
 
-TextRef TextManager::loadTextImplAsync( FontFace face, float size )
+TextRef TextManager::loadTextFromFileImpl( const fs::path &filePath, float size )
 {
 	for( const auto &text : mTextCache ) {
-		if( text->getFace() == face && text->getSize() == size )
+		if( text->mFilePath == filePath && text->getSize() == size )
 			return text;
 	}
 
-	shared_ptr<Text> result( new Text );
-	{
-		lock_guard<mutex> lock( mMutex );
-		mTextCache.push_back( result );
-	}
+	// account for content scale when using GDI
+	float sizeScaled = size / app::getWindow()->getContentScale(); // TODO: how to use Graph's app::Window for content size?
 
-	CI_ASSERT_MSG( false, "TODO (read comment)" );
-	// - move this to Script load process if possible, or force onto main thread with App
-//	Dispatch::onMain( [this, result, face, size] {
-		auto font = Font( getFontName( face ), size );
-		result->mTextureFont = gl::TextureFont::create( font );
-		result->mIsReady = true;
-//	} );
+	auto font = Font( loadFile( filePath ), sizeScaled );
+	TextRef result = TextRef( new Text( font, size ) );
+	result->mFilePath = filePath;
 
+	mTextCache.push_back( result );
+	UI_LOG_TEXT( "created Text object for font with path: " << filePath << ", font size: " << size << " (scaled: " << sizeScaled << ")" );
 	return result;
-}
-
-std::string TextManager::getFontName( FontFace face ) const
-{
-	if( face == FontFace::BOLD )
-		return "Arial Bold";
-	else
-		return "Arial";
 }
 
 // ----------------------------------------------------------------------------------------------------
@@ -120,25 +133,17 @@ Text::Text()
 {
 }
 
-Text::Text( const ci::Font &font, FontFace face )
-	: mFace( face ), mIsReady( false )
+Text::Text( const ci::Font &font, float size )
+	: mIsReady( false ), mFontSize( size )
 {
 	auto format = gl::TextureFont::Format().premultiply( true );
-	mTextureFont = gl::TextureFont::create( font, format );
+	mTextureFont = gl::TextureFont::create( font, format, TextManager::instance()->getSupportedChars() );
 	mIsReady = true;
 }
 
 float Text::getSize() const
 {
-	if( ! mIsReady )
-		return 0;
-
-	return mTextureFont->getFont().getSize();
-}
-
-FontFace Text::getFace() const
-{
-	return mFace;
+	return mFontSize;
 }
 
 float Text::getAscent() const
@@ -165,12 +170,28 @@ vec2 Text::measureString( const std::string &str ) const
 	return mTextureFont->measureString( str );
 }
 
+vec2 Text::measureStringWrapped( const std::string &str, const ci::Rectf &fitRect ) const
+{
+	if( ! mIsReady )
+		return vec2( 0 );
+
+	return mTextureFont->measureStringWrapped( str, fitRect );
+}
+
 void Text::drawString( const string &str, const vec2 &baseline )
 {
 	if( ! mIsReady )
 		return;
 
 	mTextureFont->drawString( str, baseline );
+}
+
+void Text::drawStringWrapped( const std::string &str, const ci::Rectf &fitRect )
+{
+	if( ! mIsReady )
+		return;
+
+	mTextureFont->drawStringWrapped( str, fitRect );
 }
 
 } // namespace ui

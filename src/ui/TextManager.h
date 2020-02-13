@@ -25,6 +25,8 @@
 
 #include "ui/Export.h"
 #include "cinder/Vector.h"
+#include "cinder/Rect.h"
+#include "cinder/Filesystem.h"
 
 #include <atomic>
 #include <mutex>
@@ -42,15 +44,16 @@ namespace gl {
 
 namespace ui {
 
-enum class FontFace {
-	NORMAL,
-	BOLD
-};
-
 enum class TextAlignment {
 	LEFT,
 	CENTER,
-	RIGHT
+	RIGHT,
+	JUSTIFIED
+};
+
+enum class TextBaselineAdjust {
+	NONE,
+	CENTER
 };
 
 typedef std::shared_ptr<class Text>	TextRef;
@@ -58,20 +61,28 @@ typedef std::shared_ptr<class Text>	TextRef;
 class CI_UI_API Text {
 public:
 
+	const ci::fs::path&	getFilePath() const		{ return mFilePath; }
+	const std::string&	getSystemName() const	{ return mSystemName; }
+	bool isFileFont() const						{ return ! mFilePath.empty(); }
+	bool isSystemFont() const					{ return ! mSystemName.empty(); }
+
 	float		getSize() const;
-	FontFace	getFace() const;
 	float		getAscent() const;
 	float		getDescent() const;
 
 	ci::vec2	measureString( const std::string &str ) const;
+	ci::vec2	measureStringWrapped( const std::string &str, const ci::Rectf &fitRect ) const;
 	void		drawString( const std::string &str, const ci::vec2 &baseline );
+	void		drawStringWrapped( const std::string &str, const ci::Rectf &fitRect );
 
 private:
 	Text();
-	Text( const ci::Font &font, FontFace face );
+	Text( const ci::Font &font, float fontSize );
 
 	ci::gl::TextureFontRef	mTextureFont;
-	FontFace				mFace;
+	std::string				mSystemName;
+	ci::fs::path			mFilePath;
+	float					mFontSize; //! note: this might be different to the ci::Font size, due to content scaling
 	std::atomic<bool>		mIsReady;
 
 	friend class TextManager;
@@ -79,24 +90,28 @@ private:
 
 class CI_UI_API TextManager {
 public:
+	static TextManager* instance();
+
 	//! If size < 0, a default size will be picked (this is temporary until some sort of styling is introduced)
-	static TextRef loadText( FontFace fontFace, float size = -1 );
+	static TextRef loadText( std::string systemName = "", float size = -1 );
+	static TextRef loadTextFromFile( const ci::fs::path &filePath, float size = -1 );
+
+	//! Note: call this before loading any text objects
+	void setSupportedChars( const std::string &str )	{ mSupportedChars = str; }
+
+	const std::string&	getSupportedChars() const		{ return mSupportedChars; }
 
 private:
-	TextManager()	{}
+	TextManager();
 	
 	TextManager( const TextManager& )				= delete;
 	TextManager& operator=( const TextManager& )	= delete;
 
-	static TextManager* instance();
-
-	TextRef loadTextImpl( FontFace fontFace, float size );
-	TextRef loadTextImplAsync( FontFace fontFace, float size );
-
-	std::string	getFontName( FontFace face ) const;
+	TextRef loadTextImpl( const std::string &systemName, float size );
+	TextRef loadTextFromFileImpl( const ci::fs::path &filePath, float size );
 
 	std::vector<TextRef>	mTextCache;
-	std::mutex				mMutex;
+	std::string				mSupportedChars;
 };
 
 } // namespace ui

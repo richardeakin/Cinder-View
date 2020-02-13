@@ -61,7 +61,7 @@ class CI_UI_API Graph : public View {
 
 	void propagateTouchesBegan( ci::app::TouchEvent &event );
 	void propagateTouchesMoved( ci::app::TouchEvent &event );
-	void propagateTouchesEnded( ci::app::TouchEvent &event );
+	void propagateTouchesEnded( ci::app::TouchEvent &event, const ui::ViewRef &interceptingView = nullptr );
 
 	void propagateKeyDown( ci::app::KeyEvent &event );
 	void propagateKeyUp( ci::app::KeyEvent &event );
@@ -114,7 +114,9 @@ class CI_UI_API Graph : public View {
 	//!
 	double	getTargetFrameRate() const;
 	//!
-	double	getElapsedSeconds() const;
+	size_t	getCurrentFrame() const;
+	//!
+	double	getCurrentTime() const;
 
   protected:
 	void layout() override;
@@ -122,7 +124,10 @@ class CI_UI_API Graph : public View {
   private:
 	LayerRef makeLayer( View *rootView );
 
-	void propagateTouchesBegan( ViewRef &view, ci::app::TouchEvent &event, size_t &numTouchesHandled, ViewRef &firstResponder );
+	void propagateTouchesBegan( const ViewRef &view, ci::app::TouchEvent &event, size_t &numTouchesHandled, ViewRef &firstResponder );
+	
+	//! Returns true if view should be erased from mViewsWithTouches and the intercepted event was released.
+	bool handleInterceptingTouches( const ViewRef &view, bool eventEnding );
 
 #if 0
 	void propagateKeyDown( ViewRef &view, ci::app::KeyEvent &event );
@@ -136,13 +141,17 @@ class CI_UI_API Graph : public View {
 	int					mEventSlotPriority = 1;
 	ci::ivec2			mClippingSize;
 	bool				mClippingSizeSet = false;
+	double				mCurrentTime;
+	uint64_t			mCurrentFrame;
+	
 
 	ci::signals::ConnectionList				mEventConnections;
 	ci::vec2								mPrevMousePos;
 
 	std::list<LayerRef>	    mLayers;
 	std::list<ViewRef>	    mViewsWithTouches;
-	ViewRef					mFirstResponder, mPreviousFirstResponder;
+	ViewRef					mFirstResponder;
+	std::weak_ptr<View>		mPreviousFirstResponder; //! Only store a weak reference to the previous responder so we don't retain it (mFirstResponder will get unset when it is removed from the view hierarchy)
 
 	friend class Layer;
 };

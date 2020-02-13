@@ -55,6 +55,8 @@ class CI_UI_API View : public std::enable_shared_from_this<View> {
 	void		addSubviews( const std::vector<ViewRef> &views );
 	virtual void addSubview( const ViewRef &view );
 	virtual void insertSubview( const ViewRef &view, size_t index );
+	virtual void insertSubviewAbove( const ViewRef &view, const ViewRef &viewBelow );
+	virtual void insertSubviewBelow( const ViewRef &view, const ViewRef &viewAbove );
 	virtual void removeSubview( const ViewRef &view );
 	virtual void removeAllSubviews();
 	virtual void removeFromParent();
@@ -123,7 +125,7 @@ class CI_UI_API View : public std::enable_shared_from_this<View> {
 	ViewRef	getNextResponder() const;
 
 	//! Sets a label that can be used to identify this View
-	void				setLabel( const std::string &label )	{ mLabel = label; }
+	virtual void		setLabel( const std::string &label )	{ mLabel = label; }
 	const std::string&	getLabel() const						{ return mLabel; }
 	//! Returns the first label whose label matches the specified string, or an empty ViewRef.
 	ViewRef				getViewWithLabel( const std::string &label ) const;
@@ -132,6 +134,7 @@ class CI_UI_API View : public std::enable_shared_from_this<View> {
 	std::string			getName() const;
 
 	void setBackgroundEnabled( bool enable = true );
+	bool isBackgroundEnabled() const;
 	const RectViewRef& getBackground();
 
 	const ci::vec2&		getWorldPos() const;
@@ -141,7 +144,8 @@ class CI_UI_API View : public std::enable_shared_from_this<View> {
 	ci::Rectf			toWorld( const ci::Rectf &localRect ) const;
 	ci::Rectf			toLocal( const ci::Rectf &worldRect ) const;
 
-	virtual bool				hitTest( const ci::vec2 &localPos ) const;
+	virtual const View*	hitTest( const ci::app::TouchEvent &event ) const;
+	virtual bool		isPointInside( const ci::vec2 &localPos ) const;
 
 	void	setHidden( bool hidden = true )			{ mHidden = hidden; }
 	bool	isHidden() const						{ return mHidden; }
@@ -167,17 +171,27 @@ class CI_UI_API View : public std::enable_shared_from_this<View> {
 	void	removeFilter( const FilterRef &filter );
 	void	removeAllFilters();
 
+	const std::vector<FilterRef>&	getFilters() const	{ return mFilters; }
+
 	void	setFillParentEnabled( bool enable = true );
 	bool	isFillParentEnabled() const					{ return mFillParent; }
 
 	//! Informs layout propagation that this View and its subviews need layout() to be called.
 	void	setNeedsLayout();
-	//! Returns whether this View needs to have its layout() method called before the next update().
+	//! Returns whether this View needs to have its layout() method called before the next update(). TODO: rename to getNeedsLayout()
 	bool	needsLayout() const	{ return mNeedsLayout; }
+	//! Lays out this view and its subviews immediately, if layout updates are pending.
+	void	layoutIfNeeded();
 
 	//! Signal emitted after this View has had it's layout() method called.
 	ci::signals::Signal<void ()>&	getSignalViewDidLayout()	{ return mSignalViewDidLayout; }
 
+	//! Enables or disables touch intercepting. If true, this View will get a call to shouldInterceptTouches() before its subviews get a chance to interact with the touch.
+	void	setInterceptsTouches( bool enable = true ) { mInterceptsTouches = true; }
+	//! Returns whether touch intercepting is enabled. If true, this View will get a call to shouldInterceptTouches() before its subviews get a chance to interact with the touch.
+	bool	getInterceptsTouches() const				{ return mInterceptsTouches; }
+	//! Returns the touches currently being intercepted
+	const std::vector<ci::app::TouchEvent::Touch>&	getInterceptingTouches() const	{ return mInterceptedTouchEvent.getTouches(); }
 
 	//! This is done when the world position should be recalculated but calling layout isn't necessary (ex. when ScrollView offset moves)
 	void	setWorldPosDirty();
@@ -190,6 +204,9 @@ class CI_UI_API View : public std::enable_shared_from_this<View> {
 	//! Returns the bounds required for rendering this View to a FrameBuffer. \default is this View's local bounds. Override if this View needs a larger sized or FrameBuffer.
 	virtual ci::Rectf   getBoundsForFrameBuffer() const;
 
+	//! TODO: try to combine this with getBoundsForFrameBuffer. this is a temp solution to get modified clip bounds.
+	virtual ci::Rectf   getClipWorldBounds() const	{ return getWorldBounds(); }
+
 	// Responder ------------------
 	// TODO: rename these with 'can' or 'should' suffix? To indicate they are asking whether this is possible or not
 	//! Return false if you cannot become first responder.
@@ -201,6 +218,10 @@ class CI_UI_API View : public std::enable_shared_from_this<View> {
 	virtual bool touchesBegan( ci::app::TouchEvent &event )	{ return false; }
 	virtual bool touchesMoved( ci::app::TouchEvent &event )	{ return false; }
 	virtual bool touchesEnded( ci::app::TouchEvent &event )	{ return false; }
+	//! Override and return true to intercept touches from an event before subviews have a chance at it.
+	virtual bool	shouldInterceptTouches( ci::app::TouchEvent &event )	{ return false; }
+	//! If the View is intercepting a touch, override this and return false to stop intercepting.
+	virtual bool	shouldStopInterceptingTouches( ci::app::TouchEvent &event )	{ return false; }
 
 	virtual bool keyDown( ci::app::KeyEvent &event )	{ return false; }
 	virtual bool keyUp( ci::app::KeyEvent &event )		{ return false; }
@@ -217,7 +238,7 @@ class CI_UI_API View : public std::enable_shared_from_this<View> {
 	void clearViewsMarkedForRemoval();
 
 
-	typedef std::map<uint32_t, ci::app::TouchEvent::Touch> TouchMapT; // TODO just store this as vector and use std::find
+	typedef std::map<uint32_t, ci::app::TouchEvent::Touch> TouchMapT; // TODO just store this as vector and use std::find (you hardly have more than 10 touches)
 
 	TouchMapT				mActiveTouches;
 
@@ -231,6 +252,7 @@ class CI_UI_API View : public std::enable_shared_from_this<View> {
 	ci::Anim<float>			mAlpha = 1.0f;
 	ci::Anim<ci::vec2>		mPos;
 	ci::Anim<ci::vec2>		mSize;
+	ci::vec2				mPosLastUpdate, mSizeLastUpdate;
 	std::string				mLabel;
 	bool					mFillParent = false; // TODO: replace this with proper layout system
 	BlendMode				mBlendMode = BlendMode::ALPHA;
@@ -251,6 +273,9 @@ class CI_UI_API View : public std::enable_shared_from_this<View> {
 	bool					mAcceptsFirstResponder = false;
 	ViewRef					mNextResponder;
 
+	bool					mInterceptsTouches = false;
+	ci::app::TouchEvent		mInterceptedTouchEvent;
+
 	ci::signals::Signal<void ()>	mSignalViewDidLayout;
 
 	friend class Layer;
@@ -265,7 +290,7 @@ CI_UI_API std::string printHierarchyToString( const View &view );
 //! Returns a string representation of the View hierarchy starting at \a view (for debugging purposes).
 CI_UI_API std::string printHierarchyToString( const ViewRef &view );
 //! Traverses the View hierarchy of \a view, top to bottom.
-CI_UI_API void traverse( const ViewRef &view, const std::function<void( const ViewRef & )> &applyFn );
+CI_UI_API void traverse( const ViewRef &view, const std::function<bool( const ViewRef & )> &applyFn );
 
 template<typename ViewT, typename... Args>
 std::shared_ptr<ViewT> View::makeSubview( Args&&... args )
@@ -283,6 +308,8 @@ class CI_UI_API RectView : public View {
 
 	void					setColor( const ci::ColorA &color )	{ mColor = color; }
 	const ci::ColorA&		getColor() const					{ return mColor; }
+	ci::Anim<ci::ColorA>*	animColor()							{ return &mColor; }
+	//! note: deprecated, use animColor() instead
 	ci::Anim<ci::ColorA>*	getColorAnim()						{ return &mColor; }
 
   protected:

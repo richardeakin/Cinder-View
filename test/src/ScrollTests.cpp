@@ -7,18 +7,19 @@
 #include "cinder/Rand.h"
 #include "cinder/Timeline.h"
 #include "cinder/Log.h"
+#include <glm/gtx/string_cast.hpp>
 
 using namespace std;
 using namespace ci;
-using namespace mason;
 
 const float PADDING = 40.0f;
 
-class CustomView : public ui::RectView {
+class CustomScrollTestsView : public ui::RectView {
 public:
-	CustomView( const Rectf &bounds )
+	CustomScrollTestsView( const Rectf &bounds )
 		: RectView( bounds )
 	{
+		setInteractive();
 		setColor( Color( 0, 0.3f, 0 ) );
 	}
 
@@ -30,7 +31,7 @@ protected:
 		vec2 pos = event.getTouches().front().getPos();
 		event.getTouches().front().setHandled();
 		mLocalTouchPos = toLocal( pos );
-//		CI_LOG_V( getLabel() << " local pos: " << mLocalTouchPos << ", world pos: " << getWorldPos() << ", event pos: " << pos );
+		CI_LOG_I( getLabel() << " local pos: " << mLocalTouchPos << ", world pos: " << getWorldPos() << ", event pos: " << pos );
 
 		return true;
 	}
@@ -41,7 +42,7 @@ protected:
 
 		vec2 pos = event.getTouches().front().getPos();
 		mLocalTouchPos = toLocal( pos );
-//		CI_LOG_V( getLabel() << " local pos: " << mLocalTouchPos << ", world pos: " << getWorldPos() << ", event pos: " << pos );
+		CI_LOG_I( getLabel() << " local pos: " << mLocalTouchPos << ", world pos: " << getWorldPos() << ", event pos: " << pos );
 
 		return true;
 	}
@@ -52,7 +53,7 @@ protected:
 
 		vec2 pos = event.getTouches().front().getPos();
 		mLocalTouchPos = toLocal( pos );
-//		CI_LOG_V( getLabel() << " local pos: " << mLocalTouchPos << ", world pos: " << getWorldPos() << ", event pos: " << pos );
+		CI_LOG_I( getLabel() << " local pos: " << mLocalTouchPos << ", world pos: " << getWorldPos() << ", event pos: " << pos );
 
 		return true;
 	}
@@ -73,44 +74,49 @@ ScrollTests::ScrollTests()
 	: SuiteView()
 {
 	// Free scrolling ScrollView
-	mScrollView = make_shared<ui::ScrollView>();
+	mScrollViewFree = make_shared<ui::ScrollView>();
 //	mScrollView->setClipEnabled( false );
-	mScrollView->getContentView()->getBackground()->setColor( Color( 0.15f, 0, 0 ) );
+	mScrollViewFree->setLabel( "ScrollView (free)" );
+	mScrollViewFree->getContentView()->getBackground()->setColor( Color( 0.15f, 0, 0 ) );
 
-	auto scrollBorder = make_shared<ui::StrokedRectView>();
-	scrollBorder->setFillParentEnabled();
-	scrollBorder->setColor( ColorA( 0.9f, 0.5f, 0.0f, 0.7f ) );
-	mScrollView->addSubview( scrollBorder );
+	{
+		auto scrollBorder = make_shared<ui::StrokedRectView>();
+		scrollBorder->setFillParentEnabled();
+		scrollBorder->setColor( ColorA( 0.9f, 0.5f, 0.0f, 0.7f ) );
+		//mScrollViewFree->addSubview( scrollBorder );
 
-	// add some content views:
-	auto custom = make_shared<CustomView>( Rectf( 40, 60, 180, 160 ) );
+		// add some content views:
+		auto custom = make_shared<CustomScrollTestsView>( Rectf( 40, 30, 180, 130 ) );
 
-	auto button = make_shared<ui::Button>( Rectf( 200, 60, 300, 100 ) );
-	button->setTitle( "tap me" );
-	button->setTitleColor( Color( 0, 0.2f, 0.8f ) );
-	button->setColor( Color( 0.6f, 0.6f, 0.8f ), ui::Button::State::PRESSED );
-	button->getSignalPressed().connect( [] { CI_LOG_V( "button pressed" ); } );
-	button->getSignalReleased().connect( [] { CI_LOG_V( "button released" ); } );
+		auto button = make_shared<ui::Button>( Rectf( 200, 30, 300, 70 ) );
+		button->setTitle( "tap me" );
+		button->setLabel( "Button ('tap me')" );
+		button->setTitleColor( Color( 0, 0.2f, 0.8f ) );
+		button->setColor( Color( 0.4f, 0.6f, 0.9f ), ui::Button::State::PRESSED );
+		button->getSignalPressed().connect( [] { CI_LOG_I( "button pressed" ); } );
+		button->getSignalReleased().connect( [] { CI_LOG_I( "button released" ); } );
 
-	auto imageView = make_shared<ui::ImageView>( Rectf( 40, 200, 600, 600 ) );
-	imageView->getBackground()->setColor( Color( 0, 0.2f, 0 ) );
+		auto imageView = make_shared<ui::ImageView>( Rectf( 40, 150, 600, 600 ) );
+		imageView->getBackground()->setColor( Color( 0, 0.2f, 0 ) );
 
-	fs::path imageFilePath = app::getAssetPath( "images/monkey_hitchhike.jpg" );
-	try {
-		CI_LOG_I( "loading image view.." );
-		auto image = make_shared<ui::Image>( loadImage( loadFile( imageFilePath ) ) );
-		imageView->setImage( image );
-		imageView->setSize( image->getSize() );
-		CI_LOG_I( "complete" );
+		fs::path imageFilePath = app::getAssetPath( "images/monkey_hitchhike.jpg" );
+		try {
+			CI_LOG_I( "loading image view.." );
+			auto image = make_shared<ui::Image>( loadImage( loadFile( imageFilePath ) ) );
+			imageView->setImage( image );
+			imageView->setSize( image->getSize() );
+			CI_LOG_I( "complete" );
+		}
+		catch( std::exception &exc ) {
+			CI_LOG_EXCEPTION( "failed to load image at path: " << imageFilePath, exc );
+		}
+
+		mScrollViewFree->addContentViews( { custom, imageView, button } );
 	}
-	catch( std::exception &exc ) {
-		CI_LOG_EXCEPTION( "failed to load image at path: " << imageFilePath, exc );
-	}
-
-	mScrollView->addContentViews( { custom, imageView, button } );
 
 	// Horizontal paging ScrollView
 	mHorizontalPager = make_shared<ui::PagingScrollView>();
+	mHorizontalPager->setLabel( "PagingScrollView (horizontal)" );
 	mHorizontalPager->setPageMargin( vec2( 4, 0 ) );
 	mHorizontalPager->getBackground()->setColor( Color( 0.8f, 0.4f, 0 ) );
 	const size_t numHorizontalPages = 4;
@@ -125,6 +131,7 @@ ScrollTests::ScrollTests()
 
 	// Vertical paging ScrollView
 	mVerticalPager = make_shared<ui::PagingScrollView>();
+	mVerticalPager->setLabel( "PagingScrollView (vertical)" );
 	mVerticalPager->setAxis( ui::PagingScrollView::Axis::VERTICAL );
 	mVerticalPager->setPageMargin( vec2( 0, 4 ) );
 	mVerticalPager->getBackground()->setColor( Color( 0.8f, 0.4f, 0 ) );
@@ -138,36 +145,160 @@ ScrollTests::ScrollTests()
 		mVerticalPager->addContentView( label );
 	}
 
-	addSubviews( { mScrollView, mHorizontalPager, mVerticalPager } );
+	mScrollViewNested = make_shared<ui::ScrollView>();
+	mScrollViewNested->setLabel( "ScrollView (nested parent)" );
+	mScrollViewNested->setHorizontalScrollingEnabled( false );
+	mScrollViewNested->getBackground()->setColor( Color( 0, 0, 0 ) );
+	mScrollViewNested->getContentView()->getBackground()->setColor( Color( 0.15f, 0, 0 ) );
+	mScrollViewNested->setClipEnabled( true );
+
+	{
+		auto scrollview = make_shared<ui::ScrollView>( Rectf( 40, 100, 1200, 130 ) );
+		scrollview->setLabel( "ScrollView (nested child)" );
+		scrollview->setVerticalScrollingEnabled( false );
+		//scrollview->getContentView()->getBackground()->setColor( Color( 0, 1, 0 ) );
+
+		auto button = make_shared<ui::Button>();
+		button->setSize( vec2( 80, 40 ) );
+		button->setTitle( "button" );
+		button->setLabel( "nested Button" );
+		button->setTitleColor( Color( 0, 0.2f, 0.8f ) );
+		button->setColor( Color( 0.4f, 0.6f, 0.9f ), ui::Button::State::PRESSED );
+		button->getSignalPressed().connect( [] { CI_LOG_I( "nested button pressed" ); } );
+		button->getSignalReleased().connect( [] { CI_LOG_I( "nested button released" ); } );
+
+		auto label = make_shared<ui::Label>();
+		label->setPos( button->getBounds().getUpperRight() + vec2( 10, 0 ) );
+		label->setSize( vec2( 240, 130 ) );
+		label->setFontSize( 36 );
+		label->setShrinkToFitEnabled();
+		label->setText( "blah blah blah blah blah" );
+		label->setTextColor( Color::white() );
+		label->getBackground()->setColor( Color( 0, 0, 1 ) );
+
+		scrollview->addContentView( button );
+		scrollview->addContentView( label );
+
+		mScrollViewNested->addContentView( scrollview );
+	}
+
+	mScrollViewWithLayout = make_shared<ui::ScrollView>();
+	mScrollViewWithLayout->setLabel( "ScrollView (with layout)" );
+	mScrollViewWithLayout->setHorizontalScrollingEnabled( false );
+	mScrollViewWithLayout->getContentView()->getBackground()->setColor( Color( 0.15f, 0, 0 ) );
+	mScrollViewWithLayout->getBackground()->setColor( Color( 0, 0, 0 ) );
+	mScrollViewWithLayout->setDisableScrollingWhenContentFits();
+
+	{
+		auto layout = make_shared<ui::VerticalLayout>();
+		layout->setPadding( 6 );
+		layout->setAlignment( ui::Alignment::FILL );
+		mScrollViewWithLayout->getContentView()->setLayout( layout );
+	}
+
+	for( size_t i = 0; i < 20; i++ ) {
+		auto label = make_shared<ui::Label>( Rectf( 0, 0, 140, 30 ) );
+		label->setFontSize( 24 );
+		label->setText( "label " + to_string( i ) );
+		label->setTextColor( Color::white() );
+		label->getBackground()->setColor( Color( CM_HSV, 0.5f + (float)i * 0.025f, 1.0f, 0.75f ) );
+		mScrollViewWithLayout->addContentView( label );
+	}
+
+	mInfoLabel = make_shared<ui::LabelGrid>();
+	mInfoLabel->setTextColor( Color::white() );
+	mInfoLabel->getBackground()->setColor( ColorA::gray( 0, 0.3f ) );
+
+	addSubview( mScrollViewFree );
+	addSubview( mHorizontalPager );
+	addSubview( mVerticalPager );
+	addSubview( mScrollViewNested );
+	addSubview( mScrollViewWithLayout );
+	addSubview( mInfoLabel );
 }
 
 void ScrollTests::layout()
 {
-	auto rect = Rectf( PADDING, PADDING, getWidth() / 2.0f - PADDING, getHeight() - PADDING );
-	mScrollView->setBounds( rect );
+	vec2 pos = vec2( PADDING );
+	vec2 size = getSize() / 4.0f;
 
-	auto halfRect = Rectf( ( getWidth() + PADDING ) / 2.0f, PADDING, getWidth() - PADDING, ( getHeight() - PADDING ) / 2.0f );
-	mHorizontalPager->setBounds( halfRect );
+	mScrollViewFree->setPos( pos );
+	mScrollViewFree->setSize( size );
 
-	halfRect += vec2( 0, PADDING + halfRect.getHeight() );
-	mVerticalPager->setBounds( halfRect );
+	pos.x += size.x + PADDING;
+	mHorizontalPager->setPos( pos );
+	mHorizontalPager->setSize( size );
+
+	pos.x += size.x + PADDING;
+	mVerticalPager->setPos( pos );
+	mVerticalPager->setSize( size );
+
+	pos.x = PADDING;
+	pos.y += size.y + PADDING;
+	mScrollViewNested->setPos( pos );
+	mScrollViewNested->setSize( size );
+
+	pos.x += size.x + PADDING;
+	mScrollViewWithLayout->setPos( pos );
+	mScrollViewWithLayout->setSize( size );
 }
-
 
 bool ScrollTests::keyDown( app::KeyEvent &event )
 {
+	if( event.isControlDown() )
+		return false;
+
+	const bool animate = true;
+	const float animateOffsetDist = 200;
+
 	bool handled = true;
 	switch( event.getCode() ) {
 		case app::KeyEvent::KEY_c: {
-			mScrollView->setClipEnabled( ! mScrollView->isClipEnabled() );
+			mScrollViewFree->setClipEnabled( ! mScrollViewFree->isClipEnabled() );
 			break;
 		}
 		case app::KeyEvent::KEY_h: {
-			mScrollView->setHorizontalScrollingEnabled( ! mScrollView->isHorizontalScrollingEnabled() );
+			mScrollViewFree->setHorizontalScrollingEnabled( ! mScrollViewFree->isHorizontalScrollingEnabled() );
 			break;
 		}
 		case app::KeyEvent::KEY_v: {
-			mScrollView->setVerticalScrollingEnabled( ! mScrollView->isVerticalScrollingEnabled() );
+			mScrollViewFree->setVerticalScrollingEnabled( ! mScrollViewFree->isVerticalScrollingEnabled() );
+			break;
+		}
+		case app::KeyEvent::KEY_DOWN: {
+			if( event.isShiftDown() ) {
+				mVerticalPager->nextPage( animate );
+			}
+			else {
+				mScrollViewFree->setContentOffset( mScrollViewFree->getContentOffset() + vec2( 0, animateOffsetDist ), animate );
+			}
+			break;
+		}
+		case app::KeyEvent::KEY_UP: {
+			if( event.isShiftDown() ) {
+				mVerticalPager->previousPage( animate );
+			}
+			else {
+				mScrollViewFree->setContentOffset( mScrollViewFree->getContentOffset() - vec2( 0, animateOffsetDist ), animate );
+			}
+			break;
+		}
+		case app::KeyEvent::KEY_RIGHT: {
+			if( event.isShiftDown() ) {
+				mHorizontalPager->nextPage( animate );
+			}
+			else {
+				mScrollViewFree->setContentOffset( mScrollViewFree->getContentOffset() + vec2( animateOffsetDist, 0 ), animate );
+			}
+			break;
+		}
+		case app::KeyEvent::KEY_LEFT: {
+			if( event.isShiftDown() ) {
+				mHorizontalPager->previousPage( animate );
+			}
+			else {
+				mScrollViewFree->setContentOffset( mScrollViewFree->getContentOffset() - vec2( animateOffsetDist, 0 ), animate );
+			}
 			break;
 		}
 		default:
@@ -175,4 +306,26 @@ bool ScrollTests::keyDown( app::KeyEvent &event )
 	}
 
 	return handled;
+}
+
+void ScrollTests::update()
+{
+	size_t row = 0;
+	mInfoLabel->setRow( row++, { "is dragging:",  to_string( mScrollViewFree->isDragging() ) } );
+	mInfoLabel->setRow( row++, { "is decelerating:",  to_string( mScrollViewFree->isDecelerating() ) } );
+	mInfoLabel->setRow( row++, { "swipe velocity:",  glm::to_string( mScrollViewFree->getSwipeVelocity() ) } );
+	mInfoLabel->setRow( row++, { "scroll velocity:",  glm::to_string( mScrollViewFree->getScrollVelocity() ) } );
+	mInfoLabel->setRow( row++, { "content offset:",  glm::to_string( mScrollViewFree->getContentOffset() ) } );
+	mInfoLabel->setRow( row++, { "target offset:",  glm::to_string( mScrollViewFree->getTargetOffset() ) } );
+
+	//  resize info label
+	{
+		const float padding = 6;
+		const vec2 infoRowSize = vec2( 350, 20 );
+
+		const int numRows = mInfoLabel->getNumRows();
+		vec2 windowSize = vec2( app::getWindow()->getSize() );
+		vec2 labelSize = { infoRowSize.x, infoRowSize.y * numRows };
+		mInfoLabel->setBounds( { padding, windowSize.y - labelSize.y - padding, labelSize.x + padding, windowSize.y - padding } ); // anchor bottom left
+	}
 }

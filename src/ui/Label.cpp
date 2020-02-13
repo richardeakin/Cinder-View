@@ -41,35 +41,60 @@ namespace ui {
 Label::Label( const Rectf &bounds )
 	: View( bounds )
 {
-	setFont( -1, FontFace::NORMAL );
+	setFont( "", -1 );
 	setInteractive( false );
 	setBlendMode( BlendMode::PREMULT_ALPHA );
 }
 
-void Label::setFont( float fontSize, FontFace fontFace )
+void Label::setFont( const std::string &systemName, float fontSize )
 {
-	mFont = TextManager::loadText( fontFace, fontSize );
-	measureTextSize();
-	if( mShrinkToFit )
-		shrinkToFit();
+	if( mText && mText->getSystemName() == systemName && abs( fontSize - mText->getSize() ) < 0.01f )
+		return;
+
+	mText = TextManager::loadText( systemName, fontSize );
+	markTextLayoutDirty();
+}
+
+void Label::setFontFile( const ci::fs::path &filePath, float fontSize )
+{
+	if( mText && mText->getFilePath() == filePath && abs( fontSize - mText->getSize() ) < 0.01f )
+		return;
+
+	mText = TextManager::loadTextFromFile( filePath, fontSize );
+	markTextLayoutDirty();
 }
 
 void Label::setText( const std::string &text )
 {
-	if( mText == text )
+	if( mTextStr == text )
 		return;
 
-	mText = text;
-	measureTextSize();
-	if( mShrinkToFit )
-		shrinkToFit();
+	mTextStr = text;
+	markTextLayoutDirty();
+}
+
+void Label::setSize( const ci::vec2 &size )
+{
+	View::setSize( size );
+	markTextLayoutDirty();
+}
+
+void Label::setAlignment( TextAlignment alignment )
+{ 
+	mAlignment = alignment;
+	markTextLayoutDirty();
+}
+
+void Label::setBaselineAdjust( TextBaselineAdjust adjust )
+{ 
+	mBaselineAdjust = adjust;
+	markTextLayoutDirty();
 }
 
 void Label::setPadding( const ci::Rectf &padding )
 {
 	mPadding = padding;
-	if( mShrinkToFit )
-		shrinkToFit();
+	markTextLayoutDirty();
 }
 
 void Label::setShrinkToFitEnabled( bool enable )
@@ -78,17 +103,44 @@ void Label::setShrinkToFitEnabled( bool enable )
 		return;
 
 	mShrinkToFit = enable;
-	if( mShrinkToFit )
-		shrinkToFit();
+	markTextLayoutDirty();
+}
+
+void Label::setWrapEnabled( bool enable )
+{
+	if( mWrapEnabled = enable )
+		return;
+
+	mWrapEnabled = enable;
+	markTextLayoutDirty();
+}
+
+void Label::layout()
+{
+	if( mTextLayoutDirty ) {
+		layoutForText();
+	}
 }
 
 void Label::draw( Renderer *ren )
 {
-	if( mText.empty() )
+	if( mTextStr.empty() )
 		return;
 
 	ren->setColor( mTextColor );
-	mFont->drawString( mText, getBaseLine() );
+
+	auto baseline = getBaseLine();
+	if( mWrapEnabled ) {
+		auto fitRect = getBoundsLocal();
+		fitRect.x1 += mPadding.x1;
+		fitRect.y1 += mPadding.y1 + baseline.y; // TODO: figure out how wrap and baseline should work together
+		fitRect.x2 -= mPadding.x2;
+		fitRect.y2 -= mPadding.y2;
+		mText->drawStringWrapped( mTextStr, fitRect );
+	}
+	else {
+		mText->drawString( mTextStr, baseline );
+	}
 }
 
 vec2 Label::getBaseLine() const
@@ -107,20 +159,64 @@ vec2 Label::getBaseLine() const
 		default: CI_ASSERT_NOT_REACHABLE();
 	}
 
-	vec2 result( x, getCenterLocal().y + mFont->getDescent() + mPadding.y1 ); // TODO: shouldn't padding.y1 be used here?
-	//vec2 result( x, getCenterLocal().y + mFont->getDescent() );
-	return result;
+	float y = 0;
+	switch( mBaselineAdjust ) {
+		case TextBaselineAdjust::NONE:
+			y = mText->getAscent() + mPadding.y1;
+		break;
+		case TextBaselineAdjust::CENTER:
+			y = getCenterLocal().y + mText->getDescent() + mPadding.y1;
+		break;
+		default: CI_ASSERT_NOT_REACHABLE();
+	}
+
+	return vec2( x, y );
+}
+
+void Label::markTextLayoutDirty()
+{
+	if( mTextStr.empty() )
+		return;
+
+	mTextLayoutDirty = true;
+	setNeedsLayout();
+}
+
+void Label::layoutForText()
+{
+	vec2 sizeBefore = getSize();
+
+	measureTextSize();
+	if( mShrinkToFit ) {
+		vec2 size = mTextSize;
+		size += mPadding.getUpperLeft() + mPadding.getLowerRight();
+		View::setSize( size ); // avoid cyclical Label::setSize() call
+	}
+
+	//CI_LOG_I( "this: " << getLabel() << ", wrap: " << mWrapEnabled << ", shrink: " << mShrinkToFit
+	//	<< ", size before: " << sizeBefore << ", size: " << getSize() << ", mTextSize: " << mTextSize );
+
+	mTextLayoutDirty = false;
 }
 
 void Label::measureTextSize()
 {
-	mTextSize = mFont->measureString( mText );
-}
+	if( mTextStr.empty() ) {
+		mTextSize = vec2( 0 );
+		return;
+	}
 
-void Label::shrinkToFit()
-{
-	vec2 size = mTextSize + mPadding.getUpperLeft() + mPadding.getLowerRight();
-	setSize( size );
+	if( mWrapEnabled ) {
+		auto fitRect = getBoundsLocal();
+		fitRect.x1 += mPadding.x1;
+		fitRect.x2 -= mPadding.x2;
+		mTextSize = mText->measureStringWrapped( mTextStr, fitRect );		
+	}
+	else {
+		mTextSize = mText->measureString( mTextStr );
+	}
+
+	//CI_LOG_I( "this: " << getLabel() << ", size: " << getSize() << ",  mTextSize: " << mTextSize );
 }
 
 // ----------------------------------------------------------------------------------------------------
@@ -158,7 +254,7 @@ LabelRef LabelGrid::makeOrFindCell( const ci::ivec2 &location )
 
 	Cell &cell= mCells.back();
 	cell.mLocation = location;
-	cell.mLabel = make_shared<Label>();
+	cell.mLabel = make_shared<ui::Label>();
 	cell.mLabel->setClipEnabled();
 
 	// TODO: make settable per row / column / cell

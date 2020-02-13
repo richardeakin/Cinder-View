@@ -7,9 +7,12 @@ public:
 	BasicViewTests();
 
 	void layout() override;
+	void update() override;
+
+	bool keyDown( ci::app::KeyEvent &event ) override;
 
 private:
-	bool keyDown( ci::app::KeyEvent &event ) override;
+	void loadImageViewShader();
 
 	ui::ViewRef				mContainerView;
 	ui::StrokedRectViewRef	mBorderView;

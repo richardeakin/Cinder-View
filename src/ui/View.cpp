@@ -180,6 +180,7 @@ void View::addSubview( const ViewRef &view )
 	mSubviews.push_back( view );
 
 	setNeedsLayout();
+	view->setNeedsLayout();
 }
 
 void View::addSubviews( const vector<ViewRef> &views )
@@ -203,11 +204,45 @@ void View::insertSubview( const ViewRef &view, size_t index )
 	mSubviews.insert( it, view );
 }
 
+void View::insertSubviewAbove( const ViewRef &view, const ViewRef &viewBelow )
+{
+	CI_ASSERT( view && viewBelow );
+	CI_ASSERT( view.get() != this && viewBelow.get() != this );
+
+	auto it = std::find( mSubviews.begin(), mSubviews.end(), viewBelow );
+	if( it == mSubviews.end() ) {
+		CI_LOG_W( "viewBelow labeled '" << viewBelow->getLabel() << "' not a child of this View '" << getLabel() << "'" );
+	}
+	else if( it != ( mSubviews.end() - 1 ) ) {
+		++it;
+	}
+
+	view->setParent( this );
+	mSubviews.insert( it, view );
+}
+
+void View::insertSubviewBelow( const ViewRef &view, const ViewRef &viewAbove )
+{
+	CI_ASSERT( view && viewAbove );
+	CI_ASSERT( view.get() != this && viewAbove.get() != this );
+
+	auto it = std::find( mSubviews.begin(), mSubviews.end(), viewAbove );
+	if( it == mSubviews.end() ) {
+		CI_LOG_W( "viewAbove labeled '" << viewAbove->getLabel() << "' not a child of this View '" << getLabel() << "'" );
+	}
+
+	view->setParent( this );
+	mSubviews.insert( it, view );
+}
+
 void View::removeSubview( const ViewRef &view )
 {
 	for( auto it = mSubviews.begin(); it != mSubviews.end(); ++it ) {
 		if( view == *it ) {
 			view->mParent = nullptr;
+			if( view->mAcceptsFirstResponder )
+				view->resignFirstResponder();
+
 			if( mIsIteratingSubviews )
 				view->mMarkedForRemoval = true;
 			else
@@ -223,12 +258,17 @@ void View::removeAllSubviews()
 	if( mIsIteratingSubviews ) {
 		for( auto &view : mSubviews ) {
 			view->mParent = nullptr;
+			if( view->mAcceptsFirstResponder )
+				view->resignFirstResponder();
+
 			view->mMarkedForRemoval = true;
 		}
 	}
 	else {
 		for( auto &view : mSubviews ) {
 			view->mParent = nullptr;
+			if( view->mAcceptsFirstResponder )
+				view->resignFirstResponder();
 		}
 		mSubviews.clear();
 	}
@@ -285,8 +325,20 @@ void View::setFillParentEnabled( bool enable )
 void View::setNeedsLayout()
 {
 	mNeedsLayout = true;
+
+	for( const auto &subview : mSubviews ) {
+		if( subview->mFillParent )
+			subview->setNeedsLayout();
+	}
+}
+
+void View::layoutIfNeeded()
+{
+	if( mNeedsLayout )
+		layoutImpl();
+
 	for( const auto &subview : mSubviews )
-		subview->setNeedsLayout();
+		subview->layoutIfNeeded();
 }
 
 void View::setWorldPosDirty()
@@ -341,21 +393,25 @@ void View::updateImpl()
 {
 	CI_ASSERT( mGraph );
 
-	// if bounds is animating, update background's position and size, propagate layout
-	bool needsLayout = mNeedsLayout;
 	bool hasBackground = (bool)mBackground;
 	bool needsLayer = false;
 
-	if( ! mPos.isComplete() ) {
+	// if pos changed since last update, make background match and mark world positions dirty.
+	if( glm::any( glm::epsilonNotEqual( getPos(), mPosLastUpdate, BOUNDS_EPSILON ) ) ) {
 		if( hasBackground )
 			mBackground->setPos( getPos() );
 
 		setWorldPosDirty();
+		mPosLastUpdate = getPos();
 	}
-	if( ! mSize.isComplete() ) {
-		needsLayout = true;
+
+	// if size changed since last update, mae background match and issue layout
+	if( glm::any( glm::epsilonNotEqual( getSize(), mSizeLastUpdate, BOUNDS_EPSILON ) ) ) {
 		if( hasBackground )
 			mBackground->setSize( getSize() );
+
+		setNeedsLayout();
+		mSizeLastUpdate = getSize();
 	}
 
 	// handle transparency that needs a Layer for compositing
@@ -379,7 +435,7 @@ void View::updateImpl()
 			getGraph()->removeLayer( mLayer );
 	}
 
-	if( needsLayout )
+	if( needsLayout() )
 		layoutImpl();
 
 	if( hasBackground ) {
@@ -417,7 +473,30 @@ void View::clearViewsMarkedForRemoval()
 			mSubviews.end() );
 }
 
-bool View::hitTest( const vec2 &localPos ) const
+const View* View::hitTest( const ci::app::TouchEvent &event ) const
+{
+	for( auto rIt = getSubviews().rbegin(); rIt != getSubviews().rend(); ++rIt ) {
+		const auto &view = *rIt;
+		if( view->isHidden() || ! view->isInteractive() )
+			continue;
+
+		auto hitView = (*rIt)->hitTest( event );
+		if( hitView ) {
+			return hitView;
+		}
+	}
+	
+	for( const auto &touch : event.getTouches() ) {
+		vec2 pos = toLocal( touch.getPos() );
+		if( isPointInside( pos ) ) {
+			return this;
+		}
+	}
+
+	return nullptr;
+}
+
+bool View::isPointInside( const vec2 &localPos ) const
 {
 	return ( localPos.x >= 0 ) && ( localPos.x <= getWidth() ) && ( localPos.y >= 0 ) && ( localPos.y <= getHeight() );
 }
@@ -477,6 +556,11 @@ void View::setBackgroundEnabled( bool enable )
 		mBackground.reset();
 }
 
+bool View::isBackgroundEnabled() const
+{
+	return (bool)mBackground;
+}
+
 const RectViewRef& View::getBackground()
 {
 	setBackgroundEnabled();
@@ -496,6 +580,7 @@ float View::getAlphaCombined() const
 void View::setLayout( const LayoutRef &layout )
 {
 	mLayout = layout;
+	setNeedsLayout();
 }
 
 ViewRef View::getViewWithLabel( const std::string &label ) const
@@ -518,12 +603,15 @@ std::ostream& operator<<( std::ostream &os, const View &rhs )
 	if( ! rhs.getLabel().empty() )
 		os << " (" << rhs.getLabel() << ")";
 
-	os << " - pos: " << rhs.getPos() << ", world pos: " << rhs.getWorldPos() << ", size: " << rhs.getSize() << ", interactive: " << boolalpha << rhs.isInteractive() << ", hidden: " << rhs.isHidden() << dec;
+	os << " - pos: " << rhs.getPos() << ", world pos: " << rhs.getWorldPos() << ", size: " << rhs.getSize() << ", interactive: " << boolalpha << rhs.isInteractive() << ", hidden: " << rhs.isHidden() << ", clip: " << rhs.isClipEnabled() << dec;
 
 	if( rhs.getLayer() ) {
 		os << "\n[Layer";
 		if( rhs.getLayer()->getFrameBuffer() ) {
 			os << " FrameBuffer " << hex << rhs.getLayer()->getFrameBuffer().get() << dec << " size: " << rhs.getLayer()->getFrameBuffer()->getSize();
+			if( ! rhs.getFilters().empty() ) {
+				os << ", filters: " << rhs.getFilters().size();
+			}
 		}
 		os << "]";
 	}
@@ -549,9 +637,11 @@ void printRecursive( ostream &os, const View &view, size_t depth )
 		printRecursive( os, *subview, depth + 1 );
 }
 
-void traverseRecursive( const ViewRef &view, const std::function<void( const ViewRef & )>&applyFn )
+void traverseRecursive( const ViewRef &view, const std::function<bool( const ViewRef & )>&applyFn )
 {
-	applyFn( view );
+	if( ! applyFn( view ) )
+		return;
+
 	for( const auto& subview : view->getSubviews() )
 		traverseRecursive( subview, applyFn );
 }
@@ -571,7 +661,7 @@ std::string printHierarchyToString( const ViewRef &view )
 	return printHierarchyToString( *view );
 }
 
-void traverse( const ViewRef &view, const std::function<void( const ViewRef & )> &applyFn )
+void traverse( const ViewRef &view, const std::function<bool( const ViewRef & )> &applyFn )
 {
 	traverseRecursive( view, applyFn );
 }
@@ -583,6 +673,7 @@ void traverse( const ViewRef &view, const std::function<void( const ViewRef & )>
 RectView::RectView( const ci::Rectf &bounds )
 	: View( bounds )
 {
+	setInteractive( false );
 	setBlendMode( BlendMode::PREMULT_ALPHA );
 }
 

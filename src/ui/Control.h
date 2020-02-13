@@ -24,6 +24,7 @@
 #pragma once
 
 #include "ui/View.h"
+#include "ui/ImageView.h"
 #include "ui/Label.h"
 #include "ui/GestureTracker.h"
 
@@ -86,14 +87,17 @@ class CI_UI_API Button : public Control {
 	//! TODO: only State::Normal is supported right now, add enabled and pressed too
 	void setImage( const ui::ImageRef &image, State state = State::NORMAL );
 
+	const LabelRef&		getTitleLabel() const	{ return mTitleLabel; }
+	const ImageViewRef&	getImageView() const	{ return mImageView; }
+
 	const ci::ColorA&	getColorForState( State state ) const;
 	const std::string&	getTitleForState( State state ) const;
 	const ci::ColorA&	getTitleColorForState( State state ) const;
 	ImageRef			getImageForState( State state ) const;
 
 	const ci::ColorA&	getColor() const		{ return getColorForState( getState() ); }
-	const std::string&	getTitle() const		{ return getTitleForState( getState() ); }
-	const ci::ColorA&	getTitleColor() const	{ return getTitleColorForState( getState() ); }
+	const std::string&	getTitle() const		{ return mTitleLabel->getText(); }
+	const ci::ColorA&	getTitleColor() const	{ return mTitleLabel->getTextColor(); }
 	//! Returns the image that will be used to draw for the current state, if any. If there is an image for State::Normal but not the current button state, then it will be used.
 	ImageRef			getImage() const;
 
@@ -101,7 +105,8 @@ class CI_UI_API Button : public Control {
 	ci::signals::Signal<void ()>&	getSignalReleased()	{ return mSignalReleased; }
 
   protected:
-	void draw( Renderer *ren )	override;
+	void update() override;
+	void updateTitle();
 
 	bool touchesBegan( ci::app::TouchEvent &event )	override;
 	bool touchesMoved( ci::app::TouchEvent &event )	override;
@@ -114,17 +119,27 @@ class CI_UI_API Button : public Control {
 	ci::ColorA	mColorNormal = ci::ColorA::gray( 0.5f );
 	ci::ColorA	mColorEnabled = ci::ColorA::gray( 0.38f );
 	ci::ColorA	mColorPressed = ci::ColorA::gray( 0.3f );
-	ci::ColorA	mColorTitleNormal = ci::ColorA::gray( 0.2f, 0.6f );
-	ci::ColorA	mColorTitleEnabled = ci::ColorA::gray( 0.2f, 0.6f );
-	bool		mHasColorTitleEnabled = false; // keep track of when user hasn't set the title color for enabled, will use normal color otherwise
+	ci::ColorA	mColorTitleNormal = ci::ColorA::gray( 0.2f );
+	ci::ColorA	mColorTitleEnabled = ci::ColorA::gray( 0.2f );
+	ci::ColorA	mColorTitlePressed = ci::ColorA::gray( 0.1f );
 
-	TextRef			mTextTitle;
+	bool		mHasColorTitleNormal = false;
+	bool		mHasColorTitleEnabled = false; // keep track of when user hasn't set the title color for enabled, will use normal color otherwise
+	bool		mHasColorTitlePressed = false;
+
+	ImageViewRef	mImageView;
+	LabelRef		mTitleLabel;
 	std::string		mTitleNormal, mTitleEnabled;
 
 	ImageRef   mImageNormal, mImageEnabled, mImagePressed;
 
 	ci::signals::Signal<void ()>	mSignalPressed, mSignalReleased; // TODO: look at other frameworks (like html5, dart) and see what they name these, and how they organize the events
 };
+
+//! Returns scaleMode in string representation.
+CI_UI_API std::string toString( const Button::State &state );
+//! Stream support for ScaleMode
+CI_UI_API std::ostream& operator<<( std::ostream &os, const Button::State &rhs );
 
 //! Toggle Button with text off to the right side.
 class CI_UI_API CheckBox : public Button {
@@ -134,6 +149,8 @@ class CI_UI_API CheckBox : public Button {
   protected:
 	void draw( Renderer *ren )	override;
 
+  private:
+	TextRef      mTextTitle;
 };
 
 //! Text input Control
@@ -225,7 +242,6 @@ class CI_UI_API SliderBase : public Control {
 	void updateValue( const ci::vec2 &pos );
 
   private:
-	void onDoubleTap();
 
 	float	mValue = 0;
 	float	mMin = 0;
@@ -238,7 +254,6 @@ class CI_UI_API SliderBase : public Control {
 	ci::ColorA	mTitleColor = ci::ColorA::gray( 1, 0.6f );
 	std::string	mTitle;
 	TextRef		mTextLabel;
-	TapTracker	mTapTracker;
 };
 
 class CI_UI_API HSlider : public SliderBase {

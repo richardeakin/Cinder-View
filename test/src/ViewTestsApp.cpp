@@ -14,21 +14,35 @@
 #include "ScrollTests.h"
 
 #include "glm/gtc/epsilon.hpp"
+#include "glm/gtx/string_cast.hpp"
 #include "fmt/format.h"
 
 using namespace ci;
-using namespace ci::app;
+using namespace ci::app; 
 using namespace std;
 
-#define MULTITOUCH_ENABLED 0
+const bool MULTITOUCH_ENABLED	= 0;
+const bool USE_SECONDARY_SCREEN = 0;
+const int DEFAULT_TEST			= 5;
+const vec2 WINDOW_SIZE			= vec2( 1220, 720 );
+const vec2 INFO_ROW_SIZE		= vec2( 250, 20 );
 
-const vec2 INFO_ROW_SIZE    = vec2( 250, 20 );
-const float PADDING         = 6;
+
+#define LIVEPP_ENABLED 0
+
+#if LIVEPP_ENABLED
+
+#include <windows.h>
+//#include "../../../../../LivePP/API/LPP_ForceLinkStaticRuntime.h"
+#include "../../../../../LivePP/API/LPP_API.h"
+
+#endif
 
 class ViewTestsApp : public App {
   public:
 	void setup() override;
 	void keyDown( KeyEvent event ) override;
+	void resize() override;
 	void update() override;
 	void draw() override;
 
@@ -36,20 +50,23 @@ class ViewTestsApp : public App {
 	void resizeInfoLabel();
 	void drawViewBorders();
 	void drawLayerBorders();
+	void drawTouches();
 
 	ui::SuiteRef		mTestSuite;
 	ui::LabelGridRef    mInfoLabel;
 
 	bool	mDrawViewBorders = false;
 	bool    mDrawLayerBorders = false;
+	bool	mDrawDebugNames = false;
+	bool	mDrawTouches = false;
 };
 
 void ViewTestsApp::setup()
 {
 	ui::Graph::EventOptions eventOptions;
-#if MULTITOUCH_ENABLED
-	eventOptions.mouse( false );
-#endif
+	if( MULTITOUCH_ENABLED ) {
+		eventOptions.mouse( false );
+	}
 	mTestSuite = make_shared<ui::Suite>( eventOptions );
 
 	mTestSuite->registerSuiteView<BasicViewTests>( "basic" );
@@ -65,7 +82,7 @@ void ViewTestsApp::setup()
 		CI_LOG_I( "selected test index: " << mTestSuite->getCurrentIndex() << ", key: " << mTestSuite->getCurrentKey() );
 	} );
 
-	mTestSuite->select( 2 );
+	mTestSuite->select( DEFAULT_TEST );
 
 	mInfoLabel = make_shared<ui::LabelGrid>();
 	mInfoLabel->setTextColor( Color::white() );
@@ -77,23 +94,38 @@ void ViewTestsApp::setup()
 void ViewTestsApp::keyDown( app::KeyEvent event )
 {
 	if( event.isControlDown() ) {
-		if( event.getChar() == 'r' ) {
-			CI_LOG_I( "reloading.." );
-			mTestSuite->reload();
+		switch( event.getCode() ) {
+			case app::KeyEvent::KEY_r:
+				CI_LOG_I( "reloading.." );
+				mTestSuite->reload();
+			break;
+			case app::KeyEvent::KEY_f:
+				setFullScreen( ! isFullScreen() );
+			break;
+			case app::KeyEvent::KEY_v:
+				CI_LOG_I( "TestSuite View hierarchy\n: " << ui::printHierarchyToString( mTestSuite->getGraph() ) );
+			break;
+			case app::KeyEvent::KEY_l:
+				mDrawLayerBorders = ! mDrawLayerBorders;
+			break;
+			case app::KeyEvent::KEY_k:
+				mDrawViewBorders = ! mDrawViewBorders;
+			break;
+			case app::KeyEvent::KEY_n:
+				mDrawDebugNames = ! mDrawDebugNames;
+			break;
+			case app::KeyEvent::KEY_t:
+				mDrawTouches = ! mDrawTouches;
+				CI_LOG_I( "draw touches: " << mDrawTouches );
+			break;
 		}
 	}
 
-	switch( event.getCode() ) {
-		case app::KeyEvent::KEY_p:
-			CI_LOG_I( "TestSuite View hierarchy\n: " << ui::printHierarchyToString( mTestSuite->getGraph() ) );
-		break;
-		case app::KeyEvent::KEY_l:
-			mDrawLayerBorders = ! mDrawLayerBorders;
-		break;
-		case app::KeyEvent::KEY_v:
-			mDrawViewBorders = ! mDrawViewBorders;
-		break;
-	}
+}
+
+void ViewTestsApp::resize()
+{
+	resizeInfoLabel();
 }
 
 void ViewTestsApp::update()
@@ -115,10 +147,12 @@ void ViewTestsApp::updateUI()
 
 void ViewTestsApp::resizeInfoLabel()
 {
+	const float padding = 6;
+
 	const int numRows = mInfoLabel->getNumRows();
 	vec2 windowSize = vec2( app::getWindow()->getSize() );
 	vec2 labelSize = { INFO_ROW_SIZE.x, INFO_ROW_SIZE.y * numRows };
-	mInfoLabel->setBounds( { windowSize - labelSize - PADDING, windowSize - PADDING } ); // anchor bottom right
+	mInfoLabel->setBounds( { windowSize - labelSize - padding, windowSize - padding } ); // anchor bottom right
 }
 
 void ViewTestsApp::draw()
@@ -131,20 +165,43 @@ void ViewTestsApp::draw()
 		drawViewBorders();
 	if( mDrawLayerBorders )
 		drawLayerBorders();
+	if( mDrawTouches )
+		drawTouches();
 
 	CI_CHECK_GL();
 }
 
 void ViewTestsApp::drawViewBorders()
 {
+	static gl::TextureFontRef sTextureFont;
+	if( mDrawDebugNames && ! sTextureFont ) {
+		sTextureFont = gl::TextureFont::create( Font( "Arial", 18 ) );
+	}
+
+
 	gl::ScopedColor colorScope( 0, 1, 1 );
-	ui::traverse( mTestSuite->getGraph(), []( const ui::ViewRef &view ) {
+	ui::traverse( mTestSuite->getGraph(), [this]( const ui::ViewRef &view ) {
+		//if( view->isHidden() )
+		//	return false;
+
 		gl::drawStrokedRect( view->getWorldBounds(), 2 );
+
+		if( mDrawDebugNames ) {
+			auto str = view->getName();
+			sTextureFont->drawString(str, view->getWorldPos() + vec2( 2, 2 + sTextureFont->getFont().getAscent() ) );
+		}
+
+		return true;
 	} );
 }
 
 void ViewTestsApp::drawLayerBorders()
 {
+	static gl::TextureFontRef sTextureFont;
+	if( mDrawDebugNames && ! sTextureFont ) {
+		sTextureFont = gl::TextureFont::create( Font( "Arial", 18 ) );
+	}
+
 	auto graph = mTestSuite->getGraph();
 	auto ren = graph->getRenderer();
 
@@ -152,23 +209,63 @@ void ViewTestsApp::drawLayerBorders()
 	for( auto &layer : graph->getLayers() ) {
 		Rectf layerBorder = layer->getBoundsWorld();
 		ren->drawStrokedRect( layerBorder, 3 );
+
+		if( mDrawDebugNames ) {
+			auto view = layer->getRootView();
+			auto str = view->getName();
+			if( layer->getFrameBuffer() ) {
+				str += ", FrameBuffer size: " + glm::to_string( layer->getFrameBuffer()->getSize() );
+			}
+			sTextureFont->drawString(str, view->getWorldPos() + vec2( 2, 2 + sTextureFont->getFont().getAscent() ) );
+		}
 	}
 	ren->popColor();
 }
 
-void prepareSettings( app::App::Settings *settings )
+void ViewTestsApp::drawTouches()
 {
-	//settings->setWindowPos( 0, 0 );
-	settings->setWindowSize( 1000, 650 );
-
-	// move app to secondary display
-	if( Display::getDisplays().size() > 1 ) {
-		settings->setDisplay( Display::getDisplays()[1] );
+	static gl::TextureFontRef sTextureFont;
+	static gl::BatchRef	sBatchCircle;
+	if( ! sTextureFont ) {
+		sTextureFont = gl::TextureFont::create( Font( "Arial", 12 ) );
+		sBatchCircle = gl::Batch::create( geom::WireCircle().radius( 14 ).subdivisions( 40 ), gl::getStockShader( gl::ShaderDef().color() ) );
 	}
 
-#if MULTITOUCH_ENABLED
-	settings->setMultiTouchEnabled();
+	const auto &touches = mTestSuite->getGraph()->getAllTouchesInWindow();
+	for( const auto &touch : touches ) {
+		vec2 pos = touch.second.getPos();
+		{
+			gl::ScopedColor col( Color( 0, 1, 1 ) );
+			gl::ScopedModelMatrix modelScope;
+			gl::translate( pos );
+			sBatchCircle->draw();
+		}
+		{
+			gl::ScopedColor col( Color::white() );
+			sTextureFont->drawString( to_string( touch.first ), vec2( pos.x - 3, pos.y + 4 ) );
+		}
+	}
+}
+
+void prepareSettings( app::App::Settings *settings )
+{
+#if LIVEPP_ENABLED
+	HMODULE livePP = lpp::lppLoadAndRegister( L"../../../../../../LivePP", "ViewTests" );
+	lpp::lppEnableAllCallingModulesSync( livePP );
 #endif
+
+	//settings->setWindowPos( 0, 0 );
+	settings->setWindowSize( WINDOW_SIZE.x, WINDOW_SIZE.y );
+
+	// move app to secondary display
+	if( USE_SECONDARY_SCREEN && Display::getDisplays().size() > 1 ) {
+		settings->setDisplay( Display::getDisplays()[1] );
+		settings->setFullScreen( true );
+	}
+
+	if( MULTITOUCH_ENABLED ) {
+		settings->setMultiTouchEnabled();
+	}
 }
 
 CINDER_APP( ViewTestsApp, RendererGl( RendererGl::Options().msaa( 8 ) ), prepareSettings )

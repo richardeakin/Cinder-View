@@ -80,7 +80,6 @@ class CI_UI_API Direction3dView : public Interface3dBaseView {
 	ci::gl::BatchRef	mBatchArrow;
 	ci::vec3			mDirection		= ci::vec3( 0, 1, 0 );
 	ci::Color			mColor			= ci::Color::white();
-	float				mArrowLength	= 0;
 };
 
 } // namespace ui
