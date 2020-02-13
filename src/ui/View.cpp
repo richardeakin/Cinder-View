@@ -230,9 +230,6 @@ void View::insertSubviewBelow( const ViewRef &view, const ViewRef &viewAbove )
 	if( it == mSubviews.end() ) {
 		CI_LOG_W( "viewAbove labeled '" << viewAbove->getLabel() << "' not a child of this View '" << getLabel() << "'" );
 	}
-	else if( it != mSubviews.begin() ) {
-		--it;
-	}
 
 	view->setParent( this );
 	mSubviews.insert( it, view );
@@ -399,18 +396,22 @@ void View::updateImpl()
 	bool hasBackground = (bool)mBackground;
 	bool needsLayer = false;
 
-	// if pos is animating, update background and world pos
-	if( ! mPos.isComplete() ) {
+	// if pos changed since last update, make background match and mark world positions dirty.
+	if( glm::any( glm::epsilonNotEqual( getPos(), mPosLastUpdate, BOUNDS_EPSILON ) ) ) {
 		if( hasBackground )
 			mBackground->setPos( getPos() );
 
 		setWorldPosDirty();
+		mPosLastUpdate = getPos();
 	}
-	// if size is animating, update background and layout
-	if( ! mSize.isComplete() ) {
-		setNeedsLayout();
+
+	// if size changed since last update, mae background match and issue layout
+	if( glm::any( glm::epsilonNotEqual( getSize(), mSizeLastUpdate, BOUNDS_EPSILON ) ) ) {
 		if( hasBackground )
 			mBackground->setSize( getSize() );
+
+		setNeedsLayout();
+		mSizeLastUpdate = getSize();
 	}
 
 	// handle transparency that needs a Layer for compositing

@@ -318,8 +318,9 @@ void Layer::processFilters( Renderer *ren, const FrameBufferRef &renderFrameBuff
 
 void Layer::pushClip( View *view, Renderer *ren )
 {
-	Rectf viewWorldBounds = view->getWorldBounds();
+	Rectf viewWorldBounds = view->getClipWorldBounds();
 	vec2 clipLowerLeft = viewWorldBounds.getLowerLeft();
+	vec2 clipSize = viewWorldBounds.getSize();
 	if( mRootView->mRendersToFrameBuffer ) {
 		// get bounds of view relative to framebuffer. // TODO: need a method like convertPointToView( view, point );
  		Rectf viewBoundsInFrameBuffer = viewWorldBounds - mRootView->getWorldPos();
@@ -333,11 +334,31 @@ void Layer::pushClip( View *view, Renderer *ren )
 	}
 	else {
 		// rendering to window, flip y relative to Graph's bottom left using its clipping size
-		ivec2 clippingSize = mRootView->getGraph()->getClippingSize();
-		clipLowerLeft.y = clippingSize.y - clipLowerLeft.y;
+		ivec2 windowClippingSize = mRootView->getGraph()->getClippingSize();
+		clipLowerLeft.y = windowClippingSize.y - clipLowerLeft.y;
+
+		// TODO: make this general for both axes, and nested clip
+		float rootX = mRootView->getPosX();
+		if( clipLowerLeft.x < mRootView->getPosX() ) {
+
+			float viewToLeft = mRootView->getPosX() - viewWorldBounds.x1;
+			clipSize.x -= viewToLeft;
+			clipLowerLeft.x = mRootView->getPosX();
+
+		}
+		float windowClipRight = rootX + mRootView->getWidth();
+		if( viewWorldBounds.x2 > windowClipRight ) {
+			clipSize.x -= viewWorldBounds.x2 - windowClipRight;
+		}
+
+		//CI_LOG_I( "view: " << view->getName() << ", clipLowerLeft: " << clipLowerLeft << ", root x: " << rootX << ", size: " << clipSize );
+
+		clipSize.x = glm::max( clipSize.x, 0.0f );
+		clipSize.y = glm::max( clipSize.y, 0.0f );
 	}
 
-	ren->pushClip( clipLowerLeft, view->getSize() );
+
+	ren->pushClip( clipLowerLeft, clipSize );
 }
 
 Rectf Layer::getBoundsWorld() const
