@@ -21,7 +21,7 @@ const size_t NUM_TOUCHES = 32;
 //const size_t NUM_DRAGGABLES = 5000;
 //const size_t NUM_TOUCHES = 64;
 
-class DraggableView : public ui::RectView {
+class DraggableView : public vu::RectView {
   public:
 	DraggableView()
 			: RectView( Rectf::zero() )
@@ -89,30 +89,30 @@ MultiTouchTest::MultiTouchTest()
 
 void MultiTouchTest::setupControls()
 {
-	mControlsContainer = make_shared<ui::View>();
+	mControlsContainer = make_shared<vu::View>();
 	mControlsContainer->setLabel( "controls container" );
 	mControlsContainer->setFillParentEnabled();
 
-	mButton = make_shared<ui::Button>();
+	mButton = make_shared<vu::Button>();
 	mButton->setTitle( "Moe" );
 	mButton->getSignalPressed().connect( [] { CI_LOG_V( "Bob pressed" ); } );
 	mButton->getSignalReleased().connect( [] { CI_LOG_V( "Bob released" ); } );
 
-	mToggle = make_shared<ui::Button>();
+	mToggle = make_shared<vu::Button>();
 	mToggle->setAsToggle();
 	mToggle->setLabel( "toggle" );
 	mToggle->setTitle( "Larry" );
-	mToggle->setTitle( "Curly", ui::Button::State::ENABLED );
-	mToggle->setColor( Color( 0.2f, 0.5f, 0.5f ), ui::Button::State::ENABLED );
+	mToggle->setTitle( "Curly", vu::Button::State::ENABLED );
+	mToggle->setColor( Color( 0.2f, 0.5f, 0.5f ), vu::Button::State::ENABLED );
 	mToggle->getSignalPressed().connect( [] { CI_LOG_V( "toggle pressed" ); } );
 	mToggle->getSignalReleased().connect( [] { CI_LOG_V( "toggle released" ); } );
 
-	mVSlider1 = make_shared<ui::VSlider>();
+	mVSlider1 = make_shared<vu::VSlider>();
 	mVSlider1->setLabel( "slider1" );
 	mVSlider1->getBackground()->setColor( ColorA( "green", 0.5f ) );
 
 	// temp - adding constrols to this test
-	mVSlider2 = make_shared<ui::VSlider>();
+	mVSlider2 = make_shared<vu::VSlider>();
 	mVSlider2->setLabel( "slider2" );
 //	mVSlider2->setCancelPadding( Rectf( 40, 40, 200, 40 ) );
 	mVSlider2->getBackground()->setColor( ColorA( "green", 0.5f ) );
@@ -123,7 +123,7 @@ void MultiTouchTest::setupControls()
 
 void MultiTouchTest::setupDraggables()
 {
-	mDraggablesContainer = make_shared<ui::View>();
+	mDraggablesContainer = make_shared<vu::View>();
 	mDraggablesContainer->setLabel( "draggables container" );
 	mDraggablesContainer->setFillParentEnabled();
 

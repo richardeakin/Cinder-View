@@ -1,9 +1,9 @@
 #pragma once
 
-#include "ui/Suite.h"
-#include "ui/Label.h"
+#include "vu/Suite.h"
+#include "vu/Label.h"
 
-class CompositingTest : public ui::SuiteView {
+class CompositingTest : public vu::SuiteView {
 public:
 	CompositingTest();
 	~CompositingTest();
@@ -14,7 +14,7 @@ public:
 	bool keyDown( ci::app::KeyEvent &event ) override;
 
 
-	ui::StrokedRectViewRef	    mContainerView;
+	vu::StrokedRectViewRef	    mContainerView;
 
-	ui::LabelRef mLabelA, mLabelB, mLabelC, mLabelD;
+	vu::LabelRef mLabelA, mLabelB, mLabelC, mLabelD;
 };

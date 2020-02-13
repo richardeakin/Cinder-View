@@ -3,7 +3,7 @@
 #include "cinder/gl/gl.h"
 #include "cinder/Log.h"
 
-#include "ui/Suite.h"
+#include "vu/Suite.h"
 
 #include "BasicViewTests.h"
 #include "ControlsTest.h"
@@ -52,8 +52,8 @@ class ViewTestsApp : public App {
 	void drawLayerBorders();
 	void drawTouches();
 
-	ui::SuiteRef		mTestSuite;
-	ui::LabelGridRef    mInfoLabel;
+	vu::SuiteRef		mTestSuite;
+	vu::LabelGridRef    mInfoLabel;
 
 	bool	mDrawViewBorders = false;
 	bool    mDrawLayerBorders = false;
@@ -63,11 +63,11 @@ class ViewTestsApp : public App {
 
 void ViewTestsApp::setup()
 {
-	ui::Graph::EventOptions eventOptions;
+	vu::Graph::EventOptions eventOptions;
 	if( MULTITOUCH_ENABLED ) {
 		eventOptions.mouse( false );
 	}
-	mTestSuite = make_shared<ui::Suite>( eventOptions );
+	mTestSuite = make_shared<vu::Suite>( eventOptions );
 
 	mTestSuite->registerSuiteView<BasicViewTests>( "basic" );
 	mTestSuite->registerSuiteView<CompositingTest>( "compositing" );
@@ -84,7 +84,7 @@ void ViewTestsApp::setup()
 
 	mTestSuite->select( DEFAULT_TEST );
 
-	mInfoLabel = make_shared<ui::LabelGrid>();
+	mInfoLabel = make_shared<vu::LabelGrid>();
 	mInfoLabel->setTextColor( Color::white() );
 	mInfoLabel->getBackground()->setColor( ColorA::gray( 0, 0.3f ) );
 
@@ -103,7 +103,7 @@ void ViewTestsApp::keyDown( app::KeyEvent event )
 				setFullScreen( ! isFullScreen() );
 			break;
 			case app::KeyEvent::KEY_v:
-				CI_LOG_I( "TestSuite View hierarchy\n: " << ui::printHierarchyToString( mTestSuite->getGraph() ) );
+				CI_LOG_I( "TestSuite View hierarchy\n: " << vu::printHierarchyToString( mTestSuite->getGraph() ) );
 			break;
 			case app::KeyEvent::KEY_l:
 				mDrawLayerBorders = ! mDrawLayerBorders;
@@ -180,7 +180,7 @@ void ViewTestsApp::drawViewBorders()
 
 
 	gl::ScopedColor colorScope( 0, 1, 1 );
-	ui::traverse( mTestSuite->getGraph(), [this]( const ui::ViewRef &view ) {
+	vu::traverse( mTestSuite->getGraph(), [this]( const vu::ViewRef &view ) {
 		//if( view->isHidden() )
 		//	return false;
 

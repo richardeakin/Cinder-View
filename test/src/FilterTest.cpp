@@ -23,7 +23,7 @@ FilterSinglePass::FilterSinglePass()
 	}
 }
 
-void FilterSinglePass::process( ui::Renderer *ren, const ui::Filter::Pass &pass )
+void FilterSinglePass::process( vu::Renderer *ren, const vu::Filter::Pass &pass )
 {
 	if( ! mGlsl )
 		return;
@@ -48,38 +48,38 @@ FilterTest::FilterTest()
 	mContainerView->getBackground()->setColor( Color::white() );
 	mContainerView->setLabel( "container" );
 
-	mImageView = make_shared<ui::ImageView>();
+	mImageView = make_shared<vu::ImageView>();
 	mImageView->setLabel( "ImageView" );
 
 	fs::path imageFilePath = app::getAssetPath( "images/monkey_hitchhike.jpg" );
 	try {
-		auto image = make_shared<ui::Image>( loadImage( loadFile( imageFilePath ) ) );
+		auto image = make_shared<vu::Image>( loadImage( loadFile( imageFilePath ) ) );
 		mImageView->setImage( image );
-		//mImageView->setScaleMode( ui::ImageScaleMode::FILL );
+		//mImageView->setScaleMode( vu::ImageScaleMode::FILL );
 	}
 	catch( std::exception &exc ) {
 		CI_LOG_EXCEPTION( "failed to load image at path: " << imageFilePath, exc );
 	}
 
-	mLabel = make_shared<ui::Label>();
+	mLabel = make_shared<vu::Label>();
 	mLabel->setText( "T" );
 	mLabel->setLabel( "Label T" );
 	mLabel->setFontSize( 280 );
-	mLabel->setAlignment( ui::TextAlignment::CENTER );
+	mLabel->setAlignment( vu::TextAlignment::CENTER );
 	mLabel->setTextColor( Color( 0, 0, 0.75f ) );
 
-	mLabelNested = make_shared<ui::Label>();
+	mLabelNested = make_shared<vu::Label>();
 	mLabelNested->setText( "PLFF!" );
 	mLabelNested->setLabel( "Nested Label" );
 	mLabelNested->setFontName( "Arial Bold" );
 	mLabelNested->setFontSize( 84 );
-	mLabelNested->setAlignment( ui::TextAlignment::CENTER );
+	mLabelNested->setAlignment( vu::TextAlignment::CENTER );
 	mLabelNested->setTextColor( Color( 0, 0, 0.75f ) );
 
 	mFilterSinglePass = make_shared<FilterSinglePass>();
-	mFilterBlur = make_shared<ui::FilterBlur>();
-	mFilterBlurNested = make_shared<ui::FilterBlur>();
-	mFilterDropShadow = make_shared<ui::FilterDropShadow>();
+	mFilterBlur = make_shared<vu::FilterBlur>();
+	mFilterBlurNested = make_shared<vu::FilterBlur>();
+	mFilterDropShadow = make_shared<vu::FilterDropShadow>();
 	mFilterDropShadow->setDownsampleFactor( 1 );
 	mFilterDropShadow->setShadowOffset( vec2( -6, 4 ) );
 
@@ -91,7 +91,7 @@ FilterTest::FilterTest()
 	mLabelNested->addFilter( mFilterBlurNested );
 
 	{
-		auto imageBorder = make_shared<ui::StrokedRectView>();
+		auto imageBorder = make_shared<vu::StrokedRectView>();
 		imageBorder->setFillParentEnabled();
 		imageBorder->setColor( Color( 0.9f, 0.5f, 0.0f ) );
 		imageBorder->setLineWidth( 2 );
@@ -99,7 +99,7 @@ FilterTest::FilterTest()
 	}
 #if 0
 	{
-		auto labelBorder = make_shared<ui::StrokedRectView>();
+		auto labelBorder = make_shared<vu::StrokedRectView>();
 		labelBorder->setFillParentEnabled();
 		labelBorder->setColor( Color( 0.9f, 0.5f, 0.0f ) );
 		labelBorder->setLineWidth( 2 );
@@ -109,10 +109,10 @@ FilterTest::FilterTest()
 
 	const Color toggleEnabledColor = { 0, 0.4f, 0.6f };
 
-	mToggleSinglePass = make_shared<ui::Button>();
+	mToggleSinglePass = make_shared<vu::Button>();
 	mToggleSinglePass->setTitle( "single pass" );
 	mToggleSinglePass->setAsToggle();
-	mToggleSinglePass->setColor( toggleEnabledColor, ui::Button::State::ENABLED );
+	mToggleSinglePass->setColor( toggleEnabledColor, vu::Button::State::ENABLED );
 	mToggleSinglePass->setTitleColor( Color::white() );
 	mToggleSinglePass->setEnabled( true );
 	mToggleSinglePass->getSignalReleased().connect( [this] {
@@ -129,10 +129,10 @@ FilterTest::FilterTest()
 	} );
 
 
-	mToggleBlur = make_shared<ui::Button>();
+	mToggleBlur = make_shared<vu::Button>();
 	mToggleBlur->setTitle( "blur" );
 	mToggleBlur->setAsToggle();
-	mToggleBlur->setColor( toggleEnabledColor, ui::Button::State::ENABLED );
+	mToggleBlur->setColor( toggleEnabledColor, vu::Button::State::ENABLED );
 	mToggleBlur->setTitleColor( Color::white() );
 	mToggleBlur->setEnabled( false );
 	mToggleBlur->getSignalReleased().connect( [this] {
@@ -147,10 +147,10 @@ FilterTest::FilterTest()
 		}
 	} );
 
-	mToggleBlurNested = make_shared<ui::Button>();
+	mToggleBlurNested = make_shared<vu::Button>();
 	mToggleBlurNested->setTitle( "blur nested" );
 	mToggleBlurNested->setAsToggle();
-	mToggleBlurNested->setColor( toggleEnabledColor, ui::Button::State::ENABLED );
+	mToggleBlurNested->setColor( toggleEnabledColor, vu::Button::State::ENABLED );
 	mToggleBlurNested->setTitleColor( Color::white() );
 	mToggleBlurNested->setEnabled( true );
 	mToggleBlurNested->getSignalReleased().connect( [this] {
@@ -162,10 +162,10 @@ FilterTest::FilterTest()
 	} );
 
 
-	mToggleDropShadow = make_shared<ui::Button>();
+	mToggleDropShadow = make_shared<vu::Button>();
 	mToggleDropShadow->setTitle( "drop shadow" );
 	mToggleDropShadow->setAsToggle();
-	mToggleDropShadow->setColor( toggleEnabledColor, ui::Button::State::ENABLED );
+	mToggleDropShadow->setColor( toggleEnabledColor, vu::Button::State::ENABLED );
 	mToggleDropShadow->setTitleColor( Color::white() );
 	mToggleDropShadow->setEnabled( true ); // filter already added
 	mToggleDropShadow->getSignalReleased().connect( [this] {
@@ -179,7 +179,7 @@ FilterTest::FilterTest()
 		}
 	} );
 
-	mSliderBlur = make_shared<ui::HSlider>();
+	mSliderBlur = make_shared<vu::HSlider>();
 	mSliderBlur->setTitle( "blur pixels" );
 	mSliderBlur->setMax( 10 );
 	mSliderBlur->setValue( mFilterBlur->getBlurPixels().x );
@@ -188,7 +188,7 @@ FilterTest::FilterTest()
 		mFilterBlurNested->setBlurPixels( vec2( mSliderBlur->getValue() ) );
 	} );
 
-	mSliderDropShadow = make_shared<ui::HSlider>();
+	mSliderDropShadow = make_shared<vu::HSlider>();
 	mSliderDropShadow->setTitle( "drop shadow pixels" );
 	mSliderDropShadow->setMax( 10 );
 	mSliderDropShadow->getSignalValueChanged().connect( [this] {

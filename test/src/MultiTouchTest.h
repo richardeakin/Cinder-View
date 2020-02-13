@@ -2,11 +2,11 @@
 
 #include "cinder/Tween.h"
 
-#include "ui/Suite.h"
+#include "vu/Suite.h"
 
 #include "cinder/gl/gl.h"
 
-class MultiTouchTest : public ui::SuiteView {
+class MultiTouchTest : public vu::SuiteView {
   public:
 	MultiTouchTest();
 
@@ -25,9 +25,9 @@ class MultiTouchTest : public ui::SuiteView {
 	void injectContinuousTouches();
 	void endContinuousTouches();
 
-	ui::VSliderRef			mVSlider1, mVSlider2;
-	ui::ButtonRef			mButton, mToggle;
-	ui::ViewRef             mControlsContainer, mDraggablesContainer;
+	vu::VSliderRef			mVSlider1, mVSlider2;
+	vu::ButtonRef			mButton, mToggle;
+	vu::ViewRef             mControlsContainer, mDraggablesContainer;
 
 	bool mEnableContinuousInjection = false;
 
@@ -41,11 +41,11 @@ class MultiTouchTest : public ui::SuiteView {
 	std::vector<TestTouch> mTestTouches;
 };
 
-class TouchOverlayView : public ui::View {
+class TouchOverlayView : public vu::View {
   public:
 	TouchOverlayView();
 
-	void draw( ui::Renderer *ren ) override;
+	void draw( vu::Renderer *ren ) override;
 
   private:
 	ci::gl::TextureFontRef  mTextureFont;

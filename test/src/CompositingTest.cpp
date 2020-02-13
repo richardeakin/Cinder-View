@@ -15,7 +15,7 @@ const vec2 LABEL_SIZE = { 200, 200 };
 CompositingTest::CompositingTest()
 	: SuiteView()
 {
-	mContainerView = make_shared<ui::StrokedRectView>();
+	mContainerView = make_shared<vu::StrokedRectView>();
 	mContainerView->setLabel( "container" );
 	mContainerView->setColor( Color::white() );
 	mContainerView->setLineWidth( 6 ); // test that FrameBuffer will account for line width drawing outside of View bounds by half line width
@@ -24,36 +24,36 @@ CompositingTest::CompositingTest()
 
 	const float fontSizeBig = 64;
 
-	mLabelA = make_shared<ui::Label>();
+	mLabelA = make_shared<vu::Label>();
 	mLabelA->setText( "A" );
 	mLabelA->setLabel( "Label A" );
 	mLabelA->setFontSize( fontSizeBig );
-	mLabelA->setAlignment( ui::TextAlignment::CENTER );
+	mLabelA->setAlignment( vu::TextAlignment::CENTER );
 	mLabelA->setTextColor( Color::white() );
 	mLabelA->getBackground()->setColor( Color( 0, 0, 1 ) );
 
-	mLabelB = make_shared<ui::Label>();
+	mLabelB = make_shared<vu::Label>();
 	mLabelB->setText( "B" );
 	mLabelB->setLabel( "Label B" );
 	mLabelB->setFontSize( fontSizeBig );
-	mLabelB->setAlignment( ui::TextAlignment::CENTER );
+	mLabelB->setAlignment( vu::TextAlignment::CENTER );
 	mLabelB->setTextColor( Color::white() );
 	mLabelB->getBackground()->setColor( Color( 0, 1, 0 ) );
 
-	mLabelC = make_shared<ui::Label>();
+	mLabelC = make_shared<vu::Label>();
 	mLabelC->setText( "C" );
 	mLabelC->setLabel( "Label C" );
 	mLabelC->setFontSize( fontSizeBig );
-	mLabelC->setAlignment( ui::TextAlignment::CENTER );
+	mLabelC->setAlignment( vu::TextAlignment::CENTER );
 	mLabelC->setTextColor( Color::white() );
 	mLabelC->getBackground()->setColor( Color( 1, 0, 0 ) );
 	mLabelC->setAlpha( 0.5f );
 
-	mLabelD = make_shared<ui::Label>();
+	mLabelD = make_shared<vu::Label>();
 	mLabelD->setText( "D" );
 	mLabelD->setLabel( "Label D" );
 	mLabelD->setFontSize( 30 );
-	mLabelD->setAlignment( ui::TextAlignment::CENTER );
+	mLabelD->setAlignment( vu::TextAlignment::CENTER );
 	mLabelD->setTextColor( Color::white() );
 	mLabelD->getBackground()->setColor( Color( 1, 1, 0 ) );
 	mLabelD->setAlpha( 0.75f );
@@ -65,7 +65,7 @@ CompositingTest::CompositingTest()
 	// add controls to suite view
 	Rectf sliderRect =  Rectf( 10, 10, 150, 40 );
 	{
-		auto slider = make_shared<ui::HSlider>( sliderRect );
+		auto slider = make_shared<vu::HSlider>( sliderRect );
 		slider->setTitle( "container alpha" );
 		slider->setValue( mContainerView->getAlpha() );
 		slider->getBackground()->setColor( Color::gray( 0.15f ) );
@@ -78,7 +78,7 @@ CompositingTest::CompositingTest()
 	}
 	sliderRect += vec2( 0, 40 );
 	{
-		auto slider = make_shared<ui::HSlider>( sliderRect );
+		auto slider = make_shared<vu::HSlider>( sliderRect );
 		slider->setTitle( "C alpha" );
 		slider->setValue( mLabelC->getAlpha() );
 		slider->getBackground()->setColor( Color::gray( 0.15f ) );
@@ -91,7 +91,7 @@ CompositingTest::CompositingTest()
 	}
 	sliderRect += vec2( 0, 40 );
 	{
-		auto slider = make_shared<ui::HSlider>( sliderRect );
+		auto slider = make_shared<vu::HSlider>( sliderRect );
 		slider->setTitle( "D alpha" );
 		slider->setValue( mLabelD->getAlpha() );
 		slider->getBackground()->setColor( Color::gray( 0.15f ) );
@@ -104,7 +104,7 @@ CompositingTest::CompositingTest()
 	}
 	sliderRect += vec2( 0, 40 );
 	{
-		auto slider = make_shared<ui::HSlider>( sliderRect );
+		auto slider = make_shared<vu::HSlider>( sliderRect );
 		slider->setTitle( "C scale" );
 		slider->setValue( 1 );
 		slider->setMin( 0.1f );

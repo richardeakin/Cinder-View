@@ -1,10 +1,10 @@
 #pragma once
 
-#include "ui/Suite.h"
+#include "vu/Suite.h"
 
 #include "cinder/gl/TextureFont.h"
 
-class ControlsTest : public ui::SuiteView {
+class ControlsTest : public vu::SuiteView {
 public:
 	ControlsTest();
 
@@ -13,9 +13,9 @@ public:
 private:
 	bool keyDown( ci::app::KeyEvent &event ) override;
 
-	ui::HSliderRef			mHSlider;
-	ui::VSliderRef			mVSlider;
-	ui::ButtonRef			mButton, mImageButton, mToggle;
-	ui::CheckBoxRef			mCheckBox;
-    ui::TextFieldRef        mTextField1, mTextField2, mTextField3;
+	vu::HSliderRef			mHSlider;
+	vu::VSliderRef			mVSlider;
+	vu::ButtonRef			mButton, mImageButton, mToggle;
+	vu::CheckBoxRef			mCheckBox;
+    vu::TextFieldRef        mTextField1, mTextField2, mTextField3;
 };

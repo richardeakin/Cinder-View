@@ -4,126 +4,132 @@
     <Filter Include="src">
       <UniqueIdentifier>{75948ecc-ffb9-497d-ae36-2d0056feafe2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\ui">
-      <UniqueIdentifier>{6f812af9-56ac-4cd3-8fde-b18c3111bea8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\mason">
       <UniqueIdentifier>{626b98ae-e717-483d-b53e-362be5f41d79}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\fmt">
       <UniqueIdentifier>{df61c0df-f7b2-46fd-9c08-049877f01376}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\vu">
+      <UniqueIdentifier>{463abe23-bc90-480d-8400-86d38b545b60}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\ui\Control.cpp">
-      <Filter>src\ui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\ui\Graph.cpp">
-      <Filter>src\ui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\ui\Image.cpp">
-      <Filter>src\ui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\ui\ImageView.cpp">
-      <Filter>src\ui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\ui\Interface3d.cpp">
-      <Filter>src\ui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\ui\Label.cpp">
-      <Filter>src\ui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\ui\Layer.cpp">
-      <Filter>src\ui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\ui\Renderer.cpp">
-      <Filter>src\ui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\ui\ScrollView.cpp">
-      <Filter>src\ui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\ui\Suite.cpp">
-      <Filter>src\ui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\ui\TextManager.cpp">
-      <Filter>src\ui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\ui\View.cpp">
-      <Filter>src\ui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\ui\Filter.cpp">
-      <Filter>src\ui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\ui\Layout.cpp">
-      <Filter>src\ui</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\fmt\format.cc">
       <Filter>src\fmt</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\ui\GestureTracker.cpp">
-      <Filter>src\ui</Filter>
+    <ClCompile Include="..\..\src\vu\Control.cpp">
+      <Filter>src\vu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\vu\Filter.cpp">
+      <Filter>src\vu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\vu\GestureTracker.cpp">
+      <Filter>src\vu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\vu\Graph.cpp">
+      <Filter>src\vu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\vu\Image.cpp">
+      <Filter>src\vu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\vu\ImageView.cpp">
+      <Filter>src\vu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\vu\Interface3d.cpp">
+      <Filter>src\vu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\vu\Label.cpp">
+      <Filter>src\vu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\vu\Layer.cpp">
+      <Filter>src\vu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\vu\Layout.cpp">
+      <Filter>src\vu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\vu\Renderer.cpp">
+      <Filter>src\vu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\vu\ScrollView.cpp">
+      <Filter>src\vu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\vu\Suite.cpp">
+      <Filter>src\vu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\vu\TextField.cpp">
+      <Filter>src\vu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\vu\TextManager.cpp">
+      <Filter>src\vu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\vu\View.cpp">
+      <Filter>src\vu</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\ui\Control.h">
-      <Filter>src\ui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\ui\Graph.h">
-      <Filter>src\ui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\ui\Image.h">
-      <Filter>src\ui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\ui\ImageView.h">
-      <Filter>src\ui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\ui\Interface3d.h">
-      <Filter>src\ui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\ui\Label.h">
-      <Filter>src\ui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\ui\Layer.h">
-      <Filter>src\ui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\ui\Renderer.h">
-      <Filter>src\ui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\ui\ScrollView.h">
-      <Filter>src\ui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\ui\Suite.h">
-      <Filter>src\ui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\ui\TextManager.h">
-      <Filter>src\ui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\ui\ui.h">
-      <Filter>src\ui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\ui\View.h">
-      <Filter>src\ui</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\mason\Factory.h">
       <Filter>src\mason</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\ui\Filter.h">
-      <Filter>src\ui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\ui\Layout.h">
-      <Filter>src\ui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\ui\Export.h">
-      <Filter>src\ui</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\fmt\format.h">
       <Filter>src\fmt</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\ui\GestureTracker.h">
-      <Filter>src\ui</Filter>
+    <ClInclude Include="..\..\src\vu\Control.h">
+      <Filter>src\vu</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\ui\Debug.h">
-      <Filter>src\ui</Filter>
+    <ClInclude Include="..\..\src\vu\Debug.h">
+      <Filter>src\vu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\vu\Export.h">
+      <Filter>src\vu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\vu\Filter.h">
+      <Filter>src\vu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\vu\GestureTracker.h">
+      <Filter>src\vu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\vu\Graph.h">
+      <Filter>src\vu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\vu\Image.h">
+      <Filter>src\vu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\vu\ImageView.h">
+      <Filter>src\vu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\vu\Interface3d.h">
+      <Filter>src\vu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\vu\Label.h">
+      <Filter>src\vu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\vu\Layer.h">
+      <Filter>src\vu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\vu\Layout.h">
+      <Filter>src\vu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\vu\Renderer.h">
+      <Filter>src\vu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\vu\ScrollView.h">
+      <Filter>src\vu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\vu\Suite.h">
+      <Filter>src\vu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\vu\TextField.h">
+      <Filter>src\vu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\vu\TextManager.h">
+      <Filter>src\vu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\vu\View.h">
+      <Filter>src\vu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\vu\vu.h">
+      <Filter>src\vu</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
