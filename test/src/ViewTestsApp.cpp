@@ -22,7 +22,7 @@ using namespace ci::app;
 using namespace std;
 
 const bool MULTITOUCH_ENABLED	= 0;
-const bool USE_SECONDARY_SCREEN = 1;
+const bool USE_SECONDARY_SCREEN = 0;
 const int DEFAULT_TEST			= 5;
 const vec2 WINDOW_SIZE			= vec2( 1220, 720 );
 const vec2 INFO_ROW_SIZE		= vec2( 250, 20 );
@@ -33,7 +33,7 @@ const vec2 INFO_ROW_SIZE		= vec2( 250, 20 );
 #if LIVEPP_ENABLED
 
 #include <windows.h>
-#include "../../../../../LivePP/API/LPP_ForceLinkStaticRuntime.h"
+//#include "../../../../../LivePP/API/LPP_ForceLinkStaticRuntime.h"
 #include "../../../../../LivePP/API/LPP_API.h"
 
 #endif
