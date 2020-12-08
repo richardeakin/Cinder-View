@@ -10,34 +10,34 @@ using namespace mason;
 ControlsTest::ControlsTest()
 	: SuiteView()
 {
-	mButton = make_shared<ui::Button>();
+	mButton = make_shared<vu::Button>();
 	mButton->setTitle( "Button" );
 	mButton->getSignalPressed().connect( [] { CI_LOG_I( "mButton pressed" ); } );
 	mButton->getSignalReleased().connect( [] { CI_LOG_I( "mButton released" ); } );
 
-	mToggle = make_shared<ui::Button>();
+	mToggle = make_shared<vu::Button>();
 	mToggle->setAsToggle();
 	mToggle->setLabel( "toggle" );
 	mToggle->setTitle( "disabled" );
-	mToggle->setTitle( "enabled", ui::Button::State::ENABLED );
-	mToggle->setColor( Color( 0.2f, 0.5f, 0.5f ), ui::Button::State::ENABLED );
+	mToggle->setTitle( "enabled", vu::Button::State::ENABLED );
+	mToggle->setColor( Color( 0.2f, 0.5f, 0.5f ), vu::Button::State::ENABLED );
 	mToggle->getTitleLabel()->setFontSize( 28 );
 	mToggle->getSignalPressed().connect( [] { CI_LOG_V( "toggle pressed" ); } );
 	mToggle->getSignalReleased().connect( [] { CI_LOG_V( "toggle released" ); } );
 
-	mCheckBox = make_shared<ui::CheckBox>();
+	mCheckBox = make_shared<vu::CheckBox>();
 	mCheckBox->setTitle( "checkbox" );
 
-	mImageButton = make_shared<ui::Button>();
+	mImageButton = make_shared<vu::Button>();
 	mImageButton->setLabel( "image button" );
 	try {
-		auto imageNormal = make_shared<ui::Image>( loadImage( app::loadAsset( "images/button_normal.png" ) ) );
-		auto imagePressed = make_shared<ui::Image>( loadImage( app::loadAsset( "images/button_pressed.png" ) ) );
-		auto imageEnabled = make_shared<ui::Image>( loadImage( app::loadAsset( "images/button_enabled.png" ) ) );
+		auto imageNormal = make_shared<vu::Image>( loadImage( app::loadAsset( "images/button_normal.png" ) ) );
+		auto imagePressed = make_shared<vu::Image>( loadImage( app::loadAsset( "images/button_pressed.png" ) ) );
+		auto imageEnabled = make_shared<vu::Image>( loadImage( app::loadAsset( "images/button_enabled.png" ) ) );
 
-		mImageButton->setImage( imageNormal, ui::Button::State::NORMAL );
-		mImageButton->setImage( imagePressed, ui::Button::State::PRESSED );
-		mImageButton->setImage( imageEnabled, ui::Button::State::ENABLED );
+		mImageButton->setImage( imageNormal, vu::Button::State::NORMAL );
+		mImageButton->setImage( imagePressed, vu::Button::State::PRESSED );
+		mImageButton->setImage( imageEnabled, vu::Button::State::ENABLED );
 
 		mImageButton->setSize( imageNormal->getSize() );
 		mImageButton->setAsToggle();
@@ -47,13 +47,13 @@ ControlsTest::ControlsTest()
 	}
 
 	// temp - adding controls to this test
-	mHSlider = make_shared<ui::HSlider>();
+	mHSlider = make_shared<vu::HSlider>();
 	mHSlider->getBackground()->setColor( ColorA( "green", 0.5f ) );
 	mHSlider->getSignalValueChanged().connect( [this] {
 //		CI_LOG_V( "mHSlider value: " << mHSlider->getValue() );
 	} );
 
-	mVSlider = make_shared<ui::VSlider>();
+	mVSlider = make_shared<vu::VSlider>();
 	mVSlider->getBackground()->setColor( ColorA( "green", 0.5f ) );
 	mVSlider->getSignalValueChanged().connect( [this] {
 //		CI_LOG_V( "mVSlider value: " << mVSlider->getValue() );
@@ -61,34 +61,34 @@ ControlsTest::ControlsTest()
 
 	auto selectedColor = Color( 0.5f, 1, 1 );
 
-	mTextField1 = make_shared<ui::TextField>();
+	mTextField1 = make_shared<vu::TextField>();
 	mTextField1->setPlaceholderText( "textfield 1" );
-	mTextField1->setTextColor( selectedColor, ui::TextField::State::SELECTED );
-	mTextField1->setBorderColor( selectedColor, ui::TextField::State::SELECTED );
+	mTextField1->setTextColor( selectedColor, vu::TextField::State::SELECTED );
+	mTextField1->setBorderColor( selectedColor, vu::TextField::State::SELECTED );
 
-	mTextField2 = make_shared<ui::TextField>();
+	mTextField2 = make_shared<vu::TextField>();
 	mTextField2->setPlaceholderText( "textfield 2" );
-	mTextField2->setTextColor( selectedColor, ui::TextField::State::SELECTED );
-	mTextField2->setBorderColor( selectedColor, ui::TextField::State::SELECTED );
+	mTextField2->setTextColor( selectedColor, vu::TextField::State::SELECTED );
+	mTextField2->setBorderColor( selectedColor, vu::TextField::State::SELECTED );
 
-	mTextField3 = make_shared<ui::TextField>();
+	mTextField3 = make_shared<vu::TextField>();
 	mTextField3->setPlaceholderText( "textfield 3" );
-	mTextField3->setInputMode( ui::TextField::InputMode::NUMERIC );
-	mTextField3->setTextColor( selectedColor, ui::TextField::State::SELECTED );
-	mTextField3->setBorderColor( selectedColor, ui::TextField::State::SELECTED );
+	mTextField3->setInputMode( vu::TextField::InputMode::NUMERIC );
+	mTextField3->setTextColor( selectedColor, vu::TextField::State::SELECTED );
+	mTextField3->setBorderColor( selectedColor, vu::TextField::State::SELECTED );
 
 	mTextField1->setNextResponder( mTextField2 );
 	mTextField2->setNextResponder( mTextField3 );
 	mTextField3->setNextResponder( mTextField1 );
 
-	auto nboxA = make_shared<ui::NumberBox>( Rectf( 400, 360, 500, 400 ) );
+	auto nboxA = make_shared<vu::NumberBox>( Rectf( 400, 360, 500, 400 ) );
 	nboxA->setTitle( "valA" );
 	//nbox->setBackgroundEnabled( false );
 
-	auto nboxB = make_shared<ui::NumberBox>( Rectf( 510, 360, 610, 400 ) );
+	auto nboxB = make_shared<vu::NumberBox>( Rectf( 510, 360, 610, 400 ) );
 	nboxB->setTitle( "valB" );
 
-	auto nbox3 = make_shared<ui::NumberBox3>( Rectf( 400, 410, 580, 450 ) );
+	auto nbox3 = make_shared<vu::NumberBox3>( Rectf( 400, 410, 580, 450 ) );
 	nbox3->setTitle( "nbox3" );
 //	nbox3->getSignalValueChanged().connect( [&nbox3] { CI_LOG_I( "nbox3 value: " << nbox3->getValue(); ); } );
 

@@ -1,6 +1,6 @@
 #include "LayoutTests.h"
-#include "ui/Label.h"
-#include "ui/Layout.h"
+#include "vu/Label.h"
+#include "vu/Layout.h"
 
 #include "cinder/Log.h"
 
@@ -13,22 +13,22 @@ LayoutTests::LayoutTests()
 	const Rectf margin = Rectf( 6, 6, 6, 6 );
 	const Color backgroundColor = Color( 0.85f, 0.5f, 0 );
 
-	mVerticalLayout = make_shared<ui::VerticalLayout>();
+	mVerticalLayout = make_shared<vu::VerticalLayout>();
 	mVerticalLayout->setPadding( padding );
 	mVerticalLayout->setMargin( margin );
 
-	mVerticalGroupView = make_shared<ui::View>();
+	mVerticalGroupView = make_shared<vu::View>();
 	mVerticalGroupView->setLayout( mVerticalLayout );
 	mVerticalGroupView->setLabel( "vertical group" );
 	mVerticalGroupView->getBackground()->setColor( backgroundColor );
 	addSubview( mVerticalGroupView );
 	addLabels( mVerticalGroupView, 6 );
 
-	mHorizontalLayout = make_shared<ui::HorizontalLayout>();
+	mHorizontalLayout = make_shared<vu::HorizontalLayout>();
 	mHorizontalLayout->setPadding( padding );
 	mHorizontalLayout->setMargin( margin );
 
-	mHorizontalGroupView = make_shared<ui::View>();
+	mHorizontalGroupView = make_shared<vu::View>();
 	mHorizontalGroupView->setLayout( mHorizontalLayout );
 	mHorizontalGroupView->setLabel( "horizontal group" );
 	mHorizontalGroupView->getBackground()->setColor( backgroundColor );
@@ -36,13 +36,13 @@ LayoutTests::LayoutTests()
 	addLabels( mHorizontalGroupView, 6 );
 }
 
-void LayoutTests::addLabels( const ui::ViewRef &view, size_t count )
+void LayoutTests::addLabels( const vu::ViewRef &view, size_t count )
 {
 	for( size_t i = 0; i < count; i++ ) {
-		auto label = make_shared<ui::Label>();
+		auto label = make_shared<vu::Label>();
 		label->setFontSize( 24 );
 		label->setText( "Label " + to_string( i ) );
-		label->setAlignment( ui::TextAlignment::CENTER );
+		label->setAlignment( vu::TextAlignment::CENTER );
 		label->getBackground()->setColor( Color( CM_HSV, 1.0f - (float)i * 0.2f / (float)count, 1.0f, 0.75f ) );
 		label->setSize( vec2( 120, 40 ) );
 		view->addSubview( label );
@@ -69,7 +69,7 @@ bool LayoutTests::keyDown( ci::app::KeyEvent &event )
 
 	bool handled = true;
 	if( event.getCode() == ci::app::KeyEvent::KEY_m ) {
-		auto nextMode = ui::LinearLayout::Mode( ( (int)mVerticalLayout->getMode() + 1 ) % (int)ui::LinearLayout::Mode::NUM_MODES );
+		auto nextMode = vu::LinearLayout::Mode( ( (int)mVerticalLayout->getMode() + 1 ) % (int)vu::LinearLayout::Mode::NUM_MODES );
 		CI_LOG_I( "next mode (vertical): " << (int)nextMode );
 		mVerticalLayout->setMode( nextMode );
 		mVerticalGroupView->setNeedsLayout(); // TODO: this should happen automatically when updating the mode
@@ -78,7 +78,7 @@ bool LayoutTests::keyDown( ci::app::KeyEvent &event )
 		mHorizontalGroupView->setNeedsLayout();
 	}
 	if( event.getCode() == ci::app::KeyEvent::KEY_a ) {
-		auto nextAlignment = ui::Alignment( ((int)mVerticalLayout->getAlignment() + 1) % (int)ui::Alignment::NUM_ALIGNMENTS );
+		auto nextAlignment = vu::Alignment( ((int)mVerticalLayout->getAlignment() + 1) % (int)vu::Alignment::NUM_ALIGNMENTS );
 		CI_LOG_I( "next mode (vertical): " << (int)nextAlignment );
 		mVerticalLayout->setAlignment( nextAlignment );
 		mVerticalGroupView->setNeedsLayout(); // TODO: this should happen automatically when updating alignment

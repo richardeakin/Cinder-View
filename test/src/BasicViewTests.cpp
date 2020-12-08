@@ -13,7 +13,7 @@ using namespace mason;
 #define PADDING 50.0f
 #define ANIM_TIME 1.0f
 
-class ChildView : public ui::RectView {
+class ChildView : public vu::RectView {
 public:
 	ChildView( const Rectf &bounds ) : RectView( bounds )	{}
 
@@ -90,25 +90,25 @@ BasicViewTests::BasicViewTests()
 	mContainerView->addSubview( view3 );
 	mContainerView->addSubview( view1 ); // with this call, view1 will only be in root's view heirarchy once, but it will be moved to the top.
 
-	mBorderView = make_shared<ui::StrokedRectView>();
+	mBorderView = make_shared<vu::StrokedRectView>();
 	mBorderView->setColor( ColorA( "red", 1 ) );
 	mContainerView->addSubview( mBorderView );
 
-	mLabel = make_shared<ui::Label>();
+	mLabel = make_shared<vu::Label>();
 	mLabel->setText( "bold label" );
-	mLabel->setAlignment( ui::TextAlignment::CENTER );
+	mLabel->setAlignment( vu::TextAlignment::CENTER );
 	mLabel->setTextColor( Color::white() );
 	mLabel->setFontName( "Arial Bold" );
 	mLabel->getBackground()->setColor( Color( 0, 0, 0.4f ) );
 
-	mLabelClipped = make_shared<ui::Label>();
+	mLabelClipped = make_shared<vu::Label>();
 	mLabelClipped->setText( "blah blah blah blah blah" );
 	mLabelClipped->setFontFile( app::getAssetPath( "fonts/Saint-Andrews Queen.ttf" ), 16 );
 	mLabelClipped->setClipEnabled();
 	mLabelClipped->setTextColor( Color::white() );
 	mLabelClipped->getBackground()->setColor( Color( 0, 0, 0.4f ) );
 
-	mLabelGrid = make_shared<ui::LabelGrid>();
+	mLabelGrid = make_shared<vu::LabelGrid>();
 	mLabelGrid->getBackground()->setColor( ColorA( "yellow", 0.5f ) );
 	mLabelGrid->setCell( 0, 0, "hey:" );
 	mLabelGrid->setCell( 0, 1, "how ya goin:" );
@@ -117,16 +117,16 @@ BasicViewTests::BasicViewTests()
 	mLabelGrid->setCell( 0, 2, "writing ui code:" );
 	mLabelGrid->setCell( 1, 2, "sucks" );
 
-	mImageView = make_shared<ui::ImageView>();
+	mImageView = make_shared<vu::ImageView>();
 
-	auto imageBorder = make_shared<ui::StrokedRectView>();
+	auto imageBorder = make_shared<vu::StrokedRectView>();
 	imageBorder->setFillParentEnabled();
 	imageBorder->setColor( ColorA( 0.9f, 0.5f, 0.0f, 0.7f ) );
 	mImageView->addSubview( imageBorder );
 	fs::path imageFilePath = app::getAssetPath( "images/monkey_hitchhike.jpg" );
 	try {
 		CI_LOG_I( "loading image for ImageView.." );
-		auto image = make_shared<ui::Image>( loadImage( loadFile( imageFilePath ) ) );
+		auto image = make_shared<vu::Image>( loadImage( loadFile( imageFilePath ) ) );
 		mImageView->setImage( image );
 		CI_LOG_I( "complete" );
 	}
@@ -203,7 +203,7 @@ bool BasicViewTests::keyDown( app::KeyEvent &event )
 			break;
 		}
 		case app::KeyEvent::KEY_i: {
-			auto nextMode = ui::ImageScaleMode( ( (int)mImageView->getScaleMode() + 1 ) % ui::ImageScaleMode::NUM_MODES );
+			auto nextMode = vu::ImageScaleMode( ( (int)mImageView->getScaleMode() + 1 ) % vu::ImageScaleMode::NUM_MODES );
 			CI_LOG_I( "setting scale mode to: " << nextMode );
 			mImageView->setScaleMode( nextMode );
 			break;

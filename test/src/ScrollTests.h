@@ -1,9 +1,9 @@
 #pragma once
 
-#include "ui/Suite.h"
-#include "ui/ScrollView.h"
+#include "vu/Suite.h"
+#include "vu/ScrollView.h"
 
-class ScrollTests : public ui::SuiteView {
+class ScrollTests : public vu::SuiteView {
 public:
 	ScrollTests();
 
@@ -14,8 +14,8 @@ protected:
 
 private:
 
-	ui::ScrollViewRef			mScrollViewFree, mScrollViewNested, mScrollViewWithLayout;
-	ui::PagingScrollViewRef		mHorizontalPager, mVerticalPager;
+	vu::ScrollViewRef			mScrollViewFree, mScrollViewNested, mScrollViewWithLayout;
+	vu::PagingScrollViewRef		mHorizontalPager, mVerticalPager;
 	
-	ui::LabelGridRef			mInfoLabel;
+	vu::LabelGridRef			mInfoLabel;
 };

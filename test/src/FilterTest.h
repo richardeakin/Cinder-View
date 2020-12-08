@@ -1,15 +1,15 @@
 #pragma once
 
-#include "ui/Suite.h"
-#include "ui/ui.h"
+#include "vu/Suite.h"
+#include "vu/vu.h"
 
 #include "cinder/gl/TextureFont.h"
 
-class FilterSinglePass : public ui::Filter {
+class FilterSinglePass : public vu::Filter {
 public:
 	FilterSinglePass();
 
-	void process( ui::Renderer *ren, const ui::Filter::Pass &pass  ) override;
+	void process( vu::Renderer *ren, const vu::Filter::Pass &pass  ) override;
 
 	ci::gl::GlslProgRef	mGlsl;
 
@@ -17,7 +17,7 @@ private:
 };
 
 
-class FilterTest : public ui::SuiteView {
+class FilterTest : public vu::SuiteView {
   public:
 	FilterTest();
 
@@ -28,14 +28,14 @@ class FilterTest : public ui::SuiteView {
 	void loadGlsl();
 
 	std::shared_ptr<FilterSinglePass>	mFilterSinglePass;
-	ui::FilterBlurRef					mFilterBlur, mFilterBlurNested;
-	ui::FilterDropShadowRef				mFilterDropShadow;
+	vu::FilterBlurRef					mFilterBlur, mFilterBlurNested;
+	vu::FilterDropShadowRef				mFilterDropShadow;
 
 	ci::gl::GlslProgRef					mGlslBlur, mGlslDropshadow;
 
-	ui::ViewRef				mContainerView;
-	ui::ImageViewRef        mImageView;
-	ui::ButtonRef			mToggleSinglePass, mToggleBlur, mToggleBlurNested, mToggleDropShadow;
-	ui::HSliderRef			mSliderBlur, mSliderDropShadow;
-	ui::LabelRef			mLabel, mLabelNested;
+	vu::ViewRef				mContainerView;
+	vu::ImageViewRef        mImageView;
+	vu::ButtonRef			mToggleSinglePass, mToggleBlur, mToggleBlurNested, mToggleDropShadow;
+	vu::HSliderRef			mSliderBlur, mSliderDropShadow;
+	vu::LabelRef			mLabel, mLabelNested;
 };

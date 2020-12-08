@@ -1,8 +1,8 @@
 #pragma once
 
-#include "ui/ui.h"
+#include "vu/vu.h"
 
-class BasicViewTests : public ui::SuiteView {
+class BasicViewTests : public vu::SuiteView {
 public:
 	BasicViewTests();
 
@@ -14,10 +14,10 @@ public:
 private:
 	void loadImageViewShader();
 
-	ui::ViewRef				mContainerView;
-	ui::StrokedRectViewRef	mBorderView;
+	vu::ViewRef				mContainerView;
+	vu::StrokedRectViewRef	mBorderView;
 
-	ui::LabelRef				mLabel, mLabelClipped;
-	ui::LabelGridRef			mLabelGrid;
-	ui::ImageViewRef			mImageView;
+	vu::LabelRef				mLabel, mLabelClipped;
+	vu::LabelGridRef			mLabelGrid;
+	vu::ImageViewRef			mImageView;
 };

@@ -1,11 +1,11 @@
 #pragma once
 
-#include "ui/Suite.h"
-#include "ui/Layout.h"
+#include "vu/Suite.h"
+#include "vu/Layout.h"
 
 #include <unordered_map>
 
-class LayoutTests : public ui::SuiteView {
+class LayoutTests : public vu::SuiteView {
 public:
 	LayoutTests();
 
@@ -13,11 +13,11 @@ public:
 	bool keyDown( ci::app::KeyEvent &event ) override;
 
 private:
-	void addLabels( const ui::ViewRef &view, size_t count );
+	void addLabels( const vu::ViewRef &view, size_t count );
 
-	ui::ViewRef	mVerticalGroupView, mHorizontalGroupView;
-	ui::VerticalLayoutRef	mVerticalLayout;
-	ui::HorizontalLayoutRef mHorizontalLayout;
+	vu::ViewRef	mVerticalGroupView, mHorizontalGroupView;
+	vu::VerticalLayoutRef	mVerticalLayout;
+	vu::HorizontalLayoutRef mHorizontalLayout;
 
-	std::unordered_map<ui::ViewRef, ci::vec2>	mInitialSizes;
+	std::unordered_map<vu::ViewRef, ci::vec2>	mInitialSizes;
 };

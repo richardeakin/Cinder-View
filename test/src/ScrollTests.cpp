@@ -1,6 +1,6 @@
 #include "ScrollTests.h"
-#include "ui/ImageView.h"
-#include "ui/Label.h"
+#include "vu/ImageView.h"
+#include "vu/Label.h"
 
 #include "cinder/app/App.h"
 #include "cinder/gl/gl.h"
@@ -14,7 +14,7 @@ using namespace ci;
 
 const float PADDING = 40.0f;
 
-class CustomScrollTestsView : public ui::RectView {
+class CustomScrollTestsView : public vu::RectView {
 public:
 	CustomScrollTestsView( const Rectf &bounds )
 		: RectView( bounds )
@@ -58,7 +58,7 @@ protected:
 		return true;
 	}
 
-	void draw( ui::Renderer *ren ) override
+	void draw( vu::Renderer *ren ) override
 	{
 		RectView::draw( ren );
 
@@ -74,13 +74,13 @@ ScrollTests::ScrollTests()
 	: SuiteView()
 {
 	// Free scrolling ScrollView
-	mScrollViewFree = make_shared<ui::ScrollView>();
+	mScrollViewFree = make_shared<vu::ScrollView>();
 //	mScrollView->setClipEnabled( false );
 	mScrollViewFree->setLabel( "ScrollView (free)" );
 	mScrollViewFree->getContentView()->getBackground()->setColor( Color( 0.15f, 0, 0 ) );
 
 	{
-		auto scrollBorder = make_shared<ui::StrokedRectView>();
+		auto scrollBorder = make_shared<vu::StrokedRectView>();
 		scrollBorder->setFillParentEnabled();
 		scrollBorder->setColor( ColorA( 0.9f, 0.5f, 0.0f, 0.7f ) );
 		//mScrollViewFree->addSubview( scrollBorder );
@@ -88,21 +88,21 @@ ScrollTests::ScrollTests()
 		// add some content views:
 		auto custom = make_shared<CustomScrollTestsView>( Rectf( 40, 30, 180, 130 ) );
 
-		auto button = make_shared<ui::Button>( Rectf( 200, 30, 300, 70 ) );
+		auto button = make_shared<vu::Button>( Rectf( 200, 30, 300, 70 ) );
 		button->setTitle( "tap me" );
 		button->setLabel( "Button ('tap me')" );
 		button->setTitleColor( Color( 0, 0.2f, 0.8f ) );
-		button->setColor( Color( 0.4f, 0.6f, 0.9f ), ui::Button::State::PRESSED );
+		button->setColor( Color( 0.4f, 0.6f, 0.9f ), vu::Button::State::PRESSED );
 		button->getSignalPressed().connect( [] { CI_LOG_I( "button pressed" ); } );
 		button->getSignalReleased().connect( [] { CI_LOG_I( "button released" ); } );
 
-		auto imageView = make_shared<ui::ImageView>( Rectf( 40, 150, 600, 600 ) );
+		auto imageView = make_shared<vu::ImageView>( Rectf( 40, 150, 600, 600 ) );
 		imageView->getBackground()->setColor( Color( 0, 0.2f, 0 ) );
 
 		fs::path imageFilePath = app::getAssetPath( "images/monkey_hitchhike.jpg" );
 		try {
 			CI_LOG_I( "loading image view.." );
-			auto image = make_shared<ui::Image>( loadImage( loadFile( imageFilePath ) ) );
+			auto image = make_shared<vu::Image>( loadImage( loadFile( imageFilePath ) ) );
 			imageView->setImage( image );
 			imageView->setSize( image->getSize() );
 			CI_LOG_I( "complete" );
@@ -115,13 +115,13 @@ ScrollTests::ScrollTests()
 	}
 
 	// Horizontal paging ScrollView
-	mHorizontalPager = make_shared<ui::PagingScrollView>();
+	mHorizontalPager = make_shared<vu::PagingScrollView>();
 	mHorizontalPager->setLabel( "PagingScrollView (horizontal)" );
 	mHorizontalPager->setPageMargin( vec2( 4, 0 ) );
 	mHorizontalPager->getBackground()->setColor( Color( 0.8f, 0.4f, 0 ) );
 	const size_t numHorizontalPages = 4;
 	for( size_t i = 0; i < numHorizontalPages; i++ ) {
-		auto label = make_shared<ui::Label>( Rectf( 40, 100, 140, 130 ) );
+		auto label = make_shared<vu::Label>( Rectf( 40, 100, 140, 130 ) );
 		label->setFontSize( 36 );
 		label->setText( "Page " + to_string( i ) );
 		label->setTextColor( Color::white() );
@@ -130,14 +130,14 @@ ScrollTests::ScrollTests()
 	}
 
 	// Vertical paging ScrollView
-	mVerticalPager = make_shared<ui::PagingScrollView>();
+	mVerticalPager = make_shared<vu::PagingScrollView>();
 	mVerticalPager->setLabel( "PagingScrollView (vertical)" );
-	mVerticalPager->setAxis( ui::PagingScrollView::Axis::VERTICAL );
+	mVerticalPager->setAxis( vu::PagingScrollView::Axis::VERTICAL );
 	mVerticalPager->setPageMargin( vec2( 0, 4 ) );
 	mVerticalPager->getBackground()->setColor( Color( 0.8f, 0.4f, 0 ) );
 	const size_t numVerticalPages = 10;
 	for( size_t i = 0; i < numVerticalPages; i++ ) {
-		auto label = make_shared<ui::Label>( Rectf( 40, 100, 140, 130 ) );
+		auto label = make_shared<vu::Label>( Rectf( 40, 100, 140, 130 ) );
 		label->setFontSize( 36 );
 		label->setText( "Page " + to_string( i ) );
 		label->setTextColor( Color::white() );
@@ -145,7 +145,7 @@ ScrollTests::ScrollTests()
 		mVerticalPager->addContentView( label );
 	}
 
-	mScrollViewNested = make_shared<ui::ScrollView>();
+	mScrollViewNested = make_shared<vu::ScrollView>();
 	mScrollViewNested->setLabel( "ScrollView (nested parent)" );
 	mScrollViewNested->setHorizontalScrollingEnabled( false );
 	mScrollViewNested->getBackground()->setColor( Color( 0, 0, 0 ) );
@@ -153,21 +153,21 @@ ScrollTests::ScrollTests()
 	mScrollViewNested->setClipEnabled( true );
 
 	{
-		auto scrollview = make_shared<ui::ScrollView>( Rectf( 40, 100, 1200, 130 ) );
+		auto scrollview = make_shared<vu::ScrollView>( Rectf( 40, 100, 1200, 130 ) );
 		scrollview->setLabel( "ScrollView (nested child)" );
 		scrollview->setVerticalScrollingEnabled( false );
 		//scrollview->getContentView()->getBackground()->setColor( Color( 0, 1, 0 ) );
 
-		auto button = make_shared<ui::Button>();
+		auto button = make_shared<vu::Button>();
 		button->setSize( vec2( 80, 40 ) );
 		button->setTitle( "button" );
 		button->setLabel( "nested Button" );
 		button->setTitleColor( Color( 0, 0.2f, 0.8f ) );
-		button->setColor( Color( 0.4f, 0.6f, 0.9f ), ui::Button::State::PRESSED );
+		button->setColor( Color( 0.4f, 0.6f, 0.9f ), vu::Button::State::PRESSED );
 		button->getSignalPressed().connect( [] { CI_LOG_I( "nested button pressed" ); } );
 		button->getSignalReleased().connect( [] { CI_LOG_I( "nested button released" ); } );
 
-		auto label = make_shared<ui::Label>();
+		auto label = make_shared<vu::Label>();
 		label->setPos( button->getBounds().getUpperRight() + vec2( 10, 0 ) );
 		label->setSize( vec2( 240, 130 ) );
 		label->setFontSize( 36 );
@@ -182,7 +182,7 @@ ScrollTests::ScrollTests()
 		mScrollViewNested->addContentView( scrollview );
 	}
 
-	mScrollViewWithLayout = make_shared<ui::ScrollView>();
+	mScrollViewWithLayout = make_shared<vu::ScrollView>();
 	mScrollViewWithLayout->setLabel( "ScrollView (with layout)" );
 	mScrollViewWithLayout->setHorizontalScrollingEnabled( false );
 	mScrollViewWithLayout->getContentView()->getBackground()->setColor( Color( 0.15f, 0, 0 ) );
@@ -190,14 +190,14 @@ ScrollTests::ScrollTests()
 	mScrollViewWithLayout->setDisableScrollingWhenContentFits();
 
 	{
-		auto layout = make_shared<ui::VerticalLayout>();
+		auto layout = make_shared<vu::VerticalLayout>();
 		layout->setPadding( 6 );
-		layout->setAlignment( ui::Alignment::FILL );
+		layout->setAlignment( vu::Alignment::FILL );
 		mScrollViewWithLayout->getContentView()->setLayout( layout );
 	}
 
 	for( size_t i = 0; i < 20; i++ ) {
-		auto label = make_shared<ui::Label>( Rectf( 0, 0, 140, 30 ) );
+		auto label = make_shared<vu::Label>( Rectf( 0, 0, 140, 30 ) );
 		label->setFontSize( 24 );
 		label->setText( "label " + to_string( i ) );
 		label->setTextColor( Color::white() );
@@ -205,7 +205,7 @@ ScrollTests::ScrollTests()
 		mScrollViewWithLayout->addContentView( label );
 	}
 
-	mInfoLabel = make_shared<ui::LabelGrid>();
+	mInfoLabel = make_shared<vu::LabelGrid>();
 	mInfoLabel->setTextColor( Color::white() );
 	mInfoLabel->getBackground()->setColor( ColorA::gray( 0, 0.3f ) );
 
