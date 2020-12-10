@@ -131,5 +131,8 @@
     <ClInclude Include="..\..\src\vu\vu.h">
       <Filter>src\vu</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\mason\Format.h">
+      <Filter>src\mason</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

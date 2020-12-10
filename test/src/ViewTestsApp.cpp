@@ -4,6 +4,7 @@
 #include "cinder/Log.h"
 
 #include "vu/Suite.h"
+#include "mason/Format.h"
 
 #include "BasicViewTests.h"
 #include "ControlsTest.h"
@@ -14,8 +15,6 @@
 #include "ScrollTests.h"
 
 #include "glm/gtc/epsilon.hpp"
-#include "glm/gtx/string_cast.hpp"
-#include "fmt/format.h"
 
 using namespace ci;
 using namespace ci::app; 
@@ -136,7 +135,7 @@ void ViewTestsApp::update()
 
 void ViewTestsApp::updateUI()
 {
-	mInfoLabel->setRow( 0, { "fps:",  fmt::format( "{}", getAverageFps() ) } );
+	mInfoLabel->setRow( 0, { "fps:",  fmt::format( "{:.2f}", getAverageFps() ) } );
 
 	size_t numFrameBuffers = mTestSuite->getGraph()->getRenderer()->getNumFrameBuffersCached();
 	mInfoLabel->setRow( 1, { "FrameBuffers: ", to_string( numFrameBuffers ) } );
@@ -214,7 +213,7 @@ void ViewTestsApp::drawLayerBorders()
 			auto view = layer->getRootView();
 			auto str = view->getName();
 			if( layer->getFrameBuffer() ) {
-				str += ", FrameBuffer size: " + glm::to_string( layer->getFrameBuffer()->getSize() );
+				str += ", FrameBuffer size: " + fmt::format( "{}", layer->getFrameBuffer()->getSize() );
 			}
 			sTextureFont->drawString(str, view->getWorldPos() + vec2( 2, 2 + sTextureFont->getFont().getAscent() ) );
 		}
