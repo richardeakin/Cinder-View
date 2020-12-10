@@ -114,8 +114,8 @@ BasicViewTests::BasicViewTests()
 	mLabelGrid->setCell( 0, 1, "how ya goin:" );
 	mLabelGrid->setCell( 1, 0, "yo" );
 	mLabelGrid->setCell( 1, 1, "yea, good." );
-	mLabelGrid->setCell( 0, 2, "writing ui code:" );
-	mLabelGrid->setCell( 1, 2, "sucks" );
+	mLabelGrid->setCell( 0, 2, "writing ui code?" );
+	mLabelGrid->setCell( 1, 2, "yep" );
 
 	mImageView = make_shared<vu::ImageView>();
 
