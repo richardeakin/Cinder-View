@@ -277,7 +277,7 @@ void Graph::propagateTouchesBegan( const ViewRef &view, app::TouchEvent &event, 
 		}
 	}
 
-	UI_LOG_TOUCHES( view->getName() << " | num touchesInsde: " << touchesInside.size() );
+	UI_LOG_TOUCHES( view->getName() << " | num touchesInside: " << touchesInside.size() );
 
 	if( touchesInside.empty() )
 		return;
