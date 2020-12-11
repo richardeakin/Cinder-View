@@ -1,18 +1,21 @@
 #include "ScrollTests.h"
 #include "vu/ImageView.h"
 #include "vu/Label.h"
+#include "mason/Format.h"
 
 #include "cinder/app/App.h"
 #include "cinder/gl/gl.h"
 #include "cinder/Rand.h"
 #include "cinder/Timeline.h"
 #include "cinder/Log.h"
-#include <glm/gtx/string_cast.hpp>
+
 
 using namespace std;
 using namespace ci;
 
 const float PADDING = 40.0f;
+const ColorA SCROLL_BACKGROUND_COLOR = ColorA( 0.8f, 0.4f, 0, 1 );
+
 
 class CustomScrollTestsView : public vu::RectView {
 public:
@@ -20,7 +23,7 @@ public:
 		: RectView( bounds )
 	{
 		setInteractive();
-		setColor( Color( 0, 0.3f, 0 ) );
+		setColor( Color( 0, 0.5f, 0 ) );
 	}
 
 protected:
@@ -315,10 +318,10 @@ void ScrollTests::update()
 	size_t row = 0;
 	mInfoLabel->setRow( row++, { "is dragging:",  to_string( mScrollViewFree->isDragging() ) } );
 	mInfoLabel->setRow( row++, { "is decelerating:",  to_string( mScrollViewFree->isDecelerating() ) } );
-	mInfoLabel->setRow( row++, { "swipe velocity:",  glm::to_string( mScrollViewFree->getSwipeVelocity() ) } );
-	mInfoLabel->setRow( row++, { "scroll velocity:",  glm::to_string( mScrollViewFree->getScrollVelocity() ) } );
-	mInfoLabel->setRow( row++, { "content offset:",  glm::to_string( mScrollViewFree->getContentOffset() ) } );
-	mInfoLabel->setRow( row++, { "target offset:",  glm::to_string( mScrollViewFree->getTargetOffset() ) } );
+	mInfoLabel->setRow( row++, { "swipe velocity:",  fmt::format( "{:.2f}", mScrollViewFree->getSwipeVelocity() ) } );
+	mInfoLabel->setRow( row++, { "scroll velocity:",  fmt::format( "{:.2f}", mScrollViewFree->getScrollVelocity() ) } );
+	mInfoLabel->setRow( row++, { "content offset:",  fmt::format( "{:.2f}", mScrollViewFree->getContentOffset() ) } );
+	mInfoLabel->setRow( row++, { "target offset:",  fmt::format( "{:.2f}", mScrollViewFree->getTargetOffset() ) } );
 
 	//  resize info label
 	{
