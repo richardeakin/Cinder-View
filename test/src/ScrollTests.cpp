@@ -95,7 +95,6 @@ ScrollTests::ScrollTests()
 		button->setTitle( "button" );
 		button->setLabel( "Button ('ScrollView - free')" );
 		button->setTitleColor( Color::white() );
-		button->getTitleLabel()->setAlignment( vu::TextAlignment::CENTER ); // TODO: make text centered in button by default?
 		button->setColor( Color( 0.4f, 0.6f, 0.9f ), vu::Button::State::PRESSED );
 		button->getSignalPressed().connect( [] { CI_LOG_I( "button pressed" ); } );
 		button->getSignalReleased().connect( [] { CI_LOG_I( "button released" ); } );
@@ -167,7 +166,6 @@ ScrollTests::ScrollTests()
 		button->setSize( vec2( 80, 40 ) );
 		button->setTitle( "nested button" );
 		button->setLabel( "nested Button" );
-		button->getTitleLabel()->setAlignment( vu::TextAlignment::CENTER );
 		button->setTitleColor( Color::white() );
 		button->setColor( Color( 0.4f, 0.6f, 0.9f ), vu::Button::State::PRESSED );
 		button->getSignalPressed().connect( [] { CI_LOG_I( "nested button pressed" ); } );

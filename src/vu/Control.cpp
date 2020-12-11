@@ -52,9 +52,9 @@ bool Control::hitTestInsideCancelPadding( const vec2 &localPos ) const
 Button::Button( const Rectf &bounds )
 	: Control( bounds )
 {
-	//mTextTitle = TextManager::loadText( FontFace::NORMAL );
 	mTitleLabel = make_shared<Label>();
 	mTitleLabel->setFillParentEnabled();
+	mTitleLabel->setAlignment( vu::TextAlignment::CENTER );
 	updateTitle();
 
 	mImageView = make_shared<ImageView>();
