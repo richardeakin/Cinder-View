@@ -2,21 +2,21 @@
 <cinder>
 <block
 	name="Cinder-View"
-	id="org.libcinder.cinderview"
-	author="Cinder project, Richard Eakin"
+	id="org.richardeakin.cinderview"
+	author="Richard Eakin"
 	license="BSD"
 	summary="UI toolkit for Cinder C++ framework"
-	url="https://github.com/cinder/Cinder-View"
-	git="git://github.com/cinder/Cinder-View.git"
+	url="https://github.com/richardeakin/Cinder-View"
+	git="https://github.com/richardeakin/Cinder-View.git"
 	>
 
 	<includePath>src</includePath>
 	
-	<headerPattern>src/cppformat/*.h</headerPattern>
+	<headerPattern>src/fmt/*.h</headerPattern>
 	<headerPattern>src/mason/*.h</headerPattern>
-	<headerPattern>src/ui/*.h</headerPattern>
+	<headerPattern>src/vu/*.h</headerPattern>
 
-	<sourcePattern>src/cppformat/*.cc</sourcePattern>
-	<sourcePattern>src/ui/*.cpp</sourcePattern>
+	<sourcePattern>src/fmt/*.cc</sourcePattern>
+	<sourcePattern>src/vu/*.cpp</sourcePattern>
 </block>
 </cinder>
