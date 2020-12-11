@@ -15,7 +15,10 @@ using namespace mason;
 
 class ChildView : public vu::RectView {
 public:
-	ChildView( const Rectf &bounds ) : RectView( bounds )	{}
+	ChildView( const Rectf &bounds ) : RectView( bounds )
+	{
+		setInteractive( true );
+	}
 
 protected:
 	bool touchesBegan( app::TouchEvent &event )	override
