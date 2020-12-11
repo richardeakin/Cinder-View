@@ -80,7 +80,7 @@ ScrollTests::ScrollTests()
 	mScrollViewFree = make_shared<vu::ScrollView>();
 //	mScrollView->setClipEnabled( false );
 	mScrollViewFree->setLabel( "ScrollView (free)" );
-	mScrollViewFree->getContentView()->getBackground()->setColor( Color( 0.15f, 0, 0 ) );
+	mScrollViewFree->getContentView()->getBackground()->setColor( SCROLL_BACKGROUND_COLOR );
 
 	{
 		auto scrollBorder = make_shared<vu::StrokedRectView>();
@@ -92,9 +92,9 @@ ScrollTests::ScrollTests()
 		auto custom = make_shared<CustomScrollTestsView>( Rectf( 40, 30, 180, 130 ) );
 
 		auto button = make_shared<vu::Button>( Rectf( 200, 30, 300, 70 ) );
-		button->setTitle( "tap me" );
-		button->setLabel( "Button ('tap me')" );
-		button->setTitleColor( Color( 0, 0.2f, 0.8f ) );
+		button->setTitle( "button" );
+		button->setLabel( "Button ('ScrollView - free')" );
+		button->setTitleColor( Color::white() );
 		button->getTitleLabel()->setAlignment( vu::TextAlignment::CENTER ); // TODO: make text centered in button by default?
 		button->setColor( Color( 0.4f, 0.6f, 0.9f ), vu::Button::State::PRESSED );
 		button->getSignalPressed().connect( [] { CI_LOG_I( "button pressed" ); } );
@@ -122,7 +122,7 @@ ScrollTests::ScrollTests()
 	mHorizontalPager = make_shared<vu::PagingScrollView>();
 	mHorizontalPager->setLabel( "PagingScrollView (horizontal)" );
 	mHorizontalPager->setPageMargin( vec2( 4, 0 ) );
-	mHorizontalPager->getBackground()->setColor( Color( 0.8f, 0.4f, 0 ) );
+	mHorizontalPager->getBackground()->setColor( SCROLL_BACKGROUND_COLOR );
 	const size_t numHorizontalPages = 4;
 	for( size_t i = 0; i < numHorizontalPages; i++ ) {
 		auto label = make_shared<vu::Label>( Rectf( 40, 100, 140, 130 ) );
@@ -138,7 +138,7 @@ ScrollTests::ScrollTests()
 	mVerticalPager->setLabel( "PagingScrollView (vertical)" );
 	mVerticalPager->setAxis( vu::PagingScrollView::Axis::VERTICAL );
 	mVerticalPager->setPageMargin( vec2( 0, 4 ) );
-	mVerticalPager->getBackground()->setColor( Color( 0.8f, 0.4f, 0 ) );
+	mVerticalPager->getBackground()->setColor( SCROLL_BACKGROUND_COLOR );
 	const size_t numVerticalPages = 10;
 	for( size_t i = 0; i < numVerticalPages; i++ ) {
 		auto label = make_shared<vu::Label>( Rectf( 40, 100, 140, 130 ) );
@@ -153,7 +153,7 @@ ScrollTests::ScrollTests()
 	mScrollViewNested->setLabel( "ScrollView (nested parent)" );
 	mScrollViewNested->setHorizontalScrollingEnabled( false );
 	mScrollViewNested->getBackground()->setColor( Color( 0, 0, 0 ) );
-	mScrollViewNested->getContentView()->getBackground()->setColor( Color( 0.15f, 0, 0 ) );
+	mScrollViewNested->getContentView()->getBackground()->setColor( SCROLL_BACKGROUND_COLOR );
 	mScrollViewNested->setClipEnabled( true );
 
 	{
@@ -161,25 +161,26 @@ ScrollTests::ScrollTests()
 		scrollview->setLabel( "ScrollView (nested child)" );
 		scrollview->setVerticalScrollingEnabled( false );
 		//scrollview->getContentView()->getBackground()->setColor( Color( 0, 1, 0 ) );
+		scrollview->setClipEnabled( false ); // FIXME: enabling clip in nested scrollview breaks parent scrollview's clip (eg "blah blah blah label not clipping)
 
 		auto button = make_shared<vu::Button>();
 		button->setSize( vec2( 80, 40 ) );
-		button->setTitle( "button" );
+		button->setTitle( "nested button" );
 		button->setLabel( "nested Button" );
 		button->getTitleLabel()->setAlignment( vu::TextAlignment::CENTER );
-		button->setTitleColor( Color( 0, 0.2f, 0.8f ) );
+		button->setTitleColor( Color::white() );
 		button->setColor( Color( 0.4f, 0.6f, 0.9f ), vu::Button::State::PRESSED );
 		button->getSignalPressed().connect( [] { CI_LOG_I( "nested button pressed" ); } );
 		button->getSignalReleased().connect( [] { CI_LOG_I( "nested button released" ); } );
 
 		auto label = make_shared<vu::Label>();
-		label->setPos( button->getBounds().getUpperRight() + vec2( 10, 0 ) );
+		label->setPos( button->getBounds().getUpperRight() + vec2( 10, 3 ) );
 		label->setSize( vec2( 240, 130 ) );
 		label->setFontSize( 36 );
 		label->setShrinkToFitEnabled();
-		label->setText( "blah blah blah blah blah" );
+		label->setText( "this is a somewhat lengthy label" );
 		label->setTextColor( Color::white() );
-		label->getBackground()->setColor( Color( 0, 0, 1 ) );
+		label->getBackground()->setColor( Color( 0, 0.3f, 1 ) );
 
 		scrollview->addContentView( button );
 		scrollview->addContentView( label );
@@ -190,7 +191,7 @@ ScrollTests::ScrollTests()
 	mScrollViewWithLayout = make_shared<vu::ScrollView>();
 	mScrollViewWithLayout->setLabel( "ScrollView (with layout)" );
 	mScrollViewWithLayout->setHorizontalScrollingEnabled( false );
-	mScrollViewWithLayout->getContentView()->getBackground()->setColor( Color( 0.15f, 0, 0 ) );
+	mScrollViewWithLayout->getContentView()->getBackground()->setColor( SCROLL_BACKGROUND_COLOR );
 	mScrollViewWithLayout->getBackground()->setColor( Color( 0, 0, 0 ) );
 	mScrollViewWithLayout->setDisableScrollingWhenContentFits();
 
@@ -225,7 +226,7 @@ ScrollTests::ScrollTests()
 void ScrollTests::layout()
 {
 	vec2 pos = vec2( PADDING );
-	vec2 size = getSize() / 4.0f;
+	vec2 size = getSize() / vec2( 4, 3.5f );
 
 	mScrollViewFree->setPos( pos );
 	mScrollViewFree->setSize( size );

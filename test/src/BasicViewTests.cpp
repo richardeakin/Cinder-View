@@ -102,8 +102,8 @@ BasicViewTests::BasicViewTests()
 	mLabel->getBackground()->setColor( Color( 0, 0, 0.4f ) );
 
 	mLabelClipped = make_shared<vu::Label>();
-	mLabelClipped->setText( "blah blah blah blah blah" );
-	mLabelClipped->setFontFile( app::getAssetPath( "fonts/Saint-Andrews Queen.ttf" ), 16 );
+	mLabelClipped->setText( "custom font with clipping enabled" );
+	mLabelClipped->setFontFile( app::getAssetPath( "fonts/PTSerif-Regular.ttf" ), 16 );
 	mLabelClipped->setClipEnabled();
 	mLabelClipped->setTextColor( Color::white() );
 	mLabelClipped->getBackground()->setColor( Color( 0, 0, 0.4f ) );
