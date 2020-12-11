@@ -1,0 +1,178 @@
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+    <Filter Include="Blocks">
+      <UniqueIdentifier>{715DDC3B-722C-479A-924C-DE4375E66BF3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Blocks\Cinder-View">
+      <UniqueIdentifier>{81EB53C0-9A67-43FE-99AB-D449B6E46587}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Blocks\Cinder-View\src">
+      <UniqueIdentifier>{746CC7DD-55CF-40F3-A5CB-300C228A187B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Blocks\Cinder-View\src\fmt">
+      <UniqueIdentifier>{EE40BE5A-0DC7-4CBC-B3C6-3B0781632740}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Blocks\Cinder-View\src\mason">
+      <UniqueIdentifier>{C3C371DE-4B32-457E-9D4A-847181BB806D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Blocks\Cinder-View\src\vu">
+      <UniqueIdentifier>{0045E352-9CDB-42B0-BE2F-FBEF7265567F}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\CinderViewBasicApp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClInclude Include="..\include\Resources.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClCompile Include="..\src\CinderViewBasicApp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\..\src\fmt\core.h">
+      <Filter>Blocks\Cinder-View\src\fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\fmt\format-inl.h">
+      <Filter>Blocks\Cinder-View\src\fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\fmt\format.h">
+      <Filter>Blocks\Cinder-View\src\fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\mason\Factory.h">
+      <Filter>Blocks\Cinder-View\src\mason</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\mason\Format.h">
+      <Filter>Blocks\Cinder-View\src\mason</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\vu\Control.h">
+      <Filter>Blocks\Cinder-View\src\vu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\vu\Debug.h">
+      <Filter>Blocks\Cinder-View\src\vu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\vu\Export.h">
+      <Filter>Blocks\Cinder-View\src\vu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\vu\Filter.h">
+      <Filter>Blocks\Cinder-View\src\vu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\vu\GestureTracker.h">
+      <Filter>Blocks\Cinder-View\src\vu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\vu\Graph.h">
+      <Filter>Blocks\Cinder-View\src\vu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\vu\Image.h">
+      <Filter>Blocks\Cinder-View\src\vu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\vu\ImageView.h">
+      <Filter>Blocks\Cinder-View\src\vu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\vu\Interface3d.h">
+      <Filter>Blocks\Cinder-View\src\vu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\vu\Label.h">
+      <Filter>Blocks\Cinder-View\src\vu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\vu\Layer.h">
+      <Filter>Blocks\Cinder-View\src\vu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\vu\Layout.h">
+      <Filter>Blocks\Cinder-View\src\vu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\vu\Renderer.h">
+      <Filter>Blocks\Cinder-View\src\vu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\vu\ScrollView.h">
+      <Filter>Blocks\Cinder-View\src\vu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\vu\Suite.h">
+      <Filter>Blocks\Cinder-View\src\vu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\vu\TextField.h">
+      <Filter>Blocks\Cinder-View\src\vu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\vu\TextManager.h">
+      <Filter>Blocks\Cinder-View\src\vu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\vu\View.h">
+      <Filter>Blocks\Cinder-View\src\vu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\vu\vu.h">
+      <Filter>Blocks\Cinder-View\src\vu</Filter>
+    </ClInclude>
+    <ClCompile Include="..\..\..\src\fmt\format.cc">
+      <Filter>Blocks\Cinder-View\src\fmt</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\vu\Control.cpp">
+      <Filter>Blocks\Cinder-View\src\vu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\vu\Filter.cpp">
+      <Filter>Blocks\Cinder-View\src\vu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\vu\GestureTracker.cpp">
+      <Filter>Blocks\Cinder-View\src\vu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\vu\Graph.cpp">
+      <Filter>Blocks\Cinder-View\src\vu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\vu\Image.cpp">
+      <Filter>Blocks\Cinder-View\src\vu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\vu\ImageView.cpp">
+      <Filter>Blocks\Cinder-View\src\vu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\vu\Interface3d.cpp">
+      <Filter>Blocks\Cinder-View\src\vu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\vu\Label.cpp">
+      <Filter>Blocks\Cinder-View\src\vu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\vu\Layer.cpp">
+      <Filter>Blocks\Cinder-View\src\vu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\vu\Layout.cpp">
+      <Filter>Blocks\Cinder-View\src\vu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\vu\Renderer.cpp">
+      <Filter>Blocks\Cinder-View\src\vu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\vu\ScrollView.cpp">
+      <Filter>Blocks\Cinder-View\src\vu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\vu\Suite.cpp">
+      <Filter>Blocks\Cinder-View\src\vu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\vu\TextField.cpp">
+      <Filter>Blocks\Cinder-View\src\vu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\vu\TextManager.cpp">
+      <Filter>Blocks\Cinder-View\src\vu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\vu\View.cpp">
+      <Filter>Blocks\Cinder-View\src\vu</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\include\Resources.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resources.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>
