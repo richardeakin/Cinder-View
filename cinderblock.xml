@@ -19,4 +19,5 @@
 	<sourcePattern>src/fmt/*.cc</sourcePattern>
 	<sourcePattern>src/vu/*.cpp</sourcePattern>
 </block>
+<template>templates/Basic Cinder-View/template.xml</template>
 </cinder>
