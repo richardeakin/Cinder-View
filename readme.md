@@ -1,4 +1,4 @@
-#### Cinder-View
+## Cinder-View
 
 UI toolkit for Cinder C++ framework
 
