@@ -819,9 +819,8 @@ bool SelectorBase::touchesEnded( app::TouchEvent &event )
 
 void SelectorBase::updateSelection( const vec2 &pos )
 {
-	int offset = int( pos.y - getPos().y );
-	int sectionHeight = int( getHeight() / (float)mSegments.size() );
-	size_t selectedIndex = std::min<size_t>( offset / sectionHeight, mSegments.size() - 1 );
+	auto sectionHeight = static_cast<float>( getHeight() ) / mSegments.size();
+	size_t selectedIndex = std::min<size_t>( static_cast<int>( pos.y / sectionHeight ), mSegments.size() - 1 );
 
 	if( mSelectedIndex != selectedIndex ) {
 		mSelectedIndex = selectedIndex;
